@@ -40,6 +40,7 @@ type WorkerVersionDataSourceModel struct {
 	Bindings            customfield.NestedObjectList[WorkerVersionBindingsDataSourceModel]            `tfsdk:"bindings" json:"bindings,computed"`
 	CacheOptions        customfield.NestedObject[WorkerVersionCacheOptionsDataSourceModel]            `tfsdk:"cache_options" json:"cache_options,computed"`
 	Containers          customfield.NestedObjectSet[WorkerVersionContainersDataSourceModel]           `tfsdk:"containers" json:"containers,computed"`
+	Exports             customfield.NestedObjectMap[WorkerVersionExportsDataSourceModel]              `tfsdk:"exports" json:"exports,computed"`
 	Limits              customfield.NestedObject[WorkerVersionLimitsDataSourceModel]                  `tfsdk:"limits" json:"limits,computed"`
 	Migrations          customfield.NestedObject[WorkerVersionMigrationsDataSourceModel]              `tfsdk:"migrations" json:"migrations,computed"`
 	Modules             customfield.NestedObjectSet[WorkerVersionModulesDataSourceModel]              `tfsdk:"modules" json:"modules,computed"`
@@ -149,6 +150,20 @@ type WorkerVersionCacheOptionsDataSourceModel struct {
 
 type WorkerVersionContainersDataSourceModel struct {
 	ClassName types.String `tfsdk:"class_name" json:"class_name,computed"`
+}
+
+type WorkerVersionExportsDataSourceModel struct {
+	Type          types.String                                                       `tfsdk:"type" json:"type,computed"`
+	Cache         customfield.NestedObject[WorkerVersionExportsCacheDataSourceModel] `tfsdk:"cache" json:"cache,computed"`
+	RenamedTo     types.String                                                       `tfsdk:"renamed_to" json:"renamed_to,computed"`
+	State         types.String                                                       `tfsdk:"state" json:"state,computed"`
+	Storage       types.String                                                       `tfsdk:"storage" json:"storage,computed"`
+	TransferFrom  types.String                                                       `tfsdk:"transfer_from" json:"transfer_from,computed"`
+	TransferredTo types.String                                                       `tfsdk:"transferred_to" json:"transferred_to,computed"`
+}
+
+type WorkerVersionExportsCacheDataSourceModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 type WorkerVersionLimitsDataSourceModel struct {

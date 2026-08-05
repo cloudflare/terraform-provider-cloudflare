@@ -45,12 +45,12 @@ Available values: "advanced".
 Available values: "txt", "http", "email".
 - `validity_days` (Number) Validity Days selected for the order.
 Available values: 14, 30, 90, 365.
+- `zone_id` (String) Identifier.
 
 ### Optional
 
 - `cloudflare_branding` (Boolean) Whether or not to add Cloudflare Branding for the order.  This will add a subdomain of sni.cloudflaressl.com as the Common Name if set to true.
 - `hosts` (Set of String) Comma separated list of valid host names for the certificate packs. Must contain the zone apex, may not contain more than 50 hosts, and may not be empty.
-- `zone_id` (String) Identifier.
 
 ### Read-Only
 

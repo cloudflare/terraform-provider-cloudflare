@@ -31,11 +31,11 @@ resource "cloudflare_email_security_trusted_domains" "example_email_security_tru
 
 ### Required
 
+- `account_id` (String) Identifier.
 - `pattern` (String)
 
 ### Optional
 
-- `account_id` (String) Identifier.
 - `comments` (String)
 - `is_recent` (Boolean) Select to prevent recently registered domains from triggering a Suspicious or Malicious disposition.
 - `is_regex` (Boolean)

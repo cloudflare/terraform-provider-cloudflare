@@ -49,6 +49,11 @@ value for a single entrypoint. (see [below for nested schema](#nestedatt--result
 - `compatibility_flags` (Set of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
 - `created_on` (String) When the script was created.
 - `etag` (String) Hashed script content, can be used in a If-None-Match header when updating.
+- `exports` (Attributes Map) Declarative exports for the Worker's most recent version,
+including Durable Object classes (with their `storage`
+backend) and named Worker entrypoints. Tombstoned lifecycle
+entries are omitted, so only live exports (`created` and
+`expecting-transfer`) are returned. (see [below for nested schema](#nestedatt--result--exports))
 - `handlers` (List of String) The names of handlers exported as part of the default export.
 - `has_assets` (Boolean) Whether a Worker contains assets.
 - `has_modules` (Boolean) Whether a Worker contains modules.
@@ -79,6 +84,55 @@ uploads. This is independent of `enabled`. It can stay true
 while caching is off, so the preference survives turning
 caching off and back on.
 - `enabled` (Boolean) Whether caching is enabled for this Worker.
+
+
+<a id="nestedatt--result--exports"></a>
+### Nested Schema for `result.exports`
+
+Read-Only:
+
+- `cache` (Attributes) Cache override for this entrypoint. It applies only to
+`type: worker` entries and overrides the Worker's global
+`cache_options.enabled` for that entrypoint. (see [below for nested schema](#nestedatt--result--exports--cache))
+- `renamed_to` (String) Destination class name for a `state: renamed` tombstone. The
+target must appear as a live (`created`) entry in the same
+`exports` map. Write-only: never present in GET responses.
+- `state` (String) Lifecycle state of the export entry. Defaults to `created`
+(a normal, live export) when omitted.
+
+`deleted`, `renamed`, and `transferred` are tombstones:
+write-only lifecycle operations that retire, rename, or hand
+off a provisioned Durable Object namespace. They are applied
+at upload and are filtered out of GET responses, so a read
+only ever returns `created` or `expecting-transfer`.
+
+`expecting-transfer` is a live export whose data is being
+received from another script via the two-phase transfer flow;
+it carries `storage` and `transfer_from`.
+Available values: "created", "deleted", "renamed", "transferred", "expecting-transfer".
+- `storage` (String) Storage backend for a `type: durable-object` export. Required
+for live Durable Object entries (`created` and
+`expecting-transfer`). `sqlite` selects SQLite-backed storage;
+`legacy-kv` selects the legacy key-value storage.
+Available values: "sqlite", "legacy-kv".
+- `transfer_from` (String) Source script for a `state: expecting-transfer` entry. The
+namespace on this script is materialised from the source
+script's data via the pending-transfer flow. Present on reads
+for `expecting-transfer` entries.
+- `transferred_to` (String) Destination script for a `state: transferred` tombstone. Must
+reference a script in the same account; cross-dispatch-namespace
+transfers are rejected. Write-only: never present in GET
+responses.
+- `type` (String) The kind of export.
+Available values: "worker", "durable-object".
+
+<a id="nestedatt--result--exports--cache"></a>
+### Nested Schema for `result.exports.cache`
+
+Read-Only:
+
+- `enabled` (Boolean) Whether caching is enabled for this entrypoint.
+
 
 
 <a id="nestedatt--result--named_handlers"></a>

@@ -3,6 +3,10 @@ resource "cloudflare_workflow" "example_workflow" {
   workflow_name = "x"
   class_name = "x"
   script_name = "x"
+  default_retention = {
+    error_retention = "5 minutes"
+    success_retention = "5 minutes"
+  }
   limits = {
     steps = 1
   }

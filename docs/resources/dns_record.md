@@ -42,18 +42,18 @@ resource "cloudflare_dns_record" "example_dns_record" {
 - `ttl` (Number) Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.
 - `type` (String) Record type.
 Available values: "A", "AAAA", "CNAME", "MX", "NS", "OPENPGPKEY", "PTR", "TXT", "CAA", "CERT", "DNSKEY", "DS", "HTTPS", "LOC", "NAPTR", "SMIMEA", "SRV", "SSHFP", "SVCB", "TLSA", "URI".
+- `zone_id` (String) Identifier.
 
 ### Optional
 
 - `comment` (String) Comments or notes about the DNS record. This field has no effect on DNS responses.
 - `content` (String) A valid IPv4 address.
-- `data` (Attributes) Components of a CAA record. (see [below for nested schema](#nestedatt--data))
+- `data` (Attributes) Components of a MX record. (see [below for nested schema](#nestedatt--data))
 - `priority` (Number) Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.
 - `private_routing` (Boolean) Enables private network routing to the origin.
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
 - `settings` (Attributes) Settings for the DNS record. (see [below for nested schema](#nestedatt--settings))
 - `tags` (Set of String) Custom tags for the DNS record. This field has no effect on DNS responses.
-- `zone_id` (String) Identifier.
 
 ### Read-Only
 
@@ -94,7 +94,7 @@ Available values: "E", "W".
 - `precision_horz` (Number) Horizontal precision of location.
 - `precision_vert` (Number) Vertical precision of location.
 - `preference` (Number) Preference.
-- `priority` (Number) Priority.
+- `priority` (Number) Required for MX and URI records; ignored for other record types (but may still be returned by the API). Records with lower priorities are preferred. This field is to be deprecated in favor of the priority field within the data map.
 - `protocol` (Number) Protocol.
 - `public_key` (String) Public Key.
 - `regex` (String) Regex.
@@ -103,7 +103,7 @@ Available values: "E", "W".
 - `service` (String) Service.
 - `size` (Number) Size of location in meters.
 - `tag` (String) Name of the property controlled by this record (e.g.: issue, issuewild, iodef).
-- `target` (String) Target.
+- `target` (String) A valid mail server hostname, or "." for a NULL MX record.
 - `type` (Number) Type.
 - `usage` (Number) Usage.
 - `value` (String) Value of the record. This field's semantics depend on the chosen tag.

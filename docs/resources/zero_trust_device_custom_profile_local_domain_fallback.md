@@ -31,12 +31,9 @@ resource "cloudflare_zero_trust_device_custom_profile_local_domain_fallback" "ex
 
 ### Required
 
+- `account_id` (String)
 - `domains` (Attributes Set) (see [below for nested schema](#nestedatt--domains))
 - `policy_id` (String)
-
-### Optional
-
-- `account_id` (String)
 
 ### Read-Only
 

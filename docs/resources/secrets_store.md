@@ -27,13 +27,13 @@ resource "cloudflare_secrets_store" "example_secrets_store" {
 
 ### Required
 
-- `account_id` (String) Account Identifier
-- `name` (String) The name of the store
+- `account_id` (String)
+- `name` (String) The name of the store.
 
 ### Read-Only
 
-- `created` (String) Whenthe secret was created.
-- `id` (String) Store Identifier
+- `created` (String) When the secret was created.
+- `id` (String) Store Identifier.
 - `modified` (String) When the secret was modified.
 
 ## Import

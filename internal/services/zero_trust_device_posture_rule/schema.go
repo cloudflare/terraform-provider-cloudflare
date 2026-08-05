@@ -409,6 +409,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"enabled": schema.BoolAttribute{
+				Description: "Whether the rule is enabled. This is a computed, read-only value. It is false for deprecated Kolide posture rules that still use the issue_count input, and true otherwise.",
+				Computed:    true,
+			},
 		},
 	}
 }

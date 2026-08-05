@@ -30,15 +30,21 @@ resource "cloudflare_email_security_block_sender" "example_email_security_block_
 
 ### Required
 
+- `account_id` (String) Identifier.
 - `is_regex` (Boolean)
-- `pattern` (String)
+- `pattern` (String) The pattern value to match against. Format depends on `pattern_type`:
+- EMAIL: a valid email address, e.g. `user@example.com`
+- DOMAIN: a valid domain name, e.g. `example.com`
+- IP: a plain IPv4 address (e.g. `1.2.3.4`) or an IPv4 CIDR block (e.g. `1.2.3.0/24`). Only globally reachable addresses are accepted; private, loopback, link-local, and unspecified addresses are rejected.
 - `pattern_type` (String) Type of pattern matching.
-Note: UNKNOWN is deprecated and cannot be used when creating or updating policies, but may be returned for existing entries.
+- EMAIL: matches a full email address (e.g. `user@example.com`)
+- DOMAIN: matches a domain name (e.g. `example.com`)
+- IP: matches a plain IPv4 address (e.g. `1.2.3.4`) or an IPv4 CIDR block (e.g. `1.2.3.0/24`). Only globally reachable addresses are accepted.
+- UNKNOWN: deprecated, cannot be used when creating or updating policies, but may be returned for existing entries.
 Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
 
 ### Optional
 
-- `account_id` (String) Identifier.
 - `comments` (String)
 
 ### Read-Only

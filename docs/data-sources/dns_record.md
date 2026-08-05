@@ -39,7 +39,7 @@ data "cloudflare_dns_record" "example_dns_record" {
 - `comment_modified_on` (String) When the record comment was last modified. Omitted if there is no comment.
 - `content` (String) A valid IPv4 address.
 - `created_on` (String) When the record was created.
-- `data` (Attributes) Components of a CAA record. (see [below for nested schema](#nestedatt--data))
+- `data` (Attributes) Components of a MX record. (see [below for nested schema](#nestedatt--data))
 - `id` (String) Identifier.
 - `meta` (Attributes) Extra Cloudflare-specific metadata about the record. (see [below for nested schema](#nestedatt--meta))
 - `modified_on` (String) When the record was last modified.
@@ -157,7 +157,7 @@ Available values: "E", "W".
 - `precision_horz` (Number) Horizontal precision of location.
 - `precision_vert` (Number) Vertical precision of location.
 - `preference` (Number) Preference.
-- `priority` (Number) Priority.
+- `priority` (Number) Required for MX and URI records; ignored for other record types (but may still be returned by the API). Records with lower priorities are preferred. This field is to be deprecated in favor of the priority field within the data map.
 - `protocol` (Number) Protocol.
 - `public_key` (String) Public Key.
 - `regex` (String) Regex.
@@ -166,7 +166,7 @@ Available values: "E", "W".
 - `service` (String) Service.
 - `size` (Number) Size of location in meters.
 - `tag` (String) Name of the property controlled by this record (e.g.: issue, issuewild, iodef).
-- `target` (String) Target.
+- `target` (String) A valid mail server hostname, or "." for a NULL MX record.
 - `type` (Number) Type.
 - `usage` (Number) Usage.
 - `value` (String) Value of the record. This field's semantics depend on the chosen tag.

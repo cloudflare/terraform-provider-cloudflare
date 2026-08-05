@@ -20,6 +20,7 @@ type WorkflowModel struct {
 	WorkflowName      types.String                                     `tfsdk:"workflow_name" path:"workflow_name,required"`
 	ClassName         types.String                                     `tfsdk:"class_name" json:"class_name,required"`
 	ScriptName        types.String                                     `tfsdk:"script_name" json:"script_name,required"`
+	DefaultRetention  *WorkflowDefaultRetentionModel                   `tfsdk:"default_retention" json:"default_retention,optional,no_refresh"`
 	Limits            *WorkflowLimitsModel                             `tfsdk:"limits" json:"limits,optional,no_refresh"`
 	Schedules         *[]*WorkflowSchedulesModel                       `tfsdk:"schedules" json:"schedules,optional"`
 	CreatedOn         timetypes.RFC3339                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
@@ -37,6 +38,11 @@ func (m WorkflowModel) MarshalJSON() (data []byte, err error) {
 
 func (m WorkflowModel) MarshalJSONForUpdate(state WorkflowModel) (data []byte, err error) {
 	return apijson.MarshalForUpdate(m, state)
+}
+
+type WorkflowDefaultRetentionModel struct {
+	ErrorRetention   customfield.NormalizedDynamicValue `tfsdk:"error_retention" json:"error_retention,optional"`
+	SuccessRetention customfield.NormalizedDynamicValue `tfsdk:"success_retention" json:"success_retention,optional"`
 }
 
 type WorkflowLimitsModel struct {

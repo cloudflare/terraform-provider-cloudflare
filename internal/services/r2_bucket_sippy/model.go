@@ -43,4 +43,8 @@ type R2BucketSippySourceModel struct {
 	ClientEmail           types.String `tfsdk:"client_email" json:"clientEmail,optional,no_refresh"`
 	PrivateKey            types.String `tfsdk:"private_key" json:"privateKey,optional,no_refresh"`
 	BucketURL             types.String `tfsdk:"bucket_url" json:"bucketUrl,optional"`
+	AccountKey            types.String `tfsdk:"account_key" json:"accountKey,optional,no_refresh"`
+	AccountName           types.String `tfsdk:"account_name" json:"accountName,optional,no_refresh"`
+	Container             types.String `tfsdk:"container" json:"container,optional"`
+	SasToken              types.String `tfsdk:"sas_token" json:"sasToken,optional,no_refresh"`
 }

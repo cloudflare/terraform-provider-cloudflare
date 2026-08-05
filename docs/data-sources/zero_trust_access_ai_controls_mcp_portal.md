@@ -57,6 +57,7 @@ Optional:
 
 Read-Only:
 
+- `auth_config_summary` (Attributes) Safe subset of auth_credentials surfaced to the dashboard. Includes auth_mode (dcr|manual), has_client_secret, client_secret_version, and the OAuth endpoints + client_id for manual servers. Never includes the secret value. (see [below for nested schema](#nestedatt--servers--auth_config_summary))
 - `auth_type` (String) Available values: "oauth", "bearer", "unauthenticated".
 - `created_at` (String)
 - `created_by` (String)
@@ -76,10 +77,46 @@ Read-Only:
 - `prompts` (List of Map of String)
 - `secure_web_gateway` (Boolean) Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway
 - `server_id` (String) server id
-- `status` (String)
+- `status` (String) Current sync state of the server
+Available values: "waiting", "ready", "stale", "error".
 - `tools` (List of Map of String)
 - `updated_prompts` (Attributes List) (see [below for nested schema](#nestedatt--servers--updated_prompts))
 - `updated_tools` (Attributes List) (see [below for nested schema](#nestedatt--servers--updated_tools))
+
+<a id="nestedatt--servers--auth_config_summary"></a>
+### Nested Schema for `servers.auth_config_summary`
+
+Read-Only:
+
+- `auth_mode` (String) Available values: "dcr", "manual".
+- `client_secret_version` (Number)
+- `config` (Attributes) (see [below for nested schema](#nestedatt--servers--auth_config_summary--config))
+- `has_client_secret` (Boolean)
+- `registration_info` (Attributes) (see [below for nested schema](#nestedatt--servers--auth_config_summary--registration_info))
+
+<a id="nestedatt--servers--auth_config_summary--config"></a>
+### Nested Schema for `servers.auth_config_summary.config`
+
+Read-Only:
+
+- `authorization_endpoint` (String)
+- `issuer` (String)
+- `resource` (String)
+- `revocation_endpoint` (String)
+- `token_endpoint` (String)
+
+
+<a id="nestedatt--servers--auth_config_summary--registration_info"></a>
+### Nested Schema for `servers.auth_config_summary.registration_info`
+
+Read-Only:
+
+- `client_id` (String)
+- `redirect_uris` (List of String)
+- `scope` (String)
+- `token_endpoint_auth_method` (String)
+
+
 
 <a id="nestedatt--servers--error_details"></a>
 ### Nested Schema for `servers.error_details`

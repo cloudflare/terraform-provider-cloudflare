@@ -26,22 +26,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Store Identifier",
+				Description:   "Store Identifier.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Account Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description:   "The name of the store",
+				Description:   "The name of the store.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"created": schema.StringAttribute{
-				Description: "Whenthe secret was created.",
+				Description: "When the secret was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},

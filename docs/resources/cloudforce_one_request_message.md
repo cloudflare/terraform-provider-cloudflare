@@ -27,11 +27,11 @@ resource "cloudflare_cloudforce_one_request_message" "example_cloudforce_one_req
 
 ### Required
 
+- `account_id` (String) Identifier.
 - `request_id` (String) UUID.
 
 ### Optional
 
-- `account_id` (String) Identifier.
 - `content` (String) Content of message.
 
 ### Read-Only

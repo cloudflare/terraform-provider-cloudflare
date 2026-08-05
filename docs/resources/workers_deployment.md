@@ -36,13 +36,13 @@ resource "cloudflare_workers_deployment" "example_workers_deployment" {
 
 ### Required
 
+- `account_id` (String) Identifier.
 - `script_name` (String) Name of the script, used in URLs and route configuration.
 - `strategy` (String) Available values: "percentage".
 - `versions` (Attributes List) (see [below for nested schema](#nestedatt--versions))
 
 ### Optional
 
-- `account_id` (String) Identifier.
 - `annotations` (Attributes) (see [below for nested schema](#nestedatt--annotations))
 
 ### Read-Only

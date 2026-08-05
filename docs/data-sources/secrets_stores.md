@@ -26,15 +26,15 @@ data "cloudflare_secrets_stores" "example_secrets_stores" {
 
 ### Required
 
-- `account_id` (String) Account Identifier
+- `account_id` (String)
 
 ### Optional
 
-- `direction` (String) Direction to sort objects
+- `direction` (String) Direction to sort objects.
 Available values: "asc", "desc".
 - `max_items` (Number) Max items to fetch, default: 1000
-- `order` (String) Order secrets by values in the given field
-Available values: "name", "comment", "created", "modified", "status".
+- `order` (String) Order stores by values in the given field.
+Available values: "name", "created", "modified".
 
 ### Read-Only
 
@@ -45,10 +45,10 @@ Available values: "name", "comment", "created", "modified", "status".
 
 Read-Only:
 
-- `account_id` (String) Account Identifier
-- `created` (String) Whenthe secret was created.
-- `id` (String) Store Identifier
+- `account_id` (String) Account Identifier.
+- `created` (String) When the secret was created.
+- `id` (String) Store Identifier.
 - `modified` (String) When the secret was modified.
-- `name` (String) The name of the store
+- `name` (String) The name of the store.
 
 

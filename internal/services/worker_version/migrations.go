@@ -33,6 +33,7 @@ func (r *WorkerVersionResource) UpgradeState(ctx context.Context) map[int64]reso
 func resourceSchemaV0(ctx context.Context) *schema.Schema {
 	resourceSchemaLatest := ResourceSchema(ctx)
 	resourceSchemaLatest.Version = 0
+	delete(resourceSchemaLatest.Attributes, "exports")
 	resourceSchemaLatest.
 		Attributes["assets"].(schema.SingleNestedAttribute).
 		Attributes["config"].(schema.SingleNestedAttribute).

@@ -87,6 +87,8 @@ Available values: "preview", "production".
 - `project_id` (String) Id of the project.
 - `project_name` (String) Name of the project.
 - `short_id` (String) Short Id (8 character) of the deployment.
+- `skip_reason` (String) Why the deployment was skipped.
+Available values: "commit_message", "preview_deployments_disabled", "production_deployments_disabled", "path_config", "branch_config", "pages_to_workers_conversion".
 - `source` (Attributes) Configs for the project source control. (see [below for nested schema](#nestedatt--result--canonical_deployment--source))
 - `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--result--canonical_deployment--stages))
 - `url` (String) The live URL to view this deployment.
@@ -522,6 +524,8 @@ Available values: "preview", "production".
 - `project_id` (String) Id of the project.
 - `project_name` (String) Name of the project.
 - `short_id` (String) Short Id (8 character) of the deployment.
+- `skip_reason` (String) Why the deployment was skipped.
+Available values: "commit_message", "preview_deployments_disabled", "production_deployments_disabled", "path_config", "branch_config", "pages_to_workers_conversion".
 - `source` (Attributes) Configs for the project source control. (see [below for nested schema](#nestedatt--result--latest_deployment--source))
 - `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--result--latest_deployment--stages))
 - `url` (String) The live URL to view this deployment.

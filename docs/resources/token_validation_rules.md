@@ -52,11 +52,11 @@ For details on expressions, see the [Cloudflare Docs](https://developers.cloudfl
 
 For details on selectors, see the [Cloudflare Docs](https://developers.cloudflare.com/api-shield/security/jwt-validation/). (see [below for nested schema](#nestedatt--selector))
 - `title` (String) A human-readable name for the rule.
+- `zone_id` (String) Identifier.
 
 ### Optional
 
 - `position` (Attributes) Update rule order among zone rules. (see [below for nested schema](#nestedatt--position))
-- `zone_id` (String) Identifier.
 
 ### Read-Only
 

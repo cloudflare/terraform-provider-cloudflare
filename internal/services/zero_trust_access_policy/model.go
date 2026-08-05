@@ -5,6 +5,7 @@ package zero_trust_access_policy
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,16 +16,20 @@ type ZeroTrustAccessPolicyResultEnvelope struct {
 type ZeroTrustAccessPolicyModel struct {
 	ID                           types.String                                                   `tfsdk:"id" json:"id,computed"`
 	AccountID                    types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
+	AppCount                     types.Int64                                                    `tfsdk:"app_count" json:"app_count,computed"`
 	Decision                     types.String                                                   `tfsdk:"decision" json:"decision,required"`
 	Name                         types.String                                                   `tfsdk:"name" json:"name,required"`
 	ApprovalRequired             types.Bool                                                     `tfsdk:"approval_required" json:"approval_required,optional"`
+	CreatedAt                    timetypes.RFC3339                                              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IsolationRequired            types.Bool                                                     `tfsdk:"isolation_required" json:"isolation_required,optional"`
 	PurposeJustificationPrompt   types.String                                                   `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,optional"`
 	PurposeJustificationRequired types.Bool                                                     `tfsdk:"purpose_justification_required" json:"purpose_justification_required,optional"`
+	Reusable                     types.Bool                                                     `tfsdk:"reusable" json:"reusable,computed"`
 	ApprovalGroups               *[]*ZeroTrustAccessPolicyApprovalGroupsModel                   `tfsdk:"approval_groups" json:"approval_groups,optional"`
 	ConnectionRules              *ZeroTrustAccessPolicyConnectionRulesModel                     `tfsdk:"connection_rules" json:"connection_rules,optional"`
 	MfaConfig                    *ZeroTrustAccessPolicyMfaConfigModel                           `tfsdk:"mfa_config" json:"mfa_config,optional"`
 	SessionDuration              types.String                                                   `tfsdk:"session_duration" json:"session_duration,computed_optional"`
+	UpdatedAt                    timetypes.RFC3339                                              `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Exclude                      customfield.NestedObjectSet[ZeroTrustAccessPolicyExcludeModel] `tfsdk:"exclude" json:"exclude,computed_optional"`
 	Include                      customfield.NestedObjectSet[ZeroTrustAccessPolicyIncludeModel] `tfsdk:"include" json:"include,computed_optional"`
 	Require                      customfield.NestedObjectSet[ZeroTrustAccessPolicyRequireModel] `tfsdk:"require" json:"require,computed_optional"`

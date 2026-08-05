@@ -140,10 +140,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"data": schema.SingleNestedAttribute{
-				Description: "Components of a CAA record.",
+				Description: "Components of a MX record.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[DNSRecordDataDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
+					"priority": schema.Float64Attribute{
+						Description: "Required for MX and URI records; ignored for other record types (but may still be returned by the API). Records with lower priorities are preferred. This field is to be deprecated in favor of the priority field within the data map.",
+						Computed:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 65535),
+						},
+					},
+					"target": schema.StringAttribute{
+						Description: `A valid mail server hostname, or "." for a NULL MX record.`,
+						Computed:    true,
+					},
 					"flags": schema.DynamicAttribute{
 						Description: "Flags for the CAA record.",
 						Computed:    true,
@@ -206,17 +217,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Validators: []validator.Float64{
 							float64validator.Between(0, 255),
 						},
-					},
-					"priority": schema.Float64Attribute{
-						Description: "Priority.",
-						Computed:    true,
-						Validators: []validator.Float64{
-							float64validator.Between(0, 65535),
-						},
-					},
-					"target": schema.StringAttribute{
-						Description: "Target.",
-						Computed:    true,
 					},
 					"altitude": schema.Float64Attribute{
 						Description: "Altitude of location in meters.",

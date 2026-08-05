@@ -131,25 +131,25 @@ type TargetWorkersScriptModel struct {
 	NamedHandlers    customfield.NestedObjectList[TargetNamedHandlersModel] `tfsdk:"named_handlers"`
 
 	// Metadata fields (embedded in WorkersScriptModel)
-	Annotations        *TargetAnnotationsModel                                `tfsdk:"annotations"`
-	Assets             *TargetAssetsModel                                    `tfsdk:"assets"`
-	Bindings           customfield.NestedObjectList[TargetBindingsModel]     `tfsdk:"bindings"`
-	BodyPart           types.String                                          `tfsdk:"body_part"`
-	CacheOptions       *TargetCacheOptionsModel                              `tfsdk:"cache_options"`
-	CompatibilityDate  types.String                                          `tfsdk:"compatibility_date"`
-	CompatibilityFlags customfield.Set[types.String]                         `tfsdk:"compatibility_flags"`
-	Exports            *map[string]TargetExportsModel                        `tfsdk:"exports"`
-	KeepAssets         types.Bool                                            `tfsdk:"keep_assets"`
-	KeepBindings       *[]types.String                                       `tfsdk:"keep_bindings"`
-	Limits             *TargetLimitsModel                                    `tfsdk:"limits"`
-	Logpush            types.Bool                                            `tfsdk:"logpush"`
-	MainModule         types.String                                          `tfsdk:"main_module"`
-	Migrations         customfield.NestedObject[TargetMigrationsModel]       `tfsdk:"migrations"`
+	Annotations         *TargetAnnotationsModel                               `tfsdk:"annotations"`
+	Assets              *TargetAssetsModel                                    `tfsdk:"assets"`
+	Bindings            customfield.NestedObjectList[TargetBindingsModel]     `tfsdk:"bindings"`
+	BodyPart            types.String                                          `tfsdk:"body_part"`
+	CacheOptions        *TargetCacheOptionsModel                              `tfsdk:"cache_options"`
+	CompatibilityDate   types.String                                          `tfsdk:"compatibility_date"`
+	CompatibilityFlags  customfield.Set[types.String]                         `tfsdk:"compatibility_flags"`
+	Exports             *map[string]TargetExportsModel                        `tfsdk:"exports"`
+	KeepAssets          types.Bool                                            `tfsdk:"keep_assets"`
+	KeepBindings        *[]types.String                                       `tfsdk:"keep_bindings"`
+	Limits              *TargetLimitsModel                                    `tfsdk:"limits"`
+	Logpush             types.Bool                                            `tfsdk:"logpush"`
+	MainModule          types.String                                          `tfsdk:"main_module"`
+	Migrations          customfield.NestedObject[TargetMigrationsModel]       `tfsdk:"migrations"`
 	Observability       *TargetObservabilityModel                             `tfsdk:"observability"`
 	PackageDependencies *[]*TargetPackageDependenciesModel                    `tfsdk:"package_dependencies"`
 	Placement           customfield.NestedObject[TargetPlacementModel]        `tfsdk:"placement"`
-	TailConsumers      customfield.NestedObjectSet[TargetTailConsumersModel] `tfsdk:"tail_consumers"`
-	UsageModel         types.String                                          `tfsdk:"usage_model"`
+	TailConsumers       customfield.NestedObjectSet[TargetTailConsumersModel] `tfsdk:"tail_consumers"`
+	UsageModel          types.String                                          `tfsdk:"usage_model"`
 }
 
 // TargetBindingsModel mirrors WorkersScriptMetadataBindingsModel.
@@ -201,7 +201,7 @@ type TargetBindingsModel struct {
 
 // TargetAnnotationsModel represents the annotations nested attribute in v5.
 type TargetAnnotationsModel struct {
-	WorkersMessage types.String `tfsdk:"workers_message"`
+	WorkersMessage     types.String `tfsdk:"workers_message"`
 	WorkersTag         types.String `tfsdk:"workers_tag"`
 	WorkersTriggeredBy types.String `tfsdk:"workers_triggered_by"`
 }

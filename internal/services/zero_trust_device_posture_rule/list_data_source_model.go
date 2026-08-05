@@ -33,6 +33,7 @@ func (m *ZeroTrustDevicePostureRulesDataSourceModel) toListParams(_ context.Cont
 type ZeroTrustDevicePostureRulesResultDataSourceModel struct {
 	ID          types.String                                                                  `tfsdk:"id" json:"id,computed"`
 	Description types.String                                                                  `tfsdk:"description" json:"description,computed"`
+	Enabled     types.Bool                                                                    `tfsdk:"enabled" json:"enabled,computed"`
 	Expiration  types.String                                                                  `tfsdk:"expiration" json:"expiration,computed"`
 	Input       customfield.NestedObject[ZeroTrustDevicePostureRulesInputDataSourceModel]     `tfsdk:"input" json:"input,computed"`
 	Match       customfield.NestedObjectList[ZeroTrustDevicePostureRulesMatchDataSourceModel] `tfsdk:"match" json:"match,computed"`

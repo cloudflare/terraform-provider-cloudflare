@@ -9,6 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -45,11 +46,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"comment": schema.StringAttribute{
-				Description: "Freeform text describing the secret",
+				Description: "Freeform text describing the secret.",
 				Computed:    true,
 			},
 			"created": schema.StringAttribute{
-				Description: "Whenthe secret was created.",
+				Description: "When the secret was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
@@ -59,7 +60,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"name": schema.StringAttribute{
-				Description: "The name of the secret",
+				Description: "The name of the secret.",
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
@@ -76,6 +77,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"scopes": schema.ListAttribute{
 				Description: "The list of services that can use this secret.",
 				Computed:    true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive(
+							"workers",
+							"ai_gateway",
+							"dex",
+							"access",
+							"containers",
+							"websearch",
+						),
+					),
+				},
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
@@ -83,7 +96,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"direction": schema.StringAttribute{
-						Description: "Direction to sort objects\nAvailable values: \"asc\", \"desc\".",
+						Description: "Direction to sort objects.\nAvailable values: \"asc\", \"desc\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -91,7 +104,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"order": schema.StringAttribute{
-						Description: "Order secrets by values in the given field\nAvailable values: \"name\", \"comment\", \"created\", \"modified\", \"status\".",
+						Description: "Order secrets by values in the given field.\nAvailable values: \"name\", \"comment\", \"created\", \"modified\", \"status\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -105,14 +118,24 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"scopes": schema.ListAttribute{
-						Description: "Only secrets with the given scopes will be returned",
+						Description: "Only secrets with the given scopes will be returned.",
 						Optional:    true,
-						ElementType: types.ListType{
-							ElemType: types.StringType,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive(
+									"workers",
+									"ai_gateway",
+									"dex",
+									"access",
+									"containers",
+									"websearch",
+								),
+							),
 						},
+						ElementType: types.StringType,
 					},
 					"search": schema.StringAttribute{
-						Description: "Search secrets using a filter string, filtering across name and comment",
+						Description: "Search secrets using a filter string, filtering across name and comment.",
 						Optional:    true,
 					},
 				},

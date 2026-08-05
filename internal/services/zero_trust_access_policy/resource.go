@@ -97,15 +97,16 @@ func (r *ZeroTrustAccessPolicyResource) Create(ctx context.Context, req resource
 	}
 	data = &env.Result
 
-	// Get the original plan to compare with API response
 	var planData *ZeroTrustAccessPolicyModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &planData)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Apply normalization to handle API response vs plan differences
 	resp.Diagnostics.Append(normalizeReadZeroTrustAccessPolicyAPIData(ctx, data, planData)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -167,6 +168,10 @@ func (r *ZeroTrustAccessPolicyResource) Update(ctx context.Context, req resource
 	}
 
 	resp.Diagnostics.Append(normalizeReadZeroTrustAccessPolicyAPIData(ctx, data, planData)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -218,6 +223,9 @@ func (r *ZeroTrustAccessPolicyResource) Read(ctx context.Context, req resource.R
 	}
 
 	resp.Diagnostics.Append(normalizeReadZeroTrustAccessPolicyAPIData(ctx, data, stateData)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

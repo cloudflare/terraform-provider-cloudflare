@@ -102,6 +102,67 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											ElemType: jsontypes.NormalizedType{},
 										},
 									},
+									"auth_config_summary": schema.SingleNestedAttribute{
+										Description: "Safe subset of auth_credentials surfaced to the dashboard. Includes auth_mode (dcr|manual), has_client_secret, client_secret_version, and the OAuth endpoints + client_id for manual servers. Never includes the secret value.",
+										Computed:    true,
+										CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessAIControlsMcpPortalsServersAuthConfigSummaryDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"auth_mode": schema.StringAttribute{
+												Description: `Available values: "dcr", "manual".`,
+												Computed:    true,
+												Validators: []validator.String{
+													stringvalidator.OneOfCaseInsensitive("dcr", "manual"),
+												},
+											},
+											"client_secret_version": schema.Float64Attribute{
+												Computed: true,
+											},
+											"config": schema.SingleNestedAttribute{
+												Computed:   true,
+												CustomType: customfield.NewNestedObjectType[ZeroTrustAccessAIControlsMcpPortalsServersAuthConfigSummaryConfigDataSourceModel](ctx),
+												Attributes: map[string]schema.Attribute{
+													"authorization_endpoint": schema.StringAttribute{
+														Computed: true,
+													},
+													"issuer": schema.StringAttribute{
+														Computed: true,
+													},
+													"resource": schema.StringAttribute{
+														Computed: true,
+													},
+													"revocation_endpoint": schema.StringAttribute{
+														Computed: true,
+													},
+													"token_endpoint": schema.StringAttribute{
+														Computed: true,
+													},
+												},
+											},
+											"has_client_secret": schema.BoolAttribute{
+												Computed: true,
+											},
+											"registration_info": schema.SingleNestedAttribute{
+												Computed:   true,
+												CustomType: customfield.NewNestedObjectType[ZeroTrustAccessAIControlsMcpPortalsServersAuthConfigSummaryRegistrationInfoDataSourceModel](ctx),
+												Attributes: map[string]schema.Attribute{
+													"client_id": schema.StringAttribute{
+														Computed: true,
+													},
+													"redirect_uris": schema.ListAttribute{
+														Computed:    true,
+														CustomType:  customfield.NewListType[types.String](ctx),
+														ElementType: types.StringType,
+													},
+													"scope": schema.StringAttribute{
+														Computed: true,
+													},
+													"token_endpoint_auth_method": schema.StringAttribute{
+														Computed: true,
+													},
+												},
+											},
+										},
+									},
 									"created_at": schema.StringAttribute{
 										Computed:   true,
 										CustomType: timetypes.RFC3339Type{},
@@ -171,7 +232,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Computed:    true,
 									},
 									"status": schema.StringAttribute{
-										Computed: true,
+										Description: "Current sync state of the server\nAvailable values: \"waiting\", \"ready\", \"stale\", \"error\".",
+										Computed:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"waiting",
+												"ready",
+												"stale",
+												"error",
+											),
+										},
 									},
 									"updated_prompts": schema.ListNestedAttribute{
 										Computed:   true,

@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -96,6 +97,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The name of the DEX test. Must be unique.",
 							Computed:    true,
 						},
+						"created": schema.StringAttribute{
+							Description: "Date the test was created, in RFC 3339 format.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
 						"description": schema.StringAttribute{
 							Description: "Additional details about the test.",
 							Computed:    true,
@@ -128,6 +134,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"test_id": schema.StringAttribute{
 							Description: "The unique identifier for the test.",
 							Computed:    true,
+						},
+						"updated": schema.StringAttribute{
+							Description: "Date the test was last updated, in RFC 3339 format.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 					},
 				},

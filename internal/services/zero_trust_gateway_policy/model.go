@@ -62,6 +62,7 @@ type ZeroTrustGatewayPolicyRuleSettingsModel struct {
 	BlockReason                     types.String                                                 `tfsdk:"block_reason" json:"block_reason,optional"`
 	BypassParentRule                types.Bool                                                   `tfsdk:"bypass_parent_rule" json:"bypass_parent_rule,optional"`
 	CheckSession                    *ZeroTrustGatewayPolicyRuleSettingsCheckSessionModel         `tfsdk:"check_session" json:"check_session,optional"`
+	DeleteHeaders                   *[]types.String                                              `tfsdk:"delete_headers" json:"delete_headers,optional"`
 	DNSResolvers                    *ZeroTrustGatewayPolicyRuleSettingsDNSResolversModel         `tfsdk:"dns_resolvers" json:"dns_resolvers,optional"`
 	Egress                          *ZeroTrustGatewayPolicyRuleSettingsEgressModel               `tfsdk:"egress" json:"egress,optional"`
 	ForensicCopy                    *ZeroTrustGatewayPolicyRuleSettingsForensicCopyModel         `tfsdk:"forensic_copy" json:"forensic_copy,optional"`
@@ -78,6 +79,7 @@ type ZeroTrustGatewayPolicyRuleSettingsModel struct {
 	Redirect                        *ZeroTrustGatewayPolicyRuleSettingsRedirectModel             `tfsdk:"redirect" json:"redirect,optional"`
 	ResolveDNSInternally            *ZeroTrustGatewayPolicyRuleSettingsResolveDNSInternallyModel `tfsdk:"resolve_dns_internally" json:"resolve_dns_internally,optional"`
 	ResolveDNSThroughCloudflare     types.Bool                                                   `tfsdk:"resolve_dns_through_cloudflare" json:"resolve_dns_through_cloudflare,optional"`
+	SetHeaders                      *map[string]*[]types.String                                  `tfsdk:"set_headers" json:"set_headers,optional"`
 	UntrustedCERT                   *ZeroTrustGatewayPolicyRuleSettingsUntrustedCERTModel        `tfsdk:"untrusted_cert" json:"untrusted_cert,optional"`
 }
 

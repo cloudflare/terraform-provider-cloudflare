@@ -257,6 +257,42 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"retrieval_options": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"boost_by": schema.ListNestedAttribute{
+						Description: "Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric/datetime fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field.",
+						Optional:    true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"field": schema.StringAttribute{
+									Description: "Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.",
+									Required:    true,
+								},
+								"direction": schema.StringAttribute{
+									Description: "Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional — defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.\nAvailable values: \"asc\", \"desc\", \"exists\", \"not_exists\".",
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive(
+											"asc",
+											"desc",
+											"exists",
+											"not_exists",
+										),
+									},
+								},
+							},
+						},
+					},
+					"keyword_match_mode": schema.StringAttribute{
+						Description: "Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. When omitted on an update, the existing stored value is preserved; when never set, search falls back to 'and'.\nAvailable values: \"and\", \"or\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("and", "or"),
+						},
+					},
+				},
+			},
 			"cache": schema.BoolAttribute{
 				Computed: true,
 				Optional: true,
@@ -447,6 +483,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						ElementType: types.StringType,
 					},
+					"default_domain_enabled": schema.BoolAttribute{
+						Description: "When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(true),
+					},
 					"enabled": schema.BoolAttribute{
 						Computed: true,
 						Optional: true,
@@ -509,47 +551,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"retrieval_options": schema.SingleNestedAttribute{
-				Computed:      true,
-				Optional:      true,
-				CustomType:    customfield.NewNestedObjectType[AISearchInstanceRetrievalOptionsModel](ctx),
-				PlanModifiers: []planmodifier.Object{useStateForUnknownIncludingNullObject()},
-				Attributes: map[string]schema.Attribute{
-					"boost_by": schema.ListNestedAttribute{
-						Description: "Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric/datetime fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field.",
-						Optional:    true,
-						NestedObject: schema.NestedAttributeObject{
-							Attributes: map[string]schema.Attribute{
-								"field": schema.StringAttribute{
-									Description: "Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.",
-									Required:    true,
-								},
-								"direction": schema.StringAttribute{
-									Description: "Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional — defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.\nAvailable values: \"asc\", \"desc\", \"exists\", \"not_exists\".",
-									Optional:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"asc",
-											"desc",
-											"exists",
-											"not_exists",
-										),
-									},
-								},
-							},
-						},
-					},
-					"keyword_match_mode": schema.StringAttribute{
-						Description: "Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. Defaults to 'and'.\nAvailable values: \"and\", \"or\".",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("and", "or"),
-						},
-						Default: stringdefault.StaticString("and"),
-					},
-				},
-			},
+
 			"source_params": schema.SingleNestedAttribute{
 				Computed:      true,
 				Optional:      true,

@@ -61,6 +61,7 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
       duration = "300s"
       enforce = true
     }
+    delete_headers = ["X-Old-Header", "X-Remove-Me"]
     dns_resolvers = {
       ipv4 = [{
         ip = "2.2.2.2"
@@ -115,6 +116,9 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
       view_id = "view_id"
     }
     resolve_dns_through_cloudflare = true
+    set_headers = {
+      X-User-Identity = ["user=@{identity.name}"]
+    }
     untrusted_cert = {
       action = "error"
     }
@@ -138,13 +142,13 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
 
 ### Required
 
+- `account_id` (String)
 - `action` (String) Specify the action to perform when the associated traffic, identity, and device posture expressions either absent or evaluate to `true`.
 Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "resolve", "quarantine", "redirect".
 - `name` (String) Specify the rule name.
 
 ### Optional
 
-- `account_id` (String)
 - `description` (String) Specify the rule description.
 - `device_posture` (String) Specify the wirefilter expression used for device posture check. The API automatically formats and sanitizes expressions before storing them. To prevent Terraform state drift, use the formatted expression returned in the API response.
 - `enabled` (Boolean) Specify whether the rule is enabled.
@@ -198,6 +202,7 @@ Optional:
 - `block_reason` (String) Explain why the rule blocks the request. The custom block page shows this text (if enabled). Settable only for `dns`, `l4`, and `http` rules when the action set to `block`.
 - `bypass_parent_rule` (Boolean) Set to enable MSP accounts to bypass their parent's rules. Only MSP child accounts can set this. Settable for all types of rules.
 - `check_session` (Attributes) Configure session check behavior. Settable only for `l4` and `http` rules with the action set to `allow`. (see [below for nested schema](#nestedatt--rule_settings--check_session))
+- `delete_headers` (List of String) Remove headers from allowed requests by name. A maximum of 20 header operations (add + set + delete) is allowed per policy. Each header name may not exceed 256 bytes. Settable only for `http` rules with the action set to `allow`.
 - `dns_resolvers` (Attributes) Configure custom resolvers to route queries that match the resolver policy. Unused with 'resolve_dns_through_cloudflare' or 'resolve_dns_internally' settings. DNS queries get routed to the address closest to their origin. Only valid when a rule's action set to 'resolve'. Settable only for `dns_resolver` rules. (see [below for nested schema](#nestedatt--rule_settings--dns_resolvers))
 - `egress` (Attributes) Configure how Gateway Proxy traffic egresses. You can enable this setting for rules with Egress actions and filters, or omit it to indicate local egress via WARP IPs. Settable only for `egress` rules. (see [below for nested schema](#nestedatt--rule_settings--egress))
 - `forensic_copy` (Attributes) Configure whether a copy of the HTTP request will be sent to storage when the rule matches. (see [below for nested schema](#nestedatt--rule_settings--forensic_copy))
@@ -214,6 +219,7 @@ Optional:
 - `redirect` (Attributes) Apply settings to redirect rules. Settable only for `http` rules with the action set to `redirect`. (see [below for nested schema](#nestedatt--rule_settings--redirect))
 - `resolve_dns_internally` (Attributes) Configure to forward the query to the internal DNS service, passing the specified 'view_id' as input. Not used when 'dns_resolvers' is specified or 'resolve_dns_through_cloudflare' is set. Only valid when a rule's action set to 'resolve'. Settable only for `dns_resolver` rules. (see [below for nested schema](#nestedatt--rule_settings--resolve_dns_internally))
 - `resolve_dns_through_cloudflare` (Boolean) Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot set when 'dns_resolvers' specified or 'resolve_dns_internally' is set. Only valid when a rule's action set to 'resolve'. Settable only for `dns_resolver` rules.
+- `set_headers` (Map of List of String) Replace existing headers on allowed requests with the specified key-value pairs. If a header does not exist, it is added. Header values may contain `@{selector.name}` variable references that are interpolated at the edge. Use `@@{` to escape a literal `@{`. A maximum of 20 header operations (add + set + delete) is allowed per policy. Each header name may not exceed 256 bytes and each header value may not exceed 4 KB. Settable only for `http` rules with the action set to `allow`.
 - `untrusted_cert` (Attributes) Configure behavior when an upstream certificate is invalid or an SSL error occurs. Settable only for `http` rules with the action set to `allow`. (see [below for nested schema](#nestedatt--rule_settings--untrusted_cert))
 
 <a id="nestedatt--rule_settings--audit_ssh"></a>

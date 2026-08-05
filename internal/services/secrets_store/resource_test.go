@@ -26,9 +26,6 @@ func TestMain(m *testing.M) {
 func getExistingStore(t *testing.T) (storeID, storeName string) {
 	t.Helper()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	if accountID == "" {
-		t.Skip("skipping: CLOUDFLARE_ACCOUNT_ID must be set")
-	}
 	client := acctest.SharedClient()
 	stores, err := client.SecretsStore.Stores.List(context.Background(), secrets_store.StoreListParams{
 		AccountID: cloudflare.F(accountID),
@@ -46,7 +43,15 @@ func getExistingStore(t *testing.T) (storeID, storeName string) {
 // store into Terraform state and verifying all fields are populated correctly.
 // Due to the one-store-per-account limit, this test uses the pre-existing store.
 func TestAccCloudflareSecretsStore_Import(t *testing.T) {
+	if os.Getenv("TF_ACC") == "" {
+		t.Skip("acceptance tests skipped unless TF_ACC is set")
+	}
+
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		t.Skip("acceptance test requires CLOUDFLARE_ACCOUNT_ID")
+	}
+
 	storeID, storeName := getExistingStore(t)
 	resourceName := "cloudflare_secrets_store.test"
 
@@ -95,9 +100,6 @@ func TestAccCloudflareSecretsStore_Import(t *testing.T) {
 // limit) and is skipped when a store already exists.
 func TestAccCloudflareSecretsStore_Workflow(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	if accountID == "" {
-		t.Skip("skipping: CLOUDFLARE_ACCOUNT_ID must be set")
-	}
 	resourceName := "cloudflare_secrets_store.test"
 	storeName := "cftftest-store"
 

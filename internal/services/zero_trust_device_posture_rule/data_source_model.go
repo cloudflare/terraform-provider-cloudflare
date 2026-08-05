@@ -21,6 +21,7 @@ type ZeroTrustDevicePostureRuleDataSourceModel struct {
 	RuleID      types.String                                                                 `tfsdk:"rule_id" path:"rule_id,required"`
 	AccountID   types.String                                                                 `tfsdk:"account_id" path:"account_id,optional"`
 	Description types.String                                                                 `tfsdk:"description" json:"description,computed"`
+	Enabled     types.Bool                                                                   `tfsdk:"enabled" json:"enabled,computed"`
 	Expiration  types.String                                                                 `tfsdk:"expiration" json:"expiration,computed"`
 	Name        types.String                                                                 `tfsdk:"name" json:"name,computed"`
 	Schedule    types.String                                                                 `tfsdk:"schedule" json:"schedule,computed"`

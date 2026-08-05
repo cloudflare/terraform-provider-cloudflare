@@ -18,9 +18,10 @@ type APITokensResultListDataSourceEnvelope struct {
 }
 
 type APITokensDataSourceModel struct {
-	Direction types.String                                                 `tfsdk:"direction" query:"direction,optional"`
-	MaxItems  types.Int64                                                  `tfsdk:"max_items"`
-	Result    customfield.NestedObjectList[APITokensResultDataSourceModel] `tfsdk:"result"`
+	Direction      types.String                                                 `tfsdk:"direction" query:"direction,optional"`
+	IncludeExpired types.Bool                                                   `tfsdk:"include_expired" query:"include_expired,computed_optional"`
+	MaxItems       types.Int64                                                  `tfsdk:"max_items"`
+	Result         customfield.NestedObjectList[APITokensResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *APITokensDataSourceModel) toListParams(_ context.Context) (params user.TokenListParams, diags diag.Diagnostics) {
@@ -28,6 +29,9 @@ func (m *APITokensDataSourceModel) toListParams(_ context.Context) (params user.
 
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(user.TokenListParamsDirection(m.Direction.ValueString()))
+	}
+	if !m.IncludeExpired.IsNull() {
+		params.IncludeExpired = cloudflare.F(m.IncludeExpired.ValueBool())
 	}
 
 	return

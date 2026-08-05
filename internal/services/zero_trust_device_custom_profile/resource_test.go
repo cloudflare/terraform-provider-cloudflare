@@ -296,6 +296,121 @@ func TestAccCloudflareZeroTrustDeviceCustomProfile_VirtualNetworks(t *testing.T)
 	})
 }
 
+func TestAccCloudflareZeroTrustDeviceCustomProfile_ExcludeNoDrift(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_device_custom_profile.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	randomPrecedence := rand.Intn(250)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZeroTrustDeviceCustomProfileDestroy,
+		Steps: []resource.TestStep{
+			// Step 1: Create with exclude (mixed address + host-less entries)
+			{
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileWithExcludeDrift(accountID, rnd, randomPrecedence),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("exclude"), knownvalue.ListSizeExact(2)),
+				},
+			},
+			// Step 2: Re-plan with same config -> expect empty plan (no drift)
+			{
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileWithExcludeDrift(accountID, rnd, randomPrecedence),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			// Step 3: Add a new entry to exclude -> only exclude should change,
+			// default/include/target_tests must NOT show as "known after apply"
+			{
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileWithExcludeDriftUpdated(accountID, rnd, randomPrecedence),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						// Verify that computed-only fields remain stable
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("default"), knownvalue.Bool(false)),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("exclude"), knownvalue.ListSizeExact(3)),
+				},
+			},
+			// Step 4: Re-plan after the update -> expect empty plan (no perpetual drift)
+			{
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileWithExcludeDriftUpdated(accountID, rnd, randomPrecedence),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareZeroTrustDeviceCustomProfile_UpgradeExcludeNoDrift(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_device_custom_profile.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	randomPrecedence := rand.Intn(250)
+
+	initialConfig := testAccCloudflareZeroTrustDeviceCustomProfileWithExcludeDrift(accountID, rnd, randomPrecedence)
+	updatedConfig := testAccCloudflareZeroTrustDeviceCustomProfileWithExcludeDriftUpdated(accountID, rnd, randomPrecedence)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		CheckDestroy: testAccCheckCloudflareZeroTrustDeviceCustomProfileDestroy,
+		Steps: []resource.TestStep{
+			// Step 1: Create with the latest released provider version.
+			{
+				ExternalProviders: map[string]resource.ExternalProvider{
+					"cloudflare": {
+						Source:            "cloudflare/cloudflare",
+						VersionConstraint: "5.22.0",
+					},
+				},
+				Config: initialConfig,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("exclude"), knownvalue.ListSizeExact(2)),
+				},
+			},
+			// Step 2: Upgrade to local build, same config -> expect empty plan.
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   initialConfig,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			// Step 3: Add exclude entry on local build -> update, then empty plan.
+			{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				Config:                   updatedConfig,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("default"), knownvalue.Bool(false)),
+					},
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("exclude"), knownvalue.ListSizeExact(3)),
+				},
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareZeroTrustDeviceCustomProfileDestroy(s *terraform.State) error {
 	client := acctest.SharedClient()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -350,4 +465,12 @@ func testAccCloudflareZeroTrustDeviceCustomProfileWithVirtualNetworks(accountID,
 
 func testAccCloudflareZeroTrustDeviceCustomProfileWithVirtualNetworksUpdated(accountID, rnd string, precedence int) string {
 	return acctest.LoadTestCase("devicecustomprofilewithvirtualnetworksupdated.tf", rnd, accountID, precedence)
+}
+
+func testAccCloudflareZeroTrustDeviceCustomProfileWithExcludeDrift(accountID, rnd string, precedence int) string {
+	return acctest.LoadTestCase("devicecustomprofilewithexcludedrift.tf", rnd, accountID, precedence)
+}
+
+func testAccCloudflareZeroTrustDeviceCustomProfileWithExcludeDriftUpdated(accountID, rnd string, precedence int) string {
+	return acctest.LoadTestCase("devicecustomprofilewithexcludedriftupdated.tf", rnd, accountID, precedence)
 }

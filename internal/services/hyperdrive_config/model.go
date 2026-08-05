@@ -22,6 +22,7 @@ type HyperdriveConfigModel struct {
 	MTLS                  *HyperdriveConfigMTLSModel    `tfsdk:"mtls" json:"mtls,optional"`
 	CreatedOn             timetypes.RFC3339             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedOn            timetypes.RFC3339             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	RestartedOn           timetypes.RFC3339             `tfsdk:"restarted_on" json:"restarted_on,computed" format:"date-time"`
 }
 
 func (m HyperdriveConfigModel) MarshalJSON() (data []byte, err error) {

@@ -21,6 +21,7 @@ type WorkerVersionModel struct {
 	CompatibilityDate   types.String                                             `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
 	MainModule          types.String                                             `tfsdk:"main_module" json:"main_module,optional"`
 	Containers          *[]*WorkerVersionContainersModel                         `tfsdk:"containers" json:"containers,optional"`
+	Exports             *map[string]WorkerVersionExportsModel                    `tfsdk:"exports" json:"exports,optional"`
 	Migrations          *WorkerVersionMigrationsModel                            `tfsdk:"migrations" json:"migrations,optional"`
 	Modules             *[]*WorkerVersionModulesModel                            `tfsdk:"modules" json:"modules,optional"`
 	PackageDependencies *[]*WorkerVersionPackageDependenciesModel                `tfsdk:"package_dependencies" json:"package_dependencies,optional"`
@@ -51,6 +52,20 @@ func (m WorkerVersionModel) MarshalJSONForUpdate(state WorkerVersionModel) (data
 
 type WorkerVersionContainersModel struct {
 	ClassName types.String `tfsdk:"class_name" json:"class_name,required"`
+}
+
+type WorkerVersionExportsModel struct {
+	Type          types.String                    `tfsdk:"type" json:"type,required"`
+	Cache         *WorkerVersionExportsCacheModel `tfsdk:"cache" json:"cache,optional"`
+	RenamedTo     types.String                    `tfsdk:"renamed_to" json:"renamed_to,optional"`
+	State         types.String                    `tfsdk:"state" json:"state,optional"`
+	Storage       types.String                    `tfsdk:"storage" json:"storage,optional"`
+	TransferFrom  types.String                    `tfsdk:"transfer_from" json:"transfer_from,optional"`
+	TransferredTo types.String                    `tfsdk:"transferred_to" json:"transferred_to,optional"`
+}
+
+type WorkerVersionExportsCacheModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,required"`
 }
 
 type WorkerVersionMigrationsModel struct {

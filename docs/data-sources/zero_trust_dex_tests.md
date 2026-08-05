@@ -49,6 +49,7 @@ Optional:
 
 Read-Only:
 
+- `created` (String) Date the test was created, in RFC 3339 format.
 - `data` (Attributes) The configuration object which contains the details for the WARP client to conduct the test. (see [below for nested schema](#nestedatt--result--data))
 - `description` (String) Additional details about the test.
 - `enabled` (Boolean) Determines whether or not the test is active.
@@ -57,6 +58,7 @@ Read-Only:
 - `name` (String) The name of the DEX test. Must be unique.
 - `targeted` (Boolean)
 - `test_id` (String) The unique identifier for the test.
+- `updated` (String) Date the test was last updated, in RFC 3339 format.
 
 <a id="nestedatt--result--target_policies"></a>
 ### Nested Schema for `result.target_policies`

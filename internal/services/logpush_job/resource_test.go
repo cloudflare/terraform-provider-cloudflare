@@ -165,6 +165,7 @@ func TestAccCloudflareLogpushJob_Basic(t *testing.T) {
 		accountID:       accountID,
 		dataset:         "gateway_dns", // cannot be changed
 		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+		name:            rnd,
 	}
 
 	// Logpush job config to update, with different values (where possible).
@@ -172,6 +173,7 @@ func TestAccCloudflareLogpushJob_Basic(t *testing.T) {
 		accountID:       accountID,
 		dataset:         "gateway_dns", // cannot be changed
 		destinationConf: `https://logpush-receiver.sd.cfplat.com?updated=true`,
+		name:            rnd,
 	}
 
 	resource.Test(t, resource.TestCase{
@@ -223,6 +225,7 @@ func testCloudflareLogpushJobBasic(resourceID string, logpushJobConfig *logpushJ
 		logpushJobConfig.accountID,
 		logpushJobConfig.dataset,
 		logpushJobConfig.destinationConf,
+		logpushJobConfig.name,
 	}
 	return acctest.LoadTestCase("basic.tf", params...)
 }
@@ -238,6 +241,7 @@ func TestAccCloudflareLogpushJob_BasicOutputOptions(t *testing.T) {
 		accountID:       accountID,
 		dataset:         "gateway_dns", // cannot be changed
 		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+		name:            rnd,
 		outputOptions: &logpushJobConfigOutputOptions{
 			outputType:      "ndjson",
 			sampleRate:      1.0,
@@ -250,6 +254,7 @@ func TestAccCloudflareLogpushJob_BasicOutputOptions(t *testing.T) {
 		accountID:       accountID,
 		dataset:         "gateway_dns", // cannot be changed
 		destinationConf: `https://logpush-receiver.sd.cfplat.com?updated=true`,
+		name:            rnd,
 		outputOptions: &logpushJobConfigOutputOptions{
 			outputType:      "csv",
 			sampleRate:      0.01,
@@ -312,6 +317,7 @@ func testCloudflareLogpushJobBasicOutputOptions(resourceID string, logpushJobCon
 		logpushJobConfig.accountID,
 		logpushJobConfig.dataset,
 		logpushJobConfig.destinationConf,
+		logpushJobConfig.name,
 		logpushJobConfig.outputOptions.outputType,
 		logpushJobConfig.outputOptions.sampleRate,
 		logpushJobConfig.outputOptions.timestampFormat,
@@ -333,6 +339,7 @@ func TestAccCloudflareLogpushJob_Full(t *testing.T) {
 		accountID:       accountID,
 		dataset:         "gateway_dns", // cannot be changed
 		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+		name:            rnd,
 		frequency:       "high", // deprecated, but testing
 		outputOptions: &logpushJobConfigOutputOptions{
 			outputType:      "ndjson",
@@ -347,7 +354,7 @@ func TestAccCloudflareLogpushJob_Full(t *testing.T) {
 		dataset:                  "gateway_dns", // cannot be changed
 		destinationConf:          `https://logpush-receiver.sd.cfplat.com?updated=true`,
 		enabled:                  true,
-		name:                     "terraform-test-job-updated",
+		name:                     rnd + "-updated",
 		filter:                   `{"where":{"and":[{"key":"ColoCode","operator":"!eq","value":"IAD"}]}}`,
 		kind:                     "", // cannot be changed
 		maxUploadBytes:           5000000,
@@ -492,6 +499,7 @@ func TestAccCloudflareLogpushJob_BasicToFull(t *testing.T) {
 		accountID:       accountID,
 		dataset:         "gateway_dns", // cannot be changed
 		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+		name:            rnd,
 	}
 
 	// Logpush job config to update, with different values (where possible).
@@ -500,7 +508,7 @@ func TestAccCloudflareLogpushJob_BasicToFull(t *testing.T) {
 		dataset:                  "gateway_dns", // cannot be changed
 		destinationConf:          `https://logpush-receiver.sd.cfplat.com?updated=true`,
 		enabled:                  true,
-		name:                     "terraform-test-job-updated",
+		name:                     rnd + "-updated",
 		filter:                   `{"where":{"and":[{"key":"ColoCode","operator":"!eq","value":"IAD"}]}}`,
 		kind:                     "", // cannot be changed
 		maxUploadBytes:           5000000,
@@ -565,6 +573,7 @@ func TestAccCloudflareLogpushJob_Update(t *testing.T) {
 		zoneID:          zoneID,
 		dataset:         "http_requests", // cannot be changed
 		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+		name:            rnd,
 		filter:          `{"where":{"and":[{"key":"ClientRequestHost","operator":"!eq","value":"abc.com"}]}}`,
 	}
 
@@ -573,6 +582,7 @@ func TestAccCloudflareLogpushJob_Update(t *testing.T) {
 		zoneID:          zoneID,
 		dataset:         "http_requests", // cannot be changed
 		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+		name:            rnd,
 	}
 
 	resource.Test(t, resource.TestCase{
@@ -621,6 +631,7 @@ func testCloudflareLogpushJobUpdate(resourceID string, logpushJobConfig *logpush
 		logpushJobConfig.zoneID,
 		logpushJobConfig.dataset,
 		logpushJobConfig.destinationConf,
+		logpushJobConfig.name,
 		logpushJobConfig.kind,
 		logpushJobConfig.filter,
 	}
@@ -640,6 +651,7 @@ func TestAccCloudflareLogpushJob_ImmutableFields(t *testing.T) {
 		zoneID:          zoneID,
 		dataset:         "http_requests", // cannot be changed
 		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+		name:            rnd,
 		kind:            "edge", // cannot be changed
 	}
 
@@ -648,6 +660,7 @@ func TestAccCloudflareLogpushJob_ImmutableFields(t *testing.T) {
 		zoneID:          zoneID,
 		dataset:         "http_requests", // cannot be changed
 		destinationConf: `https://logpush-receiver.sd.cfplat.com?updated=true`,
+		name:            rnd,
 		kind:            "", // cannot be changed
 	}
 
@@ -692,6 +705,7 @@ func testCloudflareLogpushJobImmutableFields(resourceID string, logpushJobConfig
 		logpushJobConfig.zoneID,
 		logpushJobConfig.dataset,
 		logpushJobConfig.destinationConf,
+		logpushJobConfig.name,
 		logpushJobConfig.kind,
 	}
 	return acctest.LoadTestCase("immutable_fields.tf", params...)
@@ -707,6 +721,7 @@ func TestAccCloudflareLogpushJob_OmitemptyField(t *testing.T) {
 		zoneID:           zoneID,
 		dataset:          "http_requests", // cannot be changed
 		destinationConf:  `https://logpush-receiver.sd.cfplat.com`,
+		name:             rnd,
 		maxUploadRecords: 0,
 	}
 
@@ -715,6 +730,7 @@ func TestAccCloudflareLogpushJob_OmitemptyField(t *testing.T) {
 		zoneID:           zoneID,
 		dataset:          "http_requests", // cannot be changed
 		destinationConf:  `https://logpush-receiver.sd.cfplat.com?updated=true`,
+		name:             rnd,
 		maxUploadRecords: 1000,
 	}
 
@@ -778,6 +794,7 @@ func testCloudflareLogpushJobOmitemptyField(resourceID string, logpushJobConfig 
 		logpushJobConfig.zoneID,
 		logpushJobConfig.dataset,
 		logpushJobConfig.destinationConf,
+		logpushJobConfig.name,
 		logpushJobConfig.maxUploadRecords,
 	}
 	return acctest.LoadTestCase("omitempty_field.tf", params...)
@@ -790,6 +807,7 @@ func TestAccUpgradeLogpushJob_FromPublishedV5(t *testing.T) {
 		accountID:       accountID,
 		dataset:         "gateway_dns", // cannot be changed
 		destinationConf: `https://logpush-receiver.sd.cfplat.com`,
+		name:            rnd,
 	}
 
 	config := testCloudflareLogpushJobBasic(rnd, logpushJobConfigCreate)

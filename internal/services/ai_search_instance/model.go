@@ -31,6 +31,7 @@ type AISearchInstanceModel struct {
 	TokenID                        types.String                                                        `tfsdk:"token_id" json:"token_id,optional"`
 	CustomMetadata                 *[]*AISearchInstanceCustomMetadataModel                             `tfsdk:"custom_metadata" json:"custom_metadata,optional"`
 	Metadata                       *AISearchInstanceMetadataModel                                      `tfsdk:"metadata" json:"metadata,optional"`
+	RetrievalOptions               *AISearchInstanceRetrievalOptionsModel                              `tfsdk:"retrieval_options" json:"retrieval_options,optional"`
 	Cache                          types.Bool                                                          `tfsdk:"cache" json:"cache,computed_optional"`
 	CacheThreshold                 types.String                                                        `tfsdk:"cache_threshold" json:"cache_threshold,computed_optional"`
 	CacheTTL                       types.Float64                                                       `tfsdk:"cache_ttl" json:"cache_ttl,computed_optional"`
@@ -48,7 +49,6 @@ type AISearchInstanceModel struct {
 	IndexMethod                    customfield.NestedObject[AISearchInstanceIndexMethodModel]          `tfsdk:"index_method" json:"index_method,computed_optional"`
 	IndexingOptions                customfield.NestedObject[AISearchInstanceIndexingOptionsModel]      `tfsdk:"indexing_options" json:"indexing_options,computed_optional"`
 	PublicEndpointParams           customfield.NestedObject[AISearchInstancePublicEndpointParamsModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed_optional"`
-	RetrievalOptions               customfield.NestedObject[AISearchInstanceRetrievalOptionsModel]     `tfsdk:"retrieval_options" json:"retrieval_options,computed_optional"`
 	SourceParams                   customfield.NestedObject[AISearchInstanceSourceParamsModel]         `tfsdk:"source_params" json:"source_params,computed_optional"`
 	CreatedAt                      timetypes.RFC3339                                                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy                      types.String                                                        `tfsdk:"created_by" json:"created_by,computed"`
@@ -81,6 +81,16 @@ type AISearchInstanceMetadataModel struct {
 	WorkerDomain              types.String `tfsdk:"worker_domain" json:"worker_domain,optional"`
 }
 
+type AISearchInstanceRetrievalOptionsModel struct {
+	BoostBy          *[]*AISearchInstanceRetrievalOptionsBoostByModel `tfsdk:"boost_by" json:"boost_by,optional"`
+	KeywordMatchMode types.String                                     `tfsdk:"keyword_match_mode" json:"keyword_match_mode,optional"`
+}
+
+type AISearchInstanceRetrievalOptionsBoostByModel struct {
+	Field     types.String `tfsdk:"field" json:"field,required"`
+	Direction types.String `tfsdk:"direction" json:"direction,optional"`
+}
+
 type AISearchInstanceIndexMethodModel struct {
 	Keyword types.Bool `tfsdk:"keyword" json:"keyword,required"`
 	Vector  types.Bool `tfsdk:"vector" json:"vector,required"`
@@ -94,6 +104,7 @@ type AISearchInstancePublicEndpointParamsModel struct {
 	AuthorizedHosts         *[]types.String                                                                            `tfsdk:"authorized_hosts" json:"authorized_hosts,optional"`
 	ChatCompletionsEndpoint customfield.NestedObject[AISearchInstancePublicEndpointParamsChatCompletionsEndpointModel] `tfsdk:"chat_completions_endpoint" json:"chat_completions_endpoint,computed_optional"`
 	CustomDomains           *[]types.String                                                                            `tfsdk:"custom_domains" json:"custom_domains,optional"`
+	DefaultDomainEnabled    types.Bool                                                                                 `tfsdk:"default_domain_enabled" json:"default_domain_enabled,computed_optional"`
 	Enabled                 types.Bool                                                                                 `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Mcp                     customfield.NestedObject[AISearchInstancePublicEndpointParamsMcpModel]                     `tfsdk:"mcp" json:"mcp,computed_optional"`
 	RateLimit               *AISearchInstancePublicEndpointParamsRateLimitModel                                        `tfsdk:"rate_limit" json:"rate_limit,optional"`
@@ -117,16 +128,6 @@ type AISearchInstancePublicEndpointParamsRateLimitModel struct {
 
 type AISearchInstancePublicEndpointParamsSearchEndpointModel struct {
 	Disabled types.Bool `tfsdk:"disabled" json:"disabled,computed_optional"`
-}
-
-type AISearchInstanceRetrievalOptionsModel struct {
-	BoostBy          *[]*AISearchInstanceRetrievalOptionsBoostByModel `tfsdk:"boost_by" json:"boost_by,optional"`
-	KeywordMatchMode types.String                                     `tfsdk:"keyword_match_mode" json:"keyword_match_mode,computed_optional"`
-}
-
-type AISearchInstanceRetrievalOptionsBoostByModel struct {
-	Field     types.String `tfsdk:"field" json:"field,required"`
-	Direction types.String `tfsdk:"direction" json:"direction,optional"`
 }
 
 type AISearchInstanceSourceParamsModel struct {

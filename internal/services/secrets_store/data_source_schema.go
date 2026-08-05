@@ -39,7 +39,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"created": schema.StringAttribute{
-				Description: "Whenthe secret was created.",
+				Description: "When the secret was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
@@ -49,14 +49,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"name": schema.StringAttribute{
-				Description: "The name of the store",
+				Description: "The name of the store.",
 				Computed:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"direction": schema.StringAttribute{
-						Description: "Direction to sort objects\nAvailable values: \"asc\", \"desc\".",
+						Description: "Direction to sort objects.\nAvailable values: \"asc\", \"desc\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
@@ -64,16 +64,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"order": schema.StringAttribute{
-						Description: "Order secrets by values in the given field\nAvailable values: \"name\", \"comment\", \"created\", \"modified\", \"status\".",
+						Description: "Order stores by values in the given field.\nAvailable values: \"name\", \"created\", \"modified\".",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"name",
-								"comment",
 								"created",
 								"modified",
-								"status",
 							),
 						},
 					},

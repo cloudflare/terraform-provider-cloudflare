@@ -174,6 +174,8 @@ func (m *DNSRecordDataSourceModel) toListParams(_ context.Context) (params dns.R
 }
 
 type DNSRecordDataDataSourceModel struct {
+	Priority      types.Float64                      `tfsdk:"priority" json:"priority,computed"`
+	Target        types.String                       `tfsdk:"target" json:"target,computed"`
 	Flags         customfield.NormalizedDynamicValue `tfsdk:"flags" json:"flags,computed"`
 	Tag           types.String                       `tfsdk:"tag" json:"tag,computed"`
 	Value         types.String                       `tfsdk:"value" json:"value,computed"`
@@ -185,8 +187,6 @@ type DNSRecordDataDataSourceModel struct {
 	PublicKey     types.String                       `tfsdk:"public_key" json:"public_key,computed"`
 	Digest        types.String                       `tfsdk:"digest" json:"digest,computed"`
 	DigestType    types.Float64                      `tfsdk:"digest_type" json:"digest_type,computed"`
-	Priority      types.Float64                      `tfsdk:"priority" json:"priority,computed"`
-	Target        types.String                       `tfsdk:"target" json:"target,computed"`
 	Altitude      types.Float64                      `tfsdk:"altitude" json:"altitude,computed"`
 	LatDegrees    types.Float64                      `tfsdk:"lat_degrees" json:"lat_degrees,computed"`
 	LatDirection  types.String                       `tfsdk:"lat_direction" json:"lat_direction,computed"`

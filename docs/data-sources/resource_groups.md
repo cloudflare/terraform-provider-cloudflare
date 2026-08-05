@@ -46,7 +46,7 @@ Read-Only:
 - `id` (String) Identifier of the resource group.
 - `meta` (Attributes) Attributes associated to the resource group. (see [below for nested schema](#nestedatt--result--meta))
 - `name` (String) Name of the resource group.
-- `scope` (Attributes List) The scope associated to the resource group (see [below for nested schema](#nestedatt--result--scope))
+- `scope` (Attributes) A scope is a combination of scope objects which provides additional context. (see [below for nested schema](#nestedatt--result--scope))
 
 <a id="nestedatt--result--meta"></a>
 ### Nested Schema for `result.meta`

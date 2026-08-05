@@ -45,6 +45,8 @@ func (m DNSRecordModel) MarshalJSONForUpdate(state DNSRecordModel) (data []byte,
 }
 
 type DNSRecordDataModel struct {
+	Priority      types.Float64                      `tfsdk:"priority" json:"priority,optional"`
+	Target        types.String                       `tfsdk:"target" json:"target,optional"`
 	Flags         customfield.NormalizedDynamicValue `tfsdk:"flags" json:"flags,optional"`
 	Tag           types.String                       `tfsdk:"tag" json:"tag,optional"`
 	Value         types.String                       `tfsdk:"value" json:"value,optional"`
@@ -56,8 +58,6 @@ type DNSRecordDataModel struct {
 	PublicKey     types.String                       `tfsdk:"public_key" json:"public_key,optional"`
 	Digest        types.String                       `tfsdk:"digest" json:"digest,optional"`
 	DigestType    types.Float64                      `tfsdk:"digest_type" json:"digest_type,optional"`
-	Priority      types.Float64                      `tfsdk:"priority" json:"priority,optional"`
-	Target        types.String                       `tfsdk:"target" json:"target,optional"`
 	Altitude      types.Float64                      `tfsdk:"altitude" json:"altitude,optional"`
 	LatDegrees    types.Float64                      `tfsdk:"lat_degrees" json:"lat_degrees,optional"`
 	LatDirection  types.String                       `tfsdk:"lat_direction" json:"lat_direction,optional"`

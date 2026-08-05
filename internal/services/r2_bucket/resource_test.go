@@ -227,7 +227,7 @@ func TestAccCloudflareR2Bucket_AllJurisdictions(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	jurisdictions := []string{"default", "fedramp"}
+	jurisdictions := []string{"default", "fedramp", "us"}
 
 	for _, jurisdiction := range jurisdictions {
 		t.Run(jurisdiction, func(t *testing.T) {

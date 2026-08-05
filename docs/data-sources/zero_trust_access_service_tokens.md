@@ -45,7 +45,7 @@ data "cloudflare_zero_trust_access_service_tokens" "example_zero_trust_access_se
 Read-Only:
 
 - `client_id` (String) The Client ID for the service token. Access will check for this value in the `CF-Access-Client-ID` request header.
-- `duration` (String) The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).
+- `duration` (String) The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`, or the special value `forever` for non-expiring tokens. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).
 - `expires_at` (String)
 - `id` (String) The ID of the service token.
 - `name` (String) The name of the service token.

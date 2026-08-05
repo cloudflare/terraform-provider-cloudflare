@@ -21,7 +21,7 @@ type SecretsStoreSecretsDataSourceModel struct {
 	AccountID types.String                                                           `tfsdk:"account_id" path:"account_id,required"`
 	StoreID   types.String                                                           `tfsdk:"store_id" path:"store_id,required"`
 	Search    types.String                                                           `tfsdk:"search" query:"search,optional"`
-	Scopes    *[]*[]types.String                                                     `tfsdk:"scopes" query:"scopes,optional"`
+	Scopes    *[]types.String                                                        `tfsdk:"scopes" query:"scopes,optional"`
 	Direction types.String                                                           `tfsdk:"direction" query:"direction,computed_optional"`
 	Order     types.String                                                           `tfsdk:"order" query:"order,computed_optional"`
 	MaxItems  types.Int64                                                            `tfsdk:"max_items"`
@@ -29,16 +29,10 @@ type SecretsStoreSecretsDataSourceModel struct {
 }
 
 func (m *SecretsStoreSecretsDataSourceModel) toListParams(_ context.Context) (params secrets_store.StoreSecretListParams, diags diag.Diagnostics) {
-	mScopes := [][]string{}
+	mScopes := []secrets_store.StoreSecretListParamsScope{}
 	if m.Scopes != nil {
 		for _, item := range *m.Scopes {
-			mItem := []string{}
-			if item != nil {
-				for _, item := range *item {
-					mItem = append(mItem, item.ValueString())
-				}
-			}
-			mScopes = append(mScopes, mItem)
+			mScopes = append(mScopes, secrets_store.StoreSecretListParamsScope(item.ValueString()))
 		}
 	}
 

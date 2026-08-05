@@ -467,6 +467,65 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"exports": schema.MapNestedAttribute{
+							Description: "Declarative exports for the version, including Durable Object\nclasses (with their `storage` backend) and named Worker\nentrypoints. On reads, tombstoned lifecycle entries are\nomitted, so only live exports (`created` and\n`expecting-transfer`) are returned. `exports` and `migrations`\nare mutually exclusive on upload.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectMapType[WorkerVersionsExportsDataSourceModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"type": schema.StringAttribute{
+										Description: "The kind of export.\nAvailable values: \"worker\", \"durable-object\".",
+										Computed:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive("worker", "durable-object"),
+										},
+									},
+									"cache": schema.SingleNestedAttribute{
+										Description: "Cache override for this entrypoint. It applies only to\n`type: worker` entries and overrides the Worker's global\n`cache_options.enabled` for that entrypoint.",
+										Computed:    true,
+										CustomType:  customfield.NewNestedObjectType[WorkerVersionsExportsCacheDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"enabled": schema.BoolAttribute{
+												Description: "Whether caching is enabled for this entrypoint.",
+												Computed:    true,
+											},
+										},
+									},
+									"renamed_to": schema.StringAttribute{
+										Description: "Destination class name for a `state: renamed` tombstone. The\ntarget must appear as a live (`created`) entry in the same\n`exports` map. Write-only: never present in GET responses.",
+										Computed:    true,
+									},
+									"state": schema.StringAttribute{
+										Description: "Lifecycle state of the export entry. Defaults to `created`\n(a normal, live export) when omitted.\n\n`deleted`, `renamed`, and `transferred` are tombstones:\nwrite-only lifecycle operations that retire, rename, or hand\noff a provisioned Durable Object namespace. They are applied\nat upload and are filtered out of GET responses, so a read\nonly ever returns `created` or `expecting-transfer`.\n\n`expecting-transfer` is a live export whose data is being\nreceived from another script via the two-phase transfer flow;\nit carries `storage` and `transfer_from`.\nAvailable values: \"created\", \"deleted\", \"renamed\", \"transferred\", \"expecting-transfer\".",
+										Computed:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"created",
+												"deleted",
+												"renamed",
+												"transferred",
+												"expecting-transfer",
+											),
+										},
+									},
+									"storage": schema.StringAttribute{
+										Description: "Storage backend for a `type: durable-object` export. Required\nfor live Durable Object entries (`created` and\n`expecting-transfer`). `sqlite` selects SQLite-backed storage;\n`legacy-kv` selects the legacy key-value storage.\nAvailable values: \"sqlite\", \"legacy-kv\".",
+										Computed:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive("sqlite", "legacy-kv"),
+										},
+									},
+									"transfer_from": schema.StringAttribute{
+										Description: "Source script for a `state: expecting-transfer` entry. The\nnamespace on this script is materialised from the source\nscript's data via the pending-transfer flow. Present on reads\nfor `expecting-transfer` entries.",
+										Computed:    true,
+									},
+									"transferred_to": schema.StringAttribute{
+										Description: "Destination script for a `state: transferred` tombstone. Must\nreference a script in the same account; cross-dispatch-namespace\ntransfers are rejected. Write-only: never present in GET\nresponses.",
+										Computed:    true,
+									},
+								},
+							},
+						},
 						"limits": schema.SingleNestedAttribute{
 							Description: "Resource limits enforced at runtime.",
 							Computed:    true,

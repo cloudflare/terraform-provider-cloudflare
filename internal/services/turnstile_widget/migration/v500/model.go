@@ -49,18 +49,20 @@ type SourceCloudfareTurnstileWidgetModel struct {
 // Note: This must match the model in turnstile_widget/model.go exactly.
 // We duplicate it here to keep the migration package self-contained.
 type TargetTurnstileWidgetModel struct {
-	ID             types.String      `tfsdk:"id"`
-	Sitekey        types.String      `tfsdk:"sitekey"`         // NEW in v5 (computed)
-	AccountID      types.String      `tfsdk:"account_id"`
-	Mode           types.String      `tfsdk:"mode"`
-	Name           types.String      `tfsdk:"name"`
-	Domains        *[]types.String   `tfsdk:"domains"`         // CHANGED: Set → *[]types.String
-	BotFightMode   types.Bool        `tfsdk:"bot_fight_mode"`
-	ClearanceLevel types.String      `tfsdk:"clearance_level"` // NEW in v5 (optional computed)
-	EphemeralID    types.Bool        `tfsdk:"ephemeral_id"`    // NEW in v5 (optional computed)
-	Offlabel       types.Bool        `tfsdk:"offlabel"`
-	Region         types.String      `tfsdk:"region"`
-	CreatedOn      timetypes.RFC3339 `tfsdk:"created_on"`  // NEW in v5 (computed timestamp)
-	ModifiedOn     timetypes.RFC3339 `tfsdk:"modified_on"` // NEW in v5 (computed timestamp)
-	Secret         types.String      `tfsdk:"secret"`
+	ID              types.String      `tfsdk:"id"`
+	Sitekey         types.String      `tfsdk:"sitekey"` // NEW in v5 (computed)
+	AccountID       types.String      `tfsdk:"account_id"`
+	Mode            types.String      `tfsdk:"mode"`
+	Name            types.String      `tfsdk:"name"`
+	Domains         *[]types.String   `tfsdk:"domains"` // CHANGED: Set → *[]types.String
+	BotFightMode    types.Bool        `tfsdk:"bot_fight_mode"`
+	ClearanceLevel  types.String      `tfsdk:"clearance_level"` // NEW in v5 (optional computed)
+	EphemeralID     types.Bool        `tfsdk:"ephemeral_id"`    // NEW in v5 (optional computed)
+	Offlabel        types.Bool        `tfsdk:"offlabel"`
+	Region          types.String      `tfsdk:"region"`
+	CreatedOn       timetypes.RFC3339 `tfsdk:"created_on"`  // NEW in v5 (computed timestamp)
+	ModifiedOn      timetypes.RFC3339 `tfsdk:"modified_on"` // NEW in v5 (computed timestamp)
+	Secret          types.String      `tfsdk:"secret"`
+	DeployedVia     types.String      `tfsdk:"deployed_via"`
+	LastModifiedVia types.String      `tfsdk:"last_modified_via"`
 }

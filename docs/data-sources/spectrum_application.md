@@ -34,7 +34,7 @@ data "cloudflare_spectrum_application" "example_spectrum_application" {
 ### Read-Only
 
 - `argo_smart_routing` (Boolean) Enables Argo Smart Routing for this application.
-Notes: Only available for TCP applications with traffic_type set to "direct".
+Notes: Only available for TCP or UDP applications with traffic_type set to "direct".
 - `created_on` (String) When the Application was created.
 - `dns` (Attributes) The name and type of DNS record for the Spectrum application. (see [below for nested schema](#nestedatt--dns))
 - `edge_ips` (Attributes) The anycast edge IP configuration for the hostname of this application. (see [below for nested schema](#nestedatt--edge_ips))

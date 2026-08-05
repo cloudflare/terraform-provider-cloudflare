@@ -17,10 +17,10 @@ Accepted Permissions
 
 ```terraform
 resource "cloudflare_load_balancer" "example_load_balancer" {
-  zone_id = "699d98642c564d2e855e9661899b7252"
   default_pools = ["17b5962d775c646f3f9725cbc7a53df4", "9290f38c5d07c2e2f4df57b1f61d4196", "00920f38ce07c2e2f4df50b1f61d4194"]
   fallback_pool = "fallback_pool"
   name = "www.example.com"
+  zone_id = "zone_id"
   adaptive_routing = {
     failover_across_pools = true
   }
@@ -29,6 +29,7 @@ resource "cloudflare_load_balancer" "example_load_balancer" {
     US = ["de90f38ced07c2e2f4df50b1f61d4194", "00920f38ce07c2e2f4df50b1f61d4194"]
   }
   description = "Load Balancer for www.example.com"
+  enabled = true
   location_strategy = {
     mode = "resolver_ip"
     prefer_ecs = "always"
@@ -75,6 +76,12 @@ resource "cloudflare_load_balancer" "example_load_balancer" {
         mode = "resolver_ip"
         prefer_ecs = "always"
       }
+      pool_default_weight = 0.2
+      pool_weights = {
+        "9290f38c5d07c2e2f4df57b1f61d4196" = 0.5
+        de90f38ced07c2e2f4df50b1f61d4194 = 0.3
+      }
+      pools = ["17b5962d775c646f3f9725cbc7a53df4"]
       pop_pools = {
         LAX = ["de90f38ced07c2e2f4df50b1f61d4194", "9290f38c5d07c2e2f4df57b1f61d4196"]
         LHR = ["abd90f38ced07c2e2f4df50b1f61d4194", "f9138c5d07c2e2f4df57b1f61d4196"]
@@ -130,6 +137,7 @@ resource "cloudflare_load_balancer" "example_load_balancer" {
 - `default_pools` (List of String) A list of pool IDs ordered by their failover priority. Pools defined here are used by default, or when region_pools are not configured for a given region.
 - `fallback_pool` (String) The pool ID to use when all other pools are detected as unhealthy.
 - `name` (String) The DNS hostname to associate with your Load Balancer. If this hostname already exists as a DNS record in Cloudflare's DNS, the Load Balancer will take precedence and the DNS record will not be used.
+- `zone_id` (String)
 
 ### Optional
 
@@ -162,7 +170,6 @@ Available values: "none", "cookie", "ip_cookie", "header".
 - `""`: Will map to `"geo"` if you use `region_pools`/`country_pools`/`pop_pools` otherwise `"off"`.
 Available values: "off", "geo", "random", "dynamic_latency", "proximity", "least_outstanding_requests", "least_connections", "".
 - `ttl` (Number) Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.
-- `zone_id` (String)
 
 ### Read-Only
 
@@ -333,7 +340,7 @@ Available values: "none", "temporary", "sticky".
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_load_balancer.example '<zone_id>/<load_balancer_id>'
+$ terraform import cloudflare_load_balancer.example '<{accounts|zones}/{account_id|zone_id}>/<load_balancer_id>'
 ```
 
 

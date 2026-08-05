@@ -28,13 +28,13 @@ resource "cloudflare_r2_bucket" "example_r2_bucket" {
 
 ### Required
 
+- `account_id` (String) Account ID.
 - `name` (String) Name of the bucket.
 
 ### Optional
 
-- `account_id` (String) Account ID.
 - `jurisdiction` (String) Jurisdiction where objects in this bucket are guaranteed to be stored.
-Available values: "default", "eu", "fedramp".
+Available values: "default", "eu", "fedramp", "us".
 - `location` (String) Location of the bucket.
 Available values: "apac", "eeur", "enam", "weur", "wnam", "oc".  Note: `location` is only honored the first time a bucket with a given name is created. If you delete and recreate a bucket with the same name, the original bucket location will be used. It is also a best-effort, not a guarantee, of bucket location.
 - `storage_class` (String) Storage class for newly uploaded objects, unless specified otherwise.

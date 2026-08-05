@@ -42,6 +42,7 @@ resource "cloudflare_email_routing_rule" "example_email_routing_rule" {
 
 - `actions` (Attributes List) List actions patterns. (see [below for nested schema](#nestedatt--actions))
 - `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--matchers))
+- `zone_id` (String) Identifier.
 
 ### Optional
 
@@ -54,7 +55,6 @@ resource "cloudflare_email_routing_rule" "example_email_routing_rule" {
 `wrangler` means the rule is managed by a Worker's wrangler.jsonc. Defaults
 to `api` when omitted on write.
 Available values: "api", "wrangler".
-- `zone_id` (String) Identifier.
 
 ### Read-Only
 

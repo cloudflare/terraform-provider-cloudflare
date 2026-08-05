@@ -28,7 +28,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 			},
 			"account_id": schema.StringAttribute{
-				Optional:    true,
+				Optional: true,
 			},
 			"ai_gateway_id": schema.StringAttribute{
 				Computed: true,
@@ -124,11 +124,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"embedding_model": schema.StringAttribute{
-				Description: `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "google-ai-studio/gemini-embedding-2", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
+				Description: `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/qwen/qwen3-vl-embedding-2b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "google-ai-studio/gemini-embedding-2", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"@cf/qwen/qwen3-embedding-0.6b",
+						"@cf/qwen/qwen3-vl-embedding-2b",
 						"@cf/baai/bge-m3",
 						"@cf/baai/bge-large-en-v1.5",
 						"@cf/google/embeddinggemma-300m",
@@ -361,6 +362,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
+					},
+					"default_domain_enabled": schema.BoolAttribute{
+						Description: "When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.",
+						Computed:    true,
 					},
 					"enabled": schema.BoolAttribute{
 						Computed: true,

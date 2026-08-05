@@ -22,6 +22,10 @@ resource "cloudflare_workflow" "example_workflow" {
   workflow_name = "x"
   class_name = "x"
   script_name = "x"
+  default_retention = {
+    error_retention = "5 minutes"
+    success_retention = "5 minutes"
+  }
   limits = {
     steps = 1
   }
@@ -36,13 +40,14 @@ resource "cloudflare_workflow" "example_workflow" {
 
 ### Required
 
+- `account_id` (String)
 - `class_name` (String)
 - `script_name` (String)
 - `workflow_name` (String)
 
 ### Optional
 
-- `account_id` (String)
+- `default_retention` (Attributes) Default retention applied to instances of this version when they do not set their own retention. (see [below for nested schema](#nestedatt--default_retention))
 - `limits` (Attributes) (see [below for nested schema](#nestedatt--limits))
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
 
@@ -57,6 +62,15 @@ resource "cloudflare_workflow" "example_workflow" {
 - `terminator_running` (Number)
 - `triggered_on` (String)
 - `version_id` (String)
+
+<a id="nestedatt--default_retention"></a>
+### Nested Schema for `default_retention`
+
+Optional:
+
+- `error_retention` (Dynamic) Specifies the duration in milliseconds or as a string like '5 minutes'.
+- `success_retention` (Dynamic) Specifies the duration in milliseconds or as a string like '5 minutes'.
+
 
 <a id="nestedatt--limits"></a>
 ### Nested Schema for `limits`

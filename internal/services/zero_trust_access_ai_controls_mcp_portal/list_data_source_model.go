@@ -59,6 +59,7 @@ type ZeroTrustAccessAIControlsMcpPortalsServersDataSourceModel struct {
 	Prompts                      customfield.List[customfield.Map[jsontypes.Normalized]]                                               `tfsdk:"prompts" json:"prompts,computed"`
 	ServerID                     types.String                                                                                          `tfsdk:"server_id" json:"server_id,computed"`
 	Tools                        customfield.List[customfield.Map[jsontypes.Normalized]]                                               `tfsdk:"tools" json:"tools,computed"`
+	AuthConfigSummary            customfield.NestedObject[ZeroTrustAccessAIControlsMcpPortalsServersAuthConfigSummaryDataSourceModel]  `tfsdk:"auth_config_summary" json:"auth_config_summary,computed"`
 	CreatedAt                    timetypes.RFC3339                                                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy                    types.String                                                                                          `tfsdk:"created_by" json:"created_by,computed"`
 	DefaultDisabled              types.Bool                                                                                            `tfsdk:"default_disabled" json:"default_disabled,computed"`
@@ -75,6 +76,29 @@ type ZeroTrustAccessAIControlsMcpPortalsServersDataSourceModel struct {
 	Status                       types.String                                                                                          `tfsdk:"status" json:"status,computed"`
 	UpdatedPrompts               customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpPortalsServersUpdatedPromptsDataSourceModel] `tfsdk:"updated_prompts" json:"updated_prompts,computed"`
 	UpdatedTools                 customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpPortalsServersUpdatedToolsDataSourceModel]   `tfsdk:"updated_tools" json:"updated_tools,computed"`
+}
+
+type ZeroTrustAccessAIControlsMcpPortalsServersAuthConfigSummaryDataSourceModel struct {
+	AuthMode            types.String                                                                                                         `tfsdk:"auth_mode" json:"auth_mode,computed"`
+	ClientSecretVersion types.Float64                                                                                                        `tfsdk:"client_secret_version" json:"client_secret_version,computed"`
+	Config              customfield.NestedObject[ZeroTrustAccessAIControlsMcpPortalsServersAuthConfigSummaryConfigDataSourceModel]           `tfsdk:"config" json:"config,computed"`
+	HasClientSecret     types.Bool                                                                                                           `tfsdk:"has_client_secret" json:"has_client_secret,computed"`
+	RegistrationInfo    customfield.NestedObject[ZeroTrustAccessAIControlsMcpPortalsServersAuthConfigSummaryRegistrationInfoDataSourceModel] `tfsdk:"registration_info" json:"registration_info,computed"`
+}
+
+type ZeroTrustAccessAIControlsMcpPortalsServersAuthConfigSummaryConfigDataSourceModel struct {
+	AuthorizationEndpoint types.String `tfsdk:"authorization_endpoint" json:"authorization_endpoint,computed"`
+	Issuer                types.String `tfsdk:"issuer" json:"issuer,computed"`
+	Resource              types.String `tfsdk:"resource" json:"resource,computed"`
+	RevocationEndpoint    types.String `tfsdk:"revocation_endpoint" json:"revocation_endpoint,computed"`
+	TokenEndpoint         types.String `tfsdk:"token_endpoint" json:"token_endpoint,computed"`
+}
+
+type ZeroTrustAccessAIControlsMcpPortalsServersAuthConfigSummaryRegistrationInfoDataSourceModel struct {
+	ClientID                types.String                   `tfsdk:"client_id" json:"client_id,computed"`
+	RedirectURIs            customfield.List[types.String] `tfsdk:"redirect_uris" json:"redirect_uris,computed"`
+	Scope                   types.String                   `tfsdk:"scope" json:"scope,computed"`
+	TokenEndpointAuthMethod types.String                   `tfsdk:"token_endpoint_auth_method" json:"token_endpoint_auth_method,computed"`
 }
 
 type ZeroTrustAccessAIControlsMcpPortalsServersErrorDetailsDataSourceModel struct {

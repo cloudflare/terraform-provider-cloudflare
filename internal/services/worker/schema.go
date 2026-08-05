@@ -5,8 +5,6 @@ package worker
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework/attr"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -16,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -106,7 +104,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
-								Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
+								PlanModifiers: []planmodifier.List{
+									listplanmodifier.UseStateForUnknown(),
+								},
 							},
 							"enabled": schema.BoolAttribute{
 								Description: "Whether logs are enabled for the Worker.",
@@ -152,7 +152,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
-								Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
+								PlanModifiers: []planmodifier.List{
+									listplanmodifier.UseStateForUnknown(),
+								},
 							},
 							"enabled": schema.BoolAttribute{
 								Description: "Whether traces are enabled for the Worker.",

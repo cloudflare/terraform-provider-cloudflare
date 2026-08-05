@@ -64,7 +64,7 @@ func (r *ZeroTrustGatewayCertificateResource) Create(ctx context.Context, req re
 		return
 	}
 
-	// Save the activate value since it's not returned by the API
+	// Save the activate value since it's not returned by the API.
 	activate := data.Activate
 
 	dataBytes, err := data.MarshalJSON()
@@ -95,15 +95,13 @@ func (r *ZeroTrustGatewayCertificateResource) Create(ctx context.Context, req re
 	}
 	data = &env.Result
 
-	// Check if activate field is set and handle activation
 	if !activate.IsNull() && activate.ValueBool() {
-		// Activate the certificate
 		_, err := r.client.ZeroTrust.Gateway.Certificates.Activate(
 			ctx,
 			data.ID.ValueString(),
 			zero_trust.GatewayCertificateActivateParams{
 				AccountID: cloudflare.F(data.AccountID.ValueString()),
-				Body:      struct{}{}, // Empty body as required by the API
+				Body:      struct{}{},
 			},
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -112,7 +110,6 @@ func (r *ZeroTrustGatewayCertificateResource) Create(ctx context.Context, req re
 			return
 		}
 
-		// After activation, get the updated certificate status
 		res = new(http.Response)
 		env = ZeroTrustGatewayCertificateResultEnvelope{*data}
 		_, err = r.client.ZeroTrust.Gateway.Certificates.Get(
@@ -135,8 +132,6 @@ func (r *ZeroTrustGatewayCertificateResource) Create(ctx context.Context, req re
 			return
 		}
 		*data = env.Result
-		
-		// Restore the activate field since it's not returned by the API
 		data.Activate = activate
 	}
 
@@ -176,10 +171,10 @@ func (r *ZeroTrustGatewayCertificateResource) Update(ctx context.Context, req re
 		resp.Diagnostics.AddError("failed to deserialize certificate", err.Error())
 		return
 	}
-	
+
 	// Update state with current certificate data
 	*state = env.Result
-	
+
 	// Check if activate field has changed and handle activation/deactivation
 	if !plan.Activate.IsNull() {
 		if plan.Activate.ValueBool() {
@@ -213,7 +208,7 @@ func (r *ZeroTrustGatewayCertificateResource) Update(ctx context.Context, req re
 				return
 			}
 		}
-		
+
 		// After activation/deactivation, get the updated certificate status
 		res = new(http.Response)
 		env = ZeroTrustGatewayCertificateResultEnvelope{*state}
@@ -238,7 +233,7 @@ func (r *ZeroTrustGatewayCertificateResource) Update(ctx context.Context, req re
 		}
 		*state = env.Result
 	}
-	
+
 	// Set the activate field from the plan to maintain user's intended state
 	state.Activate = plan.Activate
 

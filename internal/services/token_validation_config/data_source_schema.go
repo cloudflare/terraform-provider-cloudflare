@@ -76,7 +76,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"alg": schema.StringAttribute{
-									Description: "Algorithm\nAvailable values: \"RS256\", \"RS384\", \"RS512\", \"PS256\", \"PS384\", \"PS512\", \"ES256\", \"ES384\".",
+									Description: "Algorithm\nAvailable values: \"RS256\", \"RS384\", \"RS512\", \"PS256\", \"PS384\", \"PS512\", \"ES256\", \"ES384\", \"HS256\", \"HS384\", \"HS512\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -88,6 +88,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											"PS512",
 											"ES256",
 											"ES384",
+											"HS256",
+											"HS384",
+											"HS512",
 										),
 									},
 								},
@@ -100,10 +103,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"kty": schema.StringAttribute{
-									Description: "Key Type\nAvailable values: \"RSA\", \"EC\".",
+									Description: "Key Type\nAvailable values: \"RSA\", \"EC\", \"oct\".",
 									Computed:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("RSA", "EC"),
+										stringvalidator.OneOfCaseInsensitive(
+											"RSA",
+											"EC",
+											"oct",
+										),
 									},
 								},
 								"n": schema.StringAttribute{

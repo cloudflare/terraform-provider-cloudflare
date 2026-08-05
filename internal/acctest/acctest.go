@@ -1173,6 +1173,36 @@ func RunMigrationV2Command(t *testing.T, v4Config string, tmpDir string, sourceV
 	}
 }
 
+// MigrationTestStepWithPlan creates test steps for migrations that need plan processing after migration
+// This handles resources that can't use state upgraders and need plan/refresh to correct state
+// Returns multiple steps: migration step, plan step to process changes, then validation step
+func MigrationTestStepWithPlan(t *testing.T, v4Config string, tmpDir string, exactVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
+	// First step: run migration
+	migrationStep := MigrationTestStep(t, v4Config, tmpDir, exactVersion, nil) // No state checks yet
+
+	// Second step: run plan to process import blocks and state corrections
+	planStep := resource.TestStep{
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		PlanOnly:                 true, // Just run plan to process imports/corrections
+	}
+
+	// Third step: verify final plan is clean and state is correct
+	validationStep := resource.TestStep{
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: []plancheck.PlanCheck{
+				DebugNonEmptyPlan,
+				ExpectEmptyPlanExceptFalseyToNull, // Should be clean after processing
+			},
+		},
+		ConfigStateChecks: stateChecks,
+	}
+
+	return []resource.TestStep{migrationStep, planStep, validationStep}
+}
+
 // MigrationV2TestStepWithPlan creates multiple test steps for v2 migration with plan processing.
 // Runs the v2 migration command (tf-migrate) with explicit source/target version parameters,
 // then a PlanOnly step to process import blocks and state corrections, then a validation step
@@ -1220,6 +1250,50 @@ func InferMigrationVersions(testVersion string) (source, target string) {
 		return "v5", "v5"
 	}
 	return "v4", "v5"
+}
+
+// MigrationTestStep creates a test step that runs the migration command and validates with v5 provider
+func MigrationTestStep(t *testing.T, v4Config string, tmpDir string, exactVersion string, stateChecks []statecheck.StateCheck) resource.TestStep {
+	// Choose the appropriate plan check based on the version
+	var planChecks []plancheck.PlanCheck
+	if strings.HasPrefix(exactVersion, "4.") {
+		// When upgrading from v4, allow falsey-to-null changes due to removed defaults
+		planChecks = []plancheck.PlanCheck{
+			DebugNonEmptyPlan,
+			ExpectEmptyPlanExceptFalseyToNull,
+		}
+	} else {
+		// When upgrading from v5, expect a completely empty plan
+		planChecks = []plancheck.PlanCheck{
+			DebugNonEmptyPlan,
+			plancheck.ExpectEmptyPlan(),
+		}
+	}
+
+	return resource.TestStep{
+		PreConfig: func() {
+			WriteOutConfig(t, v4Config, tmpDir)
+			// we only run the migration command if the version is 4.x.x, because users will not expect to run it within v5 versions.
+			if strings.HasPrefix(exactVersion, "4.") {
+				debugLogf(t, "Running migration command for version: %s (v4 -> v5)", exactVersion)
+				RunMigrationV2Command(t, v4Config, tmpDir, "v4", "v5")
+			} else {
+				debugLogf(t, "Skipping migration command for version: %s", exactVersion)
+			}
+
+			// Remove provider.tf after migration. See MigrationV2TestStep for details.
+			providerTF := filepath.Join(tmpDir, "provider.tf")
+			if err := os.Remove(providerTF); err != nil && !os.IsNotExist(err) {
+				t.Fatalf("failed to remove provider.tf after migration: %v", err)
+			}
+		},
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: planChecks,
+		},
+		ConfigStateChecks: stateChecks,
+	}
 }
 
 // MigrationV2TestStep creates a test step that runs the migration command and validates with v5 provider

@@ -35,9 +35,6 @@ resource "cloudflare_api_shield_operation" "example_api_shield_operation" {
 - `host` (String) RFC3986-compliant host.
 - `method` (String) The HTTP method used to access the endpoint.
 Available values: "GET", "POST", "HEAD", "OPTIONS", "PUT", "DELETE", "CONNECT", "PATCH", "TRACE".
-
-### Optional
-
 - `zone_id` (String) Identifier.
 
 ### Read-Only
@@ -147,7 +144,7 @@ Read-Only:
 Read-Only:
 
 - `active_schema` (Attributes) Schema active on endpoint. (see [below for nested schema](#nestedatt--features--schema_info--active_schema))
-- `learned_available` (Boolean) True if a Cloudflare-provided learned schema is available for this endpoint.
+- `learned_available` (Boolean) Deprecated. Always false.
 - `mitigation_action` (String) Action taken on requests failing validation.
 Available values: "none", "log", "block".
 

@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 
@@ -215,13 +216,29 @@ func TestMigrateCloudflarePageRule_CacheKeyFields(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("target"), knownvalue.StringExact(target)),
 						},
 					},
-					acctest.MigrationV2TestStep(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("target"), knownvalue.StringExact(target)),
-						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("actions"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
-							"cache_level": knownvalue.StringExact("aggressive"),
-						})),
-					}),
+					{
+						PreConfig: func() {
+							// Write out config
+							acctest.WriteOutConfig(t, testConfig, tmpDir)
+
+							// Run migration
+							acctest.RunMigrationV2Command(t, testConfig, tmpDir, "v4", "v5")
+						},
+						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+						ConfigDirectory:          config.StaticDirectory(tmpDir),
+						ConfigPlanChecks: resource.ConfigPlanChecks{
+							PreApply: []plancheck.PlanCheck{
+								acctest.DebugNonEmptyPlan,
+							},
+						},
+						ConfigStateChecks: []statecheck.StateCheck{
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("zone_id"), knownvalue.StringExact(zoneID)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("target"), knownvalue.StringExact(target)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("actions"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"cache_level": knownvalue.StringExact("aggressive"),
+							})),
+						},
+					},
 					{
 						ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 						ConfigDirectory:          config.StaticDirectory(tmpDir),
@@ -241,12 +258,12 @@ func TestMigrateCloudflarePageRule_CacheKeyFields(t *testing.T) {
 											knownvalue.StringExact("api_token"),
 										}),
 									}),
-								"header": knownvalue.ObjectPartial(map[string]knownvalue.Check{
-									"include": knownvalue.ListExact([]knownvalue.Check{
-										knownvalue.StringExact("x-another-header"),
-										knownvalue.StringExact("x-custom-header"),
+									"header": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+										"include": knownvalue.ListExact([]knownvalue.Check{
+											knownvalue.StringExact("x-custom-header"),
+											knownvalue.StringExact("x-another-header"),
+										}),
 									}),
-								}),
 									"cookie": knownvalue.ObjectPartial(map[string]knownvalue.Check{
 										"include": knownvalue.ListExact([]knownvalue.Check{
 											knownvalue.StringExact("session_id"),
@@ -488,7 +505,7 @@ resource "cloudflare_page_rule" "%[3]s" {
         exclude = ["api_token"]
       }
       header {
-        include = ["x-another-header", "x-custom-header"]
+        include = ["x-custom-header", "x-another-header"]
       }
       cookie {
         include = ["session_id"]

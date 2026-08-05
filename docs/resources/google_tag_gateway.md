@@ -3,15 +3,16 @@ page_title: "cloudflare_google_tag_gateway Resource - Cloudflare"
 subcategory: ""
 description: |-
   Accepted Permissions
-  Zone Settings ReadZone Settings Write
+  Zaraz AdminZaraz EditZaraz Read
 ---
 
 # cloudflare_google_tag_gateway (Resource)
 
 Accepted Permissions
 
-- `Zone Settings Read`
-- `Zone Settings Write`
+- `Zaraz Admin`
+- `Zaraz Edit`
+- `Zaraz Read`
 
 ## Example Usage
 

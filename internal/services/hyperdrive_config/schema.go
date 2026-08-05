@@ -147,6 +147,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"restarted_on": schema.StringAttribute{
+				Description: "Defines the last time the Hyperdrive connection pool was explicitly restarted via the restart endpoint. Omitted if the pool has never been explicitly restarted.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
 		},
 	}
 }

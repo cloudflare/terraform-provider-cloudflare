@@ -21,6 +21,7 @@ type ZeroTrustDevicePostureRuleModel struct {
 	Schedule    types.String                             `tfsdk:"schedule" json:"schedule,optional"`
 	Input       *ZeroTrustDevicePostureRuleInputModel    `tfsdk:"input" json:"input,optional"`
 	Match       *[]*ZeroTrustDevicePostureRuleMatchModel `tfsdk:"match" json:"match,optional"`
+	Enabled     types.Bool                               `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 func (m ZeroTrustDevicePostureRuleModel) MarshalJSON() (data []byte, err error) {

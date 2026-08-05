@@ -50,6 +50,7 @@ Read-Only:
 Maximum allowed: 20 for free tier accounts, 100 for paid tier accounts.
 If not specified, defaults to 20 for free tier and 60 for paid tier.
 Contact Cloudflare if you need a higher limit.
+- `restarted_on` (String) Defines the last time the Hyperdrive connection pool was explicitly restarted via the restart endpoint. Omitted if the pool has never been explicitly restarted.
 
 <a id="nestedatt--result--caching"></a>
 ### Nested Schema for `result.caching`

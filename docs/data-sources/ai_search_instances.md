@@ -120,6 +120,7 @@ Read-Only:
 - `authorized_hosts` (List of String)
 - `chat_completions_endpoint` (Attributes) (see [below for nested schema](#nestedatt--result--public_endpoint_params--chat_completions_endpoint))
 - `custom_domains` (List of String) Custom domain hostnames that alias this public endpoint. GET and create responses return the current set; on update (PUT) this field is only echoed back when supplied in the request body, otherwise it is null (omit it to leave domains unchanged).
+- `default_domain_enabled` (Boolean) When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
 - `enabled` (Boolean)
 - `mcp` (Attributes) (see [below for nested schema](#nestedatt--result--public_endpoint_params--mcp))
 - `rate_limit` (Attributes) (see [below for nested schema](#nestedatt--result--public_endpoint_params--rate_limit))

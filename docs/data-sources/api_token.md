@@ -50,6 +50,7 @@ Optional:
 
 - `direction` (String) Direction to order results.
 Available values: "asc", "desc".
+- `include_expired` (Boolean) When true, includes recently-expired tokens in the response.
 
 
 <a id="nestedatt--condition"></a>

@@ -67,14 +67,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "S3-compatible URL (Generic S3-compatible providers only).",
 						Computed:    true,
 					},
+					"container": schema.StringAttribute{
+						Description: "Name of the Azure Blob Storage container (Azure only).",
+						Computed:    true,
+					},
 					"r2_bucket_sippy_provider": schema.StringAttribute{
-						Description: `Available values: "aws", "gcs", "s3".`,
+						Description: `Available values: "aws", "gcs", "s3", "azure".`,
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"aws",
 								"gcs",
 								"s3",
+								"azure",
 							),
 						},
 					},

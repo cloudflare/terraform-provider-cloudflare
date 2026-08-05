@@ -34,13 +34,13 @@ resource "cloudflare_zero_trust_dlp_entry" "example_zero_trust_dlp_entry" {
 
 ### Required
 
+- `account_id` (String)
 - `enabled` (Boolean)
 - `name` (String)
 - `pattern` (Attributes) (see [below for nested schema](#nestedatt--pattern))
 
 ### Optional
 
-- `account_id` (String)
 - `description` (String)
 - `profile_id` (String)
 - `type` (String) Available values: "custom", "predefined", "integration".

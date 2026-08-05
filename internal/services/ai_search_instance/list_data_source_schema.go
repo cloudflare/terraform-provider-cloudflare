@@ -22,7 +22,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Optional:    true,
+				Optional: true,
 			},
 			"namespace": schema.StringAttribute{
 				Description: "Filter by namespace.",
@@ -307,6 +307,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
+								},
+								"default_domain_enabled": schema.BoolAttribute{
+									Description: "When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.",
+									Computed:    true,
 								},
 								"enabled": schema.BoolAttribute{
 									Computed: true,

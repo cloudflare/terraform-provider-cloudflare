@@ -34,6 +34,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The description of the device posture rule.",
 				Computed:    true,
 			},
+			"enabled": schema.BoolAttribute{
+				Description: "Whether the rule is enabled. This is a computed, read-only value. It is false for deprecated Kolide posture rules that still use the issue_count input, and true otherwise.",
+				Computed:    true,
+			},
 			"expiration": schema.StringAttribute{
 				Description: "Sets the expiration time for a posture check result. If empty, the result remains valid until it is overwritten by new data from the WARP client.",
 				Computed:    true,

@@ -32,11 +32,8 @@ resource "cloudflare_zero_trust_risk_behavior" "example_zero_trust_risk_behavior
 
 ### Required
 
-- `behaviors` (Attributes Map) (see [below for nested schema](#nestedatt--behaviors))
-
-### Optional
-
 - `account_id` (String)
+- `behaviors` (Attributes Map) (see [below for nested schema](#nestedatt--behaviors))
 
 <a id="nestedatt--behaviors"></a>
 ### Nested Schema for `behaviors`

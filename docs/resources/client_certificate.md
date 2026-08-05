@@ -34,11 +34,11 @@ resource "cloudflare_client_certificate" "example_client_certificate" {
 
 - `csr` (String) The Certificate Signing Request (CSR). Must be newline-encoded.
 - `validity_days` (Number) The number of days the Client Certificate will be valid after the issued_on date.
+- `zone_id` (String) Identifier.
 
 ### Optional
 
 - `reactivate` (Boolean)
-- `zone_id` (String) Identifier.
 
 ### Read-Only
 

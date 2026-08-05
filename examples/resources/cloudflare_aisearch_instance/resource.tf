@@ -34,6 +34,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
       disabled = true
     }
     custom_domains = ["search.example.com"]
+    default_domain_enabled = true
     enabled = true
     mcp = {
       description = "description"

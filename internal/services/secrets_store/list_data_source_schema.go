@@ -27,11 +27,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Account Identifier",
+				Description: "Account Identifier.",
 				Required:    true,
 			},
 			"direction": schema.StringAttribute{
-				Description: "Direction to sort objects\nAvailable values: \"asc\", \"desc\".",
+				Description: "Direction to sort objects.\nAvailable values: \"asc\", \"desc\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -39,16 +39,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"order": schema.StringAttribute{
-				Description: "Order secrets by values in the given field\nAvailable values: \"name\", \"comment\", \"created\", \"modified\", \"status\".",
+				Description: "Order stores by values in the given field.\nAvailable values: \"name\", \"created\", \"modified\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"name",
-						"comment",
 						"created",
 						"modified",
-						"status",
 					),
 				},
 			},
@@ -66,11 +64,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "Store Identifier",
+							Description: "Store Identifier.",
 							Computed:    true,
 						},
 						"created": schema.StringAttribute{
-							Description: "Whenthe secret was created.",
+							Description: "When the secret was created.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
@@ -80,11 +78,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  timetypes.RFC3339Type{},
 						},
 						"name": schema.StringAttribute{
-							Description: "The name of the store",
+							Description: "The name of the store.",
 							Computed:    true,
 						},
 						"account_id": schema.StringAttribute{
-							Description: "Account Identifier",
+							Description: "Account Identifier.",
 							Computed:    true,
 						},
 					},

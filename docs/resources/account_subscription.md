@@ -17,7 +17,7 @@ Accepted Permissions
 
 ```terraform
 resource "cloudflare_account_subscription" "example_account_subscription" {
-  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  account_id = "account_id"
   frequency = "monthly"
   rate_plan = {
     id = "free"
@@ -36,7 +36,7 @@ resource "cloudflare_account_subscription" "example_account_subscription" {
 
 ### Optional
 
-- `account_id` (String) Identifier
+- `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `frequency` (String) How often the subscription is renewed automatically.
 Available values: "weekly", "monthly", "quarterly", "yearly".
 - `rate_plan` (Attributes) The rate plan applied to the subscription. (see [below for nested schema](#nestedatt--rate_plan))
@@ -74,5 +74,4 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_account_subscription.example '<account_id>'
 ```
-
 

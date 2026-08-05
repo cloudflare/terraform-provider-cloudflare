@@ -59,6 +59,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					int64validator.AtLeast(5),
 				},
 			},
+			"restarted_on": schema.StringAttribute{
+				Description: "Defines the last time the Hyperdrive connection pool was explicitly restarted via the restart endpoint. Omitted if the pool has never been explicitly restarted.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
 			"caching": schema.SingleNestedAttribute{
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[HyperdriveConfigCachingDataSourceModel](ctx),

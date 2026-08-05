@@ -66,12 +66,12 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
 
 ### Required
 
+- `account_id` (String) Identifier.
 - `name` (String) A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.
 - `origins` (Attributes List) The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy. (see [below for nested schema](#nestedatt--origins))
 
 ### Optional
 
-- `account_id` (String) Identifier.
 - `check_regions` (List of String) A list of regions from which to run health checks. Null means every Cloudflare data center.
 - `description` (String) A human-readable description of the pool.
 - `enabled` (Boolean) Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).

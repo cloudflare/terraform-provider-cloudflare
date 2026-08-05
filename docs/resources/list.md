@@ -46,13 +46,13 @@ resource "cloudflare_list" "example_list" {
 
 ### Required
 
+- `account_id` (String) The Account ID for this resource.
 - `kind` (String) The type of the list. Each type supports specific list items (IP addresses, ASNs, hostnames or redirects).
 Available values: "ip", "redirect", "hostname", "asn".
 - `name` (String) An informative name for the list. Use this name in filter and rule expressions.
 
 ### Optional
 
-- `account_id` (String) The Account ID for this resource.
 - `description` (String) An informative summary of the list.
 - `items` (Attributes Set) The items in the list. If set, this overwrites all items in the list. Do not use with `cloudflare_list_item`. (see [below for nested schema](#nestedatt--items))
 
