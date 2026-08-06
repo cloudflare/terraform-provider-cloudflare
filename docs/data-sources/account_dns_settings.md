@@ -1,5 +1,5 @@
 ---
-page_title: "cloudflare_account_dns_settings Data Source - Cloudflare"
+page_title: "cloudflare_account_dns_settings Data Source - terraform-provider-cloudflare"
 subcategory: ""
 description: |-
   Accepted Permissions

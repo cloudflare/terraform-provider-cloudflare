@@ -36,7 +36,7 @@ data "cloudflare_resource_group" "example_resource_group" {
 - `id` (String) Identifier of the resource group.
 - `meta` (Attributes) Attributes associated to the resource group. (see [below for nested schema](#nestedatt--meta))
 - `name` (String) Name of the resource group.
-- `scope` (Attributes) A scope is a combination of scope objects which provides additional context. (see [below for nested schema](#nestedatt--scope))
+- `scope` (Attributes List) The scope associated to the resource group (see [below for nested schema](#nestedatt--scope))
 
 <a id="nestedatt--meta"></a>
 ### Nested Schema for `meta`

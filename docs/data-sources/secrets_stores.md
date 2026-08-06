@@ -26,7 +26,7 @@ data "cloudflare_secrets_stores" "example_secrets_stores" {
 
 ### Required
 
-- `account_id` (String)
+- `account_id` (String) Account Identifier.
 
 ### Optional
 
