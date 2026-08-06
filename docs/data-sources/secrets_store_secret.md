@@ -28,19 +28,19 @@ data "cloudflare_secrets_store_secret" "example_secrets_store_secret" {
 
 ### Required
 
-- `account_id` (String)
-- `store_id` (String)
+- `account_id` (String) Account Identifier
+- `store_id` (String) Store Identifier
 
 ### Optional
 
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `secret_id` (String)
+- `secret_id` (String) Secret identifier tag.
 
 ### Read-Only
 
 - `comment` (String) Freeform text describing the secret.
 - `created` (String) When the secret was created.
-- `id` (String) The ID of this resource.
+- `id` (String) Secret identifier tag.
 - `modified` (String) When the secret was modified.
 - `name` (String) The name of the secret.
 - `scopes` (List of String) The list of services that can use this secret.

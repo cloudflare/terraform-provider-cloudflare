@@ -21,42 +21,6 @@ Grit to migrate. Grit patterns are no longer supported and will be removed in
 a future release. The [version 5 upgrade guide] remains a useful reference for
 per-resource attribute change details if you prefer manual HCL changes.
 
-## Table of Contents
-
-- [Quick Reference](#quick-reference)
-- [Prerequisites](#prerequisites)
-- [Understanding the Migration](#understanding-the-migration)
-  - [How It Works](#how-it-works)
-  - [What tf-migrate Handles](#what-tf-migrate-handles)
-- [Migration Path A: From v4 to v5](#migration-path-a-from-v4-to-v5)
-  - [Step 1: Upgrade to v4.52.5](#step-1-upgrade-to-v4525)
-  - [Step 2: Migrate HCL Configuration](#step-2-migrate-hcl-configuration)
-  - [Step 3: Update Provider Version](#step-3-update-provider-version)
-  - [Step 4: Handle Resource Renames](#step-4-handle-resource-renames)
-  - [Step 5: Verify](#step-5-verify)
-- [Expected Plan Changes After Migration](#expected-plan-changes-after-migration)
-  - [One-Time Changes (Resolve After First Apply)](#one-time-changes-resolve-after-first-apply)
-  - [Perpetual Computed Field Differences](#perpetual-computed-field-differences)
-- [Migration Path B: Upgrading Within v5](#migration-path-b-upgrading-within-v5)
-  - [Users on v5.16 or Earlier](#users-on-v516-or-earlier)
-  - [Users on v5.17 or v5.18](#users-on-v517-or-v518)
-  - [Users on v5.19+](#users-on-v519)
-- [Resource Rename Reference](#resource-rename-reference)
-  - [Using `moved` Blocks (Terraform 1.8+)](#using-moved-blocks-terraform-18)
-  - [Using `terraform state rm` and `import` (Manual Resources)](#using-terraform-state-rm-and-import-manual-resources)
-  - [Using `terraform state mv` (Terraform < 1.8)](#using-terraform-state-mv-terraform--18)
-- [Resources Requiring Manual Migration](#resources-requiring-manual-migration)
-  - [Application-Scoped Access Policies](#application-scoped-access-policies)
-  - [`cloudflare_zone_settings_override`](#cloudflare_zone_settings_override)
-  - [`cloudflare_dlp_profile`](#cloudflare_dlp_profile)
-- [Resources Requiring Stepping-Stone Upgrades](#resources-requiring-stepping-stone-upgrades)
-  - [What Happens If You Skip the Stepping Stone](#what-happens-if-you-skip-the-stepping-stone)
-- [Resources with State Upgraders](#resources-with-state-upgraders)
-- [Migrating Data Sources](#migrating-data-sources)
-- [Troubleshooting](#troubleshooting)
-- [FAQ](#faq)
-- [Additional Resources](#additional-resources)
-
 ## Quick Reference
 
 | Your Current Version | What To Do |

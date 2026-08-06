@@ -382,7 +382,7 @@ Required:
 <a id="nestedatt--deployment_configs--preview--placement"></a>
 ### Nested Schema for `deployment_configs.preview.placement`
 
-Required:
+Optional:
 
 - `mode` (String) Placement mode.
 
@@ -538,7 +538,7 @@ Required:
 <a id="nestedatt--deployment_configs--production--placement"></a>
 ### Nested Schema for `deployment_configs.production.placement`
 
-Required:
+Optional:
 
 - `mode` (String) Placement mode.
 

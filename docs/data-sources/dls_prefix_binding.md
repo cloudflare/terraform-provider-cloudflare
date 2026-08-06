@@ -3,8 +3,7 @@ page_title: "cloudflare_dls_prefix_binding Data Source - Cloudflare"
 subcategory: ""
 description: |-
   Accepted Permissions
-  DLS: Read
-  DLS: Write
+  DLS: ReadDLS: Write
 ---
 
 # cloudflare_dls_prefix_binding (Data Source)
@@ -37,4 +36,5 @@ data "cloudflare_dls_prefix_binding" "example_dls_prefix_binding" {
 - `id` (String) Unique identifier for the prefix binding.
 - `prefix_id` (String) The ID of the parent prefix.
 - `region_key` (String) The region key used for the binding.
+
 
