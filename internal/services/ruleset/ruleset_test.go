@@ -341,9 +341,15 @@ func TestAccCloudflareRuleset_Name(t *testing.T) {
 	})
 }
 
-var missingRulesetErrorPattern = regexp.MustCompile(`20226`)
+var missingRulesetErrorPattern = regexp.MustCompile(
+	`(?s)"code":\s*20226\b.*"pointer":\s*"/rules/0/action_parameters/id"`,
+)
 
-func TestAccCloudflareRuleset_DryRunPlanValidation(t *testing.T) {
+var invalidExpressionErrorPattern = regexp.MustCompile(
+	`(?s)"code":\s*20127\b.*"pointer":\s*"/rules/0/expression"`,
+)
+
+func TestAccCloudflareRuleset_DryRunInvalidOnCreateZone(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -358,7 +364,7 @@ func TestAccCloudflareRuleset_DryRunPlanValidation(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareRuleset_DryRunPlanValidationOnUpdate(t *testing.T) {
+func TestAccCloudflareRuleset_DryRunInvalidOnCreateAccount(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -366,13 +372,21 @@ func TestAccCloudflareRuleset_DryRunPlanValidationOnUpdate(t *testing.T) {
 			{
 				ConfigFile:      config.TestNameFile("1.tf"),
 				ConfigVariables: configVariables,
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(
-						"cloudflare_ruleset.my_ruleset",
-						tfjsonpath.New("phase"),
-						knownvalue.StringExact("http_request_firewall_managed"),
-					),
-				},
+				PlanOnly:        true,
+				ExpectError:     missingRulesetErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunInvalidOnUpdateZone(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
 			},
 			{
 				ConfigFile:      config.TestNameFile("2.tf"),
@@ -384,13 +398,123 @@ func TestAccCloudflareRuleset_DryRunPlanValidationOnUpdate(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareRuleset_DryRunSkippedWhenPlanIsUnknown(t *testing.T) {
+func TestAccCloudflareRuleset_DryRunInvalidOnUpdateAccount(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				PlanOnly:        true,
+				ExpectError:     invalidExpressionErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunSkippedWhenDependencyIsUnknownZone(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				ConfigFile:         config.TestNameFile("1.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunSkippedWhenDependencyIsUnknownAccount(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:         config.TestNameFile("1.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunDependencyOnCreateThenInvalidUpdateZone(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				PlanOnly:        true,
+				ExpectError:     missingRulesetErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunDependencyOnCreateThenInvalidUpdateAccount(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				PlanOnly:        true,
+				ExpectError:     invalidExpressionErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunInvalidUpdateWithNewDependencyZone(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:         config.TestNameFile("2.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunInvalidUpdateWithNewDependencyAccount(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:         config.TestNameFile("2.tf"),
 				ConfigVariables:    configVariables,
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,

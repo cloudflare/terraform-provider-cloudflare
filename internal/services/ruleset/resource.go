@@ -4,7 +4,6 @@ package ruleset
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -322,6 +321,11 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 			return
 		}
 
+		// Check if enough of the plan is known to build a request for the dry-run
+		if !req.Config.Raw.IsFullyKnown() {
+			return
+		}
+
 		r.validateWithDryRun(ctx, state, plan, &resp.Diagnostics)
 	}()
 
@@ -447,8 +451,6 @@ func transformQueryStringJSON(jsonBytes []byte) []byte {
 	return jsonBytes
 }
 
-const dryRunQueryParam = "dry_run"
-
 func (r *RulesetResource) validateWithDryRun(
 	ctx context.Context,
 	state *RulesetModel,
@@ -459,145 +461,78 @@ func (r *RulesetResource) validateWithDryRun(
 		return
 	}
 
-	// A plan is only absent when the resource is being deleted
-	if plan == nil {
-		r.validateDeleteWithDryRun(ctx, state, diagnostics)
-		return
-	}
-
-	if !planIsKnownForDryRun(plan) {
-		return
-	}
-
-	params := rulesets.RulesetNewParams{}
-	if !plan.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(plan.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(plan.ZoneID.ValueString())
-	}
-
-	// A plan that leaves the computed ID unknown is creating the ruleset
-	rulesetID := ""
-	if !plan.ID.IsUnknown() {
-		rulesetID = plan.ID.ValueString()
-	}
-	isCreate := rulesetID == ""
-
-	// Build the same payload that apply would send
-	var (
-		dataBytes []byte
-		err       error
-	)
-	if isCreate || state == nil {
-		dataBytes, err = plan.MarshalJSON()
-	} else {
-		dataBytes, err = plan.MarshalJSONForUpdate(*state)
-	}
-	if err != nil {
-		return
-	}
-
 	res := new(http.Response)
 	requestOptions := []option.RequestOption{
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithQuery(dryRunQueryParam, "true"),
+		option.WithQuery("dry_run", "true"),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	}
 
-	if isCreate {
-		_, err = r.client.Rulesets.New(ctx, params, requestOptions...)
-	} else {
-		_, err = r.client.Rulesets.Update(
-			ctx,
-			rulesetID,
-			rulesets.RulesetUpdateParams{
-				AccountID: params.AccountID,
-				ZoneID:    params.ZoneID,
-			},
-			requestOptions...,
-		)
-	}
-	if err == nil {
-		return
-	}
-
-	addDryRunDiagnostic(diagnostics, err)
-}
-
-func (r *RulesetResource) validateDeleteWithDryRun(
-	ctx context.Context,
-	state *RulesetModel,
-	diagnostics *diag.Diagnostics,
-) {
-	// There is nothing to delete without a ruleset in state
-	if state == nil || state.ID.IsNull() || state.ID.IsUnknown() {
-		return
-	}
-
-	params := rulesets.RulesetDeleteParams{}
+	var err error
 	switch {
-	case !state.AccountID.IsNull() && !state.AccountID.IsUnknown():
-		params.AccountID = cloudflare.F(state.AccountID.ValueString())
-	case !state.ZoneID.IsNull() && !state.ZoneID.IsUnknown():
-		params.ZoneID = cloudflare.F(state.ZoneID.ValueString())
+	// The plan is absent only when the resource is being deleted
+	case plan == nil:
+		if state == nil || state.ID.IsNull() || state.ID.IsUnknown() {
+			return
+		}
+
+		params := rulesets.RulesetDeleteParams{}
+		if !state.AccountID.IsNull() {
+			params.AccountID = cloudflare.F(state.AccountID.ValueString())
+		} else {
+			params.ZoneID = cloudflare.F(state.ZoneID.ValueString())
+		}
+
+		err = r.client.Rulesets.Delete(ctx, state.ID.ValueString(), params, requestOptions...)
+
+		if res != nil && res.StatusCode == http.StatusNotFound {
+			return
+		}
+
+	// A plan that leaves the computed ID unknown is creating the ruleset
+	case plan.ID.IsUnknown():
+		dataBytes, marshalErr := plan.MarshalJSON()
+		if marshalErr != nil {
+			diagnostics.AddError("failed to serialize http request", marshalErr.Error())
+			return
+		}
+
+		params := rulesets.RulesetNewParams{}
+		if !plan.AccountID.IsNull() {
+			params.AccountID = cloudflare.F(plan.AccountID.ValueString())
+		} else {
+			params.ZoneID = cloudflare.F(plan.ZoneID.ValueString())
+		}
+
+		_, err = r.client.Rulesets.New(ctx, params,
+			append(requestOptions, option.WithRequestBody("application/json", dataBytes))...)
+
+	// Anything else is updating a ruleset that already exists
 	default:
-		return
+		var dataBytes []byte
+		var marshalErr error
+		if state == nil {
+			dataBytes, marshalErr = plan.MarshalJSON()
+		} else {
+			dataBytes, marshalErr = plan.MarshalJSONForUpdate(*state)
+		}
+		if marshalErr != nil {
+			diagnostics.AddError("failed to serialize http request", marshalErr.Error())
+			return
+		}
+
+		params := rulesets.RulesetUpdateParams{}
+		if !plan.AccountID.IsNull() {
+			params.AccountID = cloudflare.F(plan.AccountID.ValueString())
+		} else {
+			params.ZoneID = cloudflare.F(plan.ZoneID.ValueString())
+		}
+
+		_, err = r.client.Rulesets.Update(ctx, plan.ID.ValueString(), params,
+			append(requestOptions, option.WithRequestBody("application/json", dataBytes))...)
 	}
 
-	res := new(http.Response)
-	err := r.client.Rulesets.Delete(
-		ctx,
-		state.ID.ValueString(),
-		params,
-		option.WithQuery(dryRunQueryParam, "true"),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err == nil {
-		return
-	}
-
-	var apiErr *cloudflare.Error
-	if errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound {
-		return
-	}
-
-	addDryRunDiagnostic(diagnostics, err)
-}
-
-// addDryRunDiagnostic reports a 4xx (config rejected) as an error that blocks the plan
-// and anything else (API unreachable) as a warning
-func addDryRunDiagnostic(diagnostics *diag.Diagnostics, err error) {
-	var apiErr *cloudflare.Error
-	if errors.As(err, &apiErr) && apiErr.StatusCode >= 400 && apiErr.StatusCode < 500 {
+	if err != nil {
 		diagnostics.AddError("failed to make http request", err.Error())
-		return
 	}
-
-	diagnostics.AddWarning(
-		"Could not validate against the API",
-		"The planned configuration could not be validated, so errors in it may "+
-			"only be reported during apply.\n\n"+err.Error(),
-	)
-}
-
-// planIsKnownForDryRun reports whether enough of the plan is known to build a
-// request that the API can validate
-func planIsKnownForDryRun(plan *RulesetModel) bool {
-	if plan.AccountID.IsUnknown() || plan.ZoneID.IsUnknown() {
-		return false
-	}
-	if plan.AccountID.IsNull() && plan.ZoneID.IsNull() {
-		return false
-	}
-
-	if plan.Kind.IsUnknown() || plan.Name.IsUnknown() || plan.Phase.IsUnknown() {
-		return false
-	}
-	if plan.Description.IsUnknown() {
-		return false
-	}
-
-	return !plan.Rules.IsUnknown()
 }
