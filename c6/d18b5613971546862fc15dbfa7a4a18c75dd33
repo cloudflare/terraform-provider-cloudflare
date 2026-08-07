@@ -1,0 +1,19 @@
+.github/workflows/ci.yml
+  s_9cb006b030f5fd::t_e8cf6a25dba82b 21-29,59,79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c6d18b5613971546862fc15dbfa7a4a18c75dd33",
+  "prompts": {},
+  "sessions": {
+    "s_9cb006b030f5fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04ff8d518ffe893PX6qqInJ9Ve",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

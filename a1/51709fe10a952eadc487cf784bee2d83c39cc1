@@ -1,0 +1,440 @@
+docs/resources/zero_trust_access_identity_provider.md
+  s_9cb006b030f5fd::t_5d43da86e73299 55
+docs/resources/workers_kv.md
+  s_9cb006b030f5fd::t_5d43da86e73299 35
+docs/resources/zero_trust_device_posture_integration.md
+  s_9cb006b030f5fd::t_5d43da86e73299 37
+docs/resources/zero_trust_tunnel_cloudflared_virtual_network.md
+  s_9cb006b030f5fd::t_5d43da86e73299 33
+docs/data-sources/workers_scripts.md
+  s_9cb006b030f5fd::t_5d43da86e73299 52-56,89-135
+  s_9cb006b030f5fd::t_ed6d44d8b5dde7 136-137
+docs/data-sources/turnstile_widgets.md
+  s_9cb006b030f5fd::t_5d43da86e73299 65-69,73-76
+docs/data-sources/zero_trust_dlp_custom_prompt_topic.md
+  s_9cb006b030f5fd::t_5d43da86e73299 1-37
+docs/resources/zero_trust_network_hostname_route.md
+  s_9cb006b030f5fd::t_5d43da86e73299 32,35-37
+docs/resources/filter.md
+  s_9cb006b030f5fd::t_5d43da86e73299 42
+docs/resources/workers_route.md
+  s_9cb006b030f5fd::t_5d43da86e73299 32
+docs/resources/api_shield_operation.md
+  s_9cb006b030f5fd::t_5d43da86e73299 147
+docs/resources/zero_trust_access_infrastructure_target.md
+  s_9cb006b030f5fd::t_5d43da86e73299 36
+docs/resources/zero_trust_access_service_token.md
+  s_9cb006b030f5fd::t_5d43da86e73299 39
+docs/resources/cloudforce_one_request_message.md
+  s_9cb006b030f5fd::t_5d43da86e73299 30
+docs/resources/dns_zone_transfers_tsig.md
+  s_9cb006b030f5fd::t_5d43da86e73299 32
+docs/resources/zero_trust_device_custom_profile.md
+  s_9cb006b030f5fd::t_5d43da86e73299 59,62,77,120-130,144,146-149
+docs/data-sources/custom_csr.md
+  s_9cb006b030f5fd::t_5d43da86e73299 32-33,54-55
+  s_9cb006b030f5fd::t_e987e82d0658c4 56
+docs/resources/keyless_certificate.md
+  s_9cb006b030f5fd::t_5d43da86e73299 97
+docs/data-sources/api_token.md
+  s_9cb006b030f5fd::t_5d43da86e73299 53
+docs/data-sources/api_shield_operation.md
+  s_9cb006b030f5fd::t_5d43da86e73299 164
+docs/data-sources/zero_trust_access_service_token.md
+  s_9cb006b030f5fd::t_5d43da86e73299 39
+docs/resources/connectivity_directory_service.md
+  s_9cb006b030f5fd::t_5d43da86e73299 38
+docs/resources/waiting_room.md
+  s_9cb006b030f5fd::t_5d43da86e73299 60
+docs/resources/zero_trust_device_managed_networks.md
+  s_9cb006b030f5fd::t_5d43da86e73299 34
+docs/resources/dls_prefix_binding.md
+  s_9cb006b030f5fd::t_5d43da86e73299 5-6,11,13-15
+docs/data-sources/api_tokens.md
+  s_9cb006b030f5fd::t_5d43da86e73299 31
+docs/data-sources/zero_trust_access_ai_controls_mcp_portals.md
+  s_9cb006b030f5fd::t_5d43da86e73299 60,80-81,86-119
+  s_9cb006b030f5fd::t_01e24d9827c7be 120
+docs/resources/vulnerability_scanner_credential.md
+  s_9cb006b030f5fd::t_5d43da86e73299 30
+docs/data-sources/secrets_store_secrets.md
+  s_9cb006b030f5fd::t_5d43da86e73299 22,32-33,37,40,42-43,54-55,58,61
+docs/data-sources/snippet_rules.md
+  s_9cb006b030f5fd::t_5d43da86e73299 1-29
+docs/data-sources/pages_projects.md
+  s_9cb006b030f5fd::t_5d43da86e73299 90-91,527-528
+docs/data-sources/load_balancer.md
+  s_9cb006b030f5fd::t_5d43da86e73299 21-22
+docs/resources/zero_trust_device_subnet.md
+  s_9cb006b030f5fd::t_5d43da86e73299 33,44,49-57
+docs/resources/email_security_block_sender.md
+  s_9cb006b030f5fd::t_5d43da86e73299 33,35-38,40-43
+docs/resources/load_balancer_pool.md
+  s_9cb006b030f5fd::t_5d43da86e73299 69
+docs/resources/load_balancer_monitor.md
+  s_9cb006b030f5fd::t_5d43da86e73299 46,49-51
+docs/resources/client_certificate.md
+  s_9cb006b030f5fd::t_5d43da86e73299 37
+docs/data-sources/email_security_block_senders.md
+  s_9cb006b030f5fd::t_5d43da86e73299 60-63,65-68
+docs/resources/worker.md
+  s_9cb006b030f5fd::t_5d43da86e73299 57
+docs/resources/zero_trust_gateway_policy.md
+  s_9cb006b030f5fd::t_5d43da86e73299 64,119-121,145,205,222
+docs/resources/zero_trust_list.md
+  s_9cb006b030f5fd::t_5d43da86e73299 32
+docs/resources/pipeline_sink.md
+  s_9cb006b030f5fd::t_5d43da86e73299 76
+docs/resources/leaked_credential_check_rule.md
+  s_9cb006b030f5fd::t_5d43da86e73299 31-34
+docs/data-sources/zero_trust_dex_test.md
+  s_9cb006b030f5fd::t_5d43da86e73299 39,48
+docs/resources/zero_trust_risk_scoring_integration.md
+  s_9cb006b030f5fd::t_5d43da86e73299 32
+docs/data-sources/account_members.md
+  s_9cb006b030f5fd::t_5d43da86e73299 97
+docs/data-sources/zero_trust_dex_tests.md
+  s_9cb006b030f5fd::t_5d43da86e73299 52,61
+docs/resources/google_tag_gateway.md
+  s_9cb006b030f5fd::t_5d43da86e73299 6,13-15
+docs/resources/zero_trust_gateway_pacfile.md
+  s_9cb006b030f5fd::t_5d43da86e73299 33
+docs/resources/dns_firewall.md
+  s_9cb006b030f5fd::t_5d43da86e73299 43
+docs/resources/zone_setting.md
+  s_9cb006b030f5fd::t_5d43da86e73299 309
+docs/resources/token_validation_rules.md
+  s_9cb006b030f5fd::t_5d43da86e73299 55
+docs/resources/calls_sfu_app.md
+  s_9cb006b030f5fd::t_5d43da86e73299 28,31-33
+docs/data-sources/dls_prefix_bindings.md
+  s_9cb006b030f5fd::t_5d43da86e73299 5-6,11,13-14
+docs/data-sources/resource_groups.md
+  s_9cb006b030f5fd::t_5d43da86e73299 49
+docs/resources/web_analytics_rule.md
+  s_9cb006b030f5fd::t_5d43da86e73299 30
+docs/resources/address_map.md
+  s_9cb006b030f5fd::t_5d43da86e73299 34,37-39
+docs/resources/notification_policy.md
+  s_9cb006b030f5fd::t_5d43da86e73299 93
+docs/resources/stream.md
+  s_9cb006b030f5fd::t_5d43da86e73299 27,30-32
+docs/resources/zero_trust_access_tag.md
+  s_9cb006b030f5fd::t_5d43da86e73299 27
+docs/resources/zero_trust_dlp_dataset.md
+  s_9cb006b030f5fd::t_5d43da86e73299 34
+docs/resources/zero_trust_risk_behavior.md
+  s_9cb006b030f5fd::t_5d43da86e73299 36
+docs/resources/certificate_pack.md
+  s_9cb006b030f5fd::t_5d43da86e73299 48
+docs/data-sources/r2_bucket_sippy.md
+  s_9cb006b030f5fd::t_5d43da86e73299 54-55
+docs/data-sources/account_subscription.md
+  s_9cb006b030f5fd::t_5d43da86e73299 20-21,30-31,40,54
+docs/data-sources/worker_version.md
+  s_9cb006b030f5fd::t_5d43da86e73299 59-64,227-273
+  s_9cb006b030f5fd::t_b7c9fcfc875805 274-275
+docs/resources/cloudforce_one_request.md
+  s_9cb006b030f5fd::t_5d43da86e73299 32,35-37
+docs/resources/vulnerability_scanner_target_environment.md
+  s_9cb006b030f5fd::t_5d43da86e73299 31
+docs/data-sources/token_validation_configs.md
+  s_9cb006b030f5fd::t_5d43da86e73299 65,71
+docs/resources/web3_hostname.md
+  s_9cb006b030f5fd::t_5d43da86e73299 36
+docs/resources/workers_for_platforms_dispatch_namespace.md
+  s_9cb006b030f5fd::t_5d43da86e73299 29,32-34
+docs/resources/zero_trust_device_custom_profile_local_domain_fallback.md
+  s_9cb006b030f5fd::t_5d43da86e73299 34
+docs/resources/cloudforce_one_request_asset.md
+  s_9cb006b030f5fd::t_5d43da86e73299 32
+docs/resources/calls_turn_app.md
+  s_9cb006b030f5fd::t_5d43da86e73299 28,31-33
+docs/resources/image.md
+  s_9cb006b030f5fd::t_5d43da86e73299 37
+docs/resources/user_agent_blocking_rule.md
+  s_9cb006b030f5fd::t_5d43da86e73299 39
+docs/resources/waiting_room_event.md
+  s_9cb006b030f5fd::t_5d43da86e73299 49
+docs/resources/r2_bucket_sippy.md
+  s_9cb006b030f5fd::t_5d43da86e73299 80-81,85,87,89
+docs/resources/zero_trust_device_default_profile.md
+  s_9cb006b030f5fd::t_5d43da86e73299 67,110-120,134,136-139
+docs/resources/zero_trust_gateway_certificate.md
+  s_9cb006b030f5fd::t_5d43da86e73299 24,27-29
+docs/resources/magic_transit_site.md
+  s_9cb006b030f5fd::t_5d43da86e73299 40
+docs/resources/secrets_store.md
+  s_9cb006b030f5fd::t_5d43da86e73299 30-31,35-36
+docs/resources/zero_trust_device_settings.md
+  s_9cb006b030f5fd::t_5d43da86e73299 35,38-40
+docs/resources/dns_record.md
+  s_9cb006b030f5fd::t_5d43da86e73299 45,51,97,106
+docs/data-sources/secrets_store.md
+  s_9cb006b030f5fd::t_5d43da86e73299 30,35,39-40,42,49,51-52
+docs/resources/zone_dns_settings.md
+  s_9cb006b030f5fd::t_5d43da86e73299 51-54
+docs/resources/spectrum_application.md
+  s_9cb006b030f5fd::t_5d43da86e73299 52
+docs/resources/zone_lockdown.md
+  s_9cb006b030f5fd::t_5d43da86e73299 39
+docs/resources/schema_validation_settings.md
+  s_9cb006b030f5fd::t_5d43da86e73299 40
+docs/data-sources/token_validation_config.md
+  s_9cb006b030f5fd::t_5d43da86e73299 62,68
+docs/resources/stream_key.md
+  s_9cb006b030f5fd::t_5d43da86e73299 27
+docs/resources/zero_trust_dlp_predefined_profile.md
+  s_9cb006b030f5fd::t_5d43da86e73299 47
+docs/resources/zero_trust_dex_test.md
+  s_9cb006b030f5fd::t_5d43da86e73299 45
+docs/data-sources/spectrum_application.md
+  s_9cb006b030f5fd::t_5d43da86e73299 37
+docs/data-sources/zero_trust_access_service_tokens.md
+  s_9cb006b030f5fd::t_5d43da86e73299 48
+docs/data-sources/dls_prefix_binding.md
+  s_9cb006b030f5fd::t_5d43da86e73299 5-6,11,13-14
+docs/data-sources/load_balancers.md
+  s_9cb006b030f5fd::t_5d43da86e73299 20-21
+docs/resources/pages_project.md
+  s_9cb006b030f5fd::t_5d43da86e73299 231,385,541
+docs/resources/stream_live_input.md
+  s_9cb006b030f5fd::t_5d43da86e73299 41,44-46
+docs/resources/zero_trust_dlp_custom_entry.md
+  s_9cb006b030f5fd::t_5d43da86e73299 37
+docs/data-sources/zero_trust_access_ai_controls_mcp_servers.md
+  s_9cb006b030f5fd::t_5d43da86e73299 43,60-61,66-99
+  s_9cb006b030f5fd::t_e15e37af2bc3d9 100
+docs/resources/workers_script_subdomain.md
+  s_9cb006b030f5fd::t_5d43da86e73299 35
+docs/resources/email_routing_address.md
+  s_9cb006b030f5fd::t_5d43da86e73299 30
+docs/resources/magic_network_monitoring_rule.md
+  s_9cb006b030f5fd::t_5d43da86e73299 40
+docs/resources/zero_trust_dlp_predefined_entry.md
+  s_9cb006b030f5fd::t_5d43da86e73299 32
+docs/data-sources/pages_project.md
+  s_9cb006b030f5fd::t_5d43da86e73299 87-88,524-525
+docs/resources/sso_connector.md
+  s_9cb006b030f5fd::t_5d43da86e73299 32
+docs/resources/zero_trust_dns_location.md
+  s_9cb006b030f5fd::t_5d43da86e73299 65
+docs/resources/zero_trust_tunnel_cloudflared_route.md
+  s_9cb006b030f5fd::t_5d43da86e73299 33
+docs/resources/healthcheck.md
+  s_9cb006b030f5fd::t_5d43da86e73299 59
+docs/resources/zero_trust_access_policy.md
+  s_9cb006b030f5fd::t_5d43da86e73299 40-41,71,92-93,95-96
+docs/data-sources/google_tag_gateway.md
+  s_9cb006b030f5fd::t_5d43da86e73299 6,13-15
+docs/resources/web_analytics_site.md
+  s_9cb006b030f5fd::t_5d43da86e73299 30,33-35
+docs/resources/ai_gateway_dynamic_routing.md
+  s_9cb006b030f5fd::t_5d43da86e73299 40
+docs/resources/worker_version.md
+  s_9cb006b030f5fd::t_5d43da86e73299 49-72,134-139,320-369
+  s_9cb006b030f5fd::t_81ad94da43ac3d 370-371
+docs/resources/ai_search_instance.md
+  s_9cb006b030f5fd::t_5d43da86e73299 119,167
+docs/data-sources/resource_group.md
+  s_9cb006b030f5fd::t_5d43da86e73299 39
+docs/resources/zero_trust_dlp_integration_entry.md
+  s_9cb006b030f5fd::t_5d43da86e73299 32
+docs/data-sources/secrets_store_secret.md
+  s_9cb006b030f5fd::t_5d43da86e73299 31-32,37,41-43,45,54,56,58-59
+docs/resources/account_member.md
+  s_9cb006b030f5fd::t_5d43da86e73299 33
+docs/resources/zero_trust_gateway_proxy_endpoint.md
+  s_9cb006b030f5fd::t_5d43da86e73299 27
+docs/data-sources/zero_trust_access_ai_controls_mcp_server.md
+  s_9cb006b030f5fd::t_5d43da86e73299 36,52-53,66-98
+  s_9cb006b030f5fd::t_477eea16686ae1 99-100
+docs/resources/email_routing_settings.md
+  s_9cb006b030f5fd::t_5d43da86e73299 27
+docs/resources/stream_audio_track.md
+  s_9cb006b030f5fd::t_5d43da86e73299 33
+docs/data-sources/worker_versions.md
+  s_9cb006b030f5fd::t_5d43da86e73299 62-67,230-276
+  s_9cb006b030f5fd::t_13e0bf51bf8297 277-278
+docs/resources/list.md
+  s_9cb006b030f5fd::t_5d43da86e73299 49
+docs/resources/zero_trust_access_ai_controls_mcp_portal.md
+  s_9cb006b030f5fd::t_5d43da86e73299 52
+docs/resources/zero_trust_access_custom_page.md
+  s_9cb006b030f5fd::t_5d43da86e73299 32
+docs/resources/pipeline.md
+  s_9cb006b030f5fd::t_5d43da86e73299 31
+docs/resources/email_routing_rule.md
+  s_9cb006b030f5fd::t_5d43da86e73299 45
+docs/resources/account_dns_settings_internal_view.md
+  s_9cb006b030f5fd::t_5d43da86e73299 31
+docs/resources/stream_download.md
+  s_9cb006b030f5fd::t_5d43da86e73299 31
+docs/resources/workers_script.md
+  s_9cb006b030f5fd::t_5d43da86e73299 64-68,75-79,147
+docs/data-sources/zero_trust_device_subnet.md
+  s_9cb006b030f5fd::t_5d43da86e73299 38,47-55
+docs/resources/workers_cron_trigger.md
+  s_9cb006b030f5fd::t_5d43da86e73299 33
+docs/data-sources/user_groups.md
+  s_9cb006b030f5fd::t_5d43da86e73299 97
+docs/resources/vulnerability_scanner_credential_set.md
+  s_9cb006b030f5fd::t_5d43da86e73299 27
+docs/resources/workflow.md
+  s_9cb006b030f5fd::t_5d43da86e73299 25-28,43,50,66-73
+  s_9cb006b030f5fd::t_77c62f6445a2ee 74
+docs/resources/token_validation_config.md
+  s_9cb006b030f5fd::t_5d43da86e73299 25-29,44,70,73,80
+docs/data-sources/secrets_stores.md
+  s_9cb006b030f5fd::t_5d43da86e73299 29,33,36-37,48-50,52
+docs/resources/zero_trust_device_ip_profile.md
+  s_9cb006b030f5fd::t_5d43da86e73299 35
+docs/resources/zero_trust_dlp_entry.md
+  s_9cb006b030f5fd::t_5d43da86e73299 37
+docs/resources/zero_trust_tunnel_warp_connector.md
+  s_9cb006b030f5fd::t_5d43da86e73299 33
+docs/resources/zero_trust_tunnel_cloudflared_config.md
+  s_9cb006b030f5fd::t_5d43da86e73299 83
+docs/resources/account_dns_settings.md
+  s_9cb006b030f5fd::t_5d43da86e73299 51,54-56
+docs/resources/email_security_impersonation_registry.md
+  s_9cb006b030f5fd::t_5d43da86e73299 32
+docs/resources/magic_network_monitoring_configuration.md
+  s_9cb006b030f5fd::t_5d43da86e73299 38
+docs/resources/dns_zone_transfers_acl.md
+  s_9cb006b030f5fd::t_5d43da86e73299 31
+docs/resources/page_rule.md
+  s_9cb006b030f5fd::t_5d43da86e73299 74
+docs/resources/dns_zone_transfers_incoming.md
+  s_9cb006b030f5fd::t_5d43da86e73299 37
+docs/data-sources/zero_trust_dlp_custom_prompt_topics.md
+  s_9cb006b030f5fd::t_5d43da86e73299 1-47
+docs/resources/pages_domain.md
+  s_9cb006b030f5fd::t_5d43da86e73299 33
+docs/data-sources/account_member.md
+  s_9cb006b030f5fd::t_5d43da86e73299 96
+docs/data-sources/ai_search_instance.md
+  s_9cb006b030f5fd::t_5d43da86e73299 17,20-22,38,126,205
+docs/data-sources/account_tokens.md
+  s_9cb006b030f5fd::t_5d43da86e73299 33
+docs/resources/load_balancer.md
+  s_9cb006b030f5fd::t_5d43da86e73299 23,32,79-84,140,343
+docs/resources/stream_watermark.md
+  s_9cb006b030f5fd::t_5d43da86e73299 33,36-38
+docs/resources/zero_trust_access_ai_controls_mcp_server.md
+  s_9cb006b030f5fd::t_5d43da86e73299 26,59,61,68,109-141
+  s_9cb006b030f5fd::t_5c624e7759f337 142-143
+docs/resources/zero_trust_device_posture_rule.md
+  s_9cb006b030f5fd::t_5d43da86e73299 43,58
+docs/resources/turnstile_widget.md
+  s_9cb006b030f5fd::t_5d43da86e73299 39,62-66,68-71
+docs/resources/workers_custom_domain.md
+  s_9cb006b030f5fd::t_5d43da86e73299 33
+docs/resources/notification_policy_webhooks.md
+  s_9cb006b030f5fd::t_5d43da86e73299 35
+docs/resources/api_shield_operation_schema_validation_settings.md
+  s_9cb006b030f5fd::t_5d43da86e73299 37
+docs/resources/api_shield.md
+  s_9cb006b030f5fd::t_5d43da86e73299 137
+docs/resources/custom_hostname.md
+  s_9cb006b030f5fd::t_5d43da86e73299 22-26,104
+docs/resources/leaked_credential_check.md
+  s_9cb006b030f5fd::t_5d43da86e73299 30-33
+docs/resources/pipeline_stream.md
+  s_9cb006b030f5fd::t_5d43da86e73299 62
+docs/data-sources/zero_trust_access_ai_controls_mcp_portal.md
+  s_9cb006b030f5fd::t_5d43da86e73299 60,80-81,86-119
+  s_9cb006b030f5fd::t_1395a94b15db0a 120
+docs/resources/workers_deployment.md
+  s_9cb006b030f5fd::t_5d43da86e73299 39
+docs/data-sources/ai_search_instances.md
+  s_9cb006b030f5fd::t_5d43da86e73299 123
+docs/data-sources/api_shield_operations.md
+  s_9cb006b030f5fd::t_5d43da86e73299 165
+docs/data-sources/zero_trust_device_posture_rule.md
+  s_9cb006b030f5fd::t_5d43da86e73299 35
+docs/data-sources/account_token.md
+  s_9cb006b030f5fd::t_5d43da86e73299 55
+docs/data-sources/workers_custom_domains.md
+  s_9cb006b030f5fd::t_5d43da86e73299 32,35-37
+docs/data-sources/zero_trust_gateway_policy.md
+  s_9cb006b030f5fd::t_5d43da86e73299 72,81,98
+docs/data-sources/hyperdrive_config.md
+  s_9cb006b030f5fd::t_5d43da86e73299 50
+docs/resources/account_subscription.md
+  s_9cb006b030f5fd::t_5d43da86e73299 20,39
+docs/data-sources/dns_record.md
+  s_9cb006b030f5fd::t_5d43da86e73299 42,160,169
+docs/resources/image_variant.md
+  s_9cb006b030f5fd::t_5d43da86e73299 37
+docs/resources/dns_zone_transfers_peer.md
+  s_9cb006b030f5fd::t_5d43da86e73299 30
+docs/resources/secrets_store_secret.md
+  s_9cb006b030f5fd::t_5d43da86e73299 30-31,35-37,41,44
+docs/resources/ai_search_token.md
+  s_9cb006b030f5fd::t_5d43da86e73299 19
+docs/resources/custom_ssl.md
+  s_9cb006b030f5fd::t_5d43da86e73299 96
+docs/resources/queue.md
+  s_9cb006b030f5fd::t_5d43da86e73299 32
+docs/resources/email_security_trusted_domains.md
+  s_9cb006b030f5fd::t_5d43da86e73299 34
+docs/resources/stream_webhook.md
+  s_9cb006b030f5fd::t_5d43da86e73299 28,31-33
+docs/index.md
+  s_9cb006b030f5fd::t_5d43da86e73299 48-52
+docs/resources/observatory_scheduled_test.md
+  s_9cb006b030f5fd::t_5d43da86e73299 31
+docs/resources/r2_data_catalog.md
+  s_9cb006b030f5fd::t_5d43da86e73299 31
+docs/data-sources/zero_trust_gateway_policies.md
+  s_9cb006b030f5fd::t_5d43da86e73299 75,84,101
+docs/resources/workers_kv_namespace.md
+  s_9cb006b030f5fd::t_5d43da86e73299 31
+docs/resources/registrar_domain.md
+  s_9cb006b030f5fd::t_5d43da86e73299 29
+docs/resources/zero_trust_dex_rule.md
+  s_9cb006b030f5fd::t_5d43da86e73299 34
+docs/resources/zero_trust_dlp_custom_profile.md
+  s_9cb006b030f5fd::t_5d43da86e73299 51
+docs/resources/zero_trust_tunnel_cloudflared.md
+  s_9cb006b030f5fd::t_5d43da86e73299 36
+docs/resources/d1_database.md
+  s_9cb006b030f5fd::t_5d43da86e73299 35
+docs/data-sources/turnstile_widget.md
+  s_9cb006b030f5fd::t_5d43da86e73299 44-48,52-55
+docs/data-sources/hyperdrive_configs.md
+  s_9cb006b030f5fd::t_5d43da86e73299 53
+docs/data-sources/user_group.md
+  s_9cb006b030f5fd::t_5d43da86e73299 96
+docs/data-sources/zero_trust_device_posture_rules.md
+  s_9cb006b030f5fd::t_5d43da86e73299 38
+docs/resources/cloudforce_one_request_priority.md
+  s_9cb006b030f5fd::t_5d43da86e73299 33
+docs/resources/byo_ip_prefix.md
+  s_9cb006b030f5fd::t_5d43da86e73299 38
+docs/resources/list_item.md
+  s_9cb006b030f5fd::t_5d43da86e73299 31
+docs/resources/hyperdrive_config.md
+  s_9cb006b030f5fd::t_5d43da86e73299 47,66
+docs/resources/r2_bucket.md
+  s_9cb006b030f5fd::t_5d43da86e73299 31
+docs/data-sources/email_security_block_sender.md
+  s_9cb006b030f5fd::t_5d43da86e73299 42-45,47-50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a151709fe10a952eadc487cf784bee2d83c39cc1",
+  "prompts": {},
+  "sessions": {
+    "s_9cb006b030f5fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04ff8d518ffe893PX6qqInJ9Ve",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

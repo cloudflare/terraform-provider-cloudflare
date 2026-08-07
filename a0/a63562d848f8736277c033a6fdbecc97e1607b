@@ -1,0 +1,76 @@
+internal/services/regional_hostname/list_data_source_model.go
+  s_9cb006b030f5fd::t_7b1f0dbeb71a7c 8-9
+internal/services/zero_trust_access_policy/model.go
+  s_9cb006b030f5fd::t_b4741d2da3454a 8,19,23,27,32
+internal/services/turnstile_widget/model.go
+  s_9cb006b030f5fd::t_3759bc9fa1e7b0 25
+  s_9cb006b030f5fd::t_086aec884edc6d 22-24
+internal/services/zero_trust_gateway_policy/list_data_source_schema.go
+  s_9cb006b030f5fd::t_2c9fcbb4b0746e 71
+  s_9cb006b030f5fd::t_f5c61b07a3456c 25
+internal/services/zero_trust_device_custom_profile/model.go
+  s_9cb006b030f5fd::t_0e2af73cb2b85b 41
+  s_9cb006b030f5fd::t_d7b0c5e9de7dea 81-82
+internal/services/turnstile_widget/schema.go
+  s_9cb006b030f5fd::t_acf59039b3d89d 13,94,96
+  s_9cb006b030f5fd::t_148450a1349014 71,76,89
+internal/services/zero_trust_organization/normalizations.go
+  s_9cb006b030f5fd::t_1dabfdd6074a92 102
+  s_9cb006b030f5fd::t_1958b5038eea9f 23-30,80-82
+  s_9cb006b030f5fd::t_20fdff4d1f9965 83
+internal/services/zero_trust_device_default_profile/schema.go
+  s_9cb006b030f5fd::t_5d3492019c51c5 135-137,139-141
+internal/services/dns_record/resource.go
+  s_9cb006b030f5fd::t_579ca83dc1c9cb 102-105,155-158,201-204,277-280
+  s_9cb006b030f5fd::t_d06d2f030df5ed 67-74,172-173,205-206
+internal/services/zero_trust_gateway_policy/schema.go
+  s_9cb006b030f5fd::t_64483afb2f0f64 73
+internal/services/zero_trust_device_default_profile/model.go
+  s_9cb006b030f5fd::t_35acac7c2e4b78 35
+  s_9cb006b030f5fd::t_835ea5b5d47024 76-77
+internal/services/regional_hostname/list_data_source.go
+  s_9cb006b030f5fd::t_e030cd3d4dd47f 9
+internal/provider.go
+  s_9cb006b030f5fd::t_08e3eacf04dd8b 1051
+internal/services/load_balancer_pool/resource.go
+  s_9cb006b030f5fd::t_448af532dd0657 34-45
+  s_9cb006b030f5fd::t_b62be6c21f1e70 154,169,196
+internal/services/regional_hostname/resource_test.go
+  s_9cb006b030f5fd::t_bfd6630f1a671a 9-11
+internal/services/zero_trust_device_custom_profile/schema.go
+  s_9cb006b030f5fd::t_805f10ffa1b672 158-161,163-166
+internal/services/zero_trust_access_application/resource_test.go
+  s_9cb006b030f5fd::t_7eade93d25f89b 2374
+internal/services/pages_project/schema.go
+  s_9cb006b030f5fd::t_eea12ff96788b5 15,17-18,203-205,231-233,239-241,297-299,456-458,484-486,492-494,550-552,693-695,700-702,707-709,714-716,721-723,728-730,735-737,744-746
+  s_9cb006b030f5fd::t_81f74b626f573a 60,112,118,128,134
+internal/services/regional_hostname/data_source.go
+  s_9cb006b030f5fd::t_cc64a10b703312 11-12
+internal/services/zero_trust_gateway_policy/data_source_schema.go
+  s_9cb006b030f5fd::t_f5c61b07a3456c 33
+  s_9cb006b030f5fd::t_e75fb8303bc9ee 123
+internal/services/regional_hostname/data_source_model.go
+  s_9cb006b030f5fd::t_25b81b7a375563 8-9
+internal/services/zero_trust_device_default_profile/migration/v500/model.go
+  s_9cb006b030f5fd::t_35acac7c2e4b78 44-62,64-70
+  s_9cb006b030f5fd::t_d13cf449a7345d 63
+  s_9cb006b030f5fd::t_78d8f789a95dd7 86-87
+internal/services/regional_hostname/resource.go
+  s_9cb006b030f5fd::t_abc2af301a9ec5 11-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a0a63562d848f8736277c033a6fdbecc97e1607b",
+  "prompts": {},
+  "sessions": {
+    "s_9cb006b030f5fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04ff8d518ffe893PX6qqInJ9Ve",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

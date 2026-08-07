@@ -1,0 +1,53 @@
+internal/services/regional_hostname/resource_test.go
+  s_9cb006b030f5fd::t_701e60e43da132 9-11
+internal/services/load_balancer_pool/resource.go
+  s_9cb006b030f5fd::t_701e60e43da132 34-45,154,169,196
+internal/services/regional_hostname/data_source.go
+  s_9cb006b030f5fd::t_701e60e43da132 11-12
+internal/services/pages_project/schema.go
+  s_9cb006b030f5fd::t_701e60e43da132 57,109,115,125,131
+internal/provider.go
+  s_9cb006b030f5fd::t_701e60e43da132 1051
+internal/services/regional_hostname/data_source_model.go
+  s_9cb006b030f5fd::t_701e60e43da132 8-9
+internal/services/dns_record/resource.go
+  s_9cb006b030f5fd::t_701e60e43da132 94-97,147-150,191-194,265-268
+internal/services/zero_trust_gateway_policy/schema.go
+  s_9cb006b030f5fd::t_701e60e43da132 73
+internal/services/regional_hostname/list_data_source_model.go
+  s_9cb006b030f5fd::t_701e60e43da132 8-9
+internal/services/regional_hostname/resource.go
+  s_9cb006b030f5fd::t_701e60e43da132 11-13
+internal/services/regional_hostname/list_data_source.go
+  s_9cb006b030f5fd::t_701e60e43da132 9
+internal/services/zero_trust_device_custom_profile/schema.go
+  s_9cb006b030f5fd::t_701e60e43da132 158-161,163-166
+internal/services/zero_trust_gateway_policy/list_data_source_schema.go
+  s_9cb006b030f5fd::t_701e60e43da132 25,71
+internal/services/zero_trust_organization/schema.go
+  s_9cb006b030f5fd::t_701e60e43da132 234
+internal/services/turnstile_widget/model.go
+  s_9cb006b030f5fd::t_701e60e43da132 25
+internal/services/zero_trust_gateway_policy/data_source_schema.go
+  s_9cb006b030f5fd::t_701e60e43da132 33,123
+internal/services/turnstile_widget/schema.go
+  s_9cb006b030f5fd::t_701e60e43da132 13,91,93
+internal/services/zero_trust_access_policy/model.go
+  s_9cb006b030f5fd::t_701e60e43da132 8,19,23,27,32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "708ec46754ae13bf0349d3a413f0134ffa9e8224",
+  "prompts": {},
+  "sessions": {
+    "s_9cb006b030f5fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04ff8d518ffe893PX6qqInJ9Ve",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

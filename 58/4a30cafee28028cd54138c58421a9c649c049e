@@ -1,0 +1,19 @@
+internal/services/bot_management/resource.go
+  s_f119145cb25ac8::t_03a409406e9a61 7,67-69,74,89,91-92,97-99,122-124,129,144,146-147,152-155,188,190-191,196-198,237,239-240,245-247
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "584a30cafee28028cd54138c58421a9c649c049e",
+  "prompts": {},
+  "sessions": {
+    "s_f119145cb25ac8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_057147eaeffe19iC3dy7WsxHbs",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
