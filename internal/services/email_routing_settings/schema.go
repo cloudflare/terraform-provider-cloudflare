@@ -72,6 +72,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"support_subaddress": schema.BoolAttribute{
+				Description: "Whether subaddressing (RFC 5233 plus-addressing) is enabled for this zone's Email Routing.",
+				Optional:    true,
+			},
 			"tag": schema.StringAttribute{
 				Description:        "Email Routing settings tag. (Deprecated, replaced by Email Routing settings identifier)",
 				Computed:           true,
