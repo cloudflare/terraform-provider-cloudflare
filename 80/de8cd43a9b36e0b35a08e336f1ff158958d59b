@@ -1,0 +1,21 @@
+internal/acctest/acctest.go
+  s_70b28e1496da6f::t_50e87a1aa287d6 336-345
+internal/services/zone/resource_generated_test.go
+  s_70b28e1496da6f::t_cd617b4996f39b 1-86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "80de8cd43a9b36e0b35a08e336f1ff158958d59b",
+  "prompts": {},
+  "sessions": {
+    "s_70b28e1496da6f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_08ec68c95ffeVJI33VYaC2NtWE",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}

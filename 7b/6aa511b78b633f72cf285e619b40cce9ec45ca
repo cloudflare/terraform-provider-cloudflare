@@ -1,0 +1,45 @@
+internal/services/hyperdrive_config/migration/v500/model.go
+  s_9cb006b030f5fd::t_cd15c830b5eb08 43
+internal/services/secrets_store_secret/model.go
+  s_9cb006b030f5fd::t_6ae7dc63484a98 25,28
+internal/services/zero_trust_gateway_policy/migration/v500/model.go
+  s_9cb006b030f5fd::t_ad3a0cd7c21616 243
+  s_9cb006b030f5fd::t_de369fd2fe77ba 226
+internal/services/secrets_store/resource_test.go
+  s_9cb006b030f5fd::t_41873ffe8e4854 46-49,51-54
+internal/services/zero_trust_access_policy/migration/v500/model.go
+  s_9cb006b030f5fd::t_53b1be565e6882 4,152-155
+internal/services/workers_custom_domain/model.go
+  s_9cb006b030f5fd::t_b019c2c1610780 22
+internal/services/zero_trust_gateway_policy/model.go
+  s_9cb006b030f5fd::t_943c45b96784a1 22,69
+internal/services/worker_version/migrations.go
+  s_9cb006b030f5fd::t_fc0f4f176b98e8 36
+internal/services/zero_trust_dns_location/model.go
+  s_9cb006b030f5fd::t_27cf13ad11fc76 20
+  s_9cb006b030f5fd::t_9bde10c3e51ea8 21
+internal/services/secrets_store_secret/resource_test.go
+  s_9cb006b030f5fd::t_e8d9f954e07406 95-98,101-104
+internal/services/r2_bucket_sippy/schema.go
+  s_9cb006b030f5fd::t_bfdd329824bc80 86
+internal/services/pages_project/model.go
+  s_9cb006b030f5fd::t_851994bc76dd37 21,45-50,62-63,65-66
+internal/services/workers_custom_domain/list_data_source_schema.go
+  s_9cb006b030f5fd::t_56a286a2c20f1e 29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "7b6aa511b78b633f72cf285e619b40cce9ec45ca",
+  "prompts": {},
+  "sessions": {
+    "s_9cb006b030f5fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04ff8d518ffe893PX6qqInJ9Ve",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

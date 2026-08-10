@@ -1,0 +1,23 @@
+internal/services/ai_gateway_dynamic_routing/custom.go
+  s_1a802df27b92f2::t_959a42ea45c3bd 1-20
+internal/services/ai_gateway_dynamic_routing/resource.go
+  s_1a802df27b92f2::t_53bf150e104463 190-192
+  s_1a802df27b92f2::t_a1e868fa122236 122,139,144
+  s_1a802df27b92f2::t_2a5d7579a4635e 158-160
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "73ed25f0618988b805dba6ecb77935d2ae8bf1da",
+  "prompts": {},
+  "sessions": {
+    "s_1a802df27b92f2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_012e31c1fffeSp6jX62N5TbO00",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

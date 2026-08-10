@@ -1,0 +1,23 @@
+internal/services/r2_bucket/data_source_schema.go
+  s_9a5e41eadbedcf::t_9207e44ed7a4b0 36,43
+docs/data-sources/r2_bucket.md
+  s_9a5e41eadbedcf::t_3b2da34219671d 37
+internal/services/r2_bucket/schema.go
+  s_9a5e41eadbedcf::t_e5b70d9ce6857d 74-75,82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e6e5ac3068213c93a066db4ac114ca9ad65251fd",
+  "prompts": {},
+  "sessions": {
+    "s_9a5e41eadbedcf": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_05bb685bbffeJkfb4ykHEjoifG",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

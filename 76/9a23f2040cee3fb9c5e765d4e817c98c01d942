@@ -1,0 +1,32 @@
+internal/services/argo_smart_routing/testdata/datasource_basic.tf
+  s_5cd56eaa1b28e5::t_d9735cb46005ff 1-10
+internal/services/argo_tiered_caching/testdata/invalid_value.tf
+  s_5cd56eaa1b28e5::t_2184b5a30f231d 1-4
+internal/services/argo_smart_routing/resource_test.go
+  s_5cd56eaa1b28e5::t_f155fdd02d2314 16
+  s_5cd56eaa1b28e5::t_72102c394c4f6e 59-62
+  s_5cd56eaa1b28e5::t_22a7b57e2eb814 107
+  s_5cd56eaa1b28e5::t_712fc48af4d46c 132-167
+internal/services/argo_tiered_caching/resource_test.go
+  s_5cd56eaa1b28e5::t_5ee3f75938f7ed 7
+  s_5cd56eaa1b28e5::t_baf112beb743e1 47,61-69,78-87
+  s_5cd56eaa1b28e5::t_86f98c23a8e2df 106-128,137
+internal/services/argo_tiered_caching/data_source_test.go
+  s_5cd56eaa1b28e5::t_d925d65af1decf 24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "769a23f2040cee3fb9c5e765d4e817c98c01d942",
+  "prompts": {},
+  "sessions": {
+    "s_5cd56eaa1b28e5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_093e8996affejS9uOkNEJzagHJ",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Sarah Sicard <ssicard@cloudflare.com>"
+    }
+  }
+}

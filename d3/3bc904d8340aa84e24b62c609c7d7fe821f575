@@ -1,0 +1,19 @@
+.terraform-registry
+  s_4c0d84a1d48ad6::t_2875318efda321 1-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d33bc904d8340aa84e24b62c609c7d7fe821f575",
+  "prompts": {},
+  "sessions": {
+    "s_4c0d84a1d48ad6": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_074818d64ffe3KOSDg38T6c0nV",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Sarah Sicard <ssicard@cloudflare.com>"
+    }
+  }
+}

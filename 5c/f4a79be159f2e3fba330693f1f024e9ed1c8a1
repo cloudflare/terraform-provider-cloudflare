@@ -1,0 +1,24 @@
+internal/services/workers_custom_domain/testdata/workerdomainattach_different_service.tf
+  s_d5173aca1a5d2d::t_2ded0c29c7aea6 1-6
+internal/services/workers_custom_domain/testdata/workerdomainattach_zoneid_change.tf
+  s_d5173aca1a5d2d::t_c2c48bbe745c0f 1-6
+internal/services/workers_custom_domain/resource_test.go
+  s_d5173aca1a5d2d::t_720b92e57bd501 117-350
+  s_d5173aca1a5d2d::t_6442c67604aa14 489-496
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5cf4a79be159f2e3fba330693f1f024e9ed1c8a1",
+  "prompts": {},
+  "sessions": {
+    "s_d5173aca1a5d2d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_09827af99ffew1WhbBj4Bh26eK",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Sarah Sicard <ssicard@cloudflare.com>"
+    }
+  }
+}

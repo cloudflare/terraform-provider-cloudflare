@@ -1,0 +1,20 @@
+internal/services/zero_trust_access_service_token/resource.go
+  s_6095cb5c4d3996::t_e43dc6410e5916 286-298
+  s_6095cb5c4d3996::t_6a812da09aacf6 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d58607a04893bf0dd63e239179ce2fe55f14949f",
+  "prompts": {},
+  "sessions": {
+    "s_6095cb5c4d3996": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_07a72a000ffe0ch15HyBLq4u00",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}

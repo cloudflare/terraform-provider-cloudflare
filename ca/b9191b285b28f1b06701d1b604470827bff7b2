@@ -1,0 +1,19 @@
+internal/services/ai_gateway_dynamic_routing/custom_test.go
+  s_1a802df27b92f2::t_18a4a88dd7e1ab 1-107
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "cab9191b285b28f1b06701d1b604470827bff7b2",
+  "prompts": {},
+  "sessions": {
+    "s_1a802df27b92f2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_012e31c1fffeSp6jX62N5TbO00",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
