@@ -16,4 +16,7 @@ func TestFlagshipFlagDataSourceModelSchemaParity(t *testing.T) {
 	schema := flagship_flag.DataSourceSchema(context.TODO())
 	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
 	errs.Report(t)
+	if _, ok := schema.Attributes["flag_key"]; ok {
+		t.Fatal("flag_key remains in the data source schema")
+	}
 }
