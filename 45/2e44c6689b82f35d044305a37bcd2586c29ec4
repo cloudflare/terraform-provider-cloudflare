@@ -1,0 +1,21 @@
+internal/services/account/list_data_source.go
+  s_c79743bbe8d7e5::t_8cec9c48a33b35 76-80,82-92
+internal/services/account/data_source_test.go
+  s_c79743bbe8d7e5::t_1ac504764923e7 57-106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "452e44c6689b82f35d044305a37bcd2586c29ec4",
+  "prompts": {},
+  "sessions": {
+    "s_c79743bbe8d7e5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_012e7c2dfffej38Bmvgs15gMTN",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
