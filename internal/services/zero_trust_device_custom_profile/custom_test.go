@@ -215,3 +215,63 @@ func TestNormalizeSplitTunnelList_NoChangeWhenAllKnown(t *testing.T) {
 		t.Error("expected unchanged list when all attributes are known")
 	}
 }
+
+// A host entry must not inherit `address` from the state entry that happens to
+// share its index. The two are mutually exclusive and the API rejects the whole
+// request with "cannot update split tunnels: host and Address both cannot be
+// present", so an index collision fails the apply rather than costing an extra
+// plan-apply cycle.
+func TestNormalizeSplitTunnelList_HostEntryDoesNotInheritAddressFromState(t *testing.T) {
+	ctx := context.Background()
+
+	// User prepends a host entry to a list that previously held only addresses.
+	planEntries := []ZeroTrustDeviceCustomProfileIncludeModel{
+		{
+			Address:     types.StringUnknown(),
+			Description: types.StringValue("Example Host"),
+			Host:        types.StringValue("example.com"),
+		},
+		{
+			Address:     types.StringValue("172.64.128.0/20"),
+			Description: types.StringValue("Gateway initial resolved IPs"),
+			Host:        types.StringUnknown(),
+		},
+	}
+	planList := customfield.NewObjectListMust(ctx, planEntries)
+
+	// State holds only the address entry, so index 0 is of the other kind.
+	stateEntries := []ZeroTrustDeviceCustomProfileIncludeModel{
+		{
+			Address:     types.StringValue("172.64.128.0/20"),
+			Description: types.StringValue("Gateway initial resolved IPs"),
+			Host:        types.StringNull(),
+		},
+	}
+	stateList := customfield.NewObjectListMust(ctx, stateEntries)
+
+	result, diags := normalizeSplitTunnelList(ctx, planList, stateList)
+	if diags.HasError() {
+		t.Fatalf("unexpected diagnostics: %v", diags)
+	}
+
+	elements := result.Elements()
+	if len(elements) != 2 {
+		t.Fatalf("expected 2 elements, got %d", len(elements))
+	}
+
+	host := elements[0].(types.Object).Attributes()
+	if !host["address"].IsNull() {
+		t.Errorf("expected address to be null on a host entry, got %v", host["address"])
+	}
+	if host["host"].(types.String).ValueString() != "example.com" {
+		t.Errorf("expected host to be preserved, got %v", host["host"])
+	}
+
+	address := elements[1].(types.Object).Attributes()
+	if !address["host"].IsNull() {
+		t.Errorf("expected host to be null on an address entry, got %v", address["host"])
+	}
+	if address["address"].(types.String).ValueString() != "172.64.128.0/20" {
+		t.Errorf("expected address to be preserved, got %v", address["address"])
+	}
+}
