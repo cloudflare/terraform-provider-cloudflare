@@ -43,7 +43,6 @@ type SourceV4RuleModel struct {
 // Note: In v4, this was a ListNestedBlock (MaxItems:1), stored as array in state.
 type SourceV4ActionParametersModel struct {
 	AdditionalCacheablePorts types.Set                    `tfsdk:"additional_cacheable_ports"`
-	AssetName                types.String                 `tfsdk:"asset_name"`
 	AutomaticHTTPSRewrites   types.Bool                   `tfsdk:"automatic_https_rewrites"`
 	AutoMinify               []*SourceV4AutoMinifyModel   `tfsdk:"autominify"`
 	BIC                      types.Bool                   `tfsdk:"bic"`
@@ -336,7 +335,6 @@ type TargetV5ActionParametersModel struct {
 	SNI          *TargetV5SNIModel          `tfsdk:"sni"`
 	ServeStale   *TargetV5ServeStaleModel   `tfsdk:"serve_stale"`
 	URI          *TargetV5URIModel          `tfsdk:"uri"`
-	Vary         *TargetV5VaryModel         `tfsdk:"vary"`
 
 	// Nested object lists
 	Algorithms               []*TargetV5AlgorithmModel        `tfsdk:"algorithms"`
@@ -587,21 +585,6 @@ type TargetV5TargetURLModel struct {
 
 type TargetV5ServeStaleModel struct {
 	DisableStaleWhileUpdating types.Bool `tfsdk:"disable_stale_while_updating"`
-}
-
-type TargetV5VaryModel struct {
-	Default *TargetV5VaryDefaultModel           `tfsdk:"default"`
-	Headers map[string]*TargetV5VaryHeaderModel `tfsdk:"headers"`
-}
-
-type TargetV5VaryDefaultModel struct {
-	Action types.String `tfsdk:"action"`
-}
-
-type TargetV5VaryHeaderModel struct {
-	Action     types.String   `tfsdk:"action"`
-	MediaTypes []types.String `tfsdk:"media_types"`
-	Languages  []types.String `tfsdk:"languages"`
 }
 
 // Cache control directive models for set_cache_settings action

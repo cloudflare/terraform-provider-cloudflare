@@ -44,7 +44,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"endpoint": schema.StringAttribute{
@@ -267,7 +267,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"learned_available": schema.BoolAttribute{
-								Description: "Deprecated. Always false.",
+								Description: "True if a Cloudflare-provided learned schema is available for this endpoint.",
 								Computed:    true,
 							},
 							"mitigation_action": schema.StringAttribute{

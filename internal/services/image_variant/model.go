@@ -14,7 +14,7 @@ type ImageVariantResultEnvelope struct {
 
 type ImageVariantModel struct {
 	ID                     types.String                                       `tfsdk:"id" json:"id,required"`
-	AccountID              types.String                                       `tfsdk:"account_id" path:"account_id,required"`
+	AccountID              types.String                                       `tfsdk:"account_id" path:"account_id,optional"`
 	Options                *ImageVariantOptionsModel                          `tfsdk:"options" json:"options,required,no_refresh"`
 	NeverRequireSignedURLs types.Bool                                         `tfsdk:"never_require_signed_urls" json:"neverRequireSignedURLs,computed_optional,no_refresh"`
 	Variant                customfield.NestedObject[ImageVariantVariantModel] `tfsdk:"variant" json:"variant,computed"`

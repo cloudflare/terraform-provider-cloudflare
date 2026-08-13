@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,14 +20,12 @@ type ZeroTrustDEXTestDataSourceModel struct {
 	ID             types.String                                                                `tfsdk:"id" path:"dex_test_id,computed"`
 	DEXTestID      types.String                                                                `tfsdk:"dex_test_id" path:"dex_test_id,optional"`
 	AccountID      types.String                                                                `tfsdk:"account_id" path:"account_id,optional"`
-	Created        timetypes.RFC3339                                                           `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Description    types.String                                                                `tfsdk:"description" json:"description,computed"`
 	Enabled        types.Bool                                                                  `tfsdk:"enabled" json:"enabled,computed"`
 	Interval       types.String                                                                `tfsdk:"interval" json:"interval,computed"`
 	Name           types.String                                                                `tfsdk:"name" json:"name,computed"`
 	Targeted       types.Bool                                                                  `tfsdk:"targeted" json:"targeted,computed"`
 	TestID         types.String                                                                `tfsdk:"test_id" json:"test_id,computed"`
-	Updated        timetypes.RFC3339                                                           `tfsdk:"updated" json:"updated,computed" format:"date-time"`
 	Data           customfield.NestedObject[ZeroTrustDEXTestDataDataSourceModel]               `tfsdk:"data" json:"data,computed"`
 	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestTargetPoliciesDataSourceModel] `tfsdk:"target_policies" json:"target_policies,computed_optional"`
 	Filter         *ZeroTrustDEXTestFindOneByDataSourceModel                                   `tfsdk:"filter"`

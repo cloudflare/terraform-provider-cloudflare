@@ -15,7 +15,7 @@ type WorkerResultEnvelope struct {
 
 type WorkerModel struct {
 	ID            types.String                                          `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String                                          `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String                                          `tfsdk:"account_id" path:"account_id,optional"`
 	Name          types.String                                          `tfsdk:"name" json:"name,required"`
 	Logpush       types.Bool                                            `tfsdk:"logpush" json:"logpush,computed_optional"`
 	Tags          customfield.Set[types.String]                         `tfsdk:"tags" json:"tags,computed_optional"`

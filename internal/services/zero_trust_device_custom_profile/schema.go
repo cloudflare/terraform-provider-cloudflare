@@ -6,13 +6,12 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
@@ -44,7 +43,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"match": schema.StringAttribute{
@@ -60,6 +59,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				Computed:      true,
 				PlanModifiers: []planmodifier.Float64{float64planmodifier.UseStateForUnknown()},
+			},
+			"description": schema.StringAttribute{
+				Description: "A description of the policy.",
+				Optional:    true,
+				Computed:    true,
+				Default:     stringdefault.StaticString(""),
 			},
 			"lan_allow_minutes": schema.Float64Attribute{
 				Description: "The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.",
@@ -127,31 +132,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"global_acceleration": schema.SingleNestedAttribute{
-				Description: "Global Acceleration settings for China. When configured, WARP clients connect to the Global Accelerator addresses instead of the default ones. Please contact your account representative to enable this feature on your account. See https://developers.cloudflare.com/china-network/concepts/global-acceleration/.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"api_endpoints": schema.ListAttribute{
-						Description: "IP:port entries for the API endpoints.",
-						Required:    true,
-						ElementType: types.StringType,
-					},
-					"enabled": schema.BoolAttribute{
-						Description: `Global acceleration settings are used only when "enabled".`,
-						Required:    true,
-					},
-					"masque_endpoints": schema.ListAttribute{
-						Description: "IP:port entries for the MASQUE tunnel endpoints. Either wireguard_endpoints or masque_endpoints must be provided.",
-						Required:    true,
-						ElementType: types.StringType,
-					},
-					"wireguard_endpoints": schema.ListAttribute{
-						Description: "IP:port entries for the WireGuard tunnel endpoints. Either wireguard_endpoints or masque_endpoints must be provided.",
-						Required:    true,
-						ElementType: types.StringType,
-					},
-				},
-			},
 			"service_mode_v2": schema.SingleNestedAttribute{
 				Optional:      true,
 				Computed:      true,
@@ -214,12 +194,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     float64default.StaticFloat64(180),
-			},
-			"description": schema.StringAttribute{
-				Description: "A description of the policy.",
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString(""),
 			},
 			"disable_auto_fallback": schema.BoolAttribute{
 				Description: "If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.",
@@ -289,16 +263,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"default": schema.BoolAttribute{
-				Description:   "Whether the policy is the default policy for an account.",
-				Computed:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
+				Description: "Whether the policy is the default policy for an account.",
+				Computed:    true,
 			},
 			"gateway_unique_id": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"fallback_domains": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileFallbackDomainsModel](ctx),
+				Computed:      true,
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
+				CustomType:    customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileFallbackDomainsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"suffix": schema.StringAttribute{
@@ -319,8 +294,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"target_tests": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileTargetTestsModel](ctx),
+				Computed:      true,
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
+				CustomType:    customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileTargetTestsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{

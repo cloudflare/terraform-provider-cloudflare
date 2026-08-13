@@ -66,7 +66,6 @@ type TargetCustomProfileModel struct {
 	TunnelProtocol             types.String                                                                      `tfsdk:"tunnel_protocol"`
 	DNSSearchSuffixes          customfield.NestedObjectList[TargetCustomProfileDNSSearchSuffixesModel]           `tfsdk:"dns_search_suffixes"`
 	Exclude                    customfield.NestedObjectList[TargetCustomProfileExcludeModel]                     `tfsdk:"exclude"`
-	GlobalAcceleration         customfield.NestedObject[TargetCustomProfileGlobalAccelerationModel]               `tfsdk:"global_acceleration"`
 	Include                    customfield.NestedObjectList[TargetCustomProfileIncludeModel]                     `tfsdk:"include"`
 	ServiceModeV2              customfield.NestedObject[TargetCustomProfileServiceModeV2Model]                   `tfsdk:"service_mode_v2"`
 	Default                    types.Bool                                                                        `tfsdk:"default"`
@@ -88,19 +87,8 @@ type TargetCustomProfileIncludeModel struct {
 }
 
 type TargetCustomProfileServiceModeV2Model struct {
-	APIEndpoints       customfield.List[types.String] `tfsdk:"api_endpoints"`
-	Enabled            types.Bool                     `tfsdk:"enabled"`
-	MasqueEndpoints    customfield.List[types.String] `tfsdk:"masque_endpoints"`
-	Mode               types.String                   `tfsdk:"mode"`
-	Port               types.Float64                  `tfsdk:"port"`
-	WireguardEndpoints customfield.List[types.String] `tfsdk:"wireguard_endpoints"`
-}
-
-type TargetCustomProfileGlobalAccelerationModel struct {
-	APIEndpoints       customfield.List[types.String] `tfsdk:"api_endpoints"`
-	Enabled            types.Bool                     `tfsdk:"enabled"`
-	MasqueEndpoints    customfield.List[types.String] `tfsdk:"masque_endpoints"`
-	WireguardEndpoints customfield.List[types.String] `tfsdk:"wireguard_endpoints"`
+	Mode types.String  `tfsdk:"mode"`
+	Port types.Float64 `tfsdk:"port"`
 }
 
 type TargetCustomProfileFallbackDomainsModel struct {

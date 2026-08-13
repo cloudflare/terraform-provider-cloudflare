@@ -33,7 +33,7 @@ data "cloudflare_zero_trust_dex_rule" "example_zero_trust_dex_rule" {
 
 ### Optional
 
-- `account_id` (String) Unique identifier linked to an account.
+- `account_id` (String)
 
 ### Read-Only
 

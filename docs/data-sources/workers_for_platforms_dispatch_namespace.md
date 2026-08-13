@@ -28,11 +28,8 @@ data "cloudflare_workers_for_platforms_dispatch_namespace" "example_workers_for_
 
 ### Required
 
-- `dispatch_namespace` (String) Name of the Workers for Platforms dispatch namespace.
-
-### Optional
-
 - `account_id` (String) Identifier.
+- `dispatch_namespace` (String) Name of the Workers for Platforms dispatch namespace.
 
 ### Read-Only
 

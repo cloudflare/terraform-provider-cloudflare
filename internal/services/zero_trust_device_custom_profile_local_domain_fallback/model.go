@@ -14,7 +14,7 @@ type ZeroTrustDeviceCustomProfileLocalDomainFallbackResultEnvelope struct {
 type ZeroTrustDeviceCustomProfileLocalDomainFallbackModel struct {
 	ID        types.String                                                    `tfsdk:"id" json:"-,computed"`
 	PolicyID  types.String                                                    `tfsdk:"policy_id" path:"policy_id,required"`
-	AccountID types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
 	Domains   *[]*ZeroTrustDeviceCustomProfileLocalDomainFallbackDomainsModel `tfsdk:"domains" json:"domains,required"`
 }
 

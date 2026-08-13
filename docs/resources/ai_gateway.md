@@ -66,7 +66,6 @@ resource "cloudflare_ai_gateway" "example_ai_gateway" {
 Available values: "constant", "linear", "exponential".
 - `retry_delay` (Number) Delay between retry attempts in milliseconds (0-5000)
 - `retry_max_attempts` (Number) Maximum number of retry attempts for failed requests (1-5)
-- `spend_limits` (Attributes) (see [below for nested schema](#nestedatt--spend_limits))
 - `store_id` (String)
 - `stripe` (Attributes) (see [below for nested schema](#nestedatt--stripe))
 - `workers_ai_billing_mode` (String) Controls how Workers AI inference calls routed through this gateway are billed. Only 'postpaid' is currently supported.
@@ -161,71 +160,13 @@ Optional:
 
 Required:
 
+- `authorization` (String)
 - `headers` (Map of String)
 - `url` (String)
 
 Optional:
 
-- `authorization` (String)
 - `content_type` (String) Available values: "json", "protobuf".
-
-
-<a id="nestedatt--spend_limits"></a>
-### Nested Schema for `spend_limits`
-
-Optional:
-
-- `enabled` (Boolean)
-- `rules` (Attributes List) (see [below for nested schema](#nestedatt--spend_limits--rules))
-
-<a id="nestedatt--spend_limits--rules"></a>
-### Nested Schema for `spend_limits.rules`
-
-Required:
-
-- `limit` (Number)
-- `limit_type` (String) Available values: "cost".
-- `window` (Number)
-
-Optional:
-
-- `ai_gateway_provider` (Attributes) (see [below for nested schema](#nestedatt--spend_limits--rules--ai_gateway_provider))
-- `enabled` (Boolean)
-- `id` (String)
-- `metadata` (Attributes Map) (see [below for nested schema](#nestedatt--spend_limits--rules--metadata))
-- `model` (Attributes) (see [below for nested schema](#nestedatt--spend_limits--rules--model))
-- `technique` (String) Available values: "fixed", "sliding".
-
-<a id="nestedatt--spend_limits--rules--ai_gateway_provider"></a>
-### Nested Schema for `spend_limits.rules.ai_gateway_provider`
-
-Required:
-
-- `mode` (String) Available values: "filter".
-- `values` (List of String)
-
-
-<a id="nestedatt--spend_limits--rules--metadata"></a>
-### Nested Schema for `spend_limits.rules.metadata`
-
-Required:
-
-- `mode` (String) Available values: "partition", "filter".
-
-Optional:
-
-- `values` (List of String)
-
-
-<a id="nestedatt--spend_limits--rules--model"></a>
-### Nested Schema for `spend_limits.rules.model`
-
-Required:
-
-- `mode` (String) Available values: "filter".
-- `values` (List of String)
-
-
 
 
 <a id="nestedatt--stripe"></a>

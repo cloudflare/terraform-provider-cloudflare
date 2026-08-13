@@ -401,46 +401,6 @@ values to `null` for optional fields (`isolation_required`,
 `purpose_justification_required`, `approval_required`). This prevents drift
 since the API treats `false` and `null` as equivalent.
 
-#### Zero Trust Access Policy `session_duration`
-
-In v4, the API applied an implicit default of `24h` for `session_duration`, so
-most configurations omitted it. In v5, the provider schema defaults to `24h`,
-but some Cloudflare accounts enforce a maximum session duration shorter than
-`24h` (for example, `18h`) via account-level security policies. If your
-policies relied on the implicit default and your account enforces a shorter
-maximum, the first `terraform apply` after migration will fail at the API level
-even though `terraform plan` succeeds.
-
-To avoid this, add an explicit `session_duration` to every
-`cloudflare_zero_trust_access_policy` resource:
-
-```hcl
-resource "cloudflare_zero_trust_access_policy" "example" {
-  # ...existing attributes...
-  session_duration = "18h"  # or your organization's required maximum
-}
-```
-
-#### Zero Trust Access Policy `zone_id` removal
-
-In v4, `cloudflare_access_policy` could be scoped to a zone using `zone_id`.
-In v5, all access policies are account-level only -- `zone_id` is not a valid
-attribute on `cloudflare_zero_trust_access_policy`. `tf-migrate` removes
-`zone_id` during migration. If the resource already has `account_id`, no action
-is needed. If the resource only had `zone_id`, `tf-migrate` emits a
-**MIGRATION WARNING** and you must manually add `account_id`:
-
-```hcl
-resource "cloudflare_zero_trust_access_policy" "example" {
-  account_id = var.cloudflare_account_id  # add this — zone_id is no longer valid
-  # ...existing attributes...
-}
-```
-
-Note that a zone ID and an account ID are different values. You cannot simply
-rename the attribute; you must supply the correct account ID for the account
-that owns the zone.
-
 #### Load Balancer field renames
 
 `cloudflare_load_balancer` resources will show field renames:
@@ -603,7 +563,7 @@ automatic state transformation for the rename.
 | v4 Resource | v5 Resource | State |
 |---|---|---|
 | `cloudflare_access_application` | `cloudflare_zero_trust_access_application` | Auto |
-| `cloudflare_access_ca_certificate` | `cloudflare_zero_trust_access_short_lived_certificate` | Auto |
+| `cloudflare_access_ca_certificate` | `cloudflare_zero_trust_access_short_lived_certificate` | Manual |
 | `cloudflare_access_custom_page` | `cloudflare_zero_trust_access_custom_page` | Manual |
 | `cloudflare_access_group` | `cloudflare_zero_trust_access_group` | Auto |
 | `cloudflare_access_identity_provider` | `cloudflare_zero_trust_access_identity_provider` | Auto |
@@ -682,10 +642,10 @@ into the new resource type:
 
 ```bash
 # Remove the old resource from state
-terraform state rm cloudflare_access_custom_page.example
+terraform state rm cloudflare_access_ca_certificate.example
 
 # Import into the new resource type
-terraform import cloudflare_zero_trust_access_custom_page.example <account_id>/<custom_page_id>
+terraform import cloudflare_zero_trust_access_short_lived_certificate.example <account_id>/<certificate_id>
 ```
 
 Refer to the individual [resource documentation](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs)
@@ -731,17 +691,6 @@ additional manual steps after running `tf-migrate` or updating your HCL.
 config migration.** `tf-migrate` can automatically generate a `removed` block
 to drop the old state entry without destroying the remote policy, but you still
 must rewrite the policy as inline `policies` on the application resource.
-
-!> **Applying tf-migrate output without adding inline policies is destructive.**
-`tf-migrate` removes the standalone `cloudflare_access_policy` resource and
-generates a `removed` block, but does **not** add `policies` to the parent
-`cloudflare_zero_trust_access_application` resource. If you run
-`terraform apply` in this intermediate state, Terraform sends an empty
-`policies` value to the API, which detaches all policies from the application.
-Cloudflare then garbage-collects the orphaned app-scoped policies (they have no
-independent lifecycle). You **must** add `policies = [...]` to the parent
-application resource before applying. Recovery without this step requires
-reconstructing all policies from git history or backups.
 
 In v4, `cloudflare_access_policy` could be used for both account-level policies
 and application-scoped policies (when `application_id` was set). These two types
@@ -1216,114 +1165,6 @@ Other predefined profile changes handled by `tf-migrate`:
 - `entry` blocks replaced with `enabled_entries` list (only IDs of enabled
   entries)
 
-### `cloudflare_workers_secret`
-
-In v4, `cloudflare_workers_secret` (and its deprecated alias
-`cloudflare_worker_secret`) was a standalone resource that managed Worker
-secrets via a separate API. In v5, this resource has been removed. Secrets are
-now managed as `secret_text` bindings on the `cloudflare_workers_script`
-resource.
-
-~> **tf-migrate modifies your `.tf` files in place.** It removes each
-`cloudflare_workers_secret` resource block and merges it into the parent
-`cloudflare_workers_script` resource. Use `--dry-run` to preview changes
-before applying, and ensure your files are committed to version control (or
-use the `.bak` backups tf-migrate creates by default).
-
-#### With tf-migrate (recommended)
-
-`tf-migrate` automatically handles the full transformation. Run it as part of
-Step 2 if you have not already done so.
-
-**What tf-migrate generates** for each `cloudflare_workers_secret` resource:
-
-- Merges the secret into the parent `cloudflare_workers_script` resource's
-  `bindings` list as a `secret_text` binding
-- Generates a `removed` block so Terraform drops the old state entry without
-  destroying anything (requires Terraform 1.7+)
-- If the parent script already has bindings, wraps them in `concat()` to
-  preserve both existing bindings and the new secret binding
-
-For example, this v4 configuration:
-
-```hcl
-resource "cloudflare_workers_script" "my_worker" {
-  account_id = "abc123"
-  name       = "my-worker"
-  content    = file("worker.js")
-}
-
-resource "cloudflare_workers_secret" "api_key" {
-  account_id  = "abc123"
-  script_name = cloudflare_workers_script.my_worker.name
-  name        = "API_KEY"
-  secret_text = var.api_key
-}
-```
-
-Becomes:
-
-```hcl
-resource "cloudflare_workers_script" "my_worker" {
-  account_id  = "abc123"
-  script_name = "my-worker"
-  content     = file("worker.js")
-  bindings = [
-    {
-      type = "secret_text"
-      name = "API_KEY"
-      text = var.api_key
-    }
-  ]
-}
-
-removed {
-  from = cloudflare_workers_secret.api_key
-  lifecycle {
-    destroy = false
-  }
-}
-```
-
-#### Without tf-migrate
-
-**1.** Remove the `cloudflare_workers_secret` resource from your configuration.
-
-**2.** Add a `secret_text` binding to the parent `cloudflare_workers_script`
-resource:
-
-```hcl
-resource "cloudflare_workers_script" "my_worker" {
-  # ... existing attributes ...
-  bindings = [
-    # ... existing bindings ...
-    {
-      type = "secret_text"
-      name = "API_KEY"
-      text = var.api_key
-    }
-  ]
-}
-```
-
-**3.** Remove the old state entry:
-
-```bash
-terraform state rm cloudflare_workers_secret.api_key
-```
-
-**4.** Apply:
-
-```bash
-terraform plan
-terraform apply
-```
-
-~> **Note:** In v4, secrets were managed via a separate API and could be
-updated without redeploying the Worker script. In v5, `secret_text` bindings
-are part of the script resource, so future secret value changes will trigger a
-script redeployment.
-
 ---
 
 ## Resources Requiring Stepping-Stone Upgrades
@@ -1445,7 +1286,6 @@ do not have automatic state migration and may require `terraform state rm` +
 | | `cloudflare_workers_route` |
 | **KV** | `cloudflare_workers_kv` |
 | | `cloudflare_workers_kv_namespace` |
-| **D1** | `cloudflare_d1_database` |
 | **Pages** | `cloudflare_pages_project` |
 | **Cache** | `cloudflare_tiered_cache` |
 | **Argo** | `cloudflare_argo_smart_routing` |
@@ -1797,15 +1637,9 @@ transform the state on the next plan/apply. See exceptions in
 [Using `terraform state mv` (Terraform < 1.8)](#using-terraform-state-mv-terraform--18)
 for details.
 
-**What about `cloudflare_worker_secret` / `cloudflare_workers_secret`?**
+**What about `cloudflare_worker_secret`?**
 
-This resource has been removed in v5. `tf-migrate` automatically merges
-secrets into the parent `cloudflare_workers_script` resource's `bindings` list
-as `secret_text` bindings. See the
-[`cloudflare_workers_secret`](#cloudflare_workers_secret) section under
-Resources Requiring Manual Migration for details.
-
-If you prefer not to use `tf-migrate`, migrate manually to one of:
+This resource has been removed in v5. Migrate to one of:
 
 - [Secrets Store](https://developers.cloudflare.com/secrets-store/) with the
   `secrets_store_secret` binding on `cloudflare_workers_script`

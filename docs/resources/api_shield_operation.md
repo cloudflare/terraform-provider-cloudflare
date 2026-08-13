@@ -144,7 +144,7 @@ Read-Only:
 Read-Only:
 
 - `active_schema` (Attributes) Schema active on endpoint. (see [below for nested schema](#nestedatt--features--schema_info--active_schema))
-- `learned_available` (Boolean) Deprecated. Always false.
+- `learned_available` (Boolean) True if a Cloudflare-provided learned schema is available for this endpoint.
 - `mitigation_action` (String) Action taken on requests failing validation.
 Available values: "none", "log", "block".
 

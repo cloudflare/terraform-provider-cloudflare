@@ -55,7 +55,6 @@ Available values: "file", "application", "tanium", "gateway", "warp", "disk_encr
 
 ### Read-Only
 
-- `enabled` (Boolean) Whether the rule is enabled. This is a computed, read-only value. It is false for deprecated Kolide posture rules that still use the issue_count input, and true otherwise.
 - `id` (String) API UUID.
 
 <a id="nestedatt--input"></a>

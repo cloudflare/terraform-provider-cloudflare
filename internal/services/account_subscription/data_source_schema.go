@@ -8,11 +8,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -29,15 +27,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+				Description: "Identifier",
 				Computed:    true,
 			},
-			"zone_id": schema.StringAttribute{
-				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
-				Optional:    true,
-			},
 			"account_id": schema.StringAttribute{
-				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Description: "Identifier",
 				Optional:    true,
 			},
 			"currency": schema.StringAttribute{
@@ -91,22 +85,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[AccountSubscriptionRatePlanDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
-					Description: "The ID of the rate plan.\nAvailable values: \"free\", \"lite\", \"pro\", \"pro_plus\", \"business\", \"enterprise\", \"partners_free\", \"partners_pro\", \"partners_business\", \"partners_ent\".",
-					Computed:    true,
-					Validators: []validator.String{
-						stringvalidator.OneOfCaseInsensitive(
-							"free",
-							"lite",
-							"pro",
-							"pro_plus",
-							"business",
-							"enterprise",
-							"partners_free",
-							"partners_pro",
-							"partners_business",
-							"partners_ent",
-						),
-					},
+						Description: "The ID of the rate plan.\nAvailable values: \"free\", \"lite\", \"pro\", \"pro_plus\", \"business\", \"enterprise\", \"partners_free\", \"partners_pro\", \"partners_business\", \"partners_ent\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"free",
+								"lite",
+								"pro",
+								"pro_plus",
+								"business",
+								"enterprise",
+								"partners_free",
+								"partners_pro",
+								"partners_business",
+								"partners_ent",
+							),
+						},
 					},
 					"currency": schema.StringAttribute{
 						Description: "The currency applied to the rate plan subscription.",
@@ -145,7 +139,5 @@ func (d *AccountSubscriptionDataSource) Schema(ctx context.Context, req datasour
 }
 
 func (d *AccountSubscriptionDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.Conflicting(path.MatchRoot("account_id"), path.MatchRoot("zone_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

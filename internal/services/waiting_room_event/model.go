@@ -15,7 +15,7 @@ type WaitingRoomEventResultEnvelope struct {
 type WaitingRoomEventModel struct {
 	ID                    types.String      `tfsdk:"id" json:"id,computed"`
 	WaitingRoomID         types.String      `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
-	ZoneID                types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID                types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	EventEndTime          types.String      `tfsdk:"event_end_time" json:"event_end_time,required"`
 	EventStartTime        types.String      `tfsdk:"event_start_time" json:"event_start_time,required"`
 	Name                  types.String      `tfsdk:"name" json:"name,required"`

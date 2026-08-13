@@ -30,11 +30,11 @@ data "cloudflare_zero_trust_dex_tests" "example_zero_trust_dex_tests" {
 
 ### Optional
 
-- `account_id` (String) Unique identifier linked to an account.
-- `kind` (String) Filter by test type.
+- `account_id` (String)
+- `kind` (String) Filter by test type
 Available values: "http", "traceroute".
 - `max_items` (Number) Max items to fetch, default: 1000
-- `test_name` (String) Filter by test name.
+- `test_name` (String) Filter by test name
 
 ### Read-Only
 
@@ -49,7 +49,6 @@ Optional:
 
 Read-Only:
 
-- `created` (String) Date the test was created, in RFC 3339 format.
 - `data` (Attributes) The configuration object which contains the details for the WARP client to conduct the test. (see [below for nested schema](#nestedatt--result--data))
 - `description` (String) Additional details about the test.
 - `enabled` (Boolean) Determines whether or not the test is active.
@@ -58,16 +57,15 @@ Read-Only:
 - `name` (String) The name of the DEX test. Must be unique.
 - `targeted` (Boolean)
 - `test_id` (String) The unique identifier for the test.
-- `updated` (String) Date the test was last updated, in RFC 3339 format.
 
 <a id="nestedatt--result--target_policies"></a>
 ### Nested Schema for `result.target_policies`
 
 Read-Only:
 
-- `default` (Boolean) Whether the DEX rule is the account default.
-- `id` (String) The id of the DEX rule.
-- `name` (String) The name of the DEX rule.
+- `default` (Boolean) Whether the DEX rule is the account default
+- `id` (String) API Resource UUID tag.
+- `name` (String) The name of the DEX rule
 
 
 <a id="nestedatt--result--data"></a>

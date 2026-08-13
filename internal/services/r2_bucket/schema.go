@@ -68,7 +68,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Account ID.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"location": schema.StringAttribute{
@@ -91,7 +91,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"jurisdiction": schema.StringAttribute{
-				Description: "Jurisdiction where objects in this bucket are guaranteed to be stored.\nAvailable values: \"default\", \"eu\", \"fedramp\", \"us\".",
+				Description: "Jurisdiction where objects in this bucket are guaranteed to be stored.\nAvailable values: \"default\", \"eu\", \"fedramp\".",
 				Optional:    true,
 				Computed:    true,
 				Default:     stringdefault.StaticString("default"),
@@ -100,7 +100,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"default",
 						"eu",
 						"fedramp",
-						"us",
 					),
 				},
 			},

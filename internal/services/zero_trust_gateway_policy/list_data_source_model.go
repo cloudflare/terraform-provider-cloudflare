@@ -71,7 +71,6 @@ type ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel struct {
 	BlockReason                     types.String                                                                                      `tfsdk:"block_reason" json:"block_reason,computed"`
 	BypassParentRule                types.Bool                                                                                        `tfsdk:"bypass_parent_rule" json:"bypass_parent_rule,computed"`
 	CheckSession                    customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsCheckSessionDataSourceModel]         `tfsdk:"check_session" json:"check_session,computed"`
-	DeleteHeaders                   customfield.List[types.String]                                                                    `tfsdk:"delete_headers" json:"delete_headers,computed"`
 	DNSResolvers                    customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsDNSResolversDataSourceModel]         `tfsdk:"dns_resolvers" json:"dns_resolvers,computed"`
 	Egress                          customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsEgressDataSourceModel]               `tfsdk:"egress" json:"egress,computed"`
 	ForensicCopy                    customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsForensicCopyDataSourceModel]         `tfsdk:"forensic_copy" json:"forensic_copy,computed"`
@@ -88,7 +87,6 @@ type ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel struct {
 	Redirect                        customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsRedirectDataSourceModel]             `tfsdk:"redirect" json:"redirect,computed"`
 	ResolveDNSInternally            customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsResolveDNSInternallyDataSourceModel] `tfsdk:"resolve_dns_internally" json:"resolve_dns_internally,computed"`
 	ResolveDNSThroughCloudflare     types.Bool                                                                                        `tfsdk:"resolve_dns_through_cloudflare" json:"resolve_dns_through_cloudflare,computed"`
-	SetHeaders                      customfield.Map[customfield.List[types.String]]                                                   `tfsdk:"set_headers" json:"set_headers,computed"`
 	UntrustedCERT                   customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsUntrustedCERTDataSourceModel]        `tfsdk:"untrusted_cert" json:"untrusted_cert,computed"`
 }
 

@@ -25,7 +25,6 @@ type HyperdriveConfigDataSourceModel struct {
 	ModifiedOn            timetypes.RFC3339                                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name                  types.String                                                     `tfsdk:"name" json:"name,computed"`
 	OriginConnectionLimit types.Int64                                                      `tfsdk:"origin_connection_limit" json:"origin_connection_limit,computed"`
-	RestartedOn           timetypes.RFC3339                                                `tfsdk:"restarted_on" json:"restarted_on,computed" format:"date-time"`
 	Caching               customfield.NestedObject[HyperdriveConfigCachingDataSourceModel] `tfsdk:"caching" json:"caching,computed"`
 	MTLS                  customfield.NestedObject[HyperdriveConfigMTLSDataSourceModel]    `tfsdk:"mtls" json:"mtls,computed"`
 	Origin                customfield.NestedObject[HyperdriveConfigOriginDataSourceModel]  `tfsdk:"origin" json:"origin,computed"`

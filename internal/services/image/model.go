@@ -20,7 +20,7 @@ type ImageResultEnvelope struct {
 
 type ImageModel struct {
 	ID                types.String                   `tfsdk:"id" json:"id,required"`
-	AccountID         types.String                   `tfsdk:"account_id" path:"account_id,required"`
+	AccountID         types.String                   `tfsdk:"account_id" path:"account_id,optional"`
 	File              types.String                   `tfsdk:"file" json:"file,optional,no_refresh"`
 	URL               types.String                   `tfsdk:"url" json:"url,optional,no_refresh"`
 	Creator           types.String                   `tfsdk:"creator" json:"creator,optional"`

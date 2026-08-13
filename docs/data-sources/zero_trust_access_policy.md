@@ -27,11 +27,8 @@ data "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy" {
 
 ### Required
 
-- `policy_id` (String) The UUID of the policy
-
-### Optional
-
 - `account_id` (String) Identifier.
+- `policy_id` (String) The UUID of the policy
 
 ### Read-Only
 

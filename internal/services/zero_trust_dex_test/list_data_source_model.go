@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -46,12 +45,10 @@ type ZeroTrustDEXTestsResultDataSourceModel struct {
 	Enabled        types.Bool                                                                   `tfsdk:"enabled" json:"enabled,computed"`
 	Interval       types.String                                                                 `tfsdk:"interval" json:"interval,computed"`
 	Name           types.String                                                                 `tfsdk:"name" json:"name,computed"`
-	Created        timetypes.RFC3339                                                            `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Description    types.String                                                                 `tfsdk:"description" json:"description,computed"`
 	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestsTargetPoliciesDataSourceModel] `tfsdk:"target_policies" json:"target_policies,computed_optional"`
 	Targeted       types.Bool                                                                   `tfsdk:"targeted" json:"targeted,computed"`
 	TestID         types.String                                                                 `tfsdk:"test_id" json:"test_id,computed"`
-	Updated        timetypes.RFC3339                                                            `tfsdk:"updated" json:"updated,computed" format:"date-time"`
 }
 
 type ZeroTrustDEXTestsDataDataSourceModel struct {

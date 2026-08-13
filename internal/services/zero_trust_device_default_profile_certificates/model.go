@@ -12,7 +12,7 @@ type ZeroTrustDeviceDefaultProfileCertificatesResultEnvelope struct {
 }
 
 type ZeroTrustDeviceDefaultProfileCertificatesModel struct {
-	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,required"`
 }
 

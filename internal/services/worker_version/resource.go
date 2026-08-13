@@ -70,19 +70,12 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	}
 
 	var assets *WorkerVersionAssetsModel
-	if !data.Assets.IsNull() && !data.Assets.IsUnknown() {
-		planAssets, diags := data.Assets.Value(ctx)
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-		if planAssets != nil {
-			assets = &WorkerVersionAssetsModel{
-				Config:              planAssets.Config,
-				JWT:                 planAssets.JWT,
-				Directory:           planAssets.Directory,
-				AssetManifestSHA256: planAssets.AssetManifestSHA256,
-			}
+	if data.Assets != nil {
+		assets = &WorkerVersionAssetsModel{
+			Config:              data.Assets.Config,
+			JWT:                 data.Assets.JWT,
+			Directory:           data.Assets.Directory,
+			AssetManifestSHA256: data.Assets.AssetManifestSHA256,
 		}
 	}
 	err := handleAssets(ctx, r.client, data)
@@ -198,27 +191,11 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	}
 	data.Modules = planModules
 
-	if assets != nil && !data.Assets.IsNull() && !data.Assets.IsUnknown() {
-		refreshedAssets, d := data.Assets.Value(ctx)
-		resp.Diagnostics.Append(d...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-		if refreshedAssets != nil {
-			assets.Config = refreshedAssets.Config
-		}
+	if assets != nil && data.Assets != nil {
+		assets.Config = data.Assets.Config
 	}
 
-	if assets != nil {
-		obj, d := customfield.NewObject(ctx, assets)
-		resp.Diagnostics.Append(d...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-		data.Assets = obj
-	} else {
-		data.Assets = customfield.NullObject[WorkerVersionAssetsModel](ctx)
-	}
+	data.Assets = assets
 	// Finally, reorder refreshed bindings to match the plan, now that computed
 	// properties have been filled in.
 	data.Bindings, diags = SortRefreshedBindingsToMatchPrevious(

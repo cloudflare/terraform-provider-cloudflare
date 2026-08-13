@@ -37,8 +37,8 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
   approval_required = true
   connection_rules = {
     rdp = {
-      allowed_clipboard_local_to_remote_formats = ["text", "file"]
-      allowed_clipboard_remote_to_local_formats = ["text", "file"]
+      allowed_clipboard_local_to_remote_formats = ["text"]
+      allowed_clipboard_remote_to_local_formats = ["text"]
     }
   }
   exclude = [{
@@ -89,11 +89,7 @@ Available values: "allow", "deny", "non_identity", "bypass".
 
 ### Read-Only
 
-- `app_count` (Number) Number of access applications currently using this policy.
-- `created_at` (String)
 - `id` (String) The UUID of the policy
-- `reusable` (Boolean)
-- `updated_at` (String)
 
 <a id="nestedatt--approval_groups"></a>
 ### Nested Schema for `approval_groups`

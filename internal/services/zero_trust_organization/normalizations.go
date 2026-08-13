@@ -20,14 +20,6 @@ func normalizeFalseAndNullBool(data *basetypes.BoolValue, stateData basetypes.Bo
 	if data.ValueBool() || stateData.ValueBool() {
 		return
 	}
-
-	if stateData.IsUnknown() {
-		if data.IsNull() || data.IsUnknown() {
-			*data = types.BoolValue(false)
-		}
-		return
-	}
-
 	*data = stateData
 }
 
@@ -62,7 +54,6 @@ func normalizeReadZeroTrustOrganizationAPIData(_ context.Context, data, sourceDa
 	normalizeFalseAndNullBool(&data.AllowAuthenticateViaWARP, sourceData.AllowAuthenticateViaWARP)
 	normalizeFalseAndNullBool(&data.IsUIReadOnly, sourceData.IsUIReadOnly)
 	normalizeFalseAndNullBool(&data.DenyUnmatchedRequests, sourceData.DenyUnmatchedRequests)
-	normalizeFalseAndNullBool(&data.MfaRequiredForAllApps, sourceData.MfaRequiredForAllApps)
 	normalizeEmptyAndNullObject(&data.LoginDesign, sourceData.LoginDesign)
 	normalizeEmptyAndNullList(&data.DenyUnmatchedRequestsExemptedZoneNames, sourceData.DenyUnmatchedRequestsExemptedZoneNames)
 	normalizeEmptyAndNullString(&data.UIReadOnlyToggleReason, sourceData.UIReadOnlyToggleReason)
@@ -75,10 +66,6 @@ func normalizeImportZeroTrustOrganizationAPIData(_ context.Context, data *ZeroTr
 
 	if data.AutoRedirectToIdentity.IsNull() {
 		data.AutoRedirectToIdentity = types.BoolValue(false)
-	}
-
-	if data.MfaRequiredForAllApps.IsNull() {
-		data.MfaRequiredForAllApps = types.BoolValue(false)
 	}
 
 	// Set LoginDesign to nil if all fields are empty/null
@@ -99,7 +86,7 @@ func normalizeImportZeroTrustOrganizationAPIData(_ context.Context, data *ZeroTr
 		if !data.LoginDesign.TextColor.IsNull() && data.LoginDesign.TextColor.ValueString() != "" {
 			allEmpty = false
 		}
-
+		
 		if allEmpty {
 			data.LoginDesign = nil
 		}

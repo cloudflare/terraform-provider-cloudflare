@@ -13,7 +13,7 @@ type PageShieldPolicyResultEnvelope struct {
 
 type PageShieldPolicyModel struct {
 	ID          types.String `tfsdk:"id" json:"id,computed"`
-	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	Action      types.String `tfsdk:"action" json:"action,required"`
 	Description types.String `tfsdk:"description" json:"description,required"`
 	Enabled     types.Bool   `tfsdk:"enabled" json:"enabled,required"`

@@ -1,7 +1,6 @@
 package v500
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -149,10 +148,6 @@ type TargetAccessPolicyModel struct {
 	Exclude                      []TargetConditionModel        `tfsdk:"exclude"`
 	Include                      []TargetConditionModel        `tfsdk:"include"`
 	Require                      []TargetConditionModel        `tfsdk:"require"`
-	AppCount                     types.Int64                   `tfsdk:"app_count"`
-	CreatedAt                    timetypes.RFC3339             `tfsdk:"created_at"`
-	Reusable                     types.Bool                    `tfsdk:"reusable"`
-	UpdatedAt                    timetypes.RFC3339             `tfsdk:"updated_at"`
 }
 
 type TargetApprovalGroupsModel struct {

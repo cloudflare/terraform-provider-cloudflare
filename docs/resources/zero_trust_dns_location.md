@@ -47,10 +47,6 @@ resource "cloudflare_zero_trust_dns_location" "example_zero_trust_dns_location" 
       }]
     }
   }
-  max_ttl = {
-    mode = "override"
-    ttl_secs = 3600
-  }
   networks = [{
     network = "192.0.2.1/32"
   }]
@@ -71,7 +67,9 @@ resource "cloudflare_zero_trust_dns_location" "example_zero_trust_dns_location" 
 - `dns_destination_ips_id` (String) Specify the identifier of the pair of IPv4 addresses assigned to this location. When creating a location, if this field is absent or set to null, the pair of shared IPv4 addresses (0e4a32c6-6fb8-4858-9296-98f51631e8e6) is auto-assigned. When updating a location, if this field is absent or set to null, the pre-assigned pair remains unchanged.
 - `ecs_support` (Boolean) Indicate whether the location must resolve EDNS queries.
 - `endpoints` (Attributes) Configure the destination endpoints for this location. (see [below for nested schema](#nestedatt--endpoints))
-- `max_ttl` (Attributes) Controls how DNS response TTLs are capped for this location relative to the account `max_ttl_secs` setting. Omitting `max_ttl` on update resets it to `inherit`. (see [below for nested schema](#nestedatt--max_ttl))
+- `max_ttl_secs` (Number) Specify the maximum TTL, in seconds, applied to DNS response records.
+Records whose upstream TTL exceeds this value are served with the
+capped value. When null or absent, no cap is applied at this tier.
 - `networks` (Attributes List) Specify the list of network ranges from which requests at this location originate. The list takes effect only if it is non-empty and the IPv4 endpoint is enabled for this location. (see [below for nested schema](#nestedatt--networks))
 
 ### Read-Only
@@ -154,19 +152,6 @@ Required:
 - `network` (String) Specify the IPv6 address or IPv6 CIDR.
 
 
-
-
-<a id="nestedatt--max_ttl"></a>
-### Nested Schema for `max_ttl`
-
-Required:
-
-- `mode` (String) `inherit` uses the account `max_ttl_secs`. `override` uses this location's `ttl_secs`. `disabled` leaves returned TTLs unchanged.
-Available values: "inherit", "override", "disabled".
-
-Optional:
-
-- `ttl_secs` (Number) Location-specific cap on DNS response TTLs, in seconds. Required when `mode` is `override`. Must be omitted when `mode` is `inherit` or `disabled`.
 
 
 <a id="nestedatt--networks"></a>

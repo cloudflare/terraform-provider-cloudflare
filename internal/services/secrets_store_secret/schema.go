@@ -58,7 +58,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"created": schema.StringAttribute{
-				Description: "When the secret was created.",
+				Description: "Whenthe secret was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},

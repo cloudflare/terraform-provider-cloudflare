@@ -19,7 +19,6 @@ Accepted Permissions
 data "cloudflare_dns_record" "example_dns_record" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   dns_record_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  include_shadow_metadata = true
 }
 ```
 
@@ -30,7 +29,6 @@ data "cloudflare_dns_record" "example_dns_record" {
 
 - `dns_record_id` (String) Identifier.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `include_shadow_metadata` (Boolean) Whether to include shadow metadata in the `meta` field of each record in the response. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).
 - `zone_id` (String) Identifier.
 
 ### Read-Only
@@ -39,9 +37,9 @@ data "cloudflare_dns_record" "example_dns_record" {
 - `comment_modified_on` (String) When the record comment was last modified. Omitted if there is no comment.
 - `content` (String) A valid IPv4 address.
 - `created_on` (String) When the record was created.
-- `data` (Attributes) Components of a MX record. (see [below for nested schema](#nestedatt--data))
+- `data` (Attributes) Components of a CAA record. (see [below for nested schema](#nestedatt--data))
 - `id` (String) Identifier.
-- `meta` (Attributes) Extra Cloudflare-specific metadata about the record. (see [below for nested schema](#nestedatt--meta))
+- `meta` (String) Extra Cloudflare-specific information about the record.
 - `modified_on` (String) When the record was last modified.
 - `name` (String) Complete DNS record name, including the zone name, in Punycode.
 - `priority` (Number) Required for MX and URI records; ignored for other record types (but may still be returned by the API). Records with lower priorities are preferred. This field is to be deprecated in favor of the priority field within the data map.
@@ -71,8 +69,6 @@ Available values: "any", "all".
 Available values: "type", "name", "content", "ttl", "proxied".
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
 - `search` (String) Allows searching in multiple properties of a DNS record simultaneously. This parameter is intended for human users, not automation. Its exact behavior is intentionally left unspecified and is subject to change in the future. This parameter works independently of the `match` setting. For automated searches, please use the other available parameters.
-- `shadowed_by_name` (String) Filters to records at or below the given NS delegation name, excluding the NS records that form the delegation itself. The value must be a subdomain of the zone; the zone apex is not accepted. Requires `include_shadow_metadata=true`. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).
-- `shadowing_name` (String) Returns NS records that shadow the given name, searching at the name itself and each of its ancestor names within the zone, excluding the zone apex. The value must be a subdomain of the zone; the zone apex is not accepted. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).
 - `tag` (Attributes) (see [below for nested schema](#nestedatt--filter--tag))
 - `tag_match` (String) Whether to match all tag search requirements or at least one (any). If set to `all`, acts like a logical AND between tag filters. If set to `any`, acts like a logical OR instead. Note that the regular `match` parameter is still used to combine the resulting condition with other filters that aren't related to tags.
 Available values: "any", "all".
@@ -157,7 +153,7 @@ Available values: "E", "W".
 - `precision_horz` (Number) Horizontal precision of location.
 - `precision_vert` (Number) Vertical precision of location.
 - `preference` (Number) Preference.
-- `priority` (Number) Required for MX and URI records; ignored for other record types (but may still be returned by the API). Records with lower priorities are preferred. This field is to be deprecated in favor of the priority field within the data map.
+- `priority` (Number) Priority.
 - `protocol` (Number) Protocol.
 - `public_key` (String) Public Key.
 - `regex` (String) Regex.
@@ -166,22 +162,11 @@ Available values: "E", "W".
 - `service` (String) Service.
 - `size` (Number) Size of location in meters.
 - `tag` (String) Name of the property controlled by this record (e.g.: issue, issuewild, iodef).
-- `target` (String) A valid mail server hostname, or "." for a NULL MX record.
+- `target` (String) Target.
 - `type` (Number) Type.
 - `usage` (Number) Usage.
 - `value` (String) Value of the record. This field's semantics depend on the chosen tag.
 - `weight` (Number) The record weight.
-
-
-<a id="nestedatt--meta"></a>
-### Nested Schema for `meta`
-
-Read-Only:
-
-- `dead_glue` (Boolean) Whether this glue record is not served because a shallower NS delegation takes precedence over the deeper delegation that needs it. Present only when true; reachable glue carries only `is_glue`. See [Unreachable glue records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records#unreachable-glue-records).
-- `is_glue` (Boolean) Whether this A or AAAA record is glue for a subdomain NS delegation. See [Glue records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records#glue-records).
-- `shadowed_by` (List of String) IDs of the NS records that shadow this record. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).
-- `shadowed_records_count` (Number) Number of records shadowed by this NS delegation. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).
 
 
 <a id="nestedatt--settings"></a>

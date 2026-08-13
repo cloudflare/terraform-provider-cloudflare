@@ -31,7 +31,7 @@ resource "cloudflare_zero_trust_dex_rule" "example_zero_trust_dex_rule" {
 
 ### Required
 
-- `account_id` (String) Unique identifier linked to an account.
+- `account_id` (String)
 - `match` (String) The wirefilter expression to match.
 - `name` (String) The name of the Rule.
 

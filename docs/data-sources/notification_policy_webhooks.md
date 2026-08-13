@@ -30,11 +30,8 @@ data "cloudflare_notification_policy_webhooks" "example_notification_policy_webh
 
 ### Required
 
-- `webhook_id` (String) The unique identifier of a webhook
-
-### Optional
-
 - `account_id` (String) The account id
+- `webhook_id` (String) The unique identifier of a webhook
 
 ### Read-Only
 

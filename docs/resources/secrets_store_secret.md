@@ -27,18 +27,18 @@ resource "cloudflare_secrets_store_secret" "example_secrets_store_secret" {
 
 ### Required
 
-- `account_id` (String)
-- `store_id` (String)
+- `account_id` (String) Account Identifier
+- `store_id` (String) Store Identifier
 
 ### Optional
 
-- `comment` (String) Freeform text describing the secret.
+- `comment` (String) Freeform text describing the secret
 - `scopes` (List of String) The list of services that can use this secret.
 - `value` (String, Sensitive) The value of the secret. Maximum 64 KiB (65,536 bytes). Note that this is 'write only' - no API response will provide this value, it is only used to create/modify secrets.
 
 ### Read-Only
 
-- `created` (String) When the secret was created.
+- `created` (String) Whenthe secret was created.
 - `id` (String) Secret identifier tag.
 - `modified` (String) When the secret was modified.
 - `name` (String) The name of the secret

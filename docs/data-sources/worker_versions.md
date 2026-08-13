@@ -28,11 +28,11 @@ data "cloudflare_worker_versions" "example_worker_versions" {
 
 ### Required
 
+- `account_id` (String) Identifier.
 - `worker_id` (String) Identifier for the Worker, which can be ID or name.
 
 ### Optional
 
-- `account_id` (String) Identifier.
 - `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only
@@ -51,20 +51,10 @@ Read-Only:
 [`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files should be
 included as modules named `_headers` and `_redirects` with content type `text/plain`. (see [below for nested schema](#nestedatt--result--assets))
 - `bindings` (Attributes List) List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings. (see [below for nested schema](#nestedatt--result--bindings))
-- `cache_options` (Attributes) Global CacheW configuration for the Worker. When caching is on,
-the platform provisions a `cloudflare.app` zone for the Worker.
-A `type: worker` entry in the `exports` map can override this
-value for a single entrypoint. (see [below for nested schema](#nestedatt--result--cache_options))
 - `compatibility_date` (String) Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
 - `compatibility_flags` (Set of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
 - `containers` (Attributes Set) List of containers attached to a Worker. Containers can only be attached to Durable Object classes of this Worker script. (see [below for nested schema](#nestedatt--result--containers))
 - `created_on` (String) When the version was created.
-- `exports` (Attributes Map) Declarative exports for the version, including Durable Object
-classes (with their `storage` backend) and named Worker
-entrypoints. On reads, tombstoned lifecycle entries are
-omitted, so only live exports (`created` and
-`expecting-transfer`) are returned. `exports` and `migrations`
-are mutually exclusive on upload. (see [below for nested schema](#nestedatt--result--exports))
 - `id` (String) Version identifier.
 - `limits` (Attributes) Resource limits enforced at runtime. (see [below for nested schema](#nestedatt--result--limits))
 - `main_module` (String) The name of the main module in the `modules` array (e.g. the name of the module that exports a `fetch` handler).
@@ -78,8 +68,6 @@ This includes [`_headers`](https://developers.cloudflare.com/workers/static-asse
 [Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be 
 included as modules named `_headers` and `_redirects` with content type `text/plain`. (see [below for nested schema](#nestedatt--result--modules))
 - `number` (Number) The integer version number, starting from one.
-- `package_dependencies` (Attributes List) The list of npm packages that were installed and used when this Worker
-version was built. (see [below for nested schema](#nestedatt--result--package_dependencies))
 - `placement` (Attributes) Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host. (see [below for nested schema](#nestedatt--result--placement))
 - `source` (String) The client used to create the version.
 - `startup_time_ms` (Number) Time in milliseconds spent on [Worker startup](https://developers.cloudflare.com/workers/platform/limits/#worker-startup-time).
@@ -207,73 +195,12 @@ Read-Only:
 
 
 
-<a id="nestedatt--result--cache_options"></a>
-### Nested Schema for `result.cache_options`
-
-Read-Only:
-
-- `cross_version_cache` (Boolean) Whether cached responses are shared across Worker version
-uploads. This is independent of `enabled`. It can stay true
-while caching is off, so the preference survives turning
-caching off and back on.
-- `enabled` (Boolean) Whether caching is enabled for this Worker.
-
-
 <a id="nestedatt--result--containers"></a>
 ### Nested Schema for `result.containers`
 
 Read-Only:
 
 - `class_name` (String) Select which Durable Object class should get this container attached.
-
-
-<a id="nestedatt--result--exports"></a>
-### Nested Schema for `result.exports`
-
-Read-Only:
-
-- `cache` (Attributes) Cache override for this entrypoint. It applies only to
-`type: worker` entries and overrides the Worker's global
-`cache_options.enabled` for that entrypoint. (see [below for nested schema](#nestedatt--result--exports--cache))
-- `renamed_to` (String) Destination class name for a `state: renamed` tombstone. The
-target must appear as a live (`created`) entry in the same
-`exports` map. Write-only: never present in GET responses.
-- `state` (String) Lifecycle state of the export entry. Defaults to `created`
-(a normal, live export) when omitted.
-
-`deleted`, `renamed`, and `transferred` are tombstones:
-write-only lifecycle operations that retire, rename, or hand
-off a provisioned Durable Object namespace. They are applied
-at upload and are filtered out of GET responses, so a read
-only ever returns `created` or `expecting-transfer`.
-
-`expecting-transfer` is a live export whose data is being
-received from another script via the two-phase transfer flow;
-it carries `storage` and `transfer_from`.
-Available values: "created", "deleted", "renamed", "transferred", "expecting-transfer".
-- `storage` (String) Storage backend for a `type: durable-object` export. Required
-for live Durable Object entries (`created` and
-`expecting-transfer`). `sqlite` selects SQLite-backed storage;
-`legacy-kv` selects the legacy key-value storage.
-Available values: "sqlite", "legacy-kv".
-- `transfer_from` (String) Source script for a `state: expecting-transfer` entry. The
-namespace on this script is materialised from the source
-script's data via the pending-transfer flow. Present on reads
-for `expecting-transfer` entries.
-- `transferred_to` (String) Destination script for a `state: transferred` tombstone. Must
-reference a script in the same account; cross-dispatch-namespace
-transfers are rejected. Write-only: never present in GET
-responses.
-- `type` (String) The kind of export.
-Available values: "worker", "durable-object".
-
-<a id="nestedatt--result--exports--cache"></a>
-### Nested Schema for `result.exports.cache`
-
-Read-Only:
-
-- `enabled` (Boolean) Whether caching is enabled for this entrypoint.
-
 
 
 <a id="nestedatt--result--limits"></a>
@@ -358,16 +285,6 @@ Read-Only:
 - `content_base64` (String) The base64-encoded module content.
 - `content_type` (String) The content type of the module.
 - `name` (String) The name of the module.
-
-
-<a id="nestedatt--result--package_dependencies"></a>
-### Nested Schema for `result.package_dependencies`
-
-Read-Only:
-
-- `installed_version` (String) The exact version that was resolved and installed by the package manager.
-- `name` (String) The npm package name.
-- `package_json_version` (String) The version constraint as written in package.json.
 
 
 <a id="nestedatt--result--placement"></a>

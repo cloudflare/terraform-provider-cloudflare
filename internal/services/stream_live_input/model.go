@@ -15,16 +15,14 @@ type StreamLiveInputResultEnvelope struct {
 }
 
 type StreamLiveInputModel struct {
-	AccountID                types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
+	AccountID                types.String                                                 `tfsdk:"account_id" path:"account_id,optional"`
 	LiveInputIdentifier      types.String                                                 `tfsdk:"live_input_identifier" path:"live_input_identifier,optional"`
 	DefaultCreator           types.String                                                 `tfsdk:"default_creator" json:"defaultCreator,optional,no_refresh"`
 	DeleteRecordingAfterDays types.Float64                                                `tfsdk:"delete_recording_after_days" json:"deleteRecordingAfterDays,optional"`
 	Meta                     jsontypes.Normalized                                         `tfsdk:"meta" json:"meta,optional"`
 	Enabled                  types.Bool                                                   `tfsdk:"enabled" json:"enabled,computed_optional"`
-	PreferLowLatency         types.Bool                                                   `tfsdk:"prefer_low_latency" json:"preferLowLatency,computed_optional"`
 	Recording                customfield.NestedObject[StreamLiveInputRecordingModel]      `tfsdk:"recording" json:"recording,computed_optional"`
 	Created                  timetypes.RFC3339                                            `tfsdk:"created" json:"created,computed" format:"date-time"`
-	KeysRotatedAt            timetypes.RFC3339                                            `tfsdk:"keys_rotated_at" json:"keysRotatedAt,computed" format:"date-time"`
 	Modified                 timetypes.RFC3339                                            `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Status                   types.String                                                 `tfsdk:"status" json:"status,computed"`
 	UID                      types.String                                                 `tfsdk:"uid" json:"uid,computed"`

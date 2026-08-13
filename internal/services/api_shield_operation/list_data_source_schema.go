@@ -320,7 +320,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"learned_available": schema.BoolAttribute{
-											Description: "Deprecated. Always false.",
+											Description: "True if a Cloudflare-provided learned schema is available for this endpoint.",
 											Computed:    true,
 										},
 										"mitigation_action": schema.StringAttribute{

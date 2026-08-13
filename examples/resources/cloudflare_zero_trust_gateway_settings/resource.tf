@@ -55,7 +55,6 @@ resource "cloudflare_zero_trust_gateway_settings" "example_zero_trust_gateway_se
     inspection = {
       mode = "static"
     }
-    max_ttl_secs = 3600
     protocol_detection = {
       enabled = true
     }

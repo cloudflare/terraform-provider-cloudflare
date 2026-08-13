@@ -19,7 +19,7 @@ Accepted Permissions
 data "cloudflare_secrets_store_secrets" "example_secrets_store_secrets" {
   account_id = "985e105f4ecef8ad9ca31a8372d0c353"
   store_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  scopes = ["workers"]
+  scopes = [["workers", "ai_gateway", "dex", "access"]]
   search = "search"
 }
 ```
@@ -29,18 +29,18 @@ data "cloudflare_secrets_store_secrets" "example_secrets_store_secrets" {
 
 ### Required
 
-- `account_id` (String)
-- `store_id` (String)
+- `account_id` (String) Account Identifier
+- `store_id` (String) Store Identifier
 
 ### Optional
 
-- `direction` (String) Direction to sort objects.
+- `direction` (String) Direction to sort objects
 Available values: "asc", "desc".
 - `max_items` (Number) Max items to fetch, default: 1000
-- `order` (String) Order secrets by values in the given field.
+- `order` (String) Order secrets by values in the given field
 Available values: "name", "comment", "created", "modified", "status".
-- `scopes` (List of String) Only secrets with the given scopes will be returned.
-- `search` (String) Search secrets using a filter string, filtering across name and comment.
+- `scopes` (List of List of String) Only secrets with the given scopes will be returned
+- `search` (String) Search secrets using a filter string, filtering across name and comment
 
 ### Read-Only
 
@@ -51,13 +51,13 @@ Available values: "name", "comment", "created", "modified", "status".
 
 Read-Only:
 
-- `comment` (String) Freeform text describing the secret.
-- `created` (String) When the secret was created.
+- `comment` (String) Freeform text describing the secret
+- `created` (String) Whenthe secret was created.
 - `id` (String) Secret identifier tag.
 - `modified` (String) When the secret was modified.
-- `name` (String) The name of the secret.
+- `name` (String) The name of the secret
 - `scopes` (List of String) The list of services that can use this secret.
 - `status` (String) Available values: "pending", "active", "deleted".
-- `store_id` (String) Store Identifier.
+- `store_id` (String) Store Identifier
 
 

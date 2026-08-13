@@ -1,0 +1,127 @@
+version: "1.0"
+description: "Cloudflare Terraform Provider v5 State Attribute Renames"
+
+# Schema version reset - all resources get schema_version set to 0
+schema_version_reset:
+  all_cloudflare_resources: true
+
+# Attribute renames for state files
+state_attribute_renames:
+  cloudflare_api_token:
+    policy: policies
+  
+  cloudflare_account_member:
+    role_ids: roles
+    email_address: email
+  
+  cloudflare_byo_ip_prefix:
+    advertisement: advertised
+  
+  cloudflare_hostname_tls_setting:
+    setting: setting_id
+  
+  # cloudflare_load_balancer - handled in Go state.go
+  
+  cloudflare_queue:
+    name: queue_name
+    # Special case: id gets duplicated as queue_id
+    id_duplicate_as: queue_id
+  
+  cloudflare_turnstile_widget:
+    # Special case: id gets duplicated as sitekey
+    id_duplicate_as: sitekey
+  
+  cloudflare_r2_bucket:
+    location_hint: location
+  
+  cloudflare_worker_kv:
+    key: key_name
+  
+  cloudflare_workers_kv:
+    key: key_name
+  
+  cloudflare_logpull_retention:
+    enabled: flag
+  
+  cloudflare_logpush_ownership_challenge:
+    ownership_challenge_filename: filename
+  
+  cloudflare_zero_trust_tunnel_cloudflared:
+    secret: tunnel_secret
+  
+  cloudflare_zero_trust_access_short_lived_certificate:
+    application_id: app_id
+  
+  cloudflare_workers_secret:
+    secret_text: text
+  
+  cloudflare_tiered_cache:
+    cache_type: value
+
+# Attribute removals for state files
+state_attribute_removals:
+  cloudflare_access_policy:
+    - application_id
+    - precedence
+  
+  cloudflare_zero_trust_access_group:
+    - application_id
+    - precedence
+  
+  cloudflare_access_service_token:
+    - min_days_for_renewal
+  
+  cloudflare_zero_trust_access_service_token:
+    - min_days_for_renewal
+  
+  cloudflare_tunnel:
+    - secret
+    - cname
+  
+  cloudflare_zero_trust_tunnel_cloudflared:
+    - secret  # Note: Different from tunnel_secret rename above
+    - cname
+  
+  cloudflare_origin_ca_certificate:
+    - min_days_for_renewal
+
+  cloudflare_page_rule:
+    - disable_railgun
+    - minify
+    - server_side_exclude
+
+# Special transformations for specific resources
+state_special_transformations:
+  cloudflare_page_rule:
+    # Convert empty values to null
+    empty_to_null:
+      - '""'  # Empty strings
+      - '[]'  # Empty arrays
+      - 'false'  # False booleans
+      - '0'  # Zero values
+    
+    # Specific field transformations
+    field_transformations:
+      forwarding_url:
+        # Empty array becomes null
+        from: '[]'
+        to: 'null'
+      
+      forwarding_url_unwrap:
+        # Single-element array gets unwrapped to object
+        from: '[{"status_code": $status_code, "url": $url}]'
+        to: '{"status_code": $status_code, "url": $url}'
+      
+      actions:
+        # Single-element array gets unwrapped
+        from: '[$action]'
+        to: '$action'
+
+# Notes about implementation
+notes:
+  - "Schema version is reset to 0 for all cloudflare resources"
+  - "Some resources have special handling for id duplication (queue, turnstile_widget)"
+  - "cloudflare_load_balancer is handled in Go state.go instead of Grit"
+  - "page_rule has complex transformations for normalizing empty values and unwrapping single-element arrays"
+  - "Some attributes are removed entirely rather than renamed"
+  - "cloudflare_tunnel and zero_trust_tunnel_cloudflared have overlapping removals"

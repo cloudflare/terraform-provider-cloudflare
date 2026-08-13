@@ -36,7 +36,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Define configurations using a unique string identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
@@ -144,11 +144,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "Defines the last modified time of the Hyperdrive configuration.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"restarted_on": schema.StringAttribute{
-				Description: "Defines the last time the Hyperdrive connection pool was explicitly restarted via the restart endpoint. Omitted if the pool has never been explicitly restarted.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},

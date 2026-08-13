@@ -51,39 +51,27 @@ func normalizeReadZeroTrustAccessPolicyAPIData(ctx context.Context, data, source
 	diags := make(diag.Diagnostics, 0)
 	diags.Append(pruneEmptyConditionSelectors(ctx, data)...)
 
-	// For rule fields, if they were null/unknown in the source (plan/state) and the API returned empty sets,
-	// convert them back to null to prevent "inconsistent result after apply" errors.
-	// Unknown is treated like null here because during Create, computed+optional fields that the user
-	// didn't set come in as Unknown from the plan.
-	if (sourceData.Include.IsNull() || sourceData.Include.IsUnknown()) && !data.Include.IsNull() && len(data.Include.Elements()) == 0 {
+	// For rule fields, if they were null in the source (plan/state) and the API returned empty sets,
+	// convert them back to null to prevent "inconsistent result after apply" errors
+	if sourceData.Include.IsNull() && !data.Include.IsNull() && len(data.Include.Elements()) == 0 {
 		data.Include = customfield.NullObjectSet[ZeroTrustAccessPolicyIncludeModel](ctx)
 	}
-	if (sourceData.Require.IsNull() || sourceData.Require.IsUnknown()) && !data.Require.IsNull() && len(data.Require.Elements()) == 0 {
+	if sourceData.Require.IsNull() && !data.Require.IsNull() && len(data.Require.Elements()) == 0 {
 		data.Require = customfield.NullObjectSet[ZeroTrustAccessPolicyRequireModel](ctx)
 	}
-	if (sourceData.Exclude.IsNull() || sourceData.Exclude.IsUnknown()) && !data.Exclude.IsNull() && len(data.Exclude.Elements()) == 0 {
+	if sourceData.Exclude.IsNull() && !data.Exclude.IsNull() && len(data.Exclude.Elements()) == 0 {
 		data.Exclude = customfield.NullObjectSet[ZeroTrustAccessPolicyExcludeModel](ctx)
 	}
 
-	// For non-empty rule fields, use standard normalization (only when source is known)
-	if (!sourceData.Include.IsNull() && !sourceData.Include.IsUnknown()) || (!data.Include.IsNull() && len(data.Include.Elements()) > 0) {
+	// For non-empty rule fields, use standard normalization
+	if !sourceData.Include.IsNull() || (!data.Include.IsNull() && len(data.Include.Elements()) > 0) {
 		normalizeEmptyAndNullNestedObjectSet(&data.Include, sourceData.Include)
 	}
-	if (!sourceData.Require.IsNull() && !sourceData.Require.IsUnknown()) || (!data.Require.IsNull() && len(data.Require.Elements()) > 0) {
+	if !sourceData.Require.IsNull() || (!data.Require.IsNull() && len(data.Require.Elements()) > 0) {
 		normalizeEmptyAndNullNestedObjectSet(&data.Require, sourceData.Require)
 	}
-	if (!sourceData.Exclude.IsNull() && !sourceData.Exclude.IsUnknown()) || (!data.Exclude.IsNull() && len(data.Exclude.Elements()) > 0) {
+	if !sourceData.Exclude.IsNull() || (!data.Exclude.IsNull() && len(data.Exclude.Elements()) > 0) {
 		normalizeEmptyAndNullNestedObjectSet(&data.Exclude, sourceData.Exclude)
-	}
-
-	// Normalize session_duration — when the user explicitly sets session_duration = ""
-	// (meaning "same as application session timeout"), the API's Get response may omit
-	// the field (returning null) or return the default "24h" instead. Preserve the user's
-	// empty-string intention to prevent perpetual diffs.
-	if !sourceData.SessionDuration.IsNull() && !sourceData.SessionDuration.IsUnknown() &&
-		sourceData.SessionDuration.ValueString() == "" &&
-		(data.SessionDuration.IsNull() || data.SessionDuration.ValueString() != "") {
-		data.SessionDuration = sourceData.SessionDuration
 	}
 
 	// For other fields, use the original normalization logic

@@ -18,8 +18,7 @@ type AccountSubscriptionResultDataSourceEnvelope struct {
 }
 
 type AccountSubscriptionDataSourceModel struct {
-	ID                 types.String                                                         `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID             types.String                                                         `tfsdk:"zone_id" path:"zone_id,optional"`
+	ID                 types.String                                                         `tfsdk:"id" path:"account_id,computed"`
 	AccountID          types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
 	Currency           types.String                                                         `tfsdk:"currency" json:"currency,computed"`
 	CurrentPeriodEnd   timetypes.RFC3339                                                    `tfsdk:"current_period_end" json:"current_period_end,computed" format:"date-time"`
@@ -31,12 +30,8 @@ type AccountSubscriptionDataSourceModel struct {
 }
 
 func (m *AccountSubscriptionDataSourceModel) toReadParams(_ context.Context) (params accounts.SubscriptionGetParams, diags diag.Diagnostics) {
-	params = accounts.SubscriptionGetParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	params = accounts.SubscriptionGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return

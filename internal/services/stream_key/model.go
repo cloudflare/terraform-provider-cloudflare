@@ -14,7 +14,7 @@ type StreamKeyResultEnvelope struct {
 
 type StreamKeyModel struct {
 	ID        types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Jwk       types.String      `tfsdk:"jwk" json:"jwk,computed,no_refresh"`
 	KeyID     types.String      `tfsdk:"key_id" json:"key_id,computed"`

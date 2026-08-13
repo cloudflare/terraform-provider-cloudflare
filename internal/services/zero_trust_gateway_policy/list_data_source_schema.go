@@ -22,7 +22,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Optional: true,
+				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -68,7 +68,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"filters": schema.ListAttribute{
 							Description: "Specify the protocol or layer to evaluate the traffic, identity, and device posture expressions. Can only contain a single value.",
 							Computed:    true,
-							CustomType:  customfield.NewListType[types.String](ctx),
 							Validators: []validator.List{
 								listvalidator.ValueStringsAre(
 									stringvalidator.OneOfCaseInsensitive(
@@ -80,6 +79,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									),
 								),
 							},
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"name": schema.StringAttribute{
@@ -152,7 +152,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"add_headers": schema.MapAttribute{
-									Description: "Add custom headers to allowed requests as key-value pairs. Use header names as keys that map to arrays of header values. Header values may contain `@{selector.name}` variable references that are interpolated at the edge. Use `@@{` to escape a literal `@{`. A maximum of 20 header operations (add + set + delete) is allowed per policy. Each header name may not exceed 256 bytes and each header value may not exceed 4 KB. Settable only for `http` rules with the action set to `allow`.",
+									Description: "Add custom headers to allowed requests as key-value pairs. Use header names as keys that map to arrays of header values. Settable only for `http` rules with the action set to `allow`.",
 									Computed:    true,
 									CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 									ElementType: types.ListType{
@@ -307,12 +307,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 										},
 									},
-								},
-								"delete_headers": schema.ListAttribute{
-									Description: "Remove headers from allowed requests by name. A maximum of 20 header operations (add + set + delete) is allowed per policy. Each header name may not exceed 256 bytes. Settable only for `http` rules with the action set to `allow`.",
-									Computed:    true,
-									CustomType:  customfield.NewListType[types.String](ctx),
-									ElementType: types.StringType,
 								},
 								"dns_resolvers": schema.SingleNestedAttribute{
 									Description: "Configure custom resolvers to route queries that match the resolver policy. Unused with 'resolve_dns_through_cloudflare' or 'resolve_dns_internally' settings. DNS queries get routed to the address closest to their origin. Only valid when a rule's action set to 'resolve'. Settable only for `dns_resolver` rules.",
@@ -546,14 +540,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"resolve_dns_through_cloudflare": schema.BoolAttribute{
 									Description: "Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot set when 'dns_resolvers' specified or 'resolve_dns_internally' is set. Only valid when a rule's action set to 'resolve'. Settable only for `dns_resolver` rules.",
 									Computed:    true,
-								},
-								"set_headers": schema.MapAttribute{
-									Description: "Replace existing headers on allowed requests with the specified key-value pairs. If a header does not exist, it is added. Header values may contain `@{selector.name}` variable references that are interpolated at the edge. Use `@@{` to escape a literal `@{`. A maximum of 20 header operations (add + set + delete) is allowed per policy. Each header name may not exceed 256 bytes and each header value may not exceed 4 KB. Settable only for `http` rules with the action set to `allow`.",
-									Computed:    true,
-									CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
 								},
 								"untrusted_cert": schema.SingleNestedAttribute{
 									Description: "Configure behavior when an upstream certificate is invalid or an SSL error occurs. Settable only for `http` rules with the action set to `allow`.",

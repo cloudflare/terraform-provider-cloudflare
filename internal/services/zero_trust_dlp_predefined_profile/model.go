@@ -15,7 +15,7 @@ type ZeroTrustDLPPredefinedProfileResultEnvelope struct {
 type ZeroTrustDLPPredefinedProfileModel struct {
 	ID                  types.String                                                            `tfsdk:"id" json:"-,computed"`
 	ProfileID           types.String                                                            `tfsdk:"profile_id" path:"profile_id,required"`
-	AccountID           types.String                                                            `tfsdk:"account_id" path:"account_id,required"`
+	AccountID           types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
 	EnabledEntries      *[]types.String                                                         `tfsdk:"enabled_entries" json:"enabled_entries,optional"`
 	AIContextEnabled    types.Bool                                                              `tfsdk:"ai_context_enabled" json:"ai_context_enabled,computed_optional"`
 	AllowedMatchCount   types.Int64                                                             `tfsdk:"allowed_match_count" json:"allowed_match_count,computed_optional"`

@@ -32,7 +32,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"action": schema.StringAttribute{
@@ -298,11 +298,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"delete_headers": schema.ListAttribute{
-						Description: "Remove headers from allowed requests by name. A maximum of 20 header operations (add + set + delete) is allowed per policy. Each header name may not exceed 256 bytes. Settable only for `http` rules with the action set to `allow`.",
-						Optional:    true,
-						ElementType: types.StringType,
-					},
 					"dns_resolvers": schema.SingleNestedAttribute{
 						Description: "Configure custom resolvers to route queries that match the resolver policy. Unused with 'resolve_dns_through_cloudflare' or 'resolve_dns_internally' settings. DNS queries get routed to the address closest to their origin. Only valid when a rule's action set to 'resolve'. Settable only for `dns_resolver` rules.",
 						Optional:    true,
@@ -385,8 +380,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"ignore_cname_category_matches": schema.BoolAttribute{
 						Description: "Ignore category matches at CNAME domains in a response. When off, evaluate categories in this rule against all CNAME domain categories in the response. Settable only for `dns` and `dns_resolver` rules.",
-						Computed:    true,
 						Optional:    true,
+						Computed:    true,
 					},
 					"insecure_disable_dnssec_validation": schema.BoolAttribute{
 						Description: "Specify whether to disable DNSSEC validation (for Allow actions) [INSECURE]. Settable only for `dns` rules.",
@@ -523,13 +518,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"resolve_dns_through_cloudflare": schema.BoolAttribute{
 						Description: "Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot set when 'dns_resolvers' specified or 'resolve_dns_internally' is set. Only valid when a rule's action set to 'resolve'. Settable only for `dns_resolver` rules.",
 						Optional:    true,
-					},
-					"set_headers": schema.MapAttribute{
-						Description: "Replace existing headers on allowed requests with the specified key-value pairs. If a header does not exist, it is added. Header values may contain `@{selector.name}` variable references that are interpolated at the edge. Use `@@{` to escape a literal `@{`. A maximum of 20 header operations (add + set + delete) is allowed per policy. Each header name may not exceed 256 bytes and each header value may not exceed 4 KB. Settable only for `http` rules with the action set to `allow`.",
-						Optional:    true,
-						ElementType: types.ListType{
-							ElemType: types.StringType,
-						},
 					},
 					"untrusted_cert": schema.SingleNestedAttribute{
 						Description: "Configure behavior when an upstream certificate is invalid or an SSL error occurs. Settable only for `http` rules with the action set to `allow`.",

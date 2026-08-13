@@ -120,7 +120,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_ipsec_tunnel"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_static_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/managed_transforms"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/moq_relay"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate_associations"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy"
@@ -244,7 +243,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dex_test"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_entry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_profile"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_prompt_topic"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_data_class"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_data_tag"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_data_tag_category"
@@ -494,8 +492,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		client_certificate.NewResource,
 		custom_ssl.NewResource,
 		custom_csr.NewResource,
-		mtls_certificate.NewResource,
-		ruleset.NewResource,
 		custom_hostname.NewResource,
 		custom_hostname_fallback_origin.NewResource,
 		dns_firewall.NewResource,
@@ -527,8 +523,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		logpush_job.NewResource,
 		logpush_ownership_challenge.NewResource,
 		logpull_retention.NewResource,
-		authenticated_origin_pulls.NewResource,
 		authenticated_origin_pulls_certificate.NewResource,
+		authenticated_origin_pulls.NewResource,
 		authenticated_origin_pulls_hostname_certificate.NewResource,
 		authenticated_origin_pulls_settings.NewResource,
 		page_rule.NewResource,
@@ -551,13 +547,14 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		queue.NewResource,
 		queue_consumer.NewResource,
 		api_shield.NewResource,
-		api_shield_operation.NewResource,
 		api_shield_discovery_operation.NewResource,
+		api_shield_operation.NewResource,
 		api_shield_operation_schema_validation_settings.NewResource,
 		api_shield_schema_validation_settings.NewResource,
 		api_shield_schema.NewResource,
 		managed_transforms.NewResource,
 		page_shield_policy.NewResource,
+		ruleset.NewResource,
 		url_normalization_settings.NewResource,
 		spectrum_application.NewResource,
 		regional_hostname.NewResource,
@@ -577,6 +574,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		magic_transit_cf1_site.NewResource,
 		magic_network_monitoring_configuration.NewResource,
 		magic_network_monitoring_rule.NewResource,
+		mtls_certificate.NewResource,
 		pages_project.NewResource,
 		pages_domain.NewResource,
 		registrar_domain.NewResource,
@@ -677,11 +675,10 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		observatory_scheduled_test.NewResource,
 		hostname_tls_setting.NewResource,
 		snippet.NewResource,
-		snippet_rules.NewResource,
 		snippets.NewResource, // deprecated.
+		snippet_rules.NewResource,
 		calls_sfu_app.NewResource,
 		calls_turn_app.NewResource,
-		moq_relay.NewResource,
 		cloudforce_one_request.NewResource,
 		cloudforce_one_request_message.NewResource,
 		cloudforce_one_request_priority.NewResource,
@@ -831,9 +828,9 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		logpush_job.NewLogpushJobDataSource,
 		logpush_job.NewLogpushJobsDataSource,
 		logpull_retention.NewLogpullRetentionDataSource,
-		authenticated_origin_pulls.NewAuthenticatedOriginPullsDataSource,
 		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificateDataSource,
 		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificatesDataSource,
+		authenticated_origin_pulls.NewAuthenticatedOriginPullsDataSource,
 		authenticated_origin_pulls_hostname_certificate.NewAuthenticatedOriginPullsHostnameCertificateDataSource,
 		authenticated_origin_pulls_hostname_certificate.NewAuthenticatedOriginPullsHostnameCertificatesDataSource,
 		authenticated_origin_pulls_settings.NewAuthenticatedOriginPullsSettingsDataSource,
@@ -885,11 +882,11 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		page_shield_scripts.NewPageShieldScriptsListDataSource,
 		page_shield_cookies.NewPageShieldCookiesDataSource,
 		page_shield_cookies.NewPageShieldCookiesListDataSource,
+		ruleset.NewRulesetDataSource,
+		ruleset.NewRulesetsDataSource,
 		url_normalization_settings.NewURLNormalizationSettingsDataSource,
 		spectrum_application.NewSpectrumApplicationDataSource,
 		spectrum_application.NewSpectrumApplicationsDataSource,
-		ruleset.NewRulesetDataSource,
-		ruleset.NewRulesetsDataSource,
 		regional_hostname.NewRegionalHostnameDataSource,
 		regional_hostname.NewRegionalHostnamesDataSource,
 		address_map.NewAddressMapDataSource,
@@ -1014,8 +1011,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_warp_connector.NewZeroTrustTunnelWARPConnectorsDataSource,
 		zero_trust_tunnel_warp_connector_token.NewZeroTrustTunnelWARPConnectorTokenDataSource,
 		zero_trust_tunnel_warp_connector_config.NewZeroTrustTunnelWARPConnectorConfigDataSource,
-		zero_trust_dlp_custom_prompt_topic.NewZeroTrustDLPCustomPromptTopicDataSource,
-		zero_trust_dlp_custom_prompt_topic.NewZeroTrustDLPCustomPromptTopicsDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetsDataSource,
 		zero_trust_dlp_settings.NewZeroTrustDLPSettingsDataSource,
@@ -1092,7 +1087,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		hostname_tls_setting.NewHostnameTLSSettingDataSource,
 		snippet.NewSnippetDataSource,
 		snippet.NewSnippetsDataSource,
-		snippet_rules.NewSnippetRulesDataSource,
 		snippet_rules.NewSnippetRulesListDataSource,
 		snippets.NewSnippetsDataSource,     // deprecated.
 		snippets.NewSnippetsListDataSource, // deprecated.
@@ -1100,8 +1094,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		calls_sfu_app.NewCallsSFUAppsDataSource,
 		calls_turn_app.NewCallsTURNAppDataSource,
 		calls_turn_app.NewCallsTURNAppsDataSource,
-		moq_relay.NewMoQRelayDataSource,
-		moq_relay.NewMoQRelaysDataSource,
 		cloudforce_one_request.NewCloudforceOneRequestDataSource,
 		cloudforce_one_request.NewCloudforceOneRequestsDataSource,
 		cloudforce_one_request_message.NewCloudforceOneRequestMessageDataSource,

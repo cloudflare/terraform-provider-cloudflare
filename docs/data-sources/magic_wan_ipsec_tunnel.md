@@ -29,11 +29,8 @@ data "cloudflare_magic_wan_ipsec_tunnel" "example_magic_wan_ipsec_tunnel" {
 
 ### Required
 
-- `ipsec_tunnel_id` (String) Identifier
-
-### Optional
-
 - `account_id` (String) Identifier
+- `ipsec_tunnel_id` (String) Identifier
 
 ### Read-Only
 

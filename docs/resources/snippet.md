@@ -71,10 +71,5 @@ Required:
 
 ## Import
 
-Import is supported using the following syntax:
 
-```shell
-$ terraform import cloudflare_snippet.example '<zone_id>/<snippet_name>'
-```
-
-
+~> This resource does not currently support `terraform import`.

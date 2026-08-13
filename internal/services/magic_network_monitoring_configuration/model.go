@@ -12,7 +12,7 @@ type MagicNetworkMonitoringConfigurationResultEnvelope struct {
 }
 
 type MagicNetworkMonitoringConfigurationModel struct {
-	AccountID       types.String                                            `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String                                            `tfsdk:"account_id" path:"account_id,optional"`
 	Name            types.String                                            `tfsdk:"name" json:"name,required"`
 	RouterIPs       *[]types.String                                         `tfsdk:"router_ips" json:"router_ips,optional"`
 	WARPDevices     *[]*MagicNetworkMonitoringConfigurationWARPDevicesModel `tfsdk:"warp_devices" json:"warp_devices,optional"`

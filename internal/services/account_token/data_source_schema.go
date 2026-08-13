@@ -171,11 +171,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
 						},
 					},
-					"include_expired": schema.BoolAttribute{
-						Description: "When true, includes recently-expired tokens in the response.",
-						Computed:    true,
-						Optional:    true,
-					},
 				},
 			},
 		},

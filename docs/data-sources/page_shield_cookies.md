@@ -32,9 +32,6 @@ data "cloudflare_page_shield_cookies" "example_page_shield_cookies" {
 ### Required
 
 - `cookie_id` (String) Identifier
-
-### Optional
-
 - `zone_id` (String) Identifier
 
 ### Read-Only

@@ -50,14 +50,13 @@ Read-Only:
 - `modified_by` (String)
 - `name` (String)
 - `secure_web_gateway` (Boolean) Route outbound MCP traffic through Zero Trust Secure Web Gateway
-- `servers` (Attributes Set) (see [below for nested schema](#nestedatt--result--servers))
+- `servers` (Attributes List) (see [below for nested schema](#nestedatt--result--servers))
 
 <a id="nestedatt--result--servers"></a>
 ### Nested Schema for `result.servers`
 
 Read-Only:
 
-- `auth_config_summary` (Attributes) Safe subset of auth_credentials surfaced to the dashboard. Includes auth_mode (dcr|manual), has_client_secret, client_secret_version, and the OAuth endpoints + client_id for manual servers. Never includes the secret value. (see [below for nested schema](#nestedatt--result--servers--auth_config_summary))
 - `auth_type` (String) Available values: "oauth", "bearer", "unauthenticated".
 - `created_at` (String)
 - `created_by` (String)
@@ -67,7 +66,7 @@ Read-Only:
 - `error_details` (Attributes) (see [below for nested schema](#nestedatt--result--servers--error_details))
 - `hostname` (String)
 - `id` (String) server id
-- `is_shared_oauth_callback_enabled` (Boolean) When true, the gateway worker uses the shared Cloudflare-owned OAuth callback endpoint as the redirect_uri for upstream on-behalf OAuth, instead of the customer portal hostname. New public server creates default to true; existing servers default to false from migration until explicitly updated. Effective behavior is gated by the gateway worker's per-env rollout mode KV key.
+- `is_shared_oauth_callback_enabled` (Boolean) When true, the gateway worker uses the shared Cloudflare-owned OAuth callback endpoint as the redirect_uri for upstream on-behalf OAuth, instead of the customer portal hostname. New servers default to true; existing servers default to false. Effective behavior is gated by the gateway worker's per-env rollout mode KV key.
 - `last_successful_sync` (String)
 - `last_synced` (String)
 - `modified_at` (String)
@@ -75,48 +74,10 @@ Read-Only:
 - `name` (String)
 - `on_behalf` (Boolean)
 - `prompts` (List of Map of String)
-- `secure_web_gateway` (Boolean) Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway
-- `server_id` (String) server id
-- `status` (String) Current sync state of the server
-Available values: "waiting", "ready", "stale", "error".
+- `status` (String)
 - `tools` (List of Map of String)
 - `updated_prompts` (Attributes List) (see [below for nested schema](#nestedatt--result--servers--updated_prompts))
 - `updated_tools` (Attributes List) (see [below for nested schema](#nestedatt--result--servers--updated_tools))
-
-<a id="nestedatt--result--servers--auth_config_summary"></a>
-### Nested Schema for `result.servers.auth_config_summary`
-
-Read-Only:
-
-- `auth_mode` (String) Available values: "dcr", "manual".
-- `client_secret_version` (Number)
-- `config` (Attributes) (see [below for nested schema](#nestedatt--result--servers--auth_config_summary--config))
-- `has_client_secret` (Boolean)
-- `registration_info` (Attributes) (see [below for nested schema](#nestedatt--result--servers--auth_config_summary--registration_info))
-
-<a id="nestedatt--result--servers--auth_config_summary--config"></a>
-### Nested Schema for `result.servers.auth_config_summary.config`
-
-Read-Only:
-
-- `authorization_endpoint` (String)
-- `issuer` (String)
-- `resource` (String)
-- `revocation_endpoint` (String)
-- `token_endpoint` (String)
-
-
-<a id="nestedatt--result--servers--auth_config_summary--registration_info"></a>
-### Nested Schema for `result.servers.auth_config_summary.registration_info`
-
-Read-Only:
-
-- `client_id` (String)
-- `redirect_uris` (List of String)
-- `scope` (String)
-- `token_endpoint_auth_method` (String)
-
-
 
 <a id="nestedatt--result--servers--error_details"></a>
 ### Nested Schema for `result.servers.error_details`

@@ -15,7 +15,7 @@ type DNSFirewallResultEnvelope struct {
 
 type DNSFirewallModel struct {
 	ID                   types.String                                               `tfsdk:"id" json:"id,computed"`
-	AccountID            types.String                                               `tfsdk:"account_id" path:"account_id,required"`
+	AccountID            types.String                                               `tfsdk:"account_id" path:"account_id,optional"`
 	DNSFirewallIPCount   types.Int64                                                `tfsdk:"dns_firewall_ip_count" json:"dns_firewall_ip_count,computed_optional,no_refresh"`
 	Name                 types.String                                               `tfsdk:"name" json:"name,required"`
 	UpstreamIPs          *[]types.String                                            `tfsdk:"upstream_ips" json:"upstream_ips,required"`

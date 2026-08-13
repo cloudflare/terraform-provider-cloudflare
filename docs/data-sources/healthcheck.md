@@ -28,9 +28,6 @@ data "cloudflare_healthcheck" "example_healthcheck" {
 ### Required
 
 - `healthcheck_id` (String) Identifier
-
-### Optional
-
 - `zone_id` (String) Identifier
 
 ### Read-Only

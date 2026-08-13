@@ -17,8 +17,8 @@ Accepted Permissions
 
 ```terraform
 data "cloudflare_load_balancer" "example_load_balancer" {
+  zone_id = "699d98642c564d2e855e9661899b7252"
   load_balancer_id = "699d98642c564d2e855e9661899b7252"
-  zone_id = "zone_id"
 }
 ```
 
@@ -236,4 +236,5 @@ Available values: "Auto", "Lax", "None", "Strict".
 Available values: "Auto", "Always", "Never".
 - `zero_downtime_failover` (String) Configures the zero-downtime failover between origins within a pool when session affinity is enabled. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. The supported values are: - `"none"`: No failover takes place for sessions pinned to the origin (default). - `"temporary"`: Traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping. - `"sticky"`: The session affinity cookie is updated and subsequent requests are sent to the new origin. Note: Zero-downtime failover with sticky sessions is currently not supported for session affinity by header.
 Available values: "none", "temporary", "sticky".
+
 

@@ -22,7 +22,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Optional: true,
+				Optional:    true,
 			},
 			"namespace": schema.StringAttribute{
 				Description: "Filter by namespace.",
@@ -186,7 +186,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"embedding_model": schema.StringAttribute{
-							Description: `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "google-ai-studio/gemini-embedding-2", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
+							Description: `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -196,7 +196,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"@cf/google/embeddinggemma-300m",
 									"google-ai-studio/gemini-embedding-001",
 									"google-ai-studio/gemini-embedding-2-preview",
-									"google-ai-studio/gemini-embedding-2",
 									"openai/text-embedding-3-small",
 									"openai/text-embedding-3-large",
 									"",
@@ -301,16 +300,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 										},
 									},
-								},
-								"custom_domains": schema.ListAttribute{
-									Description: "Custom domain hostnames that alias this public endpoint. GET and create responses return the current set; on update (PUT) this field is only echoed back when supplied in the request body, otherwise it is null (omit it to leave domains unchanged).",
-									Computed:    true,
-									CustomType:  customfield.NewListType[types.String](ctx),
-									ElementType: types.StringType,
-								},
-								"default_domain_enabled": schema.BoolAttribute{
-									Description: "When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.",
-									Computed:    true,
 								},
 								"enabled": schema.BoolAttribute{
 									Computed: true,

@@ -27,28 +27,28 @@ data "cloudflare_secrets_store" "example_secrets_store" {
 
 ### Required
 
-- `account_id` (String)
+- `account_id` (String) Account Identifier
 
 ### Optional
 
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `store_id` (String)
+- `store_id` (String) Store Identifier
 
 ### Read-Only
 
-- `created` (String) When the secret was created.
-- `id` (String) The ID of this resource.
+- `created` (String) Whenthe secret was created.
+- `id` (String) Store Identifier
 - `modified` (String) When the secret was modified.
-- `name` (String) The name of the store.
+- `name` (String) The name of the store
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
 
 Optional:
 
-- `direction` (String) Direction to sort objects.
+- `direction` (String) Direction to sort objects
 Available values: "asc", "desc".
-- `order` (String) Order stores by values in the given field.
-Available values: "name", "created", "modified".
+- `order` (String) Order secrets by values in the given field
+Available values: "name", "comment", "created", "modified", "status".
 
 

@@ -35,17 +35,13 @@ func (r *ZeroTrustListResource) MoveState(ctx context.Context) []resource.StateM
 // 2: v5 production state (v5.0-v5.18) -> no-op
 func (r *ZeroTrustListResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
+	sourceSchema := v500.SourceTeamsListSchema()
 
 	return map[int64]resource.StateUpgrader{
-		// schema_version=0 -- AMBIGUOUS between v4 SDKv2 (cloudflare_teams_list)
-		// and v5 production format. PriorSchema is nil so the framework skips
-		// pre-decoding req.State; pre-decoding v5 object-format `items` against
-		// the v4 string schema fails with "unsupported type json.Delim sent as
-		// tftypes.String". UpgradeFromV0Ambiguous detects the format from raw
-		// JSON: v4 => merge items + items_with_description; v5 => no-op bump.
+		// v4 SDKv2 provider (schema_version=0) -- merge items + items_with_description
 		0: {
-			PriorSchema:   nil,
-			StateUpgrader: v500.UpgradeFromV0Ambiguous,
+			PriorSchema:   &sourceSchema,
+			StateUpgrader: v500.UpgradeFromV4,
 		},
 		// v5 intermediate state (version=1) -- no-op
 		1: {

@@ -5,7 +5,6 @@ package zero_trust_device_subnet
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -37,7 +36,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Cloudflare account ID",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
@@ -71,29 +70,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"subnet_type": schema.StringAttribute{
-				Description: "The type of subnet.\nAvailable values: \"cloudflare_source\", \"initial_resolved_ip\", \"warp\".",
+				Description: "The type of subnet.\nAvailable values: \"cloudflare_source\", \"warp\".",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"cloudflare_source",
-						"initial_resolved_ip",
-						"warp",
-					),
-				},
-			},
-			"capacity": schema.SingleNestedAttribute{
-				Description: "IP capacity information for the subnet.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustDeviceSubnetCapacityModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"total": schema.Int64Attribute{
-						Description: "Total number of assignable IPs in the subnet.",
-						Computed:    true,
-					},
-					"used": schema.Int64Attribute{
-						Description: "Number of assigned IPs in the subnet.",
-						Computed:    true,
-					},
+					stringvalidator.OneOfCaseInsensitive("cloudflare_source", "warp"),
 				},
 			},
 		},

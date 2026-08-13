@@ -94,29 +94,6 @@ func (r *WorkersCustomDomainResource) Create(ctx context.Context, req resource.C
 	}
 	data = &env.Result
 
-	res = new(http.Response)
-	env = WorkersCustomDomainResultEnvelope{*data}
-	_, err = r.client.Workers.Domains.Get(
-		ctx,
-		data.ID.ValueString(),
-		workers.DomainGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ = io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

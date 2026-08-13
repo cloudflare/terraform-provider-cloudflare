@@ -40,10 +40,16 @@ func (m *SecretsStoreSecretDataSourceModel) toReadParams(_ context.Context) (par
 }
 
 func (m *SecretsStoreSecretDataSourceModel) toListParams(_ context.Context) (params secrets_store.StoreSecretListParams, diags diag.Diagnostics) {
-	mFilterScopes := []secrets_store.StoreSecretListParamsScope{}
+	mFilterScopes := [][]string{}
 	if m.Filter.Scopes != nil {
 		for _, item := range *m.Filter.Scopes {
-			mFilterScopes = append(mFilterScopes, secrets_store.StoreSecretListParamsScope(item.ValueString()))
+			mFilterItem := []string{}
+			if item != nil {
+				for _, item := range *item {
+					mFilterItem = append(mFilterItem, item.ValueString())
+				}
+			}
+			mFilterScopes = append(mFilterScopes, mFilterItem)
 		}
 	}
 
@@ -66,8 +72,8 @@ func (m *SecretsStoreSecretDataSourceModel) toListParams(_ context.Context) (par
 }
 
 type SecretsStoreSecretFindOneByDataSourceModel struct {
-	Direction types.String    `tfsdk:"direction" query:"direction,computed_optional"`
-	Order     types.String    `tfsdk:"order" query:"order,computed_optional"`
-	Scopes    *[]types.String `tfsdk:"scopes" query:"scopes,optional"`
-	Search    types.String    `tfsdk:"search" query:"search,optional"`
+	Direction types.String       `tfsdk:"direction" query:"direction,computed_optional"`
+	Order     types.String       `tfsdk:"order" query:"order,computed_optional"`
+	Scopes    *[]*[]types.String `tfsdk:"scopes" query:"scopes,optional"`
+	Search    types.String       `tfsdk:"search" query:"search,optional"`
 }

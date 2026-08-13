@@ -27,11 +27,8 @@ data "cloudflare_pipeline" "example_pipeline" {
 
 ### Required
 
-- `pipeline_id` (String) Specifies the public ID of the pipeline.
-
-### Optional
-
 - `account_id` (String) Specifies the public ID of the account.
+- `pipeline_id` (String) Specifies the public ID of the pipeline.
 
 ### Read-Only
 

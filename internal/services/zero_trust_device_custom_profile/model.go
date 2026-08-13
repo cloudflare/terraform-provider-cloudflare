@@ -15,7 +15,7 @@ type ZeroTrustDeviceCustomProfileResultEnvelope struct {
 type ZeroTrustDeviceCustomProfileModel struct {
 	ID                         types.String                                                                     `tfsdk:"id" json:"-,computed"`
 	PolicyID                   types.String                                                                     `tfsdk:"policy_id" json:"policy_id,computed"`
-	AccountID                  types.String                                                                     `tfsdk:"account_id" path:"account_id,required"`
+	AccountID                  types.String                                                                     `tfsdk:"account_id" path:"account_id,optional"`
 	Match                      types.String                                                                     `tfsdk:"match" json:"match,required"`
 	Name                       types.String                                                                     `tfsdk:"name" json:"name,required"`
 	Precedence                 types.Float64                                                                    `tfsdk:"precedence" json:"precedence,computed_optional"`
@@ -38,7 +38,6 @@ type ZeroTrustDeviceCustomProfileModel struct {
 	TunnelProtocol             types.String                                                                     `tfsdk:"tunnel_protocol" json:"tunnel_protocol,computed_optional"`
 	DNSSearchSuffixes          customfield.NestedObjectList[ZeroTrustDeviceCustomProfileDNSSearchSuffixesModel] `tfsdk:"dns_search_suffixes" json:"dns_search_suffixes,computed_optional"`
 	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfileExcludeModel]           `tfsdk:"exclude" json:"exclude,computed_optional"`
-	GlobalAcceleration         *ZeroTrustDeviceCustomProfileGlobalAccelerationModel                             `tfsdk:"global_acceleration" json:"global_acceleration,optional"`
 	Include                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfileIncludeModel]           `tfsdk:"include" json:"include,computed_optional"`
 	ServiceModeV2              customfield.NestedObject[ZeroTrustDeviceCustomProfileServiceModeV2Model]         `tfsdk:"service_mode_v2" json:"service_mode_v2,computed_optional"`
 	Default                    types.Bool                                                                       `tfsdk:"default" json:"default,computed"`
@@ -80,13 +79,6 @@ type ZeroTrustDeviceCustomProfileIncludeModel struct {
 type ZeroTrustDeviceCustomProfileServiceModeV2Model struct {
 	Mode types.String  `tfsdk:"mode" json:"mode,computed_optional"`
 	Port types.Float64 `tfsdk:"port" json:"port,computed_optional"`
-}
-
-type ZeroTrustDeviceCustomProfileGlobalAccelerationModel struct {
-	APIEndpoints       customfield.List[types.String] `tfsdk:"api_endpoints" json:"api_endpoints,required"`
-	Enabled            types.Bool                     `tfsdk:"enabled" json:"enabled,required"`
-	MasqueEndpoints    customfield.List[types.String] `tfsdk:"masque_endpoints" json:"masque_endpoints,required"`
-	WireguardEndpoints customfield.List[types.String] `tfsdk:"wireguard_endpoints" json:"wireguard_endpoints,required"`
 }
 
 type ZeroTrustDeviceCustomProfileFallbackDomainsModel struct {

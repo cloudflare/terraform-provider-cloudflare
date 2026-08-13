@@ -14,7 +14,7 @@ type CloudforceOneRequestPriorityResultEnvelope struct {
 
 type CloudforceOneRequestPriorityModel struct {
 	ID            types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID     types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	Priority      types.Int64       `tfsdk:"priority" json:"priority,required,no_refresh"`
 	Requirement   types.String      `tfsdk:"requirement" json:"requirement,required,no_refresh"`
 	TLP           types.String      `tfsdk:"tlp" json:"tlp,required"`

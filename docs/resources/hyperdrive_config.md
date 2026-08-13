@@ -63,7 +63,6 @@ Contact Cloudflare if you need a higher limit.
 - `created_on` (String) Defines the creation time of the Hyperdrive configuration.
 - `id` (String) Define configurations using a unique string identifier.
 - `modified_on` (String) Defines the last modified time of the Hyperdrive configuration.
-- `restarted_on` (String) Defines the last time the Hyperdrive connection pool was explicitly restarted via the restart endpoint. Omitted if the pool has never been explicitly restarted.
 
 <a id="nestedatt--origin"></a>
 ### Nested Schema for `origin`

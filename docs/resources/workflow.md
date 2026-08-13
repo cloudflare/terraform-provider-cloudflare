@@ -22,16 +22,9 @@ resource "cloudflare_workflow" "example_workflow" {
   workflow_name = "x"
   class_name = "x"
   script_name = "x"
-  default_retention = {
-    error_retention = "5 minutes"
-    success_retention = "5 minutes"
-  }
   limits = {
     steps = 1
   }
-  schedules = [{
-    cron = "x"
-  }]
 }
 ```
 
@@ -47,9 +40,7 @@ resource "cloudflare_workflow" "example_workflow" {
 
 ### Optional
 
-- `default_retention` (Attributes) Default retention applied to instances of this version when they do not set their own retention. (see [below for nested schema](#nestedatt--default_retention))
 - `limits` (Attributes) (see [below for nested schema](#nestedatt--limits))
-- `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
 
 ### Read-Only
 
@@ -63,29 +54,12 @@ resource "cloudflare_workflow" "example_workflow" {
 - `triggered_on` (String)
 - `version_id` (String)
 
-<a id="nestedatt--default_retention"></a>
-### Nested Schema for `default_retention`
-
-Optional:
-
-- `error_retention` (Dynamic) Specifies the duration in milliseconds or as a string like '5 minutes'.
-- `success_retention` (Dynamic) Specifies the duration in milliseconds or as a string like '5 minutes'.
-
-
 <a id="nestedatt--limits"></a>
 ### Nested Schema for `limits`
 
 Optional:
 
 - `steps` (Number)
-
-
-<a id="nestedatt--schedules"></a>
-### Nested Schema for `schedules`
-
-Required:
-
-- `cron` (String)
 
 
 <a id="nestedatt--instances"></a>
@@ -97,7 +71,6 @@ Read-Only:
 - `errored` (Number)
 - `paused` (Number)
 - `queued` (Number)
-- `rolling_back` (Number)
 - `running` (Number)
 - `terminated` (Number)
 - `waiting` (Number)

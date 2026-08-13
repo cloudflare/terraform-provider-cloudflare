@@ -19,7 +19,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessAIControlsMcpPort
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 501,
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"MCP Portals Read",
@@ -33,7 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"hostname": schema.StringAttribute{
@@ -57,10 +57,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 			},
-			"servers": schema.SetNestedAttribute{
+			"servers": schema.ListNestedAttribute{
 				Computed:   true,
 				Optional:   true,
-				CustomType: customfield.NewNestedObjectSetType[ZeroTrustAccessAIControlsMcpPortalServersModel](ctx),
+				CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpPortalServersModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"server_id": schema.StringAttribute{

@@ -29,11 +29,8 @@ data "cloudflare_magic_wan_gre_tunnel" "example_magic_wan_gre_tunnel" {
 
 ### Required
 
-- `gre_tunnel_id` (String) Identifier
-
-### Optional
-
 - `account_id` (String) Identifier
+- `gre_tunnel_id` (String) Identifier
 
 ### Read-Only
 

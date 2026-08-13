@@ -28,21 +28,21 @@ data "cloudflare_secrets_store_secret" "example_secrets_store_secret" {
 
 ### Required
 
-- `account_id` (String)
-- `store_id` (String)
+- `account_id` (String) Account Identifier
+- `store_id` (String) Store Identifier
 
 ### Optional
 
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `secret_id` (String)
+- `secret_id` (String) Secret identifier tag.
 
 ### Read-Only
 
-- `comment` (String) Freeform text describing the secret.
-- `created` (String) When the secret was created.
-- `id` (String) The ID of this resource.
+- `comment` (String) Freeform text describing the secret
+- `created` (String) Whenthe secret was created.
+- `id` (String) Secret identifier tag.
 - `modified` (String) When the secret was modified.
-- `name` (String) The name of the secret.
+- `name` (String) The name of the secret
 - `scopes` (List of String) The list of services that can use this secret.
 - `status` (String) Available values: "pending", "active", "deleted".
 
@@ -51,11 +51,11 @@ data "cloudflare_secrets_store_secret" "example_secrets_store_secret" {
 
 Optional:
 
-- `direction` (String) Direction to sort objects.
+- `direction` (String) Direction to sort objects
 Available values: "asc", "desc".
-- `order` (String) Order secrets by values in the given field.
+- `order` (String) Order secrets by values in the given field
 Available values: "name", "comment", "created", "modified", "status".
-- `scopes` (List of String) Only secrets with the given scopes will be returned.
-- `search` (String) Search secrets using a filter string, filtering across name and comment.
+- `scopes` (List of List of String) Only secrets with the given scopes will be returned
+- `search` (String) Search secrets using a filter string, filtering across name and comment
 
 

@@ -99,10 +99,8 @@ func (r *DNSRecordResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 	data = &env.Result
+
 	normalizeSettings(ctx, data, &resp.Diagnostics)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -152,10 +150,8 @@ func (r *DNSRecordResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 	data = &env.Result
+
 	normalizeSettings(ctx, data, &resp.Diagnostics)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -169,6 +165,8 @@ func (r *DNSRecordResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
+	// Save the prior state name before the API call so we can derive the zone
+	// suffix by comparing it with the FQDN the API returns.
 	priorName := data.Name.ValueString()
 
 	res := new(http.Response)
@@ -198,11 +196,14 @@ func (r *DNSRecordResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 	data = &env.Result
-	normalizeSettings(ctx, data, &resp.Diagnostics)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 
+	// avoid unnecessary diff: the Cloudflare API omits the settings object entirely for
+	// non-proxied CNAME records. Unconditionally materialize settings as a known object
+	// with false defaults so state is stable against a config of settings = { flatten_cname = false }.
+	normalizeSettings(ctx, data, &resp.Diagnostics)
+
+	// Derive the zone name by comparing the prior state name with the API's FQDN
+	// and store it in private state for ModifyPlan's FQDN normalization.
 	deriveAndSaveZoneName(ctx, priorName, data.Name.ValueString(), resp.Private)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -274,10 +275,9 @@ func (r *DNSRecordResource) ImportState(ctx context.Context, req resource.Import
 		return
 	}
 	data = &env.Result
+
+	// avoid unnecessary diff: same normalization as Read()
 	normalizeSettings(ctx, data, &resp.Diagnostics)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

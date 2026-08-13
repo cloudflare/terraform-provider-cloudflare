@@ -98,7 +98,6 @@ type TargetDevicePostureRuleModel struct {
 	Description types.String         `tfsdk:"description"`
 	Expiration  types.String         `tfsdk:"expiration"`
 	Schedule    types.String         `tfsdk:"schedule"`
-	Enabled     types.Bool           `tfsdk:"enabled"`
 	Input       *TargetInputModel    `tfsdk:"input"`
 	Match       *[]*TargetMatchModel `tfsdk:"match"`
 }

@@ -34,7 +34,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"email": schema.StringAttribute{
@@ -57,7 +57,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"external_directory_node_id": schema.StringAttribute{
 				Optional:           true,
-				DeprecationMessage: "This field is deprecated.",
+				DeprecationMessage: "This attribute is deprecated.",
 			},
 			"provenance": schema.StringAttribute{
 				Description: `Available values: "A1S_INTERNAL", "SNOOPY-CASB_OFFICE_365", "SNOOPY-OFFICE_365", "SNOOPY-GOOGLE_DIRECTORY".`,
@@ -78,7 +78,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"last_modified": schema.StringAttribute{
 				Description:        "Deprecated, use `modified_at` instead. End of life: November 1, 2026.",
 				Computed:           true,
-				DeprecationMessage: "Use `modified_at` instead.",
+				DeprecationMessage: "This attribute is deprecated.",
 				CustomType:         timetypes.RFC3339Type{},
 			},
 			"modified_at": schema.StringAttribute{

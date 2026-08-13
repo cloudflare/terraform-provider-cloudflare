@@ -13,7 +13,7 @@ type FilterResultEnvelope struct {
 
 type FilterModel struct {
 	ID          types.String        `tfsdk:"id" json:"id,computed"`
-	ZoneID      types.String        `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID      types.String        `tfsdk:"zone_id" path:"zone_id,optional"`
 	Body        *[]*FilterBodyModel `tfsdk:"body" json:"body,required,no_refresh"`
 	Description types.String        `tfsdk:"description" json:"description,optional"`
 	Expression  types.String        `tfsdk:"expression" json:"expression,optional"`

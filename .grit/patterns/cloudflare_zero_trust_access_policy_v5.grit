@@ -1,0 +1,12 @@
+language hcl
+
+// Custom transformation for cloudflare_zero_trust_access_policy to handle SetNestedAttribute
+pattern cloudflare_zero_trust_access_policy_v5() {
+  // Transform approval_group to approval_groups (attribute rename only)
+  `approval_group = $v` as $attr => `approval_groups = $v` where { 
+    $attr <: within `resource "cloudflare_zero_trust_access_policy" $_ { $_ }` 
+  },
+  
+  // Skip block transformations - let provider state upgrader handle structural changes
+  // This allows the configuration to stay in v4 format while the state is upgraded to v5
+}

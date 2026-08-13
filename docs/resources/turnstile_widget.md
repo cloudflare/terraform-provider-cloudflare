@@ -59,16 +59,7 @@ Available values: "world", "china".
 ### Read-Only
 
 - `created_on` (String) When the widget was created.
-- `deployed_via` (String) Origin that created this widget, recorded at creation time and
-immutable afterward. Server-derived from the create request; not
-client-settable. Omitted from the response for widgets created
-before this field existed.
-Available values: "wrangler", "dashboard", "spin", "api", "unknown".
 - `id` (String) Widget item identifier tag.
-- `last_modified_via` (String) Origin of the most recent mutation (create, update, delete, or
-secret rotation). Server-derived; not client-settable. Omitted for
-widgets last mutated before this field existed.
-Available values: "wrangler", "dashboard", "spin", "api", "unknown".
 - `modified_on` (String) When the widget was modified.
 - `secret` (String, Sensitive) Secret key for this widget.
 - `sitekey` (String) Widget item identifier tag.

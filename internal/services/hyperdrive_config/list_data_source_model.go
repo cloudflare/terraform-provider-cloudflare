@@ -40,7 +40,6 @@ type HyperdriveConfigsResultDataSourceModel struct {
 	ModifiedOn            timetypes.RFC3339                                                 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	MTLS                  customfield.NestedObject[HyperdriveConfigsMTLSDataSourceModel]    `tfsdk:"mtls" json:"mtls,computed"`
 	OriginConnectionLimit types.Int64                                                       `tfsdk:"origin_connection_limit" json:"origin_connection_limit,computed"`
-	RestartedOn           timetypes.RFC3339                                                 `tfsdk:"restarted_on" json:"restarted_on,computed" format:"date-time"`
 }
 
 type HyperdriveConfigsOriginDataSourceModel struct {

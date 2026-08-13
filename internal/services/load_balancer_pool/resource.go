@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/load_balancers"
 	"github.com/cloudflare/cloudflare-go/v7/option"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -29,18 +30,6 @@ func NewResource() resource.Resource {
 // LoadBalancerPoolResource defines the resource implementation.
 type LoadBalancerPoolResource struct {
 	client *cloudflare.Client
-}
-
-func preserveCreatedOnFromState(data *LoadBalancerPoolModel, state *LoadBalancerPoolModel) {
-	if data == nil || state == nil {
-		return
-	}
-
-	if data.CreatedOn.IsUnknown() || data.CreatedOn.IsNull() || data.CreatedOn.ValueString() == "0001-01-01T00:00:00Z" {
-		if !state.CreatedOn.IsUnknown() && !state.CreatedOn.IsNull() {
-			data.CreatedOn = state.CreatedOn
-		}
-	}
 }
 
 func (r *LoadBalancerPoolResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -96,7 +85,7 @@ func (r *LoadBalancerPoolResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = UnmarshalComputedCustom(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -145,13 +134,16 @@ func (r *LoadBalancerPoolResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = UnmarshalComputedCustom(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
 	data = &env.Result
-	preserveCreatedOnFromState(data, state)
+
+	// Reset created_on to the value from state
+	// The API seems to return 0001-01-01T00:00:00Z on update
+	data.CreatedOn = state.CreatedOn
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -166,7 +158,6 @@ func (r *LoadBalancerPoolResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	res := new(http.Response)
-	stateData := data
 	env := LoadBalancerPoolResultEnvelope{*data}
 	_, err := r.client.LoadBalancers.Pools.Get(
 		ctx,
@@ -187,13 +178,12 @@ func (r *LoadBalancerPoolResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = UnmarshalCustom(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
 	data = &env.Result
-	preserveCreatedOnFromState(data, stateData)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -258,7 +248,7 @@ func (r *LoadBalancerPoolResource) ImportState(ctx context.Context, req resource
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = UnmarshalCustom(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

@@ -77,16 +77,12 @@ best to scope this token to the bucket you're enabling Sippy for.
 Optional:
 
 - `access_key_id` (String) Access Key ID of an IAM credential (ideally scoped to a single S3 bucket).
-- `account_key` (String, Sensitive) Access key for the Azure Storage account. Mutually exclusive with `sas_token`.
-- `account_name` (String) Name of the Azure Storage account.
 - `bucket` (String) Name of the AWS S3 bucket.
 - `bucket_url` (String) URL to the S3-compatible API of the bucket.
 - `client_email` (String) Client email of an IAM credential (ideally scoped to a single GCS bucket).
-- `container` (String) Name of the Azure Blob Storage container.
+- `cloud_provider` (String) Available values: "aws", "gcs", "s3".
 - `private_key` (String, Sensitive) Private Key of an IAM credential (ideally scoped to a single GCS bucket).
-- `r2_bucket_sippy_provider` (String) Available values: "aws", "gcs", "s3", "azure".
 - `region` (String) Name of the AWS availability zone.
-- `sas_token` (String, Sensitive) Shared Access Signature token for the Azure Storage account. Mutually exclusive with `account_key`.
 - `secret_access_key` (String, Sensitive) Secret Access Key of an IAM credential (ideally scoped to a single S3 bucket).
 
 ## Import

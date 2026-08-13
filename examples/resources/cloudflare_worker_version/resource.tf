@@ -18,39 +18,11 @@ resource "cloudflare_worker_version" "example_worker_version" {
     text = "my_data"
     type = "plain_text"
   }]
-  cache_options = {
-    enabled = true
-    cross_version_cache = true
-  }
   compatibility_date = "2021-01-01"
   compatibility_flags = ["nodejs_compat"]
   containers = [{
     class_name = "MyDurableObject"
   }]
-  exports = {
-    Admin = {
-      type = "worker"
-      cache = {
-        enabled = true
-      }
-      renamed_to = "renamed_to"
-      state = "created"
-      storage = "sqlite"
-      transfer_from = "transfer_from"
-      transferred_to = "transferred_to"
-    }
-    default = {
-      type = "worker"
-      cache = {
-        enabled = false
-      }
-      renamed_to = "renamed_to"
-      state = "created"
-      storage = "sqlite"
-      transfer_from = "transfer_from"
-      transferred_to = "transferred_to"
-    }
-  }
   limits = {
     cpu_ms = 50
     subrequests = 1000
@@ -76,11 +48,6 @@ resource "cloudflare_worker_version" "example_worker_version" {
     content_file = "dist/index.js"
     content_type = "application/javascript+module"
     name = "index.js"
-  }]
-  package_dependencies = [{
-    installed_version = "4.17.22"
-    name = "lodash"
-    package_json_version = "^4.17.21"
   }]
   placement = {
     mode = "smart"

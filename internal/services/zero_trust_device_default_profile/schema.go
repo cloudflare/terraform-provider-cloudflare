@@ -6,9 +6,9 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -99,31 +99,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The domain name to include in the tunnel. If `host` is present, `address` must not be present.",
 							Optional:    true,
 						},
-					},
-				},
-			},
-			"global_acceleration": schema.SingleNestedAttribute{
-				Description: "Global Acceleration settings for China. When configured, WARP clients connect to the Global Accelerator addresses instead of the default ones. Please contact your account representative to enable this feature on your account. See https://developers.cloudflare.com/china-network/concepts/global-acceleration/.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"api_endpoints": schema.ListAttribute{
-						Description: "IP:port entries for the API endpoints.",
-						Required:    true,
-						ElementType: types.StringType,
-					},
-					"enabled": schema.BoolAttribute{
-						Description: `Global acceleration settings are used only when "enabled".`,
-						Required:    true,
-					},
-					"masque_endpoints": schema.ListAttribute{
-						Description: "IP:port entries for the MASQUE tunnel endpoints. Either wireguard_endpoints or masque_endpoints must be provided.",
-						Required:    true,
-						ElementType: types.StringType,
-					},
-					"wireguard_endpoints": schema.ListAttribute{
-						Description: "IP:port entries for the WireGuard tunnel endpoints. Either wireguard_endpoints or masque_endpoints must be provided.",
-						Required:    true,
-						ElementType: types.StringType,
 					},
 				},
 			},

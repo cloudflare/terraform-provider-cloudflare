@@ -28,9 +28,6 @@ data "cloudflare_workers_route" "example_workers_route" {
 ### Required
 
 - `route_id` (String) Identifier.
-
-### Optional
-
 - `zone_id` (String) Identifier.
 
 ### Read-Only

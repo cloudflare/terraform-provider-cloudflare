@@ -19,6 +19,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setdefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -44,7 +45,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
@@ -181,16 +182,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("authenticated", "accept"),
 								},
-								PlanModifiers: []planmodifier.String{
-									PropagationPolicyDefault(),
-								},
+								Default: stringdefault.StaticString("authenticated"),
 							},
 						},
 						Default: objectdefault.StaticValue(customfield.NewObjectMust(ctx, &WorkerObservabilityTracesModel{
-							Enabled:          types.BoolValue(false),
-							HeadSamplingRate: types.Float64Value(1),
-							Persist:          types.BoolValue(true),
-							Destinations:     customfield.NewListMust[types.String](ctx, nil),
+							Enabled:           types.BoolValue(false),
+							HeadSamplingRate:  types.Float64Value(1),
+							Persist:           types.BoolValue(true),
+							Destinations:      customfield.NewListMust[types.String](ctx, nil),
+							PropagationPolicy: types.StringValue("authenticated"),
 						}).ObjectValue),
 					},
 				},
@@ -205,10 +205,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Destinations:     customfield.NewListMust[types.String](ctx, nil),
 					}),
 					Traces: customfield.NewObjectMust(ctx, &WorkerObservabilityTracesModel{
-						Enabled:          types.BoolValue(false),
-						HeadSamplingRate: types.Float64Value(1),
-						Persist:          types.BoolValue(true),
-						Destinations:     customfield.NewListMust[types.String](ctx, nil),
+						Enabled:           types.BoolValue(false),
+						HeadSamplingRate:  types.Float64Value(1),
+						Persist:           types.BoolValue(true),
+						Destinations:      customfield.NewListMust[types.String](ctx, nil),
+						PropagationPolicy: types.StringValue("authenticated"),
 					}),
 				}).ObjectValue),
 			},

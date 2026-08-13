@@ -370,20 +370,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Description: "The live URL to view this deployment.",
 									Computed:    true,
 								},
-								"skip_reason": schema.StringAttribute{
-									Description: "Why the deployment was skipped.\nAvailable values: \"commit_message\", \"preview_deployments_disabled\", \"production_deployments_disabled\", \"path_config\", \"branch_config\", \"pages_to_workers_conversion\".",
-									Computed:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"commit_message",
-											"preview_deployments_disabled",
-											"production_deployments_disabled",
-											"path_config",
-											"branch_config",
-											"pages_to_workers_conversion",
-										),
-									},
-								},
 								"uses_functions": schema.BoolAttribute{
 									Description: "Whether the deployment uses functions.",
 									Computed:    true,
@@ -1225,20 +1211,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"url": schema.StringAttribute{
 									Description: "The live URL to view this deployment.",
 									Computed:    true,
-								},
-								"skip_reason": schema.StringAttribute{
-									Description: "Why the deployment was skipped.\nAvailable values: \"commit_message\", \"preview_deployments_disabled\", \"production_deployments_disabled\", \"path_config\", \"branch_config\", \"pages_to_workers_conversion\".",
-									Computed:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"commit_message",
-											"preview_deployments_disabled",
-											"production_deployments_disabled",
-											"path_config",
-											"branch_config",
-											"pages_to_workers_conversion",
-										),
-									},
 								},
 								"uses_functions": schema.BoolAttribute{
 									Description: "Whether the deployment uses functions.",

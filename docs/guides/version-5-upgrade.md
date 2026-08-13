@@ -241,18 +241,7 @@ must be removed from state, then rewritten inline on the application.
    deleting the remote policy).
 2. Add the policy configuration inline in your
    `cloudflare_zero_trust_access_application` resource's `policies` attribute.
-3. Run `terraform plan` and verify no unexpected policy detachments.
-4. Run `terraform apply`.
-
-!> **Do not apply tf-migrate output without adding inline policies first.**
-`tf-migrate` removes the standalone `cloudflare_access_policy` resource and
-generates a `removed` block, but does **not** add `policies` to the parent
-`cloudflare_zero_trust_access_application` resource. If you run
-`terraform apply` in this intermediate state, Terraform sends an empty
-`policies` value to the API, which detaches all policies from the application.
-Cloudflare then garbage-collects the orphaned app-scoped policies. You **must**
-add the `policies = [...]` attribute to the parent application resource before
-applying.
+3. Run `terraform apply`.
 
 On the first plan/apply, Terraform may show that the old policy
 "will no longer be managed by Terraform". This is expected when using a
@@ -264,41 +253,6 @@ applying the inline policy configuration.
 
 See the [migration guide](version-5-migration#application-scoped-access-policies)
 for detailed instructions.
-
-~> **`session_duration` must be set explicitly.** In v4, the API applied an
-implicit default of `24h` for `session_duration`. In v5, the provider schema
-defaults to `24h`, but some Cloudflare account-level security policies enforce
-a maximum of `18h`. If your policies relied on the implicit default and your
-account enforces a shorter maximum, add `session_duration = "18h"` (or your
-organization's required value) to every `cloudflare_zero_trust_access_policy`
-resource. Without this, `terraform apply` may fail at the API level even though
-`terraform plan` succeeds.
-
-~> **Zone-scoped policies require `account_id`.** In v4,
-`cloudflare_access_policy` could be scoped to a zone using `zone_id`. In v5,
-all access policies are account-level only and `zone_id` is not a valid
-attribute on `cloudflare_zero_trust_access_policy`. If your v4 configuration
-used `zone_id` without `account_id`, you must add `account_id` after migration.
-`tf-migrate` removes `zone_id` and emits a warning when `account_id` is
-missing.
-
-```hcl
-# v4 (zone-scoped):
-resource "cloudflare_access_policy" "example" {
-  zone_id  = var.zone_id
-  name     = "My Policy"
-  decision = "allow"
-  # ...
-}
-
-# v5 (account_id required — add manually after migration):
-resource "cloudflare_zero_trust_access_policy" "example" {
-  account_id = var.cloudflare_account_id  # REQUIRED — zone_id is no longer valid
-  name       = "My Policy"
-  decision   = "allow"
-  # ...
-}
-```
 
 ## cloudflare_access_rule
 
@@ -456,13 +410,7 @@ resource "cloudflare_zero_trust_access_policy" "example" {
 
 ## cloudflare_worker_secret
 
-This has been removed. `tf-migrate` automatically merges each secret into the
-parent `cloudflare_workers_script` resource's `bindings` list as a
-`secret_text` binding and generates a `removed` block for state cleanup. See
-the [migration guide](version-5-migration#cloudflare_workers_secret) for
-details.
-
-If migrating manually, use one of:
+This has been removed. Users should instead use the:
 
 - [Secrets Store](https://developers.cloudflare.com/secrets-store/) with the `secrets_store_secret` binding on the [cloudflare_workers_script resource](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_script)
 - `secret_text` binding
@@ -1102,13 +1050,7 @@ terraform plan
 
 ## cloudflare_workers_secret
 
-This has been removed. `tf-migrate` automatically merges each secret into the
-parent `cloudflare_workers_script` resource's `bindings` list as a
-`secret_text` binding and generates a `removed` block for state cleanup. See
-the [migration guide](version-5-migration#cloudflare_workers_secret) for
-details.
-
-If migrating manually, use one of:
+This has been removed. Users should instead use the:
 
 - [Secrets Store](https://developers.cloudflare.com/secrets-store/) with the `secrets_store_secret` binding on the [cloudflare_workers_script resource](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_script)
 - `secret_text` binding
@@ -1539,11 +1481,6 @@ If migrating manually, use one of:
   section, including
   [Keeping existing policies attached (in-place migration)](version-5-migration#keeping-existing-policies-attached-in-place-migration)
   if your applications reference policy UUIDs.
-- `session_duration` now defaults to `24h` in the provider schema. In v4, this
-  value was set implicitly by the API and did not need to appear in HCL. If
-  your account enforces a maximum session duration shorter than `24h` (for
-  example, `18h`), you must set `session_duration` explicitly on every policy
-  resource to avoid API-level failures at apply time.
 - `approval_group` is now a list of objects (`approval_group = [{ ... }]`) instead of multiple block attribute (`approval_group { ... }`).
 - `auth_context` is now a list of objects (`auth_context = [{ ... }]`) instead of multiple block attribute (`auth_context { ... }`).
 - `azure` is now a single nested attribute (`azure = { ... }`) instead of a block (`azure { ... }`).

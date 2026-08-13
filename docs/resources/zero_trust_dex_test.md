@@ -42,7 +42,7 @@ resource "cloudflare_zero_trust_dex_test" "example_zero_trust_dex_test" {
 
 ### Required
 
-- `account_id` (String) Unique identifier linked to an account.
+- `account_id` (String)
 - `data` (Attributes) The configuration object which contains the details for the WARP client to conduct the test. (see [below for nested schema](#nestedatt--data))
 - `enabled` (Boolean) Determines whether or not the test is active.
 - `interval` (String) How often the test will run.
@@ -74,12 +74,12 @@ Optional:
 
 Required:
 
-- `id` (String) The id of the DEX rule.
+- `id` (String) The id of the DEX rule
 
 Read-Only:
 
-- `default` (Boolean) Whether the DEX rule is the account default.
-- `name` (String) The name of the DEX rule.
+- `default` (Boolean) Whether the DEX rule is the account default
+- `name` (String) The name of the DEX rule
 
 ## Import
 

@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -15,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 var _ resource.ResourceWithConfigValidators = (*WorkflowResource)(nil)
@@ -40,7 +38,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"workflow_name": schema.StringAttribute{
@@ -52,30 +50,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"script_name": schema.StringAttribute{
 				Required: true,
-			},
-			"default_retention": schema.SingleNestedAttribute{
-				Description: "Default retention applied to instances of this version when they do not set their own retention.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"error_retention": schema.DynamicAttribute{
-						Description: "Specifies the duration in milliseconds or as a string like '5 minutes'.",
-						Optional:    true,
-						Validators: []validator.Dynamic{
-							customvalidator.AllowedSubtypes(basetypes.Int64Type{}, basetypes.StringType{}),
-						},
-						CustomType:    customfield.NormalizedDynamicType{},
-						PlanModifiers: []planmodifier.Dynamic{customfield.NormalizeDynamicPlanModifier()},
-					},
-					"success_retention": schema.DynamicAttribute{
-						Description: "Specifies the duration in milliseconds or as a string like '5 minutes'.",
-						Optional:    true,
-						Validators: []validator.Dynamic{
-							customvalidator.AllowedSubtypes(basetypes.Int64Type{}, basetypes.StringType{}),
-						},
-						CustomType:    customfield.NormalizedDynamicType{},
-						PlanModifiers: []planmodifier.Dynamic{customfield.NormalizeDynamicPlanModifier()},
-					},
-				},
 			},
 			"limits": schema.SingleNestedAttribute{
 				Optional: true,

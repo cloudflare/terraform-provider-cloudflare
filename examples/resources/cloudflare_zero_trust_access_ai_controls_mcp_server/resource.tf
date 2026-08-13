@@ -5,7 +5,6 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
   hostname = "https://example.com/mcp"
   name = "My MCP Server"
   auth_credentials = "auth_credentials"
-  client_secret = "client_secret"
   description = "This is one remote mcp server"
   is_shared_oauth_callback_enabled = true
   secure_web_gateway = false

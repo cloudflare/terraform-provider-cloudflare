@@ -38,7 +38,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"token_type": schema.StringAttribute{
@@ -50,15 +50,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"credentials": schema.SingleNestedAttribute{
-				Description: "Request payload for create and PUT credentials operations. Provided keys define the complete stored key set. Key identities (`{alg,kid}`) must be unique.",
-				Required:    true,
+				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"keys": schema.ListNestedAttribute{
 						Required: true,
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"alg": schema.StringAttribute{
-									Description: "Algorithm\nAvailable values: \"RS256\", \"RS384\", \"RS512\", \"PS256\", \"PS384\", \"PS512\", \"ES256\", \"ES384\", \"HS256\", \"HS384\", \"HS512\".",
+									Description: "Algorithm\nAvailable values: \"RS256\", \"RS384\", \"RS512\", \"PS256\", \"PS384\", \"PS512\", \"ES256\", \"ES384\".",
 									Required:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -70,9 +69,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											"PS512",
 											"ES256",
 											"ES384",
-											"HS256",
-											"HS384",
-											"HS512",
 										),
 									},
 								},
@@ -85,14 +81,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Required:    true,
 								},
 								"kty": schema.StringAttribute{
-									Description: "Key Type\nAvailable values: \"RSA\", \"EC\", \"oct\".",
+									Description: "Key Type\nAvailable values: \"RSA\", \"EC\".",
 									Required:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"RSA",
-											"EC",
-											"oct",
-										),
+										stringvalidator.OneOfCaseInsensitive("RSA", "EC"),
 									},
 								},
 								"n": schema.StringAttribute{
@@ -112,10 +104,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"y": schema.StringAttribute{
 									Description: "Y EC coordinate",
-									Optional:    true,
-								},
-								"k": schema.StringAttribute{
-									Description: "Symmetric key material. Required for create and PUT update requests.",
 									Optional:    true,
 								},
 							},

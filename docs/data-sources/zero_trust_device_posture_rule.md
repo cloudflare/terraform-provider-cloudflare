@@ -32,7 +32,6 @@ data "cloudflare_zero_trust_device_posture_rule" "example_zero_trust_device_post
 ### Read-Only
 
 - `description` (String) The description of the device posture rule.
-- `enabled` (Boolean) Whether the rule is enabled. This is a computed, read-only value. It is false for deprecated Kolide posture rules that still use the issue_count input, and true otherwise.
 - `expiration` (String) Sets the expiration time for a posture check result. If empty, the result remains valid until it is overwritten by new data from the WARP client.
 - `id` (String) API UUID.
 - `input` (Attributes) The value to be checked against. (see [below for nested schema](#nestedatt--input))

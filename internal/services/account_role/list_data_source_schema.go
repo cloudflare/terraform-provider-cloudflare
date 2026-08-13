@@ -24,7 +24,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				"SCIM Provisioning",
 			},
 		}.String(),
-		DeprecationMessage: "Please use the `cloudflare_account_permission_group` data source instead",
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",

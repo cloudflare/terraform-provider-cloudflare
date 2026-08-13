@@ -13,7 +13,7 @@ type DNSZoneTransfersACLResultEnvelope struct {
 
 type DNSZoneTransfersACLModel struct {
 	ID        types.String `tfsdk:"id" json:"id,computed"`
-	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
 	IPRange   types.String `tfsdk:"ip_range" json:"ip_range,required"`
 	Name      types.String `tfsdk:"name" json:"name,required"`
 }

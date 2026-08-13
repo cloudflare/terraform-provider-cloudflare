@@ -18,23 +18,21 @@ type TurnstileWidgetResultDataSourceEnvelope struct {
 }
 
 type TurnstileWidgetDataSourceModel struct {
-	ID              types.String                             `tfsdk:"id" path:"sitekey,computed"`
-	Sitekey         types.String                             `tfsdk:"sitekey" path:"sitekey,computed_optional"`
-	AccountID       types.String                             `tfsdk:"account_id" path:"account_id,optional"`
-	BotFightMode    types.Bool                               `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed"`
-	ClearanceLevel  types.String                             `tfsdk:"clearance_level" json:"clearance_level,computed"`
-	CreatedOn       timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	DeployedVia     types.String                             `tfsdk:"deployed_via" json:"deployed_via,computed"`
-	EphemeralID     types.Bool                               `tfsdk:"ephemeral_id" json:"ephemeral_id,computed"`
-	LastModifiedVia types.String                             `tfsdk:"last_modified_via" json:"last_modified_via,computed"`
-	Mode            types.String                             `tfsdk:"mode" json:"mode,computed"`
-	ModifiedOn      timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Name            types.String                             `tfsdk:"name" json:"name,computed"`
-	Offlabel        types.Bool                               `tfsdk:"offlabel" json:"offlabel,computed"`
-	Region          types.String                             `tfsdk:"region" json:"region,computed"`
-	Secret          types.String                             `tfsdk:"secret" json:"secret,computed"`
-	Domains         customfield.List[types.String]           `tfsdk:"domains" json:"domains,computed"`
-	Filter          *TurnstileWidgetFindOneByDataSourceModel `tfsdk:"filter"`
+	ID             types.String                             `tfsdk:"id" path:"sitekey,computed"`
+	Sitekey        types.String                             `tfsdk:"sitekey" path:"sitekey,computed_optional"`
+	AccountID      types.String                             `tfsdk:"account_id" path:"account_id,optional"`
+	BotFightMode   types.Bool                               `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed"`
+	ClearanceLevel types.String                             `tfsdk:"clearance_level" json:"clearance_level,computed"`
+	CreatedOn      timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	EphemeralID    types.Bool                               `tfsdk:"ephemeral_id" json:"ephemeral_id,computed"`
+	Mode           types.String                             `tfsdk:"mode" json:"mode,computed"`
+	ModifiedOn     timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name           types.String                             `tfsdk:"name" json:"name,computed"`
+	Offlabel       types.Bool                               `tfsdk:"offlabel" json:"offlabel,computed"`
+	Region         types.String                             `tfsdk:"region" json:"region,computed"`
+	Secret         types.String                             `tfsdk:"secret" json:"secret,computed"`
+	Domains        customfield.List[types.String]           `tfsdk:"domains" json:"domains,computed"`
+	Filter         *TurnstileWidgetFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 func (m *TurnstileWidgetDataSourceModel) toReadParams(_ context.Context) (params turnstile.WidgetGetParams, diags diag.Diagnostics) {

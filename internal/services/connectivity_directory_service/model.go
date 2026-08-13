@@ -15,7 +15,7 @@ type ConnectivityDirectoryServiceResultEnvelope struct {
 type ConnectivityDirectoryServiceModel struct {
 	ID          types.String                                  `tfsdk:"id" json:"-,computed"`
 	ServiceID   types.String                                  `tfsdk:"service_id" json:"service_id,computed"`
-	AccountID   types.String                                  `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                                  `tfsdk:"account_id" path:"account_id,optional"`
 	Name        types.String                                  `tfsdk:"name" json:"name,required"`
 	Type        types.String                                  `tfsdk:"type" json:"type,required"`
 	Host        *ConnectivityDirectoryServiceHostModel        `tfsdk:"host" json:"host,required"`

@@ -72,7 +72,6 @@ type PagesProjectCanonicalDeploymentDataSourceModel struct {
 	Source            customfield.NestedObject[PagesProjectCanonicalDeploymentSourceDataSourceModel]            `tfsdk:"source" json:"source,computed"`
 	Stages            customfield.NestedObjectList[PagesProjectCanonicalDeploymentStagesDataSourceModel]        `tfsdk:"stages" json:"stages,computed"`
 	URL               types.String                                                                              `tfsdk:"url" json:"url,computed"`
-	SkipReason        types.String                                                                              `tfsdk:"skip_reason" json:"skip_reason,computed"`
 	UsesFunctions     types.Bool                                                                                `tfsdk:"uses_functions" json:"uses_functions,computed"`
 }
 
@@ -335,7 +334,6 @@ type PagesProjectLatestDeploymentDataSourceModel struct {
 	Source            customfield.NestedObject[PagesProjectLatestDeploymentSourceDataSourceModel]            `tfsdk:"source" json:"source,computed"`
 	Stages            customfield.NestedObjectList[PagesProjectLatestDeploymentStagesDataSourceModel]        `tfsdk:"stages" json:"stages,computed"`
 	URL               types.String                                                                           `tfsdk:"url" json:"url,computed"`
-	SkipReason        types.String                                                                           `tfsdk:"skip_reason" json:"skip_reason,computed"`
 	UsesFunctions     types.Bool                                                                             `tfsdk:"uses_functions" json:"uses_functions,computed"`
 }
 

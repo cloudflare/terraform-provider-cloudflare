@@ -14,7 +14,7 @@ type TokenValidationConfigResultEnvelope struct {
 
 type TokenValidationConfigModel struct {
 	ID           types.String                           `tfsdk:"id" json:"id,computed"`
-	ZoneID       types.String                           `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID       types.String                           `tfsdk:"zone_id" path:"zone_id,optional"`
 	TokenType    types.String                           `tfsdk:"token_type" json:"token_type,required"`
 	Credentials  *TokenValidationConfigCredentialsModel `tfsdk:"credentials" json:"credentials,required"`
 	Description  types.String                           `tfsdk:"description" json:"description,required"`
@@ -45,5 +45,4 @@ type TokenValidationConfigCredentialsKeysModel struct {
 	Crv types.String `tfsdk:"crv" json:"crv,optional"`
 	X   types.String `tfsdk:"x" json:"x,optional"`
 	Y   types.String `tfsdk:"y" json:"y,optional"`
-	K   types.String `tfsdk:"k" json:"k,optional,no_refresh"`
 }

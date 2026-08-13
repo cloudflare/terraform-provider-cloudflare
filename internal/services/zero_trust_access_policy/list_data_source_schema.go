@@ -99,7 +99,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 											Validators: []validator.List{
 												listvalidator.ValueStringsAre(
-													stringvalidator.OneOfCaseInsensitive("text", "file"),
+													stringvalidator.OneOfCaseInsensitive("text"),
 												),
 											},
 											CustomType:  customfield.NewListType[types.String](ctx),
@@ -110,7 +110,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 											Validators: []validator.List{
 												listvalidator.ValueStringsAre(
-													stringvalidator.OneOfCaseInsensitive("text", "file"),
+													stringvalidator.OneOfCaseInsensitive("text"),
 												),
 											},
 											CustomType:  customfield.NewListType[types.String](ctx),

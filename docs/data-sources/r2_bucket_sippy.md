@@ -51,8 +51,7 @@ Read-Only:
 
 - `bucket` (String) Name of the bucket on the provider (AWS, GCS only).
 - `bucket_url` (String) S3-compatible URL (Generic S3-compatible providers only).
-- `container` (String) Name of the Azure Blob Storage container (Azure only).
-- `r2_bucket_sippy_provider` (String) Available values: "aws", "gcs", "s3", "azure".
+- `r2_bucket_sippy_provider` (String) Available values: "aws", "gcs", "s3".
 - `region` (String) Region where the bucket resides (AWS only).
 
 

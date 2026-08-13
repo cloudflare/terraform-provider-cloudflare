@@ -15,7 +15,7 @@ type MagicWANIPSECTunnelResultEnvelope struct {
 
 type MagicWANIPSECTunnelModel struct {
 	ID                     types.String                                                          `tfsdk:"id" json:"id,computed"`
-	AccountID              types.String                                                          `tfsdk:"account_id" path:"account_id,required"`
+	AccountID              types.String                                                          `tfsdk:"account_id" path:"account_id,optional"`
 	CloudflareEndpoint     types.String                                                          `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint,required,no_refresh"`
 	InterfaceAddress       types.String                                                          `tfsdk:"interface_address" json:"interface_address,required,no_refresh"`
 	Name                   types.String                                                          `tfsdk:"name" json:"name,required,no_refresh"`

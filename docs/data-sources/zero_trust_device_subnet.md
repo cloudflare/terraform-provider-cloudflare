@@ -27,15 +27,11 @@ data "cloudflare_zero_trust_device_subnet" "example_zero_trust_device_subnet" {
 
 ### Required
 
-- `subnet_id` (String) The UUID of the subnet.
-
-### Optional
-
 - `account_id` (String) Cloudflare account ID
+- `subnet_id` (String) The UUID of the subnet.
 
 ### Read-Only
 
-- `capacity` (Attributes) IP capacity information for the subnet. (see [below for nested schema](#nestedatt--capacity))
 - `comment` (String) An optional description of the subnet.
 - `created_at` (String) Timestamp of when the resource was created.
 - `deleted_at` (String) Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.
@@ -44,14 +40,6 @@ data "cloudflare_zero_trust_device_subnet" "example_zero_trust_device_subnet" {
 - `name` (String) A user-friendly name for the subnet.
 - `network` (String) The private IPv4 or IPv6 range defining the subnet, in CIDR notation.
 - `subnet_type` (String) The type of subnet.
-Available values: "cloudflare_source", "initial_resolved_ip", "warp".
-
-<a id="nestedatt--capacity"></a>
-### Nested Schema for `capacity`
-
-Read-Only:
-
-- `total` (Number) Total number of assignable IPs in the subnet.
-- `used` (Number) Number of assigned IPs in the subnet.
+Available values: "cloudflare_source", "warp".
 
 

@@ -47,7 +47,6 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
       duration = "300s"
       enforce = true
     }
-    delete_headers = ["X-Old-Header", "X-Remove-Me"]
     dns_resolvers = {
       ipv4 = [{
         ip = "2.2.2.2"
@@ -102,9 +101,6 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
       view_id = "view_id"
     }
     resolve_dns_through_cloudflare = true
-    set_headers = {
-      X-User-Identity = ["user=@{identity.name}"]
-    }
     untrusted_cert = {
       action = "error"
     }

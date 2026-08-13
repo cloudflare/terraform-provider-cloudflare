@@ -25,7 +25,6 @@ resource "cloudflare_dns_firewall" "example_dns_firewall" {
     only_when_upstream_unhealthy = false
   }
   deprecate_any_requests = true
-  dns_firewall_ip_count = 2
   ecs_fallback = false
   maximum_cache_ttl = 900
   minimum_cache_ttl = 60
@@ -48,7 +47,6 @@ resource "cloudflare_dns_firewall" "example_dns_firewall" {
 
 - `attack_mitigation` (Attributes) Attack mitigation settings (see [below for nested schema](#nestedatt--attack_mitigation))
 - `deprecate_any_requests` (Boolean) Whether to refuse to answer queries for the ANY type
-- `dns_firewall_ip_count` (Number) Number of IPv4 addresses to assign to the DNS Firewall cluster. Only used during cluster creation and cannot be changed later.
 - `ecs_fallback` (Boolean) Whether to forward client IP (resolver) subnet if no EDNS Client Subnet is sent
 - `maximum_cache_ttl` (Number) By default, Cloudflare attempts to cache responses for as long as
 indicated by the TTL received from upstream nameservers. This setting
@@ -77,7 +75,7 @@ responses (e.g., NXDOMAIN) from the upstream servers.
 This setting does not affect the TTL value in the DNS response
 Cloudflare returns to clients. Cloudflare will always forward the TTL
 value received from upstream nameservers.
-- `ratelimit` (Number) Maximum number of DNS queries per second that will be forwarded to your upstream nameservers. The limit is enforced per server, where each server receives a fraction of the configured value. The actual aggregate rate for a data center may vary depending on how many servers are present. Responses served from cache do not count toward this limit. Set to null to disable rate limiting.
+- `ratelimit` (Number) Ratelimit in queries per second per datacenter (applies to DNS queries sent to the upstream nameservers configured on the cluster)
 - `retries` (Number) Number of retries for fetching DNS responses from upstream nameservers (not counting the initial attempt)
 
 ### Read-Only

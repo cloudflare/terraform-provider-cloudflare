@@ -22,11 +22,12 @@ resource "cloudflare_token_validation_config" "example_token_validation_config" 
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   credentials = {
     keys = [{
-      alg = "RS256"
-      e = "e"
-      kid = "kid"
-      kty = "RSA"
-      n = "n"
+      alg = "ES256"
+      crv = "P-256"
+      kid = "38013f13-c266-4eec-a72a-92ec92779f21"
+      kty = "EC"
+      x = "KN53JRwN3wCjm2o39bvZUX2VdrsHzS8pxOAGjm8m7EQ"
+      y = "lnkkzIxaveggz-HFhcMWW15nxvOj0Z_uQsXbpK0GFcY"
     }]
   }
   description = "Long description for Token Validation Configuration"
@@ -41,7 +42,7 @@ resource "cloudflare_token_validation_config" "example_token_validation_config" 
 
 ### Required
 
-- `credentials` (Attributes) Request payload for create and PUT credentials operations. Provided keys define the complete stored key set. Key identities (`{alg,kid}`) must be unique. (see [below for nested schema](#nestedatt--credentials))
+- `credentials` (Attributes) (see [below for nested schema](#nestedatt--credentials))
 - `description` (String)
 - `title` (String)
 - `token_sources` (List of String)
@@ -67,17 +68,16 @@ Required:
 Required:
 
 - `alg` (String) Algorithm
-Available values: "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "HS256", "HS384", "HS512".
+Available values: "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384".
 - `kid` (String) Key ID
 - `kty` (String) Key Type
-Available values: "RSA", "EC", "oct".
+Available values: "RSA", "EC".
 
 Optional:
 
 - `crv` (String) Curve
 Available values: "P-256", "P-384".
 - `e` (String) RSA exponent
-- `k` (String) Symmetric key material. Required for create and PUT update requests.
 - `n` (String) RSA modulus
 - `x` (String) X EC coordinate
 - `y` (String) Y EC coordinate

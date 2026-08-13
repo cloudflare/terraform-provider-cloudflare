@@ -19,9 +19,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
-				"Zaraz Admin",
-				"Zaraz Edit",
-				"Zaraz Read",
+				"Zone Settings Read",
+				"Zone Settings Write",
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{

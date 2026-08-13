@@ -39,17 +39,6 @@ resource "cloudflare_ruleset" "my_ruleset" {
             }
           }
         }
-        vary = {
-          default = {
-            action = "bypass"
-          }
-          headers = {
-            "accept" = {
-              action      = "normalize"
-              media_types = ["image/webp"]
-            }
-          }
-        }
       }
     }
   ]

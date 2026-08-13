@@ -31,7 +31,7 @@ Available values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 51
 - `chunk_overlap` (Number)
 - `chunk_size` (Number)
 - `custom_metadata` (Attributes List) (see [below for nested schema](#nestedatt--custom_metadata))
-- `embedding_model` (String) Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "google-ai-studio/gemini-embedding-2", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".
+- `embedding_model` (String) Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".
 - `fusion_method` (String) Available values: "max", "rrf".
 - `hybrid_search_enabled` (Boolean, Deprecated) Deprecated — use index_method instead.
 - `index_method` (Attributes) Controls which storage backends are used during indexing. Defaults to vector-only. (see [below for nested schema](#nestedatt--index_method))
@@ -115,8 +115,6 @@ Optional:
 
 - `authorized_hosts` (List of String)
 - `chat_completions_endpoint` (Attributes) (see [below for nested schema](#nestedatt--public_endpoint_params--chat_completions_endpoint))
-- `custom_domains` (List of String) Custom domain hostnames that alias this public endpoint. GET and create responses return the current set; on update (PUT) this field is only echoed back when supplied in the request body, otherwise it is null (omit it to leave domains unchanged).
-- `default_domain_enabled` (Boolean) When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
 - `enabled` (Boolean)
 - `mcp` (Attributes) (see [below for nested schema](#nestedatt--public_endpoint_params--mcp))
 - `rate_limit` (Attributes) (see [below for nested schema](#nestedatt--public_endpoint_params--rate_limit))
@@ -164,7 +162,7 @@ Optional:
 Optional:
 
 - `boost_by` (Attributes List) Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric/datetime fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field. (see [below for nested schema](#nestedatt--retrieval_options--boost_by))
-- `keyword_match_mode` (String) Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. When omitted on an update, the existing stored value is preserved; when never set, search falls back to 'and'.
+- `keyword_match_mode` (String) Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. Defaults to 'and'.
 Available values: "and", "or".
 
 <a id="nestedatt--retrieval_options--boost_by"></a>
@@ -197,9 +195,22 @@ Optional:
 
 Optional:
 
+- `crawl_options` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler--crawl_options))
 - `parse_options` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler--parse_options))
 - `parse_type` (String) Available values: "sitemap", "feed-rss", "crawl".
 - `store_options` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler--store_options))
+
+<a id="nestedatt--source_params--web_crawler--crawl_options"></a>
+### Nested Schema for `source_params.web_crawler.crawl_options`
+
+Optional:
+
+- `depth` (Number)
+- `include_external_links` (Boolean)
+- `include_subdomains` (Boolean)
+- `max_age` (Number)
+- `source` (String) Available values: "all", "sitemaps", "links".
+
 
 <a id="nestedatt--source_params--web_crawler--parse_options"></a>
 ### Nested Schema for `source_params.web_crawler.parse_options`

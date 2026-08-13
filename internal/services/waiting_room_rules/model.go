@@ -14,7 +14,7 @@ type WaitingRoomRulesResultEnvelope struct {
 type WaitingRoomRulesModel struct {
 	ID            types.String                   `tfsdk:"id" json:"id,computed"`
 	WaitingRoomID types.String                   `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
-	ZoneID        types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID        types.String                   `tfsdk:"zone_id" path:"zone_id,optional"`
 	Rules         *[]*WaitingRoomRulesRulesModel `tfsdk:"rules" json:"rules,required"`
 }
 

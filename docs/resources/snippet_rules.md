@@ -59,10 +59,5 @@ Read-Only:
 
 ## Import
 
-Import is supported using the following syntax:
 
-```shell
-$ terraform import cloudflare_snippet_rules.example '<zone_id>'
-```
-
-
+~> This resource does not currently support `terraform import`.

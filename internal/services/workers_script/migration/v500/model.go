@@ -131,25 +131,22 @@ type TargetWorkersScriptModel struct {
 	NamedHandlers    customfield.NestedObjectList[TargetNamedHandlersModel] `tfsdk:"named_handlers"`
 
 	// Metadata fields (embedded in WorkersScriptModel)
-	Annotations         *TargetAnnotationsModel                               `tfsdk:"annotations"`
-	Assets              *TargetAssetsModel                                    `tfsdk:"assets"`
-	Bindings            customfield.NestedObjectList[TargetBindingsModel]     `tfsdk:"bindings"`
-	BodyPart            types.String                                          `tfsdk:"body_part"`
-	CacheOptions        *TargetCacheOptionsModel                              `tfsdk:"cache_options"`
-	CompatibilityDate   types.String                                          `tfsdk:"compatibility_date"`
-	CompatibilityFlags  customfield.Set[types.String]                         `tfsdk:"compatibility_flags"`
-	Exports             *map[string]TargetExportsModel                        `tfsdk:"exports"`
-	KeepAssets          types.Bool                                            `tfsdk:"keep_assets"`
-	KeepBindings        *[]types.String                                       `tfsdk:"keep_bindings"`
-	Limits              *TargetLimitsModel                                    `tfsdk:"limits"`
-	Logpush             types.Bool                                            `tfsdk:"logpush"`
-	MainModule          types.String                                          `tfsdk:"main_module"`
-	Migrations          customfield.NestedObject[TargetMigrationsModel]       `tfsdk:"migrations"`
-	Observability       *TargetObservabilityModel                             `tfsdk:"observability"`
-	PackageDependencies *[]*TargetPackageDependenciesModel                    `tfsdk:"package_dependencies"`
-	Placement           customfield.NestedObject[TargetPlacementModel]        `tfsdk:"placement"`
-	TailConsumers       customfield.NestedObjectSet[TargetTailConsumersModel] `tfsdk:"tail_consumers"`
-	UsageModel          types.String                                          `tfsdk:"usage_model"`
+	Annotations        *TargetAnnotationsModel                                `tfsdk:"annotations"`
+	Assets             *TargetAssetsModel                                    `tfsdk:"assets"`
+	Bindings           customfield.NestedObjectList[TargetBindingsModel]     `tfsdk:"bindings"`
+	BodyPart           types.String                                          `tfsdk:"body_part"`
+	CompatibilityDate  types.String                                          `tfsdk:"compatibility_date"`
+	CompatibilityFlags customfield.Set[types.String]                         `tfsdk:"compatibility_flags"`
+	KeepAssets         types.Bool                                            `tfsdk:"keep_assets"`
+	KeepBindings       *[]types.String                                       `tfsdk:"keep_bindings"`
+	Limits             *TargetLimitsModel                                    `tfsdk:"limits"`
+	Logpush            types.Bool                                            `tfsdk:"logpush"`
+	MainModule         types.String                                          `tfsdk:"main_module"`
+	Migrations         customfield.NestedObject[TargetMigrationsModel]       `tfsdk:"migrations"`
+	Observability      *TargetObservabilityModel                             `tfsdk:"observability"`
+	Placement          customfield.NestedObject[TargetPlacementModel]        `tfsdk:"placement"`
+	TailConsumers      customfield.NestedObjectSet[TargetTailConsumersModel] `tfsdk:"tail_consumers"`
+	UsageModel         types.String                                          `tfsdk:"usage_model"`
 }
 
 // TargetBindingsModel mirrors WorkersScriptMetadataBindingsModel.
@@ -201,7 +198,7 @@ type TargetBindingsModel struct {
 
 // TargetAnnotationsModel represents the annotations nested attribute in v5.
 type TargetAnnotationsModel struct {
-	WorkersMessage     types.String `tfsdk:"workers_message"`
+	WorkersMessage types.String `tfsdk:"workers_message"`
 	WorkersTag         types.String `tfsdk:"workers_tag"`
 	WorkersTriggeredBy types.String `tfsdk:"workers_triggered_by"`
 }
@@ -241,26 +238,6 @@ type TargetAssetsConfigModel struct {
 type TargetLimitsModel struct {
 	CPUMs       types.Int64 `tfsdk:"cpu_ms"`
 	Subrequests types.Int64 `tfsdk:"subrequests"`
-}
-
-type TargetCacheOptionsModel struct {
-	Enabled           types.Bool `tfsdk:"enabled"`
-	CrossVersionCache types.Bool `tfsdk:"cross_version_cache"`
-}
-
-type TargetExportsModel struct {
-	Type  types.String             `tfsdk:"type"`
-	Cache *TargetExportsCacheModel `tfsdk:"cache"`
-}
-
-type TargetExportsCacheModel struct {
-	Enabled types.Bool `tfsdk:"enabled"`
-}
-
-type TargetPackageDependenciesModel struct {
-	InstalledVersion   types.String `tfsdk:"installed_version"`
-	Name               types.String `tfsdk:"name"`
-	PackageJsonVersion types.String `tfsdk:"package_json_version"`
 }
 
 type TargetMigrationsModel struct {
@@ -309,11 +286,10 @@ type TargetObservabilityLogsModel struct {
 }
 
 type TargetObservabilityTracesModel struct {
-	Destinations      *[]types.String `tfsdk:"destinations"`
-	Enabled           types.Bool      `tfsdk:"enabled"`
-	HeadSamplingRate  types.Float64   `tfsdk:"head_sampling_rate"`
-	Persist           types.Bool      `tfsdk:"persist"`
-	PropagationPolicy types.String    `tfsdk:"propagation_policy"`
+	Destinations     *[]types.String `tfsdk:"destinations"`
+	Enabled          types.Bool      `tfsdk:"enabled"`
+	HeadSamplingRate types.Float64   `tfsdk:"head_sampling_rate"`
+	Persist          types.Bool      `tfsdk:"persist"`
 }
 
 type TargetPlacementModel struct {

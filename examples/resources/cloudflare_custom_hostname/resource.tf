@@ -1,11 +1,6 @@
 resource "cloudflare_custom_hostname" "example_custom_hostname" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   hostname = "app.example.com"
-  custom_metadata = {
-    foo = "string"
-  }
-  custom_origin_server = "origin2.example.com"
-  custom_origin_sni = "sni.example.com"
   ssl = {
     bundle_method = "ubiquitous"
     certificate_authority = "google"
@@ -73,5 +68,8 @@ resource "cloudflare_custom_hostname" "example_custom_hostname" {
     }
     type = "dv"
     wildcard = false
+  }
+  custom_metadata = {
+    foo = "string"
   }
 }

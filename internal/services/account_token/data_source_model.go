@@ -49,9 +49,6 @@ func (m *AccountTokenDataSourceModel) toListParams(_ context.Context) (params ac
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(accounts.TokenListParamsDirection(m.Filter.Direction.ValueString()))
 	}
-	if !m.Filter.IncludeExpired.IsNull() {
-		params.IncludeExpired = cloudflare.F(m.Filter.IncludeExpired.ValueBool())
-	}
 
 	return
 }
@@ -84,6 +81,5 @@ type AccountTokenPoliciesPermissionGroupsMetaDataSourceModel struct {
 }
 
 type AccountTokenFindOneByDataSourceModel struct {
-	Direction      types.String `tfsdk:"direction" query:"direction,optional"`
-	IncludeExpired types.Bool   `tfsdk:"include_expired" query:"include_expired,computed_optional"`
+	Direction types.String `tfsdk:"direction" query:"direction,optional"`
 }

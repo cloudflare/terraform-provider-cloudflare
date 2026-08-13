@@ -119,7 +119,6 @@ func testAccCheckCloudflareLeakedCredentialCheckRuleDestroy(s *terraform.State) 
 }
 
 func TestAccCloudflareLeakedCredentialsCheckRule_Basic(t *testing.T) {
-	t.Skip("skipping: leaked credential check product is not enabled on the test zone")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_leaked_credential_check_rule.%s", rnd)
@@ -154,7 +153,6 @@ func TestAccCloudflareLeakedCredentialsCheckRule_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareLeakedCredentialsCheckRule_StateConsistency(t *testing.T) {
-	t.Skip("skipping: leaked credential check product is not enabled on the test zone")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_leaked_credential_check_rule.%s", rnd)

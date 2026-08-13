@@ -150,7 +150,7 @@ func areZeroTrustAccessGroupObjectsEquivalent(before, after interface{}) bool {
 // normalizeZeroTrustAccessGroupObject normalizes a zero trust access group object for comparison
 func normalizeZeroTrustAccessGroupObject(obj map[string]interface{}) map[string]interface{} {
 	normalized := make(map[string]interface{})
-
+	
 	for key, value := range obj {
 		// Convert various falsey values to nil for consistent comparison
 		if isFalseyValue(value) {
@@ -159,7 +159,7 @@ func normalizeZeroTrustAccessGroupObject(obj map[string]interface{}) map[string]
 			normalized[key] = value
 		}
 	}
-
+	
 	return normalized
 }
 
@@ -217,13 +217,13 @@ func mapsEquivalent(map1, map2 map[string]interface{}) bool {
 	if len(map1) != len(map2) {
 		return false
 	}
-
+	
 	for key, value1 := range map1 {
 		value2, exists := map2[key]
 		if !exists {
 			return false
 		}
-
+		
 		// Deep comparison for nested maps
 		if nested1, ok1 := value1.(map[string]interface{}); ok1 {
 			if nested2, ok2 := value2.(map[string]interface{}); ok2 {
@@ -237,7 +237,7 @@ func mapsEquivalent(map1, map2 map[string]interface{}) bool {
 			return false
 		}
 	}
-
+	
 	return true
 }
 
@@ -257,6 +257,7 @@ func isAllowableFalseyToNullChange(beforeValue, afterValue interface{}) bool {
 	// Values are different and not a valid transition
 	return false
 }
+
 
 // ExpectEmptyPlanExceptZeroTrustAccessGroupOrdering is the public interface for the custom plan checker
 var ExpectEmptyPlanExceptZeroTrustAccessGroupOrdering = expectEmptyPlanExceptZeroTrustAccessGroupOrdering{}
@@ -285,8 +286,8 @@ func ZeroTrustAccessGroupMigrationTestStep(t *testing.T, v4Config string, tmpDir
 			WriteOutConfig(t, v4Config, tmpDir)
 			// we only run the migration command if the version is 4.x.x, because users will not expect to run it within v5 versions.
 			if strings.HasPrefix(exactVersion, "4.") {
-				debugLogf(t, "Running migration command for version: %s (v4 -> v5)", exactVersion)
-				RunMigrationV2Command(t, v4Config, tmpDir, "v4", "v5")
+				debugLogf(t, "Running migration command for version: %s", exactVersion)
+				RunMigrationCommand(t, v4Config, tmpDir)
 			} else {
 				debugLogf(t, "Skipping migration command for version: %s", exactVersion)
 			}

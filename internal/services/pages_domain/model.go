@@ -15,7 +15,7 @@ type PagesDomainResultEnvelope struct {
 type PagesDomainModel struct {
 	ID                   types.String                                               `tfsdk:"id" json:"-,computed"`
 	Name                 types.String                                               `tfsdk:"name" json:"name,required"`
-	AccountID            types.String                                               `tfsdk:"account_id" path:"account_id,required"`
+	AccountID            types.String                                               `tfsdk:"account_id" path:"account_id,optional"`
 	ProjectName          types.String                                               `tfsdk:"project_name" path:"project_name,required"`
 	CertificateAuthority types.String                                               `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
 	CreatedOn            types.String                                               `tfsdk:"created_on" json:"created_on,computed"`

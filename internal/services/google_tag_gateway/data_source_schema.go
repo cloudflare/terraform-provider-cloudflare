@@ -16,9 +16,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
-				"Zaraz Admin",
-				"Zaraz Edit",
-				"Zaraz Read",
+				"Zone Settings Read",
+				"Zone Settings Write",
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{

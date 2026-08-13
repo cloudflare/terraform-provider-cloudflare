@@ -27,36 +27,8 @@ resource "cloudflare_workers_script" "example_workers_script" {
       type = "plain_text"
     }]
     body_part = "worker.js"
-    cache_options = {
-      enabled = true
-      cross_version_cache = true
-    }
     compatibility_date = "2021-01-01"
     compatibility_flags = ["nodejs_compat"]
-    exports = {
-      Admin = {
-        type = "worker"
-        cache = {
-          enabled = true
-        }
-        renamed_to = "renamed_to"
-        state = "created"
-        storage = "sqlite"
-        transfer_from = "transfer_from"
-        transferred_to = "transferred_to"
-      }
-      default = {
-        type = "worker"
-        cache = {
-          enabled = false
-        }
-        renamed_to = "renamed_to"
-        state = "created"
-        storage = "sqlite"
-        transfer_from = "transfer_from"
-        transferred_to = "transferred_to"
-      }
-    }
     keep_assets = false
     keep_bindings = ["string"]
     limits = {
@@ -98,11 +70,6 @@ resource "cloudflare_workers_script" "example_workers_script" {
         persist = true
       }
     }
-    package_dependencies = [{
-      installed_version = "4.17.22"
-      name = "lodash"
-      package_json_version = "^4.17.21"
-    }]
     placement = {
       mode = "smart"
     }

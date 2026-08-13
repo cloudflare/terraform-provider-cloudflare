@@ -13,7 +13,7 @@ type LeakedCredentialCheckRuleResultEnvelope struct {
 
 type LeakedCredentialCheckRuleModel struct {
 	ID       types.String `tfsdk:"id" json:"id,computed"`
-	ZoneID   types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneID   types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 	Password types.String `tfsdk:"password" json:"password,optional"`
 	Username types.String `tfsdk:"username" json:"username,optional"`
 }

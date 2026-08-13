@@ -14,7 +14,7 @@ type ByoIPPrefixResultEnvelope struct {
 
 type ByoIPPrefixModel struct {
 	ID                       types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID                types.String      `tfsdk:"account_id" path:"account_id,required"`
+	AccountID                types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	ASN                      types.Int64       `tfsdk:"asn" json:"asn,required"`
 	CIDR                     types.String      `tfsdk:"cidr" json:"cidr,required"`
 	LOADocumentID            types.String      `tfsdk:"loa_document_id" json:"loa_document_id,optional"`

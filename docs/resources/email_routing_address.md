@@ -30,11 +30,6 @@ resource "cloudflare_email_routing_address" "example_email_routing_address" {
 - `account_id` (String) Identifier.
 - `email` (String) The contact email address of the user.
 
-### Optional
-
-- `status` (String) Destination address status. Non-admin callers may only set verified addresses back to unverified; setting to verified requires admin privileges.
-Available values: "unverified", "verified".
-
 ### Read-Only
 
 - `created` (String) The date and time the destination address has been created.

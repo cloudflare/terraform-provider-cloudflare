@@ -13,7 +13,7 @@ type ZeroTrustDevicePostureRuleResultEnvelope struct {
 
 type ZeroTrustDevicePostureRuleModel struct {
 	ID          types.String                             `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String                             `tfsdk:"account_id" path:"account_id,required"`
+	AccountID   types.String                             `tfsdk:"account_id" path:"account_id,optional"`
 	Name        types.String                             `tfsdk:"name" json:"name,optional"`
 	Type        types.String                             `tfsdk:"type" json:"type,required"`
 	Description types.String                             `tfsdk:"description" json:"description,computed_optional"`
@@ -21,7 +21,6 @@ type ZeroTrustDevicePostureRuleModel struct {
 	Schedule    types.String                             `tfsdk:"schedule" json:"schedule,optional"`
 	Input       *ZeroTrustDevicePostureRuleInputModel    `tfsdk:"input" json:"input,optional"`
 	Match       *[]*ZeroTrustDevicePostureRuleMatchModel `tfsdk:"match" json:"match,optional"`
-	Enabled     types.Bool                               `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 func (m ZeroTrustDevicePostureRuleModel) MarshalJSON() (data []byte, err error) {

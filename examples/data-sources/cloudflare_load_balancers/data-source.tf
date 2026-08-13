@@ -1,4 +1,3 @@
 data "cloudflare_load_balancers" "example_load_balancers" {
-  account_id = "account_id"
-  zone_id = "zone_id"
+  zone_id = "699d98642c564d2e855e9661899b7252"
 }

@@ -13,9 +13,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/mapplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
@@ -45,7 +42,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"worker_id": schema.StringAttribute{
@@ -75,64 +72,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 				PlanModifiers: []planmodifier.Set{setplanmodifier.RequiresReplace()},
-			},
-			"exports": schema.MapNestedAttribute{
-				Description: "Declarative exports for the version, including Durable Object\nclasses (with their `storage` backend) and named Worker\nentrypoints. On reads, tombstoned lifecycle entries are\nomitted, so only live exports (`created` and\n`expecting-transfer`) are returned. `exports` and `migrations`\nare mutually exclusive on upload.",
-				Optional:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"type": schema.StringAttribute{
-							Description: "The kind of export.\nAvailable values: \"worker\", \"durable-object\".",
-							Required:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("worker", "durable-object"),
-							},
-						},
-						"cache": schema.SingleNestedAttribute{
-							Description: "Cache override for this entrypoint. It applies only to\n`type: worker` entries and overrides the Worker's global\n`cache_options.enabled` for that entrypoint.",
-							Optional:    true,
-							Attributes: map[string]schema.Attribute{
-								"enabled": schema.BoolAttribute{
-									Description: "Whether caching is enabled for this entrypoint.",
-									Required:    true,
-								},
-							},
-						},
-						"renamed_to": schema.StringAttribute{
-							Description: "Destination class name for a `state: renamed` tombstone. The\ntarget must appear as a live (`created`) entry in the same\n`exports` map. Write-only: never present in GET responses.",
-							Optional:    true,
-						},
-						"state": schema.StringAttribute{
-							Description: "Lifecycle state of the export entry. Defaults to `created`\n(a normal, live export) when omitted.\n\n`deleted`, `renamed`, and `transferred` are tombstones:\nwrite-only lifecycle operations that retire, rename, or hand\noff a provisioned Durable Object namespace. They are applied\nat upload and are filtered out of GET responses, so a read\nonly ever returns `created` or `expecting-transfer`.\n\n`expecting-transfer` is a live export whose data is being\nreceived from another script via the two-phase transfer flow;\nit carries `storage` and `transfer_from`.\nAvailable values: \"created\", \"deleted\", \"renamed\", \"transferred\", \"expecting-transfer\".",
-							Optional:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive(
-									"created",
-									"deleted",
-									"renamed",
-									"transferred",
-									"expecting-transfer",
-								),
-							},
-						},
-						"storage": schema.StringAttribute{
-							Description: "Storage backend for a `type: durable-object` export. Required\nfor live Durable Object entries (`created` and\n`expecting-transfer`). `sqlite` selects SQLite-backed storage;\n`legacy-kv` selects the legacy key-value storage.\nAvailable values: \"sqlite\", \"legacy-kv\".",
-							Optional:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("sqlite", "legacy-kv"),
-							},
-						},
-						"transfer_from": schema.StringAttribute{
-							Description: "Source script for a `state: expecting-transfer` entry. The\nnamespace on this script is materialised from the source\nscript's data via the pending-transfer flow. Present on reads\nfor `expecting-transfer` entries.",
-							Optional:    true,
-						},
-						"transferred_to": schema.StringAttribute{
-							Description: "Destination script for a `state: transferred` tombstone. Must\nreference a script in the same account; cross-dispatch-namespace\ntransfers are rejected. Write-only: never present in GET\nresponses.",
-							Optional:    true,
-						},
-					},
-				},
-				PlanModifiers: []planmodifier.Map{mapplanmodifier.RequiresReplace()},
 			},
 			"migrations": schema.SingleNestedAttribute{
 				Description: "Migrations for Durable Objects associated with the version. Migrations are applied when the version is deployed.",
@@ -295,27 +234,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"package_dependencies": schema.ListNestedAttribute{
-				Description: "The list of npm packages that were installed and used when this Worker\nversion was built.",
-				Optional:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"installed_version": schema.StringAttribute{
-							Description: "The exact version that was resolved and installed by the package manager.",
-							Required:    true,
-						},
-						"name": schema.StringAttribute{
-							Description: "The npm package name.",
-							Required:    true,
-						},
-						"package_json_version": schema.StringAttribute{
-							Description: "The version constraint as written in package.json.",
-							Required:    true,
-						},
-					},
-				},
-				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
-			},
 			"placement": schema.SingleNestedAttribute{
 				Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host.",
 				Optional:    true,
@@ -409,7 +327,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"assets": schema.SingleNestedAttribute{
 				Description: "Configuration for assets within a Worker.\n\n[`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and\n[`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files should be\nincluded as modules named `_headers` and `_redirects` with content type `text/plain`.",
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[WorkerVersionAssetsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"config": schema.SingleNestedAttribute{
 						Description: "Configuration for assets within a Worker.",
@@ -771,27 +688,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 				PlanModifiers: []planmodifier.List{RequiresReplaceIfConfiguredIgnoringSensitiveTextDiff()},
-			},
-			"cache_options": schema.SingleNestedAttribute{
-				Description: "Global CacheW configuration for the Worker. When caching is on,\nthe platform provisions a `cloudflare.app` zone for the Worker.\nA `type: worker` entry in the `exports` map can override this\nvalue for a single entrypoint.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[WorkerVersionCacheOptionsModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"enabled": schema.BoolAttribute{
-						Description: "Whether caching is enabled for this Worker.",
-						Computed:    true,
-						Optional:    true,
-						Default:     booldefault.StaticBool(false),
-					},
-					"cross_version_cache": schema.BoolAttribute{
-						Description: "Whether cached responses are shared across Worker version\nuploads. This is independent of `enabled`. It can stay true\nwhile caching is off, so the preference survives turning\ncaching off and back on.",
-						Computed:    true,
-						Optional:    true,
-						Default:     booldefault.StaticBool(false),
-					},
-				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplaceIfConfigured()},
 			},
 			"limits": schema.SingleNestedAttribute{
 				Description: "Resource limits enforced at runtime.",

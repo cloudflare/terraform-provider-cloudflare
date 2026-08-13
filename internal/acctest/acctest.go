@@ -273,16 +273,6 @@ func TestAccPreCheck_BYOIPPrefix(t *testing.T) {
 	}
 }
 
-// TestAccPreCheck_Organization skips the test unless the organization test
-// credentials are configured. Only the `organization` acceptance-test matrix
-// entry injects CLOUDFLARE_ORGANIZATION_ID, so gating on it lets these tests
-// self-skip on every other runner instead of failing.
-func TestAccPreCheck_Organization(t *testing.T) {
-	if v := os.Getenv("CLOUDFLARE_ORGANIZATION_ID"); v == "" {
-		t.Skip("Skipping acceptance test as CLOUDFLARE_ORGANIZATION_ID is not set")
-	}
-}
-
 // Test helper method checking all required Hyperdrive configurations are present.
 func TestAccPreCheck_Hyperdrive(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_NAME"); v == "" {
@@ -1173,6 +1163,81 @@ func RunMigrationV2Command(t *testing.T, v4Config string, tmpDir string, sourceV
 	}
 }
 
+// RunMigrationCommand runs the migration script to transform config and state
+// NOTE: assumes config and state are already in tmpDir
+func RunMigrationCommand(t *testing.T, v4Config string, tmpDir string) {
+	t.Helper()
+
+	// Get the current working directory to find the migration binary
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Failed to get current working directory: %v", err)
+	}
+
+	// Build the path to the migration binary
+	// The test runs from internal/services/zone, so we need to go up to the root
+	projectRoot := filepath.Join(cwd, "..", "..", "..")
+	migratePath := filepath.Join(projectRoot, "cmd", "migrate")
+	debugLogf(t, "Migrate path: %s", migratePath)
+
+	// Path to the transformations directories
+	transformerDir := filepath.Join(projectRoot, "cmd", "migrate", "transformations", "config")
+
+	debugLogf(t, "Using YAML transformations from: %s", transformerDir)
+
+	// Find state file in tmpDir
+	entries, err := os.ReadDir(tmpDir)
+	var stateDir string
+	if err != nil {
+		t.Logf("Failed to read test directory: %v", err)
+	} else {
+		for _, entry := range entries {
+			if entry.IsDir() {
+				inner_entries, _ := os.ReadDir(filepath.Join(tmpDir, entry.Name()))
+				for _, inner_entry := range inner_entries {
+					if inner_entry.Name() == "terraform.tfstate" {
+						stateDir = filepath.Join(tmpDir, entry.Name())
+					}
+				}
+			}
+
+		}
+	}
+
+	// Run the migration command on tmpDir (for config) and terraform.tfstate (for state)
+	debugLogf(t, "StateDir: %s", stateDir)
+	state, err := os.ReadFile(filepath.Join(stateDir, "terraform.tfstate"))
+	if err != nil {
+		t.Fatalf("Failed to read state file: %v", err)
+	}
+	debugLogf(t, "Config is: %s", string(state))
+	debugLogf(t, "State is: %s", string(state))
+
+	var cmd *exec.Cmd
+	// Use the new Go-based YAML transformations
+	debugLogf(t, "Running migration with YAML transformations")
+	cmd = exec.Command("go", "run", "-C", migratePath, ".",
+		"-config", tmpDir,
+		"-state", filepath.Join(stateDir, "terraform.tfstate"),
+		"-grit=false",       // Disable Grit transformations
+		"-transformer=true", // Enable YAML transformations
+		"-transformer-dir", transformerDir) // Use local YAML configs
+	cmd.Dir = tmpDir
+	// Capture output for debugging
+	output, err := cmd.CombinedOutput()
+
+	debugLogf(t, "Migration output:\n%s", string(output))
+
+	if err != nil {
+		t.Fatalf("Migration command failed: %v\nMigration output:\n%s", err, string(output))
+	}
+	newState, err := os.ReadFile(filepath.Join(stateDir, "terraform.tfstate"))
+	if err != nil {
+		t.Fatalf("Failed to read state file: %v", err)
+	}
+	debugLogf(t, "New State is: %s", string(newState))
+}
+
 // MigrationTestStepWithPlan creates test steps for migrations that need plan processing after migration
 // This handles resources that can't use state upgraders and need plan/refresh to correct state
 // Returns multiple steps: migration step, plan step to process changes, then validation step
@@ -1203,10 +1268,8 @@ func MigrationTestStepWithPlan(t *testing.T, v4Config string, tmpDir string, exa
 	return []resource.TestStep{migrationStep, planStep, validationStep}
 }
 
-// MigrationV2TestStepWithPlan creates multiple test steps for v2 migration with plan processing.
-// Runs the v2 migration command (tf-migrate) with explicit source/target version parameters,
-// then a PlanOnly step to process import blocks and state corrections, then a validation step
-// asserting an empty plan (modulo falsey-to-null transitions).
+// MigrationV2TestStepWithPlan creates multiple test steps for v2 migration with plan processing
+// This is similar to MigrationTestStepWithPlan but uses the v2 migration command with explicit version parameters
 func MigrationV2TestStepWithPlan(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, stateChecks []statecheck.StateCheck) []resource.TestStep {
 	// First step: run migration
 	migrationStep := MigrationV2TestStep(t, v4Config, tmpDir, exactVersion, sourceVersion, targetVersion, nil) // No state checks yet
@@ -1275,8 +1338,8 @@ func MigrationTestStep(t *testing.T, v4Config string, tmpDir string, exactVersio
 			WriteOutConfig(t, v4Config, tmpDir)
 			// we only run the migration command if the version is 4.x.x, because users will not expect to run it within v5 versions.
 			if strings.HasPrefix(exactVersion, "4.") {
-				debugLogf(t, "Running migration command for version: %s (v4 -> v5)", exactVersion)
-				RunMigrationV2Command(t, v4Config, tmpDir, "v4", "v5")
+				debugLogf(t, "Running migration command for version: %s", exactVersion)
+				RunMigrationCommand(t, v4Config, tmpDir)
 			} else {
 				debugLogf(t, "Skipping migration command for version: %s", exactVersion)
 			}

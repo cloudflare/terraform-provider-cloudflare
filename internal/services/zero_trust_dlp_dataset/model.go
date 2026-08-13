@@ -14,7 +14,7 @@ type ZeroTrustDLPDatasetResultEnvelope struct {
 }
 
 type ZeroTrustDLPDatasetModel struct {
-	AccountID       types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String                                                  `tfsdk:"account_id" path:"account_id,optional"`
 	DatasetID       types.String                                                  `tfsdk:"dataset_id" path:"dataset_id,optional"`
 	EncodingVersion types.Int64                                                   `tfsdk:"encoding_version" json:"encoding_version,optional"`
 	Secret          types.Bool                                                    `tfsdk:"secret" json:"secret,optional"`

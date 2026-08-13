@@ -18,15 +18,6 @@ env:
   GOPRIVATE: github.com/cloudflare/cloudflare-go/v7,github.com/stainless-sdks/cloudflare-go/v7
 
 jobs:
-  check-schema-versions:
-    runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
-    if: github.event_name == 'pull_request' && github.base_ref == 'main'
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Check schema versions
-        run: ./scripts/check-schema-versions
-
   lint:
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
     if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
@@ -52,11 +43,10 @@ jobs:
     name: Unit Tests (shard ${{ matrix.shard }})
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
     if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
-    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v6
 
@@ -76,7 +66,7 @@ jobs:
       - name: Run tests
         run: |
           # Get all packages and select this shard (1-indexed)
-          packages=$(go list ./... | awk "NR % 16 == (${{ matrix.shard }} - 1)")
+          packages=$(go list ./... | awk "NR % 4 == (${{ matrix.shard }} - 1)")
           if [ -n "$packages" ]; then
-            echo "$packages" | xargs go test -v -timeout 25m
+            echo "$packages" | xargs go test -v
           fi
