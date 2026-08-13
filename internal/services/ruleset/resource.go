@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sync"
 
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/option"
@@ -18,6 +19,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 )
@@ -322,11 +324,11 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 		}
 
 		// Check if enough of the plan is known to build a request for the dry-run
-		if !req.Config.Raw.IsFullyKnown() {
+		if !planIsKnown(resp.Plan.Raw, req.Config.Raw) {
 			return
 		}
 
-		r.validateWithDryRun(ctx, state, plan, &resp.Diagnostics)
+		r.validateWithDryRun(ctx, req, state, plan, &resp.Diagnostics)
 	}()
 
 	// Do nothing if there is no state or no plan.
@@ -451,8 +453,28 @@ func transformQueryStringJSON(jsonBytes []byte) []byte {
 	return jsonBytes
 }
 
+func planIsKnown(plan, config tftypes.Value) bool {
+	known := true
+
+	_ = tftypes.Walk(plan, func(path *tftypes.AttributePath, value tftypes.Value) (bool, error) {
+		if value.IsKnown() {
+			return true, nil
+		}
+
+		configValue, _, err := tftypes.WalkAttributePath(config, path)
+		if value, ok := configValue.(tftypes.Value); ok && err == nil && !value.IsKnown() {
+			known = false
+		}
+
+		return false, nil
+	})
+
+	return known
+}
+
 func (r *RulesetResource) validateWithDryRun(
 	ctx context.Context,
+	req resource.ModifyPlanRequest,
 	state *RulesetModel,
 	plan *RulesetModel,
 	diagnostics *diag.Diagnostics,
@@ -461,36 +483,21 @@ func (r *RulesetResource) validateWithDryRun(
 		return
 	}
 
-	res := new(http.Response)
 	requestOptions := []option.RequestOption{
 		option.WithQuery("dry_run", "true"),
-		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	}
 
 	var err error
 	switch {
-	// The plan is absent only when the resource is being deleted
-	case plan == nil:
-		if state == nil || state.ID.IsNull() || state.ID.IsUnknown() {
+	// Terraform plans a create as a null state
+	case req.State.Raw.IsNull():
+		// A replacement plans its create half while the entry point it replaces still
+		// holds the phase, so skip the dry-run when the delete half recorded that it frees this phase
+		if isEntryPoint(plan) && takeVacatedPhase(plan) {
 			return
 		}
 
-		params := rulesets.RulesetDeleteParams{}
-		if !state.AccountID.IsNull() {
-			params.AccountID = cloudflare.F(state.AccountID.ValueString())
-		} else {
-			params.ZoneID = cloudflare.F(state.ZoneID.ValueString())
-		}
-
-		err = r.client.Rulesets.Delete(ctx, state.ID.ValueString(), params, requestOptions...)
-
-		if res != nil && res.StatusCode == http.StatusNotFound {
-			return
-		}
-
-	// A plan that leaves the computed ID unknown is creating the ruleset
-	case plan.ID.IsUnknown():
 		dataBytes, marshalErr := plan.MarshalJSON()
 		if marshalErr != nil {
 			diagnostics.AddError("failed to serialize http request", marshalErr.Error())
@@ -507,15 +514,25 @@ func (r *RulesetResource) validateWithDryRun(
 		_, err = r.client.Rulesets.New(ctx, params,
 			append(requestOptions, option.WithRequestBody("application/json", dataBytes))...)
 
-	// Anything else is updating a ruleset that already exists
-	default:
-		var dataBytes []byte
-		var marshalErr error
-		if state == nil {
-			dataBytes, marshalErr = plan.MarshalJSON()
-		} else {
-			dataBytes, marshalErr = plan.MarshalJSONForUpdate(*state)
+	// Terraform plans a destroy as a null plan
+	case req.Plan.Raw.IsNull():
+		return
+
+	// Terraform carries out a replacement as a destroy followed by a create that it
+	// plans in a separate call
+	case replacesRuleset(state, plan):
+		// Terraform plans the create half straight after this and cannot see that
+		// the phase it creates into is about to be freed. Only an entry point put
+		// back into the phase it frees is turned away for it
+		if isEntryPoint(state) && isEntryPoint(plan) && phaseKey(state) == phaseKey(plan) {
+			willVacatePhase(state)
 		}
+
+		return
+
+	// Updating a ruleset that already exists
+	default:
+		dataBytes, marshalErr := plan.MarshalJSONForUpdate(*state)
 		if marshalErr != nil {
 			diagnostics.AddError("failed to serialize http request", marshalErr.Error())
 			return
@@ -535,4 +552,58 @@ func (r *RulesetResource) validateWithDryRun(
 	if err != nil {
 		diagnostics.AddError("failed to make http request", err.Error())
 	}
+}
+
+// vacatedPhases holds the phases that a planned replacement empties before it
+// fills them again.
+var (
+	plannedChangesMu sync.Mutex
+	vacatedPhases    = map[string]struct{}{}
+)
+
+// willVacatePhase records that a planned replacement deletes the ruleset holding
+// this phase before it creates its replacement
+func willVacatePhase(state *RulesetModel) {
+	plannedChangesMu.Lock()
+	defer plannedChangesMu.Unlock()
+
+	vacatedPhases[phaseKey(state)] = struct{}{}
+}
+
+// takeVacatedPhase reports whether a replacement planned earlier in this run frees
+// the phase that this ruleset is being created into
+func takeVacatedPhase(plan *RulesetModel) bool {
+	plannedChangesMu.Lock()
+	defer plannedChangesMu.Unlock()
+
+	key := phaseKey(plan)
+
+	_, vacating := vacatedPhases[key]
+	delete(vacatedPhases, key)
+
+	return vacating
+}
+
+// isEntryPoint reports whether a ruleset is the one entry point that its phase
+// has, rather than a ruleset that an entry point executes
+func isEntryPoint(data *RulesetModel) bool {
+	kind := data.Kind.ValueString()
+
+	return kind == "root" || kind == "zone"
+}
+
+// phaseKey identifies the phase of a scope, which holds at most one entry point
+func phaseKey(data *RulesetModel) string {
+	return fmt.Sprintf("%s/%s/%s",
+		data.AccountID.ValueString(), data.ZoneID.ValueString(), data.Phase.ValueString())
+}
+
+// replacesRuleset reports whether changing from the state to the plan replaces the
+// ruleset instead of updating it in place
+func replacesRuleset(state, plan *RulesetModel) bool {
+	return !plan.AccountID.Equal(state.AccountID) ||
+		!plan.ZoneID.Equal(state.ZoneID) ||
+		!plan.Kind.Equal(state.Kind) ||
+		!plan.Name.Equal(state.Name) ||
+		!plan.Phase.Equal(state.Phase)
 }
