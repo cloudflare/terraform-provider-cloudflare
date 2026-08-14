@@ -33,7 +33,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"cloud_connector_rules_provider": schema.StringAttribute{
-				Description: "Cloud Provider type\nAvailable values: \"aws_s3\", \"cloudflare_r2\", \"gcp_storage\", \"azure_storage\".",
+				Description: "Cloud Provider type\nAvailable values: \"aws_s3\", \"cloudflare_r2\", \"gcp_storage\", \"azure_storage\", \"oci_storage\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -41,6 +41,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"cloudflare_r2",
 						"gcp_storage",
 						"azure_storage",
+						"oci_storage",
 					),
 				},
 			},

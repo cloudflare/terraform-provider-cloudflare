@@ -32,7 +32,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "server id",
+				Description:   "Unique identifier for the MCP server.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
@@ -41,7 +41,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"auth_type": schema.StringAttribute{
-				Description: `Available values: "oauth", "bearer", "unauthenticated".`,
+				Description: "Authentication method used to connect to the upstream MCP server.\nAvailable values: \"oauth\", \"bearer\", \"unauthenticated\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -53,15 +53,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"hostname": schema.StringAttribute{
+				Description:   "URL of the upstream MCP endpoint.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Required: true,
+				Description: "Display name for the MCP server.",
+				Required:    true,
 			},
 			"auth_credentials": schema.StringAttribute{
-				Optional:  true,
-				Sensitive: true,
+				Description: "Static credential for the upstream MCP server. For auth_type \"bearer\", either a raw token string (e.g. \"sk-abc123\"), which is wrapped server-side as `Authorization: Bearer <token>`, or a JSON-encoded object of the form `{\"headers\":{\"Header-Name\":\"value\",...}}` for custom or multiple static headers (e.g. Cloudflare Access service tokens: `{\"headers\":{\"cf-access-client-id\":\"...\",\"cf-access-client-secret\":\"...\"}}`).",
+				Optional:    true,
+				Sensitive:   true,
 			},
 			"client_secret": schema.StringAttribute{
 				Description: "Pre-registered OAuth client_secret. Write-only - accepted on create/update when auth_credentials.auth_mode is 'manual'. Stored AES-GCM-encrypted in server_oauth_secrets; never returned by read endpoints.",
@@ -69,42 +72,53 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Sensitive:   true,
 			},
 			"description": schema.StringAttribute{
-				Optional: true,
+				Description: "Optional description of the MCP server.",
+				Optional:    true,
 			},
 			"updated_prompts": schema.ListNestedAttribute{
-				Optional: true,
+				Description: "Server-wide prompt capability overrides.",
+				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
-							Required: true,
+							Description: "Name of the tool or prompt capability to override.",
+							Required:    true,
 						},
 						"alias": schema.StringAttribute{
-							Optional: true,
+							Description: "Custom name exposed for the capability.",
+							Optional:    true,
 						},
 						"description": schema.StringAttribute{
-							Optional: true,
+							Description: "Custom description exposed for the capability.",
+							Optional:    true,
 						},
 						"enabled": schema.BoolAttribute{
-							Optional: true,
+							Description: "Whether the capability is available through the MCP server.",
+							Optional:    true,
 						},
 					},
 				},
 			},
 			"updated_tools": schema.ListNestedAttribute{
-				Optional: true,
+				Description: "Server-wide tool capability overrides.",
+				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
-							Required: true,
+							Description: "Name of the tool or prompt capability to override.",
+							Required:    true,
 						},
 						"alias": schema.StringAttribute{
-							Optional: true,
+							Description: "Custom name exposed for the capability.",
+							Optional:    true,
 						},
 						"description": schema.StringAttribute{
-							Optional: true,
+							Description: "Custom description exposed for the capability.",
+							Optional:    true,
 						},
 						"enabled": schema.BoolAttribute{
-							Optional: true,
+							Description: "Whether the capability is available through the MCP server.",
+							Optional:    true,
 						},
 					},
 				},
@@ -116,7 +130,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(false),
 			},
 			"secure_web_gateway": schema.BoolAttribute{
-				Description: "Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway",
+				Description: "Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway.",
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),

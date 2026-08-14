@@ -30,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "portal id",
+				Description: "Unique identifier for the MCP portal.",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -62,10 +62,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"description": schema.StringAttribute{
-				Computed: true,
+				Description: "Optional description of the MCP portal.",
+				Computed:    true,
 			},
 			"hostname": schema.StringAttribute{
-				Computed: true,
+				Description: "Hostname where the MCP portal is available.",
+				Computed:    true,
 			},
 			"modified_at": schema.StringAttribute{
 				Computed:   true,
@@ -75,10 +77,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"name": schema.StringAttribute{
-				Computed: true,
+				Description: "Display name for the MCP portal.",
+				Computed:    true,
 			},
 			"secure_web_gateway": schema.BoolAttribute{
-				Description: "Route outbound MCP traffic through Zero Trust Secure Web Gateway",
+				Description: "Route outbound MCP traffic through Zero Trust Secure Web Gateway.",
 				Computed:    true,
 			},
 			"servers": schema.SetNestedAttribute{
@@ -87,11 +90,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "server id",
+							Description: "Unique identifier for the MCP server.",
 							Computed:    true,
 						},
 						"auth_type": schema.StringAttribute{
-							Description: `Available values: "oauth", "bearer", "unauthenticated".`,
+							Description: "Authentication method used to connect to the upstream MCP server.\nAvailable values: \"oauth\", \"bearer\", \"unauthenticated\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -102,10 +105,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"hostname": schema.StringAttribute{
-							Computed: true,
+							Description: "URL of the upstream MCP endpoint.",
+							Computed:    true,
 						},
 						"name": schema.StringAttribute{
-							Computed: true,
+							Description: "Display name for the MCP server.",
+							Computed:    true,
 						},
 						"prompts": schema.ListAttribute{
 							Computed:   true,
@@ -115,7 +120,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"server_id": schema.StringAttribute{
-							Description: "server id",
+							Description: "Unique identifier for the MCP server.",
 							Computed:    true,
 						},
 						"tools": schema.ListAttribute{
@@ -210,7 +215,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"description": schema.StringAttribute{
-							Computed: true,
+							Description: "Optional description of the MCP server.",
+							Computed:    true,
 						},
 						"error": schema.StringAttribute{
 							Computed: true,
@@ -264,7 +270,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"secure_web_gateway": schema.BoolAttribute{
-							Description: "Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway",
+							Description: "Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway.",
 							Computed:    true,
 						},
 						"status": schema.StringAttribute{

@@ -362,6 +362,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"is_default": schema.BoolAttribute{
 							Computed: true,
 						},
+						"log_classification": schema.BoolAttribute{
+							Computed: true,
+						},
 						"log_management": schema.Int64Attribute{
 							Computed: true,
 							Validators: []validator.Int64{

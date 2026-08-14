@@ -69,6 +69,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"authentication": schema.BoolAttribute{
 				Optional: true,
 			},
+			"log_classification": schema.BoolAttribute{
+				Optional: true,
+			},
 			"log_management": schema.Int64Attribute{
 				Optional: true,
 				Validators: []validator.Int64{
@@ -482,7 +485,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"id": schema.StringAttribute{
 									Computed: true,
 									Optional: true,
-									Default:  stringdefault.StaticString("4a6d1f72"),
+									Default:  stringdefault.StaticString("4e5ce391"),
 								},
 								"enabled": schema.BoolAttribute{
 									Computed: true,

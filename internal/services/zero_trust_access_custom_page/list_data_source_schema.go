@@ -51,15 +51,45 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "Custom page type.\nAvailable values: \"identity_denied\", \"forbidden\".",
+							Description: "Custom page type.\nAvailable values: \"identity_denied\", \"forbidden\", \"login\", \"interstitial\".",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("identity_denied", "forbidden"),
+								stringvalidator.OneOfCaseInsensitive(
+									"identity_denied",
+									"forbidden",
+									"login",
+									"interstitial",
+								),
 							},
+						},
+						"contract_version": schema.Int64Attribute{
+							Description: "Contract version of the page's Liquid template. Present (>= 1) marks a sanitized template; absent or 0 marks a legacy page served verbatim.",
+							Computed:    true,
 						},
 						"uid": schema.StringAttribute{
 							Description: "UUID.",
 							Computed:    true,
+						},
+						"warnings": schema.ListNestedAttribute{
+							Description: "Advisory validation findings returned when creating or updating a template. Omitted when empty.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessCustomPagesWarningsDataSourceModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"message": schema.StringAttribute{
+										Description: "Human-readable description of the finding.",
+										Computed:    true,
+									},
+									"tier": schema.StringAttribute{
+										Description: "The validation tier that produced the finding (e.g. html, liquid).",
+										Computed:    true,
+									},
+									"ref": schema.StringAttribute{
+										Description: "Optional pointer to the part of the template the finding refers to.",
+										Computed:    true,
+									},
+								},
+							},
 						},
 					},
 				},

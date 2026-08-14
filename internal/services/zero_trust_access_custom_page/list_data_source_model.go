@@ -31,8 +31,16 @@ func (m *ZeroTrustAccessCustomPagesDataSourceModel) toListParams(_ context.Conte
 }
 
 type ZeroTrustAccessCustomPagesResultDataSourceModel struct {
-	ID   types.String `tfsdk:"id" json:"uid,computed"`
-	Name types.String `tfsdk:"name" json:"name,computed"`
-	Type types.String `tfsdk:"type" json:"type,computed"`
-	UID  types.String `tfsdk:"uid" json:"uid,computed"`
+	ID              types.String                                                                    `tfsdk:"id" json:"uid,computed"`
+	Name            types.String                                                                    `tfsdk:"name" json:"name,computed"`
+	Type            types.String                                                                    `tfsdk:"type" json:"type,computed"`
+	ContractVersion types.Int64                                                                     `tfsdk:"contract_version" json:"contract_version,computed"`
+	UID             types.String                                                                    `tfsdk:"uid" json:"uid,computed"`
+	Warnings        customfield.NestedObjectList[ZeroTrustAccessCustomPagesWarningsDataSourceModel] `tfsdk:"warnings" json:"warnings,computed"`
+}
+
+type ZeroTrustAccessCustomPagesWarningsDataSourceModel struct {
+	Message types.String `tfsdk:"message" json:"message,computed"`
+	Tier    types.String `tfsdk:"tier" json:"tier,computed"`
+	Ref     types.String `tfsdk:"ref" json:"ref,computed"`
 }

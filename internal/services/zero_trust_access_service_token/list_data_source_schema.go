@@ -68,6 +68,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`, or the special value `forever` for non-expiring tokens. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).",
 							Computed:    true,
 						},
+						"enabled": schema.BoolAttribute{
+							Description: "Whether the service token is enabled. A disabled service token cannot be used to authenticate; both its current and previous `client_secret` stop being accepted, but the token itself is preserved and can be re-enabled at any time. Defaults to enabled when omitted on create.",
+							Computed:    true,
+						},
 						"expires_at": schema.StringAttribute{
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
