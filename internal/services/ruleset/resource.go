@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"sync"
 
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/option"
@@ -312,6 +311,15 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 		return
 	}
 
+	// A replacement plans its create half with no state, exactly like a plain create,
+	// so mark a ruleset that is here for that create to find
+	if !req.State.Raw.IsNull() {
+		resp.Diagnostics.Append(resp.Private.SetKey(ctx, "existing_ruleset", []byte("true"))...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+	}
+
 	// Validate the plan once the planned rules below have been populated
 	defer func() {
 		if resp.Diagnostics.HasError() {
@@ -492,9 +500,8 @@ func (r *RulesetResource) validateWithDryRun(
 	switch {
 	// Terraform plans a create as a null state
 	case req.State.Raw.IsNull():
-		// A replacement plans its create half while the entry point it replaces still
-		// holds the phase, so skip the dry-run when the delete half recorded that it frees this phase
-		if isEntryPoint(plan) && takeVacatedPhase(plan) {
+		// skip the dry run when creating as part of a replacement
+		if replacesExistingRuleset(ctx, req) {
 			return
 		}
 
@@ -519,15 +526,8 @@ func (r *RulesetResource) validateWithDryRun(
 		return
 
 	// Terraform carries out a replacement as a destroy followed by a create that it
-	// plans in a separate call
+	// plans in a separate call, skip dry run
 	case replacesRuleset(state, plan):
-		// Terraform plans the create half straight after this and cannot see that
-		// the phase it creates into is about to be freed. Only an entry point put
-		// back into the phase it frees is turned away for it
-		if isEntryPoint(state) && isEntryPoint(plan) && phaseKey(state) == phaseKey(plan) {
-			willVacatePhase(state)
-		}
-
 		return
 
 	// Updating a ruleset that already exists
@@ -554,48 +554,12 @@ func (r *RulesetResource) validateWithDryRun(
 	}
 }
 
-// vacatedPhases holds the phases that a planned replacement empties before it
-// fills them again.
-var (
-	plannedChangesMu sync.Mutex
-	vacatedPhases    = map[string]struct{}{}
-)
+// replacesExistingRuleset checks whether a planned create is the second half of a
+// replacement, by looking for the mark ModifyPlan leaves on a ruleset that is there
+func replacesExistingRuleset(ctx context.Context, req resource.ModifyPlanRequest) bool {
+	existing, _ := req.Private.GetKey(ctx, "existing_ruleset")
 
-// willVacatePhase records that a planned replacement deletes the ruleset holding
-// this phase before it creates its replacement
-func willVacatePhase(state *RulesetModel) {
-	plannedChangesMu.Lock()
-	defer plannedChangesMu.Unlock()
-
-	vacatedPhases[phaseKey(state)] = struct{}{}
-}
-
-// takeVacatedPhase reports whether a replacement planned earlier in this run frees
-// the phase that this ruleset is being created into
-func takeVacatedPhase(plan *RulesetModel) bool {
-	plannedChangesMu.Lock()
-	defer plannedChangesMu.Unlock()
-
-	key := phaseKey(plan)
-
-	_, vacating := vacatedPhases[key]
-	delete(vacatedPhases, key)
-
-	return vacating
-}
-
-// isEntryPoint reports whether a ruleset is the one entry point that its phase
-// has, rather than a ruleset that an entry point executes
-func isEntryPoint(data *RulesetModel) bool {
-	kind := data.Kind.ValueString()
-
-	return kind == "root" || kind == "zone"
-}
-
-// phaseKey identifies the phase of a scope, which holds at most one entry point
-func phaseKey(data *RulesetModel) string {
-	return fmt.Sprintf("%s/%s/%s",
-		data.AccountID.ValueString(), data.ZoneID.ValueString(), data.Phase.ValueString())
+	return existing != nil
 }
 
 // replacesRuleset reports whether changing from the state to the plan replaces the

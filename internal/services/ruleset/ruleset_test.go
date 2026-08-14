@@ -562,6 +562,25 @@ func TestAccCloudflareRuleset_DryRunSkippedOnEntryPointRename(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_DryRunSkippedOnInvalidEntryPointReplacement(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:         config.TestNameFile("2.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_DryRunInvalidUpdateWithNewDependency(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
