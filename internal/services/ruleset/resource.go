@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/option"
@@ -15,6 +16,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/tidwall/gjson"
@@ -94,6 +96,7 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	addRulesetWarnings(&resp.Diagnostics, bytes)
 	bytes = transformQueryStringJSON(bytes)
 	err = apijsoncustom.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -146,6 +149,7 @@ func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	addRulesetWarnings(&resp.Diagnostics, bytes)
 	bytes = transformQueryStringJSON(bytes)
 	err = apijsoncustom.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -429,4 +433,20 @@ func transformQueryStringJSON(jsonBytes []byte) []byte {
 		return []byte(jsonStr)
 	}
 	return jsonBytes
+}
+
+// addRulesetWarnings surfaces the warnings the API reports alongside a ruleset
+func addRulesetWarnings(diagnostics *diag.Diagnostics, body []byte) {
+	for _, message := range gjson.GetBytes(body, "messages").Array() {
+		text := strings.TrimPrefix(message.Get("message").String(), "warning: ")
+		if text == "" {
+			continue
+		}
+
+		if pointer := message.Get("source.pointer").String(); pointer != "" {
+			text += "\n\nSource: " + pointer
+		}
+
+		diagnostics.AddWarning("Ruleset validation warning", text)
+	}
 }
