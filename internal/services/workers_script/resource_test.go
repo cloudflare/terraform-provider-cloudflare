@@ -511,6 +511,47 @@ func TestAccCloudflareWorkerScript_ModuleWithDurableObject(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareWorkerScript_Issue6852DurableObjectMigrationWithWASM(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	config := acctest.LoadTestCase("issue_6852_durable_object_migration_with_wasm.tf", resourceName, accountID, encodedWasm)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(resourceName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("main_module"), knownvalue.StringExact("worker.js")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("has_modules"), knownvalue.Bool(true)),
+				},
+			},
+			{
+				Config: config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"bindings.0.namespace_id", "migrations", "startup_time_ms"},
+			},
+		},
+	})
+}
+
 func TestAccCloudflareWorkerScript_AssetsConfigRunWorkerFirst(t *testing.T) {
 	t.Parallel()
 

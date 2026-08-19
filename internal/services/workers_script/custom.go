@@ -3,6 +3,7 @@ package workers_script
 import (
 	"context"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -69,6 +70,13 @@ func readFile(path string) (string, error) {
 }
 
 func calculateFileHash(filePath string) (string, error) {
+	if strings.HasPrefix(filePath, "~/") {
+		dirname, err := os.UserHomeDir()
+		if err != nil {
+			return "", fmt.Errorf("could not expand home directory in path %s: %w", filePath, err)
+		}
+		filePath = filepath.Join(dirname, filePath[2:])
+	}
 	file, err := os.Open(filePath)
 	if err != nil {
 		return "", fmt.Errorf("failed to open file: %w", err)
@@ -86,6 +94,59 @@ func calculateFileHash(filePath string) (string, error) {
 func calculateStringHash(content string) (string, error) {
 	hash := sha256.Sum256([]byte(content))
 	return hex.EncodeToString(hash[:]), nil
+}
+
+func ComputeSHA256HashOfFileContent() planmodifier.String {
+	return computeSHA256HashOfFileContentModifier{}
+}
+
+var _ planmodifier.String = &computeSHA256HashOfFileContentModifier{}
+
+type computeSHA256HashOfFileContentModifier struct{}
+
+func (computeSHA256HashOfFileContentModifier) Description(_ context.Context) string {
+	return "Calculates the SHA-256 hash of the provided file content."
+}
+
+func (m computeSHA256HashOfFileContentModifier) MarkdownDescription(ctx context.Context) string {
+	return m.Description(ctx)
+}
+
+func (computeSHA256HashOfFileContentModifier) PlanModifyString(ctx context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) {
+	if req.Config.Raw.IsNull() {
+		return
+	}
+
+	var contentFile, contentBase64 types.String
+	resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, req.Path.ParentPath().AtName("content_file"), &contentFile)...)
+	resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, req.Path.ParentPath().AtName("content_base64"), &contentBase64)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if !contentFile.IsNull() && !contentFile.IsUnknown() {
+		hash, err := calculateFileHash(contentFile.ValueString())
+		if err != nil {
+			resp.Diagnostics.AddAttributeError(req.Path, "Error computing SHA-256 hash", err.Error())
+			return
+		}
+		resp.PlanValue = types.StringValue(hash)
+		return
+	}
+
+	if !contentBase64.IsNull() && !contentBase64.IsUnknown() {
+		content, err := base64.StdEncoding.DecodeString(contentBase64.ValueString())
+		if err != nil {
+			resp.Diagnostics.AddAttributeError(req.Path, "Error decoding base64", err.Error())
+			return
+		}
+		hash, err := calculateStringHash(string(content))
+		if err != nil {
+			resp.Diagnostics.AddAttributeError(req.Path, "Error computing SHA-256 hash", err.Error())
+			return
+		}
+		resp.PlanValue = types.StringValue(hash)
+	}
 }
 
 var _ validator.String = &contentSHA256Validator{}
