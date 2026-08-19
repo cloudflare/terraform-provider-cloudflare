@@ -40,6 +40,7 @@ func Transform(ctx context.Context, source SourceWorkerScriptModel) (*TargetWork
 		ContentFile:       types.StringNull(),
 		ContentSHA256:     types.StringNull(),
 		ContentType:       types.StringNull(),
+		Files:             nil,
 		CreatedOn:         timetypes.NewRFC3339Null(),
 		Etag:              types.StringNull(),
 		HasAssets:         types.BoolNull(),
