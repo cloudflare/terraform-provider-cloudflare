@@ -4,6 +4,8 @@ package workers_script
 
 import (
 	"bytes"
+	"encoding/base64"
+	"fmt"
 	"mime/multipart"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
@@ -42,6 +44,7 @@ type WorkersScriptModel struct {
 	ContentFile      types.String                                                  `tfsdk:"content_file" json:"-"`
 	ContentSHA256    types.String                                                  `tfsdk:"content_sha256" json:"-"`
 	ContentType      types.String                                                  `tfsdk:"content_type" json:"-"`
+	Files            *map[string]WorkersScriptFileModel                            `tfsdk:"files" json:"-"`
 	CreatedOn        timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Etag             types.String                                                  `tfsdk:"etag" json:"etag,computed"`
 	HasAssets        types.Bool                                                    `tfsdk:"has_assets" json:"has_assets,computed"`
@@ -73,28 +76,56 @@ func (r WorkersScriptModel) MarshalMultipart() (data []byte, formDataContentType
 				contentType = "application/javascript+module"
 			}
 			mainModuleName := r.MainModule.ValueString()
-			writeFileBytes(mainModuleName, mainModuleName, contentType, workerBody, writer)
+			if err := writeFileBytes(mainModuleName, mainModuleName, contentType, workerBody, writer); err != nil {
+				return nil, "", err
+			}
 		} else {
 			if contentType == "" {
 				contentType = "application/javascript"
 			}
-			writeFileBytes("script", "script", contentType, workerBody, writer)
+			if err := writeFileBytes("script", "script", contentType, workerBody, writer); err != nil {
+				return nil, "", err
+			}
 			r.BodyPart = types.StringValue("script")
+		}
+	}
+
+	if r.Files != nil {
+		for name, file := range *r.Files {
+			content, err := base64.StdEncoding.DecodeString(file.ContentBase64.ValueString())
+			if err != nil {
+				return nil, "", fmt.Errorf("failed to decode file %q: %w", name, err)
+			}
+			if err := writeFileBytes(name, name, file.ContentType.ValueString(), bytes.NewReader(content), writer); err != nil {
+				return nil, "", err
+			}
 		}
 	}
 
 	topLevelMetadata := r.WorkersScriptMetadataModel
 	copier.Copy(&metadata, &topLevelMetadata)
 
-	payload, _ := apijson.Marshal(metadata)
+	payload, err := apijson.Marshal(metadata)
+	if err != nil {
+		return nil, "", err
+	}
 	metadataContent := bytes.NewReader(payload)
-	writeFileBytes("metadata", "", "application/json", metadataContent, writer)
+	if err := writeFileBytes("metadata", "", "application/json", metadataContent, writer); err != nil {
+		return nil, "", err
+	}
 
 	err = writer.Close()
 	if err != nil {
 		return nil, "", err
 	}
 	return buf.Bytes(), writer.FormDataContentType(), nil
+}
+
+type WorkersScriptFileModel struct {
+	ContentBase64 types.String `tfsdk:"content_base64" json:"-"`
+	ContentFile   types.String `tfsdk:"content_file" json:"-"`
+	ContentSHA256 types.String `tfsdk:"content_sha256" json:"-"`
+	ContentType   types.String `tfsdk:"content_type" json:"-"`
 }
 
 type WorkersScriptMetadataModel struct {

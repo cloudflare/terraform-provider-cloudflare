@@ -4,6 +4,8 @@ package workers_script
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io"
 	"mime"
@@ -106,6 +108,11 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 		}
 		data.Content = types.StringValue(content)
 	}
+	planFiles, err := prepareFileUploads(data)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to prepare file upload", err.Error())
+		return
+	}
 
 	dataBytes, formDataContentType, err := data.MarshalMultipart()
 	if err != nil {
@@ -140,6 +147,7 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 	data.ContentType = contentType
 	data.Assets = assets
 	data.Migrations = planMigrations
+	data.Files = planFiles
 
 	// avoid storing `content` in state if `content_file` is configured
 	if !data.ContentFile.IsNull() {
@@ -200,6 +208,11 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 		}
 		data.Content = types.StringValue(content)
 	}
+	planFiles, err := prepareFileUploads(data)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to prepare file upload", err.Error())
+		return
+	}
 
 	dataBytes, formDataContentType, err := data.MarshalMultipart()
 	if err != nil {
@@ -234,6 +247,7 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 	data.ContentType = contentType
 	data.Assets = assets
 	data.Migrations = planMigrations
+	data.Files = planFiles
 
 	// avoid storing `content` in state if `content_file` is configured
 	if !data.ContentFile.IsNull() {
@@ -351,6 +365,13 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 	switch scriptContentRes.StatusCode {
 	case http.StatusOK:
 		var content string
+		stateFiles := state.Files
+		if stateFiles != nil {
+			emptyFiles := make(map[string]WorkersScriptFileModel)
+			data.Files = &emptyFiles
+		} else {
+			data.Files = nil
+		}
 		mediaType, mediaTypeParams, err := mime.ParseMediaType(scriptContentRes.Header.Get("Content-Type"))
 		if err != nil {
 			resp.Diagnostics.AddError("failed parsing content-type", err.Error())
@@ -358,12 +379,107 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 		}
 		if strings.HasPrefix(mediaType, "multipart/") {
 			mr := multipart.NewReader(scriptContentRes.Body, mediaTypeParams["boundary"])
-			p, err := mr.NextPart()
-			if err != nil {
-				resp.Diagnostics.AddError("failed to read response body", err.Error())
+			type multipartFile struct {
+				content     []byte
+				contentType string
 			}
-			c, _ := io.ReadAll(p)
-			content = string(c)
+			parts := make(map[string]multipartFile)
+			partOrder := make([]string, 0)
+			for {
+				p, err := mr.NextPart()
+				if err == io.EOF {
+					break
+				}
+				if err != nil {
+					resp.Diagnostics.AddError("failed to read response body", err.Error())
+					return
+				}
+				partContent, err := io.ReadAll(p)
+				if err != nil {
+					resp.Diagnostics.AddError("failed to read response body", err.Error())
+					return
+				}
+				name := p.FormName()
+				if name == "" {
+					name = p.FileName()
+				}
+				if name != "" {
+					if _, exists := parts[name]; exists {
+						resp.Diagnostics.AddError("failed to read response body", fmt.Sprintf("duplicate multipart part %q", name))
+						return
+					}
+					parts[name] = multipartFile{content: partContent, contentType: p.Header.Get("Content-Type")}
+					partOrder = append(partOrder, name)
+				}
+			}
+
+			mainPart := data.MainModule.ValueString()
+			if mainPart == "" {
+				mainPart = data.BodyPart.ValueString()
+			}
+			if mainPart == "" {
+				mainPart = scriptContentRes.Header.Get("CF-Entrypoint")
+			}
+			if mainPart == "" {
+				if metadataPart, ok := parts["metadata"]; ok {
+					var metadata struct {
+						MainModule string `json:"main_module"`
+						BodyPart   string `json:"body_part"`
+					}
+					if err := json.Unmarshal(metadataPart.content, &metadata); err != nil {
+						resp.Diagnostics.AddError("failed to read response body", fmt.Sprintf("failed to parse multipart metadata: %s", err))
+						return
+					}
+					mainPart = metadata.MainModule
+					if mainPart == "" {
+						mainPart = metadata.BodyPart
+					}
+				}
+			}
+			if mainPart == "" {
+				for _, name := range partOrder {
+					if name == "metadata" {
+						continue
+					}
+					if mainPart != "" {
+						resp.Diagnostics.AddError("failed to read response body", "unable to determine the main script from multipart response metadata")
+						return
+					}
+					mainPart = name
+				}
+			}
+			mainFile, ok := parts[mainPart]
+			if !ok {
+				resp.Diagnostics.AddError("failed to read response body", fmt.Sprintf("main script part %q is missing from multipart response", mainPart))
+				return
+			}
+			data.MainModule = types.StringValue(mainPart)
+			content = string(mainFile.content)
+
+			refreshedFiles := make(map[string]WorkersScriptFileModel)
+			for _, name := range partOrder {
+				if name == "metadata" || name == mainPart {
+					continue
+				}
+				part := parts[name]
+				file := WorkersScriptFileModel{
+					ContentBase64: types.StringValue(base64.StdEncoding.EncodeToString(part.content)),
+					ContentFile:   types.StringNull(),
+					ContentType:   types.StringValue(part.contentType),
+				}
+				hash, _ := calculateStringHash(string(part.content))
+				file.ContentSHA256 = types.StringValue(hash)
+				if stateFiles != nil {
+					if stateFile, exists := (*stateFiles)[name]; exists && !stateFile.ContentFile.IsNull() {
+						file.ContentBase64 = types.StringNull()
+						file.ContentFile = stateFile.ContentFile
+					}
+				}
+				refreshedFiles[name] = file
+			}
+			if len(refreshedFiles) > 0 || stateFiles != nil {
+				data.Files = &refreshedFiles
+			}
 		} else {
 			bytes, err = io.ReadAll(scriptContentRes.Body)
 			if err != nil {
@@ -396,6 +512,38 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func prepareFileUploads(data *WorkersScriptModel) (*map[string]WorkersScriptFileModel, error) {
+	if data.Files == nil {
+		return nil, nil
+	}
+
+	planFiles := *data.Files
+	uploadFiles := make(map[string]WorkersScriptFileModel, len(planFiles))
+	mainPart := data.MainModule.ValueString()
+	if mainPart == "" {
+		mainPart = "script"
+	}
+	for name, file := range planFiles {
+		if name == "" || strings.ContainsAny(name, "\r\n") {
+			return nil, fmt.Errorf("file name %q is not a valid multipart part name", name)
+		}
+		if name == "metadata" || name == mainPart {
+			return nil, fmt.Errorf("file name %q conflicts with a reserved multipart part", name)
+		}
+		fileCopy := file
+		if !file.ContentFile.IsNull() {
+			content, err := readFile(file.ContentFile.ValueString())
+			if err != nil {
+				return nil, err
+			}
+			fileCopy.ContentBase64 = types.StringValue(base64.StdEncoding.EncodeToString([]byte(content)))
+		}
+		uploadFiles[name] = fileCopy
+	}
+	data.Files = &uploadFiles
+	return &planFiles, nil
 }
 
 func (r *WorkersScriptResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
