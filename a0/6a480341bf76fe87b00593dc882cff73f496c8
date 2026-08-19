@@ -1,0 +1,25 @@
+internal/services/argo_tiered_caching/resource_test.go
+  s_87791a8eee94b4::t_13c35c6073353f 137
+  s_87791a8eee94b4::t_2abf3e136d2885 112
+  s_87791a8eee94b4::t_ee2ce012327dcf 47
+docs/index.md
+  s_87791a8eee94b4::t_963389460d976d 48-53
+internal/services/argo_tiered_caching/data_source_test.go
+  s_87791a8eee94b4::t_2f1a436d96179c 24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a06a480341bf76fe87b00593dc882cff73f496c8",
+  "prompts": {},
+  "sessions": {
+    "s_87791a8eee94b4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_027014816ffez2wgLLsreMEtK4",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Rotem Atzaba <rotem@cloudflare.com>"
+    }
+  }
+}
