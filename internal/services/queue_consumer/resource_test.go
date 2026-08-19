@@ -278,6 +278,21 @@ func TestAccCloudflareQueueConsumer_Worker(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("created_on"), knownvalue.NotNull()),
 				},
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("queue consumer resource not found: %s", resourceName)
+					}
+
+					queueID := rs.Primary.Attributes["queue_id"]
+					consumerID := rs.Primary.Attributes["consumer_id"]
+					return fmt.Sprintf("%s/%s/%s", accountID, queueID, consumerID), nil
+				},
+			},
 		},
 	})
 }
