@@ -4,6 +4,11 @@ set -e
 
 cd "$(dirname "$0")/.."
 
+if [ "$1" == "--install" ]; then
+  npm exec --package=@stainless-api/prism-cli@5.15.0 -- prism --version
+  exit 0
+fi
+
 if [[ -n "$1" && "$1" != '--'* ]]; then
   URL="$1"
   shift
@@ -20,11 +25,13 @@ fi
 echo "==> Starting mock server with URL ${URL}"
 
 # Run prism mock on the given spec
+MOCK_PORT="${STAINLESS_MOCK_PORT:-4010}"
+
 if [ "$1" == "--daemon" ]; then
   # Pre-install the package so the download doesn't eat into the startup timeout
   npm exec --package=@stainless-api/prism-cli@5.15.0 -- prism --version
 
-  npm exec --package=@stainless-api/prism-cli@5.15.0 -- prism mock "$URL" &> .prism.log &
+  npm exec --package=@stainless-api/prism-cli@5.15.0 -- prism mock -p "$MOCK_PORT" "$URL" &> .prism.log &
 
   # Wait for server to come online (max 30s)
   echo -n "Waiting for server"
@@ -48,5 +55,5 @@ if [ "$1" == "--daemon" ]; then
 
   echo
 else
-  npm exec --package=@stainless-api/prism-cli@5.15.0 -- prism mock "$URL"
+  npm exec --package=@stainless-api/prism-cli@5.15.0 -- prism mock -p "$MOCK_PORT" "$URL"
 fi
