@@ -4,6 +4,7 @@ package load_balancer_monitor
 
 import (
 	"context"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer_monitor/migration/v500"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -14,26 +15,26 @@ var _ resource.ResourceWithUpgradeState = (*LoadBalancerMonitorResource)(nil)
 //
 // This handles two upgrade paths:
 // 1. v4 state (schema_version=0) -> v5 (version=500): Full transformation
-//    - Header field: TypeSet (nested) -> MapAttribute
-//    - Default value additions for v5 fields
-//    - Direct pass-through for compatible fields
+//   - Header field: TypeSet (nested) -> MapAttribute
+//   - Default value additions for v5 fields
+//   - Direct pass-through for compatible fields
 //
 // 2. v5 state (version=1) -> v5 (version=500): No-op upgrade
-//    - Just bumps version number, no data transformation
+//   - Just bumps version number, no data transformation
 //
-// The separation of schema versions (v4=0, v5=1/500) eliminates the need for
-// dual-format detection that was required in earlier implementations.
+// Version 0 remains ambiguous because early v5 state predates the version bump;
+// its upgrader selects the format from raw state before decoding.
 func (r *LoadBalancerMonitorResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	targetSchema := ResourceSchema(ctx)
-
-	sourceSchema := v500.SourceLoadBalancerMonitorSchema()
 
 	return map[int64]resource.StateUpgrader{
 		// Handle state from v4 SDKv2 provider (schema_version=0)
 		// This performs full transformation from v4 to v5 format
 		0: {
-			PriorSchema:   &sourceSchema,
-			StateUpgrader: v500.UpgradeFromV4,
+			// v4 uses a set for header, while early v5 uses a map. Decode raw
+			// state first because either format can have schema version zero.
+			PriorSchema:   nil,
+			StateUpgrader: v500.UpgradeFromV0(targetSchema),
 		},
 
 		// Handle state from v5 Plugin Framework provider with version=1

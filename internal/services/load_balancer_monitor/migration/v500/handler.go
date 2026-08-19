@@ -4,51 +4,70 @@ package v500
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// UpgradeFromV4 handles state upgrades from v4 SDKv2 provider (schema_version=0) to v5 (version=500).
-//
-// This performs a full transformation from v4 → v5 format, including:
-// - Header field transformation: TypeSet (nested) → MapAttribute
-// - Default value additions for fields with v5 defaults
-// - Direct copy for compatible fields
-//
-// The v4 state has schema_version=0 (SDKv2 default), and we transform it to v5 format.
-func UpgradeFromV4(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	tflog.Info(ctx, "Upgrading load_balancer_monitor state from v4 SDKv2 provider (schema_version=0)")
+// UpgradeFromV0 disambiguates v4 and early-v5 state that both report version 0.
+func UpgradeFromV0(targetSchema schema.Schema) func(context.Context, resource.UpgradeStateRequest, *resource.UpgradeStateResponse) {
+	return func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+		if req.RawState == nil || len(req.RawState.JSON) == 0 {
+			resp.Diagnostics.AddError("Missing raw state", "Cannot determine whether schema version 0 state uses the v4 header set or the early-v5 header map")
+			return
+		}
 
-	// Parse v4 state using v4 model with source schema
+		// Prefer v4 when both schemas accept state without a header. The v4 path
+		// also applies the defaults and zero-value normalization required by v5.
+		v4Resp := resource.UpgradeStateResponse{State: resp.State}
+		v4Err := upgradeRawV4(ctx, req.RawState, &v4Resp)
+		if v4Err == nil {
+			resp.State = v4Resp.State
+			resp.Diagnostics.Append(v4Resp.Diagnostics...)
+			return
+		}
+
+		targetRaw, targetErr := req.RawState.Unmarshal(targetSchema.Type().TerraformType(ctx))
+		if targetErr == nil {
+			resp.State.Raw = targetRaw
+			return
+		}
+
+		resp.Diagnostics.AddError("Unrecognized load_balancer_monitor state",
+			fmt.Sprintf("State could not be decoded as v4 collection-shaped state (%s) or early-v5 object-shaped state (%s)", v4Err, targetErr))
+	}
+}
+
+func upgradeRawV4(ctx context.Context, rawState *tfprotov6.RawState, resp *resource.UpgradeStateResponse) error {
+	sourceSchema := SourceLoadBalancerMonitorSchema()
+	rawValue, err := rawState.Unmarshal(sourceSchema.Type().TerraformType(ctx))
+	if err != nil {
+		return err
+	}
+
 	var v4State SourceLoadBalancerMonitorModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &v4State)...)
-	if resp.Diagnostics.HasError() {
-		tflog.Error(ctx, "Failed to parse v4 state")
-		return
-	}
-
-	tflog.Debug(ctx, "Successfully parsed v4 state", map[string]interface{}{
-		"account_id": v4State.AccountID.ValueString(),
-		"type":       v4State.Type.ValueString(),
-	})
-
-	// Transform v4 → v5
-	v5State, diags := Transform(ctx, &v4State)
+	state := tfsdk.State{Raw: rawValue, Schema: sourceSchema}
+	diags := state.Get(ctx, &v4State)
 	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		tflog.Error(ctx, "Failed to transform v4 state to v5")
-		return
+	if diags.HasError() {
+		return fmt.Errorf("v4 state model decode failed")
 	}
 
-	// Write transformed state
+	v5State, transformDiags := Transform(ctx, &v4State)
+	resp.Diagnostics.Append(transformDiags...)
+	if transformDiags.HasError() {
+		return fmt.Errorf("v4-to-v5 transformation failed")
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, v5State)...)
 	if resp.Diagnostics.HasError() {
-		tflog.Error(ctx, "Failed to set v5 state")
-		return
+		return fmt.Errorf("setting transformed state failed")
 	}
-
 	tflog.Info(ctx, "State upgrade from v4 to v5 completed successfully")
+	return nil
 }
 
 // UpgradeFromV5 handles state upgrades from v5 Plugin Framework provider (version=1) to v5 (version=500).
