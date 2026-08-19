@@ -109,7 +109,6 @@ func (r *StreamKeyResource) Read(ctx context.Context, req resource.ReadRequest, 
 	}
 
 	res := new(http.Response)
-	env := StreamKeyResultEnvelope{*data}
 	_, err := r.client.Stream.Keys.Get(
 		ctx,
 		stream.KeyGetParams{
@@ -128,12 +127,23 @@ func (r *StreamKeyResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
+
+	// This endpoint lists every signing key of the account, so the element
+	// belonging to this resource has to be selected rather than the response
+	// being decoded as a single key. See custom.go.
+	keyID := resolveStreamKeyID(data)
+	if keyID != "" {
+		found, err := refreshStreamKeyFromList(data, keyID, bytes)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+			return
+		}
+		if !found {
+			resp.Diagnostics.AddWarning("Resource not found", "The signing key "+keyID+" was not found on the server and will be removed from state.")
+			resp.State.RemoveResource(ctx)
+			return
+		}
 	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
