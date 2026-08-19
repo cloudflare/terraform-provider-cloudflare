@@ -121,6 +121,13 @@ func TestAccCloudflareQueueConsumer_Worker_UpdateDeadLetterQueue(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("dead_letter_queue"), knownvalue.StringExact(dlq2)),
 				},
 			},
+			{
+				ResourceName:                         resourceName,
+				ImportState:                          true,
+				ImportStateVerify:                    true,
+				ImportStateVerifyIdentifierAttribute: "consumer_id",
+				ImportStateIdFunc:                    testAccCloudflareQueueConsumerImportStateIDFunc(resourceName, accountID),
+			},
 		},
 	})
 }
@@ -283,16 +290,7 @@ func TestAccCloudflareQueueConsumer_Worker(t *testing.T) {
 				ImportState:                          true,
 				ImportStateVerify:                    true,
 				ImportStateVerifyIdentifierAttribute: "consumer_id",
-				ImportStateIdFunc: func(s *terraform.State) (string, error) {
-					rs, ok := s.RootModule().Resources[resourceName]
-					if !ok {
-						return "", fmt.Errorf("queue consumer resource not found: %s", resourceName)
-					}
-
-					queueID := rs.Primary.Attributes["queue_id"]
-					consumerID := rs.Primary.Attributes["consumer_id"]
-					return fmt.Sprintf("%s/%s/%s", accountID, queueID, consumerID), nil
-				},
+				ImportStateIdFunc:                    testAccCloudflareQueueConsumerImportStateIDFunc(resourceName, accountID),
 			},
 		},
 	})
@@ -489,6 +487,19 @@ func testAccCheckCloudflareQueueConsumerDestroy(s *terraform.State) error {
 	}
 
 	return nil
+}
+
+func testAccCloudflareQueueConsumerImportStateIDFunc(resourceName, accountID string) func(*terraform.State) (string, error) {
+	return func(s *terraform.State) (string, error) {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return "", fmt.Errorf("queue consumer resource not found: %s", resourceName)
+		}
+
+		queueID := rs.Primary.Attributes["queue_id"]
+		consumerID := rs.Primary.Attributes["consumer_id"]
+		return fmt.Sprintf("%s/%s/%s", accountID, queueID, consumerID), nil
+	}
 }
 
 func testAccCheckCloudflareQueueConsumerWorker(rnd, accountID, queueName string) string {

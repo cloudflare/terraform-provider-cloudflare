@@ -236,29 +236,27 @@ func (r *QueueConsumerResource) ImportState(ctx context.Context, req resource.Im
 	data.QueueID = types.StringValue(path_queue_id)
 	data.ConsumerID = types.StringValue(path_consumer_id)
 
-	res := new(http.Response)
-	env := QueueConsumerResultEnvelope{*data}
-	_, err := r.client.Queues.Consumers.Get(
+	consumer, err := r.client.Queues.Consumers.Get(
 		ctx,
 		path_queue_id,
 		path_consumer_id,
 		queues.ConsumerGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
-		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalRoot([]byte(consumer.JSON.RawJSON()), data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	if consumer.DeadLetterQueue != "" {
+		data.DeadLetterQueue = types.StringValue(consumer.DeadLetterQueue)
+	}
 	FixInconsistentCRUDResponses(ctx, data)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
