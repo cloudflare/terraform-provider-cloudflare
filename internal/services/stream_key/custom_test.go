@@ -167,6 +167,9 @@ func TestRefreshStreamKeyFromList_UnreadableBodyIsAnError(t *testing.T) {
 		{"not json", `not json`},
 		{"truncated json", `{"success":true,"result":[{"id":"`},
 		{"no result array", `{"success":true,"errors":[]}`},
+		// An explicit null is treated the same as an absent array: it says
+		// nothing about which keys the account has.
+		{"null result", `{"success":true,"result":null}`},
 	}
 
 	for _, tt := range tests {
