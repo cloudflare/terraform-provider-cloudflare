@@ -1,0 +1,30 @@
+internal/services/account_subscription/data_source_schema.go
+  s_8ba9125ff5c08b::t_52ef800c32a8ca 94-109
+internal/services/ruleset/migration/v500/model.go
+  s_9cb006b030f5fd::t_d1290fa0575774 339,592-605
+  s_9cb006b030f5fd::t_b37e11ef0e5586 606
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b60d2264bcb0b0d479e6da6abe978ead8a3c3d26",
+  "prompts": {},
+  "sessions": {
+    "s_8ba9125ff5c08b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0454be66dffeoVaQMY0rwCiLXG",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    },
+    "s_9cb006b030f5fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04ff8d518ffe893PX6qqInJ9Ve",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
