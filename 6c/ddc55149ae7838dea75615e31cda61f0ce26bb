@@ -1,0 +1,33 @@
+CHANGELOG.md
+  s_159f76e71a3911::t_df17c421a595d3 3-59
+internal/services/turnstile_widget/migration/v500/model.go
+  s_9cb006b030f5fd::t_0dd4ab5cf7cfdc 52-67
+internal/services/account_subscription/model.go
+  s_9cb006b030f5fd::t_380d1288d313b8 20
+internal/services/ai_search_instance/data_source_schema.go
+  s_9cb006b030f5fd::t_a18fafe1491a4d 31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6cddc55149ae7838dea75615e31cda61f0ce26bb",
+  "prompts": {},
+  "sessions": {
+    "s_159f76e71a3911": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04c14c976ffex4KmrC296O3pj1",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    },
+    "s_9cb006b030f5fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04ff8d518ffe893PX6qqInJ9Ve",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

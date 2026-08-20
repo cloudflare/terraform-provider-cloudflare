@@ -1,0 +1,31 @@
+internal/services/image/resource.go
+  s_b08c188f1b3435::t_be2be4ed589695 1-259
+internal/services/image/model.go
+  s_b08c188f1b3435::t_be2be4ed589695 1-50
+internal/services/image/resource_schema_test.go
+  s_b08c188f1b3435::t_be2be4ed589695 1-20
+internal/services/image/schema.go
+  s_b08c188f1b3435::t_be2be4ed589695 1-97
+examples/resources/cloudflare_image/resource.tf
+  s_b08c188f1b3435::t_cb216c87590239 1-11
+examples/resources/cloudflare_image/import.sh
+  s_b08c188f1b3435::t_cb216c87590239 1
+internal/services/image/migrations.go
+  s_b08c188f1b3435::t_be2be4ed589695 1-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d92af55594d4be3042f34b07bd70c0c9c91524f0",
+  "prompts": {},
+  "sessions": {
+    "s_b08c188f1b3435": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_06961b944ffennjiN5ZwhrBTEU",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

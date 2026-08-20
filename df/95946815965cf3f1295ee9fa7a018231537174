@@ -1,0 +1,35 @@
+internal/services/moq_relay/model.go
+  s_b08c188f1b3435::t_71e18f5dab8324 24-27
+internal/services/worker_version/data_source_model.go
+  s_b08c188f1b3435::t_ea9c05758beb12 30
+internal/services/worker_version/migrations.go
+  s_b08c188f1b3435::t_9a60263fd24a54 94
+  s_b08c188f1b3435::t_4b5a0063235d92 139-142
+internal/services/worker_version/migrations_test.go
+  s_b08c188f1b3435::t_6b47b0f95bd3c8 263-266
+internal/services/worker_version/model.go
+  s_b08c188f1b3435::t_1d8ea45fbc97c9 177
+  s_b08c188f1b3435::t_8b575ec8362b00 167
+  s_b08c188f1b3435::t_f72146b5c1d316 115
+  s_b08c188f1b3435::t_277b859ffe0859 149
+  s_b08c188f1b3435::t_6caf4f7da65cdc 156-158
+  s_b08c188f1b3435::t_20e03fb1cc4e12 32-33
+internal/services/worker_version/data_source_schema.go
+  s_b08c188f1b3435::t_5a28b59ff90526 67-70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "df95946815965cf3f1295ee9fa7a018231537174",
+  "prompts": {},
+  "sessions": {
+    "s_b08c188f1b3435": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_06961b944ffennjiN5ZwhrBTEU",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

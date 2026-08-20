@@ -1,0 +1,20 @@
+internal/services/secrets_store_secret/model.go
+  s_0eb764e4c2d4f5::t_2cf090ab0bdb4d 28
+  s_0eb764e4c2d4f5::t_af4a3ae4d42adb 24-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "556de86a6b8686c53ae1709a039dd3755a9838cc",
+  "prompts": {},
+  "sessions": {
+    "s_0eb764e4c2d4f5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_055f0e367ffeqQk5Hrpf02YxXB",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+internal/services/worker/schema.go
+  s_f206717096f78f::t_cf4c12813c4213 241-244
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3c3045a034e84b3260946f466b6cb5eb24e70e6d",
+  "prompts": {},
+  "sessions": {
+    "s_f206717096f78f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe44234c9ffe23phFefiCltLz0",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

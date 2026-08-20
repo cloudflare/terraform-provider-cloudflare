@@ -1,0 +1,31 @@
+docs/resources/r2_bucket_sippy.md
+  s_9cb006b030f5fd::t_47b7cc5dc95f34 80,89
+docs/data-sources/dls_prefix_binding.md
+  s_9cb006b030f5fd::t_20be26f2faf405 6-7
+docs/resources/zero_trust_device_default_profile.md
+  s_9cb006b030f5fd::t_98819ef8c8c6ac 134,136-137
+docs/resources/zero_trust_device_custom_profile.md
+  s_9cb006b030f5fd::t_9f300a57d01b28 144,146-147
+docs/resources/dls_prefix_binding.md
+  s_9cb006b030f5fd::t_6482d690f8d53d 6-8
+docs/index.md
+  s_9cb006b030f5fd::t_b84f5627430527 48-52
+docs/data-sources/account_subscription.md
+  s_9cb006b030f5fd::t_1053a3f94801ae 39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "691131e7e1cfdf54568cfdc063e14de0b9f2e5ff",
+  "prompts": {},
+  "sessions": {
+    "s_9cb006b030f5fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04ff8d518ffe893PX6qqInJ9Ve",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

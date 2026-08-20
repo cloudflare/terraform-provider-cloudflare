@@ -1,0 +1,33 @@
+internal/services/snippet_rules/data_source_model.go
+  s_9cb006b030f5fd::t_385891cb01bed0 1-29
+internal/services/zero_trust_dlp_custom_prompt_topic/list_data_source_schema.go
+  s_9cb006b030f5fd::t_385891cb01bed0 1-85
+internal/services/zero_trust_dlp_custom_prompt_topic/list_data_source_model.go
+  s_9cb006b030f5fd::t_385891cb01bed0 1-43
+internal/services/zero_trust_dlp_custom_prompt_topic/data_source_schema.go
+  s_9cb006b030f5fd::t_385891cb01bed0 1-69
+internal/services/pages_project/model.go
+  s_9cb006b030f5fd::t_8c4af9ad5ed129 21,45-50,59-71
+internal/services/zero_trust_dlp_custom_prompt_topic/data_source_model.go
+  s_9cb006b030f5fd::t_385891cb01bed0 1-38
+internal/services/custom_csr/data_source_schema.go
+  s_9cb006b030f5fd::t_7387ad0eef9cbf 107
+internal/services/snippet_rules/data_source_schema.go
+  s_9cb006b030f5fd::t_385891cb01bed0 1-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3525cb472e46efff75ed00403962e592529c0196",
+  "prompts": {},
+  "sessions": {
+    "s_9cb006b030f5fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04ff8d518ffe893PX6qqInJ9Ve",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
