@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v7"
@@ -335,6 +336,183 @@ func TestAccCloudflareRuleset_Name(t *testing.T) {
 						knownvalue.StringExact("My updated ruleset"),
 					),
 				},
+			},
+		},
+	})
+}
+
+var missingRulesetErrorPattern = regexp.MustCompile(
+	`(?s)400 Bad Request.*"code":\s*20226\b.*"pointer":\s*"/rules/0/action_parameters/id"`,
+)
+
+var invalidExpressionErrorPattern = regexp.MustCompile(
+	`(?s)400 Bad Request.*"code":\s*20127\b.*"pointer":\s*"/rules/0/expression"`,
+)
+
+var refusedDeleteErrorPattern = regexp.MustCompile(
+	`(?s)DELETE\s.*/rulesets/[0-9a-f]{32}.*400 Bad Request`,
+)
+
+func TestAccCloudflareRuleset_DryRunInvalidOnCreate(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				PlanOnly:        true,
+				ExpectError:     missingRulesetErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunInvalidOnUpdate(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				PlanOnly:        true,
+				ExpectError:     missingRulesetErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunSkippedWhenDependencyIsUnknown(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:         config.TestNameFile("1.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ExpectError:     missingRulesetErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunSkippedWhenRefIsUnknown(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:         config.TestNameFile("1.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ExpectError:     missingRulesetErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunDependencyOnCreateThenInvalidUpdate(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				PlanOnly:        true,
+				ExpectError:     missingRulesetErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunSkippedOnReferencedReplacement(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:         config.TestNameFile("2.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ExpectError:     refusedDeleteErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunSkippedOnInvalidEntryPointReplacement(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:         config.TestNameFile("2.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ExpectError:     invalidExpressionErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunInvalidUpdateWithNewDependency(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:         config.TestNameFile("2.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ExpectError:     missingRulesetErrorPattern,
 			},
 		},
 	})
