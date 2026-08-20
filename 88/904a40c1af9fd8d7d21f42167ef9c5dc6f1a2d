@@ -1,0 +1,25 @@
+templates/guides/version-5-upgrade.md
+  s_23f5a546349daa::t_86d77b42be840a 265
+  s_23f5a546349daa::t_0b755ee9c338a1 1526,1528
+  s_23f5a546349daa::t_4f5800254f0644 61,159
+templates/guides/migrating-renamed-resources.md
+  s_23f5a546349daa::t_f0ca9f48aa6898 10
+templates/guides/version-5-migration.md
+  s_23f5a546349daa::t_0e17faf82d89a4 1761,1767,1769
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "88904a40c1af9fd8d7d21f42167ef9c5dc6f1a2d",
+  "prompts": {},
+  "sessions": {
+    "s_23f5a546349daa": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdfff196dffeQRO7e43HdUc1TB",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Sarah Sicard <ssicard@cloudflare.com>"
+    }
+  }
+}
