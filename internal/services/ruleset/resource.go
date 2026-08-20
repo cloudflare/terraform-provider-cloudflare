@@ -18,7 +18,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 )
@@ -332,7 +331,7 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 		}
 
 		// Check if enough of the plan is known to build a request for the dry-run
-		if !planIsKnown(resp.Plan.Raw, req.Config.Raw) {
+		if !req.Config.Raw.IsFullyKnown() {
 			return
 		}
 
@@ -459,25 +458,6 @@ func transformQueryStringJSON(jsonBytes []byte) []byte {
 		return []byte(jsonStr)
 	}
 	return jsonBytes
-}
-
-func planIsKnown(plan, config tftypes.Value) bool {
-	known := true
-
-	_ = tftypes.Walk(plan, func(path *tftypes.AttributePath, value tftypes.Value) (bool, error) {
-		if value.IsKnown() {
-			return true, nil
-		}
-
-		configValue, _, err := tftypes.WalkAttributePath(config, path)
-		if value, ok := configValue.(tftypes.Value); ok && err == nil && !value.IsKnown() {
-			known = false
-		}
-
-		return false, nil
-	})
-
-	return known
 }
 
 func (r *RulesetResource) validateWithDryRun(
