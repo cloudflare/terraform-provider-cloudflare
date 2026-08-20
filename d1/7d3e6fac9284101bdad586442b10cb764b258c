@@ -1,0 +1,35 @@
+scripts/generate-docs
+  s_88624d21881aa2::t_43c463d0928774 23-25
+  s_88624d21881aa2::t_d68148a94fb5f3 12,17-19,21-22
+  s_88624d21881aa2::t_98c2af89dbedb3 13-16
+scripts/generate-zone-setting-ids
+  s_88624d21881aa2::t_3f1759d48611f0 140-147
+scripts/run-ci-tests
+  s_b91f1ab768a70a::t_7a6756f2e3b5bd 462
+go.mod
+  s_b91f1ab768a70a::t_3e9c2a920bab94 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d17d3e6fac9284101bdad586442b10cb764b258c",
+  "prompts": {},
+  "sessions": {
+    "s_88624d21881aa2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe04ab1a4ffePQHZxLqw5C1U52",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    },
+    "s_b91f1ab768a70a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe05592e5ffeZcWj2OjRYF3miK",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
