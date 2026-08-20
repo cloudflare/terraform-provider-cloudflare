@@ -587,6 +587,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_network_hostname_route.NewResource,
 		zero_trust_risk_behavior.NewResource,
 		zero_trust_risk_scoring_integration.NewResource,
+		zero_trust_resource_library_application.NewResource,
 		turnstile_widget.NewResource,
 		connectivity_directory_service.NewResource,
 		hyperdrive_config.NewResource,
