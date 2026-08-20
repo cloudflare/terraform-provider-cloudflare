@@ -1,0 +1,19 @@
+docs/data-sources/account_subscription.md
+  s_88624d21881aa2::t_55515bedf4554e 40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "48856936b9cdbed13c77eee1dec57a9551d1907b",
+  "prompts": {},
+  "sessions": {
+    "s_88624d21881aa2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe04ab1a4ffePQHZxLqw5C1U52",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
