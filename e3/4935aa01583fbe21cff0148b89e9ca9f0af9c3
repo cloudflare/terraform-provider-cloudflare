@@ -1,0 +1,21 @@
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_SetCacheSettingsRules/3.tf
+  s_6e6851c24f654c::t_d9855228da9e3a 62-79
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_SetCacheSettingsRules/5.tf
+  s_6e6851c24f654c::t_a08a7bec307c1b 42-52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e34935aa01583fbe21cff0148b89e9ca9f0af9c3",
+  "prompts": {},
+  "sessions": {
+    "s_6e6851c24f654c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0413bc819ffeXlJBHBTbiFOFNg",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
