@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// Transform converts a v4 SourceTunnelCloudflaredModel into the v5 target model.
+// Transform converts a v4 SourceTunnelCloudflaredModel into the current v5 target model.
 //
 // Field mapping:
 //   - id          → id          (UUID, unchanged between v4 and v5)
@@ -22,10 +22,10 @@ import (
 //   - tunnel_token→ (dropped, not in v5)
 //
 // All new v5 computed fields are set to null so the provider's Read populates them.
-func Transform(ctx context.Context, source *SourceTunnelCloudflaredModel) (*TargetTunnelCloudflaredModel, diag.Diagnostics) {
+func Transform(ctx context.Context, source *SourceTunnelCloudflaredModel) (*CurrentTunnelCloudflaredModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	target := &TargetTunnelCloudflaredModel{
+	target := &CurrentTunnelCloudflaredModel{
 		ID:        source.ID,
 		AccountID: source.AccountID,
 		Name:      source.Name,
@@ -50,7 +50,7 @@ func Transform(ctx context.Context, source *SourceTunnelCloudflaredModel) (*Targ
 	target.RemoteConfig = types.BoolNull()
 	target.Status = types.StringNull()
 	target.TunType = types.StringNull()
-	target.Connections = customfield.NullObjectList[TargetTunnelCloudflaredConnectionsModel](ctx)
+	target.Connections = customfield.NullObjectList[CurrentTunnelCloudflaredConnectionsModel](ctx)
 	target.Metadata = jsontypes.NewNormalizedNull()
 
 	return target, diags

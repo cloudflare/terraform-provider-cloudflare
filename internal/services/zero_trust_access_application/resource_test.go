@@ -1619,7 +1619,7 @@ func TestAccCloudflareAccessApplicationWithInvalidWorkerDestination(t *testing.T
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccessApplicationWithInvalidWorkerDestination(rnd, accountID),
-				ExpectError: regexp.MustCompile(`"destinations\[0]\.worker_id" can only be set if "<\.type" is one of: "worker", "preview_worker"`),
+				ExpectError: regexp.MustCompile(`"destinations\[0]\.worker_id" can only be set if "<\.type" is one of: "worker",\s*"preview_worker"`),
 			},
 		},
 	})

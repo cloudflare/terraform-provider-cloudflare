@@ -33,7 +33,7 @@ func (r *ZeroTrustTunnelCloudflaredResource) MoveState(ctx context.Context) []re
 // 2. v5 state (version=1) → v5 (version=500): No-op upgrade
 func (r *ZeroTrustTunnelCloudflaredResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	sourceSchema := v500.SourceTunnelCloudflaredSchema()
-	targetSchema := ResourceSchema(ctx)
+	oldTargetSchema := v500.OldTargetTunnelCloudflaredSchema(ctx)
 
 	return map[int64]resource.StateUpgrader{
 		// Handle state from v4 SDKv2 provider (schema_version=0)
@@ -43,10 +43,12 @@ func (r *ZeroTrustTunnelCloudflaredResource) UpgradeState(ctx context.Context) m
 			StateUpgrader: v500.UpgradeFromV4,
 		},
 
-		// Handle state from v5 Plugin Framework provider with version=1
-		// This is a no-op upgrade that just bumps the version to 500
+		// Handle state from v5 Plugin Framework provider with version=1 (v5.0–v5.23).
+		// The old schema included is_pending_reconnect in connections; v5.24.0 removed it.
+		// We use the old schema as PriorSchema so the framework can decode old state,
+		// and UpgradeFromV5 re-writes it using the current schema.
 		1: {
-			PriorSchema:   &targetSchema,
+			PriorSchema:   &oldTargetSchema,
 			StateUpgrader: v500.UpgradeFromV5,
 		},
 	}
