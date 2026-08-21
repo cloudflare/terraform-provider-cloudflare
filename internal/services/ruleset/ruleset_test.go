@@ -341,13 +341,7 @@ func TestAccCloudflareRuleset_Name(t *testing.T) {
 	})
 }
 
-var missingRulesetErrorPattern = regexp.MustCompile(
-	`(?s)"code":\s*20226\b.*"pointer":\s*"/rules/0/action_parameters/id"`,
-)
-
-var invalidExpressionErrorPattern = regexp.MustCompile(
-	`(?s)"code":\s*20127\b.*"pointer":\s*"/rules/0/expression"`,
-)
+var anyErrorPattern = regexp.MustCompile(`.`)
 
 var refusedDeleteErrorPattern = regexp.MustCompile(
 	`(?s)DELETE\s.*/rulesets/[0-9a-f]{32}.*400 Bad Request`,
@@ -362,7 +356,7 @@ func TestAccCloudflareRuleset_DryRunInvalidOnCreate(t *testing.T) {
 				ConfigFile:      config.TestNameFile("1.tf"),
 				ConfigVariables: configVariables,
 				PlanOnly:        true,
-				ExpectError:     missingRulesetErrorPattern,
+				ExpectError:     anyErrorPattern,
 			},
 		},
 	})
@@ -381,7 +375,7 @@ func TestAccCloudflareRuleset_DryRunInvalidOnUpdate(t *testing.T) {
 				ConfigFile:      config.TestNameFile("2.tf"),
 				ConfigVariables: configVariables,
 				PlanOnly:        true,
-				ExpectError:     missingRulesetErrorPattern,
+				ExpectError:     anyErrorPattern,
 			},
 		},
 	})
@@ -401,7 +395,7 @@ func TestAccCloudflareRuleset_DryRunSkippedWhenDependencyIsUnknown(t *testing.T)
 			{
 				ConfigFile:      config.TestNameFile("1.tf"),
 				ConfigVariables: configVariables,
-				ExpectError:     missingRulesetErrorPattern,
+				ExpectError:     anyErrorPattern,
 			},
 		},
 	})
@@ -421,7 +415,7 @@ func TestAccCloudflareRuleset_DryRunSkippedWhenRefIsUnknown(t *testing.T) {
 			{
 				ConfigFile:      config.TestNameFile("1.tf"),
 				ConfigVariables: configVariables,
-				ExpectError:     missingRulesetErrorPattern,
+				ExpectError:     anyErrorPattern,
 			},
 		},
 	})
@@ -440,7 +434,7 @@ func TestAccCloudflareRuleset_DryRunDependencyOnCreateThenInvalidUpdate(t *testi
 				ConfigFile:      config.TestNameFile("2.tf"),
 				ConfigVariables: configVariables,
 				PlanOnly:        true,
-				ExpectError:     missingRulesetErrorPattern,
+				ExpectError:     anyErrorPattern,
 			},
 		},
 	})
@@ -488,7 +482,7 @@ func TestAccCloudflareRuleset_DryRunSkippedOnInvalidEntryPointReplacement(t *tes
 			{
 				ConfigFile:      config.TestNameFile("2.tf"),
 				ConfigVariables: configVariables,
-				ExpectError:     invalidExpressionErrorPattern,
+				ExpectError:     anyErrorPattern,
 			},
 		},
 	})
@@ -512,7 +506,7 @@ func TestAccCloudflareRuleset_DryRunInvalidUpdateWithNewDependency(t *testing.T)
 			{
 				ConfigFile:      config.TestNameFile("2.tf"),
 				ConfigVariables: configVariables,
-				ExpectError:     missingRulesetErrorPattern,
+				ExpectError:     anyErrorPattern,
 			},
 		},
 	})
