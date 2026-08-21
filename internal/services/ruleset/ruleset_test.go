@@ -342,11 +342,11 @@ func TestAccCloudflareRuleset_Name(t *testing.T) {
 }
 
 var missingRulesetErrorPattern = regexp.MustCompile(
-	`(?s)400 Bad Request.*"code":\s*20226\b.*"pointer":\s*"/rules/0/action_parameters/id"`,
+	`(?s)"code":\s*20226\b.*"pointer":\s*"/rules/0/action_parameters/id"`,
 )
 
 var invalidExpressionErrorPattern = regexp.MustCompile(
-	`(?s)400 Bad Request.*"code":\s*20127\b.*"pointer":\s*"/rules/0/expression"`,
+	`(?s)"code":\s*20127\b.*"pointer":\s*"/rules/0/expression"`,
 )
 
 var refusedDeleteErrorPattern = regexp.MustCompile(

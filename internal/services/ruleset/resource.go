@@ -298,7 +298,7 @@ func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportSt
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-const privateStateKeyExistingRuleset = "existing_ruleset"
+const privateStateKeyRulesetInState = "ruleset_in_state"
 
 func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
 	var state *RulesetModel
@@ -316,7 +316,7 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 	// Mark every plan that has state. A replacement plans its create half with no
 	// state, exactly like a plain create, and reads the mark to tell them apart
 	if !req.State.Raw.IsNull() {
-		resp.Diagnostics.Append(resp.Private.SetKey(ctx, privateStateKeyExistingRuleset, []byte("true"))...)
+		resp.Diagnostics.Append(resp.Private.SetKey(ctx, privateStateKeyRulesetInState, []byte("true"))...)
 		if resp.Diagnostics.HasError() {
 			return
 		}
@@ -490,7 +490,7 @@ func (r *RulesetResource) validateWithDryRun(
 
 		dataBytes, marshalErr := plan.MarshalJSON()
 		if marshalErr != nil {
-			diagnostics.AddError("failed to serialize request for validation", marshalErr.Error())
+			diagnostics.AddError("failed to serialize http request for the dry run", marshalErr.Error())
 			return
 		}
 
@@ -517,7 +517,7 @@ func (r *RulesetResource) validateWithDryRun(
 	default:
 		dataBytes, marshalErr := plan.MarshalJSONForUpdate(*state)
 		if marshalErr != nil {
-			diagnostics.AddError("failed to serialize request for validation", marshalErr.Error())
+			diagnostics.AddError("failed to serialize http request for the dry run", marshalErr.Error())
 			return
 		}
 
@@ -537,36 +537,25 @@ func (r *RulesetResource) validateWithDryRun(
 	}
 
 	var apiErr *cloudflare.Error
-	if errors.As(err, &apiErr) && requestWasEvaluated(apiErr.StatusCode) {
-		diagnostics.AddError(
-			"the request was rejected during validation",
-			"The request was validated without being applied, so nothing has changed.\n\n"+err.Error(),
-		)
-
+	if !errors.As(err, &apiErr) || apiErr.StatusCode != http.StatusBadRequest {
+		diagnostics.AddWarning("failed to make http request for the dry run", err.Error())
 		return
 	}
 
-	diagnostics.AddWarning(
-		"could not validate the request",
-		"The request was not validated, so this plan does not confirm that apply will succeed.\n\n"+err.Error(),
-	)
-}
-
-// requestWasEvaluated reports whether the API inspected the request and rejected it,
-// rather than failing before inspection
-func requestWasEvaluated(statusCode int) bool {
-	switch statusCode {
-	case http.StatusUnauthorized, http.StatusForbidden, http.StatusTooManyRequests:
-		return false
+	if len(apiErr.Errors) == 0 {
+		diagnostics.AddError("failed to make http request for the dry run", err.Error())
+		return
 	}
 
-	return statusCode >= http.StatusBadRequest && statusCode < http.StatusInternalServerError
+	for _, apiError := range apiErr.Errors {
+		diagnostics.AddError("failed to make http request for the dry run", apiError.JSON.RawJSON())
+	}
 }
 
 // replacesExistingRuleset checks whether a planned create is the second half of a
 // replacement, by looking for the mark ModifyPlan leaves on a ruleset that is there
 func replacesExistingRuleset(ctx context.Context, req resource.ModifyPlanRequest) bool {
-	existing, _ := req.Private.GetKey(ctx, privateStateKeyExistingRuleset)
+	existing, _ := req.Private.GetKey(ctx, privateStateKeyRulesetInState)
 
 	return existing != nil
 }
