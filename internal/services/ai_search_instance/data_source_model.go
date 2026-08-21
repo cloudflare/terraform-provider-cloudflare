@@ -161,6 +161,7 @@ type AISearchInstanceSourceParamsWebCrawlerDataSourceModel struct {
 	DiscoverOptions customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerDiscoverOptionsDataSourceModel] `tfsdk:"discover_options" json:"discover_options,computed"`
 	ParseOptions    customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerParseOptionsDataSourceModel]    `tfsdk:"parse_options" json:"parse_options,computed"`
 	ParseType       types.String                                                                                   `tfsdk:"parse_type" json:"parse_type,computed"`
+	StoreOptions    customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerStoreOptionsDataSourceModel]    `tfsdk:"store_options" json:"store_options,computed"`
 }
 
 type AISearchInstanceSourceParamsWebCrawlerDiscoverOptionsDataSourceModel struct {

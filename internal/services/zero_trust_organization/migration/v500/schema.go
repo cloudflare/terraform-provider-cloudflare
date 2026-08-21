@@ -53,6 +53,10 @@ func SourceCloudflareAccessOrganizationSchema() schema.Schema {
 			"warp_auth_session_duration": schema.StringAttribute{
 				Optional: true,
 			},
+			"warp_auth_non_browser_401": schema.BoolAttribute{
+				Optional: true,
+				Computed: true,
+			},
 		},
 		Blocks: map[string]schema.Block{
 			// Source login_design is a list block with MaxItems: 1 (SDK v2 pattern)

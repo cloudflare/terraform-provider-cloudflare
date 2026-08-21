@@ -110,6 +110,7 @@ type TargetLoadBalancerPoolModel struct {
 	DisabledAt         timetypes.RFC3339                                                     `tfsdk:"disabled_at"` // NEW in v5
 	ModifiedOn         types.String                                                          `tfsdk:"modified_on"`
 	Networks           customfield.List[types.String]                                        `tfsdk:"networks"` // NEW in v5
+	HealthSources      *[]types.String                                                       `tfsdk:"health_sources"` // NEW in v5
 }
 
 // TargetLoadBalancerPoolOriginsModel represents a single origin within the pool from v5.x+ provider.
