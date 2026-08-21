@@ -1,0 +1,19 @@
+internal/services/logpush_job/resource_test.go
+  s_b15b721d29b585::t_a450c0cc91c740 370,524
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "00fe84ab8739e14f897b7a173ddd6d7fa7b9f155",
+  "prompts": {},
+  "sessions": {
+    "s_b15b721d29b585": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdb5562a8ffe2msnnRE0sgpvPE",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
