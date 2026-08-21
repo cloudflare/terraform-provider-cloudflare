@@ -27,10 +27,6 @@ func SourceAccessServiceTokenSchema() schema.Schema {
 			"name": schema.StringAttribute{
 				Required: true,
 			},
-			"enabled": schema.BoolAttribute{
-				Optional: true,
-				Computed: true,
-			},
 			"client_id": schema.StringAttribute{
 				Computed: true,
 			},
