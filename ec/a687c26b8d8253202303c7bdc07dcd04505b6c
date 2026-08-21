@@ -1,0 +1,19 @@
+internal/services/zero_trust_resource_library_application/testdata/basic.tf
+  s_4616493795e62b::t_12d89ba58723d2 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "eca687c26b8d8253202303c7bdc07dcd04505b6c",
+  "prompts": {},
+  "sessions": {
+    "s_4616493795e62b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_000274110ffe4u2ViMoY3f7zl2",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "rahul <rbhati@cloudflare.com>"
+    }
+  }
+}
