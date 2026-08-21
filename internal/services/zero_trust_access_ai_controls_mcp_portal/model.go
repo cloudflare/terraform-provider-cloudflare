@@ -18,8 +18,8 @@ type ZeroTrustAccessAIControlsMcpPortalModel struct {
 	AccountID        types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
 	Hostname         types.String                                                                `tfsdk:"hostname" json:"hostname,required"`
 	Name             types.String                                                                `tfsdk:"name" json:"name,required"`
-	AllowCodeMode    types.Bool                                                                  `tfsdk:"allow_code_mode" json:"allow_code_mode,optional"`
-	CodeMode         types.String                                                                `tfsdk:"code_mode" json:"code_mode,optional"`
+	AllowCodeMode    types.Bool                                                                  `tfsdk:"allow_code_mode" json:"allow_code_mode,computed_optional"`
+	CodeMode         types.String                                                                `tfsdk:"code_mode" json:"code_mode,computed_optional"`
 	Description      types.String                                                                `tfsdk:"description" json:"description,optional"`
 	SecureWebGateway types.Bool                                                                  `tfsdk:"secure_web_gateway" json:"secure_web_gateway,computed_optional"`
 	Servers          customfield.NestedObjectSet[ZeroTrustAccessAIControlsMcpPortalServersModel] `tfsdk:"servers" json:"servers,computed_optional"`
