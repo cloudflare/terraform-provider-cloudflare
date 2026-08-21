@@ -341,7 +341,7 @@ func TestAccCloudflareRuleset_Name(t *testing.T) {
 	})
 }
 
-var anyErrorPattern = regexp.MustCompile(`.`)
+var dryRunErrorPattern = regexp.MustCompile(`failed to make http request for the dry run`)
 
 var refusedDeleteErrorPattern = regexp.MustCompile(
 	`(?s)DELETE\s.*/rulesets/[0-9a-f]{32}.*400 Bad Request`,
@@ -356,7 +356,7 @@ func TestAccCloudflareRuleset_DryRunInvalidOnCreate(t *testing.T) {
 				ConfigFile:      config.TestNameFile("1.tf"),
 				ConfigVariables: configVariables,
 				PlanOnly:        true,
-				ExpectError:     anyErrorPattern,
+				ExpectError:     dryRunErrorPattern,
 			},
 		},
 	})
@@ -375,7 +375,7 @@ func TestAccCloudflareRuleset_DryRunInvalidOnUpdate(t *testing.T) {
 				ConfigFile:      config.TestNameFile("2.tf"),
 				ConfigVariables: configVariables,
 				PlanOnly:        true,
-				ExpectError:     anyErrorPattern,
+				ExpectError:     dryRunErrorPattern,
 			},
 		},
 	})
@@ -395,7 +395,7 @@ func TestAccCloudflareRuleset_DryRunSkippedWhenDependencyIsUnknown(t *testing.T)
 			{
 				ConfigFile:      config.TestNameFile("1.tf"),
 				ConfigVariables: configVariables,
-				ExpectError:     anyErrorPattern,
+				ExpectError:     dryRunErrorPattern,
 			},
 		},
 	})
@@ -415,7 +415,7 @@ func TestAccCloudflareRuleset_DryRunSkippedWhenRefIsUnknown(t *testing.T) {
 			{
 				ConfigFile:      config.TestNameFile("1.tf"),
 				ConfigVariables: configVariables,
-				ExpectError:     anyErrorPattern,
+				ExpectError:     dryRunErrorPattern,
 			},
 		},
 	})
@@ -434,7 +434,7 @@ func TestAccCloudflareRuleset_DryRunDependencyOnCreateThenInvalidUpdate(t *testi
 				ConfigFile:      config.TestNameFile("2.tf"),
 				ConfigVariables: configVariables,
 				PlanOnly:        true,
-				ExpectError:     anyErrorPattern,
+				ExpectError:     dryRunErrorPattern,
 			},
 		},
 	})
@@ -482,7 +482,7 @@ func TestAccCloudflareRuleset_DryRunSkippedOnInvalidEntryPointReplacement(t *tes
 			{
 				ConfigFile:      config.TestNameFile("2.tf"),
 				ConfigVariables: configVariables,
-				ExpectError:     anyErrorPattern,
+				ExpectError:     dryRunErrorPattern,
 			},
 		},
 	})
@@ -506,7 +506,7 @@ func TestAccCloudflareRuleset_DryRunInvalidUpdateWithNewDependency(t *testing.T)
 			{
 				ConfigFile:      config.TestNameFile("2.tf"),
 				ConfigVariables: configVariables,
-				ExpectError:     anyErrorPattern,
+				ExpectError:     dryRunErrorPattern,
 			},
 		},
 	})
