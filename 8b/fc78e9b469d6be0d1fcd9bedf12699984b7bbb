@@ -1,0 +1,20 @@
+internal/services/r2_bucket/resource_test.go
+  s_b15b721d29b585::t_a6598e90505487 72-80
+  s_b15b721d29b585::t_94227c3df3b302 336-340
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8bfc78e9b469d6be0d1fcd9bedf12699984b7bbb",
+  "prompts": {},
+  "sessions": {
+    "s_b15b721d29b585": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdb5562a8ffe2msnnRE0sgpvPE",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

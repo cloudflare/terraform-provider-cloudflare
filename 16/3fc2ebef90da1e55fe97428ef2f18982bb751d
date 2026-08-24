@@ -1,0 +1,19 @@
+docs/index.md
+  s_88624d21881aa2::t_0b0537849c0f2c 51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "163fc2ebef90da1e55fe97428ef2f18982bb751d",
+  "prompts": {},
+  "sessions": {
+    "s_88624d21881aa2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe04ab1a4ffePQHZxLqw5C1U52",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
