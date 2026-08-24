@@ -1,0 +1,22 @@
+internal/services/turnstile_widget/custom_test.go
+  s_0a921b8a160bc0::t_ae285570be61e2 4
+  s_0a921b8a160bc0::t_d74cce7126c8e9 160-238
+internal/services/turnstile_widget/custom.go
+  s_0a921b8a160bc0::t_a9c06eb533f16f 43-48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c7a7680075739948e179c58376f942afd6a55be4",
+  "prompts": {},
+  "sessions": {
+    "s_0a921b8a160bc0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe05bdbc1ffe3ZxMsGQi732UWP",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Sarah Sicard <ssicard@cloudflare.com>"
+    }
+  }
+}
