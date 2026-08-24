@@ -413,6 +413,7 @@ type TargetDestinationsModel struct {
 	PortRange   types.String `tfsdk:"port_range"`
 	VnetID      types.String `tfsdk:"vnet_id"`
 	McpServerID types.String `tfsdk:"mcp_server_id"`
+	WorkerID    types.String `tfsdk:"worker_id"`
 }
 
 type TargetLandingPageDesignModel struct {

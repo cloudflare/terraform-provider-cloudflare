@@ -142,6 +142,7 @@ type AISearchInstanceSourceParamsWebCrawlerModel struct {
 	DiscoverOptions *AISearchInstanceSourceParamsWebCrawlerDiscoverOptionsModel `tfsdk:"discover_options" json:"discover_options,optional"`
 	ParseOptions    *AISearchInstanceSourceParamsWebCrawlerParseOptionsModel    `tfsdk:"parse_options" json:"parse_options,optional"`
 	ParseType       types.String                                                `tfsdk:"parse_type" json:"parse_type,computed_optional"`
+	StoreOptions    *AISearchInstanceSourceParamsWebCrawlerStoreOptionsModel    `tfsdk:"store_options" json:"store_options,optional"`
 }
 
 type AISearchInstanceSourceParamsWebCrawlerDiscoverOptionsModel struct {

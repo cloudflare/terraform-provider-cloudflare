@@ -53,6 +53,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"enabled": schema.BoolAttribute{
 				Description: "Whether the service token is enabled. A disabled service token cannot be used to authenticate; both its current and previous `client_secret` stop being accepted, but the token itself is preserved and can be re-enabled at any time. Defaults to enabled when omitted on create.",
 				Optional:    true,
+				Computed:    true,
 			},
 			"previous_client_secret_expires_at": schema.StringAttribute{
 				Description: "The expiration of the previous `client_secret`. This can be modified at any point after a rotation. For example, you may extend it further into the future if you need more time to update services with the new secret; or move it into the past to immediately invalidate the previous token in case of compromise.",

@@ -25,6 +25,7 @@ type zeroTrustAccessAIControlsMcpPortalModelV500 struct {
 	Name             types.String                                                                 `tfsdk:"name"`
 	Description      types.String                                                                 `tfsdk:"description"`
 	AllowCodeMode    types.Bool                                                                   `tfsdk:"allow_code_mode"`
+	CodeMode         types.String                                                                 `tfsdk:"code_mode"`
 	SecureWebGateway types.Bool                                                                   `tfsdk:"secure_web_gateway"`
 	Servers          customfield.NestedObjectList[ZeroTrustAccessAIControlsMcpPortalServersModel] `tfsdk:"servers"`
 	CreatedAt        timetypes.RFC3339                                                            `tfsdk:"created_at"`
@@ -80,6 +81,7 @@ func upgradeMcpPortalV500ToV501(
 		Name:             prior.Name,
 		Description:      prior.Description,
 		AllowCodeMode:    prior.AllowCodeMode,
+		CodeMode:         prior.CodeMode,
 		SecureWebGateway: prior.SecureWebGateway,
 		CreatedAt:        prior.CreatedAt,
 		CreatedBy:        prior.CreatedBy,

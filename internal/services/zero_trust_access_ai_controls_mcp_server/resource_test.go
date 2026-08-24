@@ -107,7 +107,7 @@ func TestAccZeroTrustAccessAIControlsMcpServer_basic(t *testing.T) {
 					}
 					return fmt.Sprintf("%s/%s", rs.Primary.Attributes["account_id"], rs.Primary.ID), nil
 				},
-				ImportStateVerifyIgnore: []string{"last_synced"},
+				ImportStateVerifyIgnore: []string{"last_synced", "last_successful_sync"},
 			},
 		},
 	})

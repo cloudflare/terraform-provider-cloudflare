@@ -65,6 +65,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"contract_version": schema.Int64Attribute{
 				Description: "Contract version of the page's Liquid template. Present (>= 1) marks a sanitized template; absent or 0 marks a legacy page served verbatim.",
 				Optional:    true,
+				Computed:    true,
 			},
 			"warnings": schema.ListNestedAttribute{
 				Description: "Advisory validation findings returned when creating or updating a template. Omitted when empty.",

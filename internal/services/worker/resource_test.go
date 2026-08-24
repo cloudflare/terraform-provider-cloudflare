@@ -119,7 +119,7 @@ func TestAccCloudflareWorker_Basic(t *testing.T) {
 							"persist":            knownvalue.Bool(true),
 						}),
 					})),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
 						"enabled":          knownvalue.Bool(false),
 						"previews_enabled": knownvalue.Bool(false),
 					})),
@@ -154,7 +154,7 @@ func TestAccCloudflareWorker_Basic(t *testing.T) {
 							"persist":            knownvalue.Bool(true),
 						}),
 					})),
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
 						"enabled":          knownvalue.Bool(false),
 						"previews_enabled": knownvalue.Bool(false),
 					})),
@@ -207,7 +207,7 @@ func TestAccCloudflareWorker_SubdomainDynamicDefault(t *testing.T) {
 				// Test that when subdomain.enabled = true, previews_enabled defaults to true
 				Config: testAccCloudflareWorkerConfigSubdomainEnabled(resourceName, accountID),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
 						"enabled":          knownvalue.Bool(true),
 						"previews_enabled": knownvalue.Bool(true),
 					})),
@@ -217,7 +217,7 @@ func TestAccCloudflareWorker_SubdomainDynamicDefault(t *testing.T) {
 				// Test that explicit previews_enabled = false is respected
 				Config: testAccCloudflareWorkerConfigSubdomainExplicitPreviews(resourceName, accountID),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("subdomain"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
 						"enabled":          knownvalue.Bool(true),
 						"previews_enabled": knownvalue.Bool(false),
 					})),

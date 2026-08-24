@@ -19,7 +19,7 @@ type ZeroTrustAccessCustomPageModel struct {
 	CustomHTML      types.String                                                         `tfsdk:"custom_html" json:"custom_html,required"`
 	Name            types.String                                                         `tfsdk:"name" json:"name,required"`
 	Type            types.String                                                         `tfsdk:"type" json:"type,required"`
-	ContractVersion types.Int64                                                          `tfsdk:"contract_version" json:"contract_version,optional"`
+	ContractVersion types.Int64                                                          `tfsdk:"contract_version" json:"contract_version,computed_optional"`
 	Warnings        customfield.NestedObjectList[ZeroTrustAccessCustomPageWarningsModel] `tfsdk:"warnings" json:"warnings,computed,no_refresh"`
 }
 

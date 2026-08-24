@@ -1,5 +1,74 @@
 # Changelog
 
+## 5.24.0 (2026-08-20)
+
+Full Changelog: [v5.23.0...v5.24.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.23.0...v5.24.0)
+
+### BREAKING CHANGES
+
+The following upstream API schema changes required corresponding provider schema updates. Existing state files load without user action (the plugin framework silently drops attributes that no longer exist in the schema), but Terraform **configurations** that still reference removed attributes must be updated before `terraform plan` will succeed.
+
+* **hostname_tls_setting:** the `cloudflare_hostname_tls_setting` data source now requires `hostname` as an input parameter instead of returning it as a computed attribute. The computed `id` attribute has been removed; use `setting_id` instead. ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **image_variant:** the computed `variant` nested attribute has been removed. The API no longer returns this wrapper object; the `id`, `options`, and `never_require_signed_urls` fields remain available at the top level. Remove any references to `cloudflare_image_variant.<name>.variant` from your configurations. ([738bd28](https://github.com/cloudflare/terraform-provider-cloudflare/commit/738bd28e14408e9012fd6487e6e4c8e46bf397ea))
+* **organization:** the computed `meta.flags` nested attribute has been renamed to `meta.tenant_flags`. Two new computed sub-attributes (`enterprise_capability`, `member_management`) have been added. Update any references from `.meta.flags` to `.meta.tenant_flags`. ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **zero_trust_access_ai_controls_mcp_portal:** the `allow_code_mode` attribute is now deprecated and no longer computed with a default of `true`. Use the new `code_mode` attribute (`"off"`, `"opt_in"`, `"default_on"`, `"enforced"`) instead. Configurations that relied on the computed default must explicitly set `code_mode` or `allow_code_mode`. ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **zero_trust_access_policy:** the `session_duration` attribute is no longer computed with a default of `"24h"`. It is now optional-only. Existing configurations that omitted `session_duration` and relied on the provider default will see a plan diff; explicitly set `session_duration = "24h"` to preserve the previous behavior. ([ae4f5a1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ae4f5a1d14cfda92bee0471a976e0b597ebce880))
+* **zero_trust_organization:** the `allowed_authenticators` enum value `ssh_piv_key` has been renamed to `piv_key`, and a new value `ssh_fido2_key` has been added. Configurations using `"ssh_piv_key"` must be updated to `"piv_key"`. ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **zero_trust_resource_library_application:** the `id` attribute type changed from `String` to `Int64`. The computed `intel_id` attribute has been removed. The `hostnames`, `ip_subnets`, `port_protocols`, `support_domains`, and `supported` attributes changed from `List` to `Set` (element ordering is no longer significant). These changes apply to both the resource data source and the list data source. ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **zero_trust_resource_library_category:** the `id` attribute type changed from `String` to `Int64` on both the data source and list data source. ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **zero_trust_tunnel_cloudflared:** the computed `is_pending_reconnect` attribute has been removed from `connections`. The upstream API no longer returns this field. Remove any references to `connections[*].is_pending_reconnect` from your configurations. ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **zero_trust_tunnel_warp_connector:** the computed `is_pending_reconnect` attribute has been removed from `connections`, matching the `zero_trust_tunnel_cloudflared` change above. ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+
+
+### New Resources
+
+* **cloudflare_ct_alerting:** onboard new Terraform resource for Certificate Transparency alerting ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **cloudflare_precursor:** onboard new Terraform resource for Precursor ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+
+
+### New Data Sources
+
+* **cloudflare_hostname_tls_settings:** add list data source for hostname TLS settings ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+
+
+### Features
+
+* bump Go SDK version to v7.9.0 ([79c7d4f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/79c7d4fe441405d3df953c1e43f6ace406aad52b))
+* **ai_gateway:** add `log_classification` attribute and `unified` billing mode ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **ai_search_instance:** add `discover_options` for link-following web crawler configuration ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **ai_search_namespace:** add `public_endpoint_params` with MCP, rate limiting, custom domains, and chat completions configuration ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **cloud_connector_rules:** add `oci_storage` cloud provider type ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **d1_database:** add `us` location restriction value ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **load_balancer_pool:** add `health_sources` attribute for regional health steering ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **ruleset:** add vary parameter to set_cache_settings action ([e9cdc20](https://github.com/cloudflare/terraform-provider-cloudflare/commit/e9cdc20b27501bb7368df444818a6717ae625142))
+* **waiting_room:** add Latvian (`lv-LV`) language support ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **worker:** add `preview_url_suffix` and `url` computed attributes to subdomain block ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **worker_version:** add `messaging` binding type ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **zero_trust_access_ai_controls_mcp_portal:** add `code_mode` attribute for granular Code Mode policy control ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **zero_trust_access_ai_controls_mcp_server:** add `authentication_status` computed attribute ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **zero_trust_access_application:** add worker destination types for Access ([118fe39](https://github.com/cloudflare/terraform-provider-cloudflare/commit/118fe3907372ad9d185025cfa6e6d64b31f83028))
+* **zero_trust_access_custom_page:** add `contract_version`, `warnings`, and new `type` values (`login`, `interstitial`) ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **zero_trust_access_service_token:** add `enabled` attribute to control service token activation ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **zero_trust_dlp_*_entry:** add computed `deprecated` attribute to all DLP entry resources and data sources ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **zero_trust_organization:** add `warp_auth_non_browser_401` attribute for non-browser 401 responses ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+* **zone_setting:** add `webmcp_enabled` and `webmcp_packs` setting IDs ([ece27fe](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ece27fee47f3fb7229d16fc73354ea755b96b285))
+
+
+### Bug Fixes
+
+* guard against nil pointer dereference in dynamic semantic equality ([d82bbd5](https://github.com/cloudflare/terraform-provider-cloudflare/commit/d82bbd5a71ca2f22fba036dcc44c5c7c3ad41a88))
+* **image_variant:** fix nested variant response deserialization ([738bd28](https://github.com/cloudflare/terraform-provider-cloudflare/commit/738bd28e14408e9012fd6487e6e4c8e46bf397ea))
+* port v5.23.0 regression fixes from GitHub main ([ae4f5a1](https://github.com/cloudflare/terraform-provider-cloudflare/commit/ae4f5a1d14cfda92bee0471a976e0b597ebce880))
+* remove duplicate declarations causing build failures ([dc360d2](https://github.com/cloudflare/terraform-provider-cloudflare/commit/dc360d2a4f35974478397468eaf45ac5372144bc))
+
+
+### Documentation
+
+* **image_variant:** update resource documentation ([bab4b71](https://github.com/cloudflare/terraform-provider-cloudflare/commit/bab4b71bcb0a9228e86786e26bb4c6b393a39c2f))
+* regenerate provider documentation ([79c7d4f](https://github.com/cloudflare/terraform-provider-cloudflare/commit/79c7d4fe441405d3df953c1e43f6ace406aad52b))
+* restore .md extensions on internal guide cross-links ([f51c9d6](https://github.com/cloudflare/terraform-provider-cloudflare/commit/f51c9d656039454555755b050b2619967f3e02ca))
+
+
 ## 5.23.0 (2026-07-30)
 
 Full Changelog: [v5.22.0...v5.23.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.22.0...v5.23.0)
