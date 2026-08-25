@@ -1,0 +1,43 @@
+internal/services/email_security_block_sender/resource_test.go
+  s_67d57475267cf8::t_bd5ca4be735fbc 1-256
+internal/services/email_security_block_sender/testdata/blocksender_domain.tf
+  s_67d57475267cf8::t_3a9a3d2b54e190 1-6
+internal/services/email_security_block_sender/testdata/blocksender_ip.tf
+  s_67d57475267cf8::t_a49e7708df5157 1-10
+internal/services/email_security_trusted_domains/testdata/trusteddomains_updated.tf
+  s_67d57475267cf8::t_92fcc6b9049c4d 1-8
+internal/services/email_security_block_sender/testdata/blocksender_email_updated.tf
+  s_67d57475267cf8::t_a3de93941af8d1 1-2,4-7
+  s_67d57475267cf8::t_ec4d5737a88587 3
+internal/services/email_security_trusted_domains/resource_test.go
+  s_67d57475267cf8::t_529f904ccae1f5 1-230
+scripts/run-ci-tests
+  s_67d57475267cf8::t_a1003bbc1f763f 202
+  s_67d57475267cf8::t_d1fe3fbb7e3044 54
+internal/services/email_security_trusted_domains/testdata/trusteddomains_regex.tf
+  s_67d57475267cf8::t_d6ba6b7f55f02f 1-7
+internal/services/email_security_trusted_domains/testdata/trusteddomains_basic.tf
+  s_67d57475267cf8::t_f377c268845817 1-8
+internal/services/email_security_block_sender/testdata/blocksender_email.tf
+  s_67d57475267cf8::t_651409b0240d72 1-7
+internal/services/email_security_trusted_domains/testdata/trusteddomains_similarity.tf
+  s_67d57475267cf8::t_fcd395a89441cd 1-5
+internal/services/email_security_block_sender/testdata/blocksender_regex.tf
+  s_67d57475267cf8::t_43c28dbe298463 1-7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6dfbdaebe7860f3a3a0c5b062301f9d338ef5a57",
+  "prompts": {},
+  "sessions": {
+    "s_67d57475267cf8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_032cdaee3ffeeMonyh0jg57vLZ",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Greg Thompson Jr. <gregt@cloudflare.com>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+docs/guides/version-5-migration.md
+  s_71787840f8df50::t_57dfd665f4616e 24-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2e64a0d417c2a9ec5d2a94dc7681fe633f1a8b60",
+  "prompts": {},
+  "sessions": {
+    "s_71787840f8df50": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdf38afbbffedT41GmfeOjVARg",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
