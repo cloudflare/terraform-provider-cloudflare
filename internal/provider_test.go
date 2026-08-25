@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
@@ -93,6 +94,16 @@ func configureAndCaptureUserAgent(t *testing.T, attrs map[string]tftypes.Value) 
 	return userAgent
 }
 
+// unsetEnv removes a variable for the duration of the test. `t.Setenv` can only
+// set, and the caller's environment may already export CLOUDFLARE_* values.
+func unsetEnv(t *testing.T, key string) {
+	t.Helper()
+	if original, ok := os.LookupEnv(key); ok {
+		t.Cleanup(func() { os.Setenv(key, original) })
+		os.Unsetenv(key)
+	}
+}
+
 func TestProviderUserAgentOperatorSuffix(t *testing.T) {
 	suffixKey := consts.UserAgentOperatorSuffixSchemaKey
 
@@ -101,6 +112,7 @@ func TestProviderUserAgentOperatorSuffix(t *testing.T) {
 	tests := []struct {
 		name       string
 		attrs      map[string]tftypes.Value
+		env        *string
 		expectTail string
 	}{
 		{
@@ -118,6 +130,17 @@ func TestProviderUserAgentOperatorSuffix(t *testing.T) {
 			expectTail: " terraform/" + testTerraformVersion,
 		},
 		{
+			name:       "suffix can come from the environment",
+			env:        stringPtr("mycorp/1.0"),
+			expectTail: " mycorp/1.0",
+		},
+		{
+			name:       "configuration takes precedence over the environment",
+			attrs:      map[string]tftypes.Value{suffixKey: tftypes.NewValue(tftypes.String, "config/1.0")},
+			env:        stringPtr("env/1.0"),
+			expectTail: " config/1.0",
+		},
+		{
 			name:       "no suffix falls back to the Terraform version",
 			expectTail: " terraform/" + testTerraformVersion,
 		},
@@ -125,6 +148,12 @@ func TestProviderUserAgentOperatorSuffix(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			if tc.env != nil {
+				t.Setenv(consts.UserAgentOperatorSuffixEnvVarKey, *tc.env)
+			} else {
+				unsetEnv(t, consts.UserAgentOperatorSuffixEnvVarKey)
+			}
+
 			got := configureAndCaptureUserAgent(t, tc.attrs)
 
 			if !strings.HasPrefix(got, "terraform-provider-cloudflare/"+testProviderVersion+" terraform-plugin-framework") {
@@ -135,4 +164,8 @@ func TestProviderUserAgentOperatorSuffix(t *testing.T) {
 			}
 		})
 	}
+}
+
+func stringPtr(s string) *string {
+	return &s
 }
