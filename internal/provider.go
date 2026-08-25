@@ -434,9 +434,11 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		PluginVersion:   pluginVersion,
 	}
 
-	if !data.UserAgentOperatorSuffix.IsNull() {
-		operatorSuffix := data.UserAgentOperatorSuffix.String()
+	if !data.UserAgentOperatorSuffix.IsNull() && !data.UserAgentOperatorSuffix.IsUnknown() {
+		operatorSuffix := data.UserAgentOperatorSuffix.ValueString()
 		userAgentParams.OperatorSuffix = &operatorSuffix
+	} else if o, ok := os.LookupEnv(consts.UserAgentOperatorSuffixEnvVarKey); ok {
+		userAgentParams.OperatorSuffix = &o
 	} else {
 		userAgentParams.TerraformVersion = &req.TerraformVersion
 	}
