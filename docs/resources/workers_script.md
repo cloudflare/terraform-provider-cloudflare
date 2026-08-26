@@ -135,7 +135,6 @@ resource "cloudflare_workers_script" "example_workers_script" {
       namespace = "my-namespace"
     }]
     usage_model = "standard"
-  }
   files = {
     "module.wasm" = {
       content_base64 = "AGFzbQEAAAA="

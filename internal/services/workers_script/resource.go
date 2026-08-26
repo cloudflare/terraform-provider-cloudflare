@@ -414,11 +414,13 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 			}
 
 			mainPart := data.MainModule.ValueString()
+			isMainModule := mainPart != ""
 			if mainPart == "" {
 				mainPart = data.BodyPart.ValueString()
 			}
 			if mainPart == "" {
 				mainPart = scriptContentRes.Header.Get("CF-Entrypoint")
+				isMainModule = mainPart != ""
 			}
 			if mainPart == "" {
 				if metadataPart, ok := parts["metadata"]; ok {
@@ -431,6 +433,7 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 						return
 					}
 					mainPart = metadata.MainModule
+					isMainModule = mainPart != ""
 					if mainPart == "" {
 						mainPart = metadata.BodyPart
 					}
@@ -453,7 +456,9 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 				resp.Diagnostics.AddError("failed to read response body", fmt.Sprintf("main script part %q is missing from multipart response", mainPart))
 				return
 			}
-			data.MainModule = types.StringValue(mainPart)
+			if isMainModule {
+				data.MainModule = types.StringValue(mainPart)
+			}
 			content = string(mainFile.content)
 
 			refreshedFiles := make(map[string]WorkersScriptFileModel)
@@ -467,7 +472,11 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 					ContentFile:   types.StringNull(),
 					ContentType:   types.StringValue(part.contentType),
 				}
-				hash, _ := calculateStringHash(string(part.content))
+				hash, err := calculateStringHash(string(part.content))
+				if err != nil {
+					resp.Diagnostics.AddError("failed to hash multipart file", err.Error())
+					return
+				}
 				file.ContentSHA256 = types.StringValue(hash)
 				if stateFiles != nil {
 					if stateFile, exists := (*stateFiles)[name]; exists && !stateFile.ContentFile.IsNull() {
@@ -496,7 +505,11 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 
 		// refresh the content hash in case the remote state has drifted
 		if !data.ContentSHA256.IsNull() {
-			hash, _ := calculateStringHash(content)
+			hash, err := calculateStringHash(content)
+			if err != nil {
+				resp.Diagnostics.AddError("failed to hash script content", err.Error())
+				return
+			}
 			data.ContentSHA256 = types.StringValue(hash)
 		}
 	case http.StatusNoContent:

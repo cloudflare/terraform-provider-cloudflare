@@ -123,6 +123,9 @@ func TestAccCloudflareWorkerScript_ServiceWorker(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(resourceName)),
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("content"), knownvalue.StringExact(scriptContent2)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("main_module"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("body_part"), knownvalue.StringExact("script")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("files").AtMapKey("module.wasm").AtMapKey("content_base64"), knownvalue.StringExact(encodedWasm)),
 				},
 			},
 			{
