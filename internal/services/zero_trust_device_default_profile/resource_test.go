@@ -421,3 +421,42 @@ func testAccCloudflareZeroTrustDeviceDefaultProfileWithOptionals(accountID, rnd 
 func testAccCloudflareZeroTrustDeviceDefaultProfileWithoutOptionals(accountID, rnd string) string {
 	return acctest.LoadTestCase("devicedefaultprofilewithoutoptionals.tf", rnd, accountID)
 }
+
+func TestAccCloudflareZeroTrustDeviceDefaultProfile_PolicyIdStability(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_device_default_profile.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			// Create and verify policy_id is computed
+			{
+				Config: testAccCloudflareZeroTrustDeviceDefaultProfileBasic(accountID, rnd),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policy_id"), knownvalue.NotNull()),
+				},
+			},
+			// Update and verify policy_id remains stable (UseStateForUnknown behavior)
+			{
+				Config: testAccCloudflareZeroTrustDeviceDefaultProfileUpdated(accountID, rnd),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+						// Verify policy_id is known in the plan (not "known after apply")
+						plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("policy_id"), knownvalue.NotNull()),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policy_id"), knownvalue.NotNull()),
+				},
+			},
+			// Verify no plan changes after apply
+			{
+				Config:   testAccCloudflareZeroTrustDeviceDefaultProfileUpdated(accountID, rnd),
+				PlanOnly: true,
+			},
+		},
+	})
+}
