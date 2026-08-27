@@ -761,6 +761,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "Identifier of the VPC service to bind to.",
 							Optional:    true,
 						},
+						"identity": schema.StringAttribute{
+							Description: "Enables Gateway identity for the binding. Requires network_id to be \"cf1:network\" and cannot be combined with tunnel_id.\nAvailable values: \"runtime-email-alpha\".",
+							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("runtime-email-alpha"),
+							},
+						},
 						"network_id": schema.StringAttribute{
 							Description: `Identifier of the network to bind to. Only "cf1:network" is currently supported. Mutually exclusive with tunnel_id.`,
 							Optional:    true,
@@ -812,9 +819,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplaceIfConfigured()},
 			},
 			"created_on": schema.StringAttribute{
-				Description: "When the version was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "When the version was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"migration_tag": schema.StringAttribute{
 				Description: "Durable Object migration tag. Set when the version is deployed. Omitted if the version has not been deployed or the Worker does not use Durable Objects.",

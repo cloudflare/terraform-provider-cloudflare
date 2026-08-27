@@ -41,8 +41,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 			},
 			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"template_id": schema.StringAttribute{
 				Computed: true,
@@ -60,8 +61,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"created_at": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
+							Computed:      true,
+							CustomType:    timetypes.RFC3339Type{},
+							PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 						},
 						"name": schema.StringAttribute{
 							Computed: true,

@@ -45,9 +45,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"created": schema.StringAttribute{
-				Description: "The date and time the settings have been created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "The date and time the settings have been created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "State of the zone settings for Email Routing.",

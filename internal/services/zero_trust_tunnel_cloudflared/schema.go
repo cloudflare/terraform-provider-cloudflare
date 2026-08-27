@@ -78,9 +78,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"created_at": schema.StringAttribute{
-				Description: "Timestamp of when the resource was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "Timestamp of when the resource was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"deleted_at": schema.StringAttribute{
 				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
@@ -141,6 +142,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"colo_name": schema.StringAttribute{
 							Description: "The Cloudflare data center used for this connection.",
 							Computed:    true,
+						},
+						"is_pending_reconnect": schema.BoolAttribute{
+							Description:        "Cloudflare continues to track connections for several minutes after they disconnect. This is an optimization to improve latency and reliability of reconnecting.  If `true`, the connection has disconnected but is still being tracked. If `false`, the connection is actively serving traffic.",
+							Computed:           true,
+							DeprecationMessage: "This functionality has been removed. The is_pending_reconnect field will now always report false.",
 						},
 						"opened_at": schema.StringAttribute{
 							Description: "Timestamp of when the connection was established.",

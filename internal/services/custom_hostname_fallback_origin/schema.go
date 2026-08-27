@@ -44,9 +44,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"created_at": schema.StringAttribute{
-				Description: "This is the time the fallback origin was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "This is the time the fallback origin was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of the fallback origin's activation.\nAvailable values: \"initializing\", \"pending_deployment\", \"pending_deletion\", \"active\", \"deployment_timed_out\", \"deletion_timed_out\".",

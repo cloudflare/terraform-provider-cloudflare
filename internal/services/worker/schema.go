@@ -136,6 +136,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(true),
 							},
 						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
+					},
+					"redact_query_string": schema.BoolAttribute{
+						Description: "Whether query strings are removed from request URLs in logs and traces.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"traces": schema.SingleNestedAttribute{
 						Description: "Trace settings for the Worker.",

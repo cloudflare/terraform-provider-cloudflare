@@ -54,9 +54,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"created_at": schema.StringAttribute{
-							Description: "The timestamp of when the monitor was added to the group",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
+							Description:   "The timestamp of when the monitor was added to the group",
+							Computed:      true,
+							CustomType:    timetypes.RFC3339Type{},
+							PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 						},
 						"updated_at": schema.StringAttribute{
 							Description: "The timestamp of when the monitor group member was last updated",
@@ -67,9 +68,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_on": schema.StringAttribute{
-				Description: "The timestamp of when the monitor group was created",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "The timestamp of when the monitor group was created",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "The timestamp of when the monitor group was last updated",

@@ -310,8 +310,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 													CustomType: timetypes.RFC3339Type{},
 												},
 												"is_learned": schema.BoolAttribute{
-													Description: "True if schema is Cloudflare-provided.",
-													Computed:    true,
+													Description:        "Deprecated. Always false.",
+													Computed:           true,
+													DeprecationMessage: "This attribute is deprecated.",
 												},
 												"name": schema.StringAttribute{
 													Description: "Schema file name.",

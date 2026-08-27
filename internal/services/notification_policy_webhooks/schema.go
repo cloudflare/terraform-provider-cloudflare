@@ -54,9 +54,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Sensitive:   true,
 			},
 			"created_at": schema.StringAttribute{
-				Description: "Timestamp of when the webhook destination was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "Timestamp of when the webhook destination was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"last_failure": schema.StringAttribute{
 				Description: "Timestamp of the last time an attempt to dispatch a notification to this webhook failed.",

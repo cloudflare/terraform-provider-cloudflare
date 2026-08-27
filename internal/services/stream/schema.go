@@ -118,9 +118,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"created": schema.StringAttribute{
-				Description: "The date and time the media item was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "The date and time the media item was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"duration": schema.Float64Attribute{
 				Description: "The duration of the video in seconds. A value of `-1` means the duration is unknown. The duration becomes available after the upload and before the video is ready.",
@@ -232,9 +233,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[StreamWatermarkModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"created": schema.StringAttribute{
-						Description: "The date and a time a watermark profile was created.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
+						Description:   "The date and a time a watermark profile was created.",
+						Computed:      true,
+						CustomType:    timetypes.RFC3339Type{},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"downloaded_from": schema.StringAttribute{
 						Description: "The source URL for a downloaded image. If the watermark profile was created via direct upload, this field is null.",

@@ -458,6 +458,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Identifier of the VPC service to bind to.",
 							Computed:    true,
 						},
+						"identity": schema.StringAttribute{
+							Description: "Enables Gateway identity for the binding. Requires network_id to be \"cf1:network\" and cannot be combined with tunnel_id.\nAvailable values: \"runtime-email-alpha\".",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("runtime-email-alpha"),
+							},
+						},
 						"network_id": schema.StringAttribute{
 							Description: `Identifier of the network to bind to. Only "cf1:network" is currently supported. Mutually exclusive with tunnel_id.`,
 							Computed:    true,

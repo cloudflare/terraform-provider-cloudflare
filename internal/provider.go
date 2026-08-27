@@ -124,6 +124,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/moq_relay"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate_associations"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/nel_setting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy_webhooks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/oauth_client"
@@ -474,6 +475,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		api_token.NewResource,
 		zone.NewResource,
 		zone_setting.NewResource,
+		nel_setting.NewResource,
 		zone_hold.NewResource,
 		zone_subscription.NewResource,
 		ct_alerting.NewResource,
@@ -666,6 +668,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_network_hostname_route.NewResource,
 		zero_trust_risk_behavior.NewResource,
 		zero_trust_risk_scoring_integration.NewResource,
+		zero_trust_resource_library_application.NewResource,
 		turnstile_widget.NewResource,
 		connectivity_directory_service.NewResource,
 		hyperdrive_config.NewResource,
@@ -751,6 +754,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zone.NewZoneDataSource,
 		zone.NewZonesDataSource,
 		zone_setting.NewZoneSettingDataSource,
+		nel_setting.NewNELSettingDataSource,
 		zone_hold.NewZoneHoldDataSource,
 		zone_subscription.NewZoneSubscriptionDataSource,
 		ct_alerting.NewCTAlertingDataSource,

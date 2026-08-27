@@ -352,6 +352,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
+				PlanModifiers: []planmodifier.Set{setplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "Settings for the DNS record.",
@@ -375,6 +376,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"comment_modified_on": schema.StringAttribute{
 				Description: "When the record comment was last modified. Omitted if there is no comment.",
@@ -382,9 +384,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"created_on": schema.StringAttribute{
-				Description: "When the record was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "When the record was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the record was last modified.",

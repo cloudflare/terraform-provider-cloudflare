@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -49,16 +50,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"only_on_ad_pages",
 					),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"auto_update_model": schema.BoolAttribute{
-				Description: "Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes)",
-				Computed:    true,
-				Optional:    true,
+				Description:   "Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes)",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"bm_cookie_enabled": schema.BoolAttribute{
-				Description: "Indicates that the bot management cookie can be placed on end user devices accessing the site. Defaults to true",
-				Computed:    true,
-				Optional:    true,
+				Description:   "Indicates that the bot management cookie can be placed on end user devices accessing the site. Defaults to true",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"cf_robots_variant": schema.StringAttribute{
 				Description: "Specifies the Robots Access Control License variant to use.\nAvailable values: \"off\", \"policy_only\".",
@@ -67,6 +71,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("off", "policy_only"),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"content_bots_protection": schema.StringAttribute{
 				Description:   "Enable rule to block content bots. When enabled, blocks automated traffic with low bot scores, excluding safe verified bot categories. Exceptions should be managed via skip rules.\nAvailable values: \"block\", \"disabled\".",
@@ -76,6 +81,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("block", "disabled"),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"crawler_protection": schema.StringAttribute{
 				Description: "Enable rule to punish AI Scrapers and Crawlers via a link maze.\nAvailable values: \"enabled\", \"disabled\".",
@@ -84,16 +90,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"enable_js": schema.BoolAttribute{
-				Description: "Use lightweight, invisible JavaScript detections to improve Bot Management. [Learn more about JavaScript Detections](https://developers.cloudflare.com/bots/reference/javascript-detections/).",
-				Computed:    true,
-				Optional:    true,
+				Description:   "Use lightweight, invisible JavaScript detections to improve Bot Management. [Learn more about JavaScript Detections](https://developers.cloudflare.com/bots/reference/javascript-detections/).",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"fight_mode": schema.BoolAttribute{
-				Description: "Whether to enable Bot Fight Mode.",
-				Computed:    true,
-				Optional:    true,
+				Description:   "Whether to enable Bot Fight Mode.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"is_robots_txt_managed": schema.BoolAttribute{
 				Description: "Enable cloudflare managed robots.txt. If an existing robots.txt is detected, then managed robots.txt will be prepended to the existing robots.txt.",
@@ -102,9 +111,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(false),
 			},
 			"optimize_wordpress": schema.BoolAttribute{
-				Description: "Whether to optimize Super Bot Fight Mode protections for Wordpress.",
-				Computed:    true,
-				Optional:    true,
+				Description:   "Whether to optimize Super Bot Fight Mode protections for Wordpress.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"sbfm_definitely_automated": schema.StringAttribute{
 				Description: "Super Bot Fight Mode (SBFM) action to take on definitely automated requests.\nAvailable values: \"allow\", \"block\", \"managed_challenge\".",
@@ -117,6 +127,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"managed_challenge",
 					),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"sbfm_likely_automated": schema.StringAttribute{
 				Description: "Super Bot Fight Mode (SBFM) action to take on likely automated requests.\nAvailable values: \"allow\", \"block\", \"managed_challenge\".",
@@ -129,11 +140,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"managed_challenge",
 					),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"sbfm_static_resource_protection": schema.BoolAttribute{
-				Description: "Super Bot Fight Mode (SBFM) to enable static resource protection.\nEnable if static resources on your application need bot protection.\nNote: Static resource protection can also result in legitimate traffic being blocked.",
-				Computed:    true,
-				Optional:    true,
+				Description:   "Super Bot Fight Mode (SBFM) to enable static resource protection.\nEnable if static resources on your application need bot protection.\nNote: Static resource protection can also result in legitimate traffic being blocked.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"sbfm_verified_bots": schema.StringAttribute{
 				Description: "Super Bot Fight Mode (SBFM) action to take on verified bots requests.\nAvailable values: \"allow\", \"block\".",
@@ -142,11 +155,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("allow", "block"),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"suppress_session_score": schema.BoolAttribute{
-				Description: "Whether to disable tracking the highest bot score for a session in the Bot Management cookie.",
-				Computed:    true,
-				Optional:    true,
+				Description:   "Whether to disable tracking the highest bot score for a session in the Bot Management cookie.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"using_latest_model": schema.BoolAttribute{
 				Description: "A read-only field that indicates whether the zone currently is running the latest ML model.",

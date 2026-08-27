@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -44,6 +45,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "The custom hostname that will point to your hostname via CNAME.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"custom_origin_server": schema.StringAttribute{
+				Description: "a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.",
+				Optional:    true,
+			},
+			"custom_origin_sni": schema.StringAttribute{
+				Description: "A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.",
+				Optional:    true,
+			},
+			"custom_metadata": schema.MapAttribute{
+				Description: "Unique key/value metadata for this hostname. These are per-hostname (customer) settings.",
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"ssl": schema.SingleNestedAttribute{
 				Description: "SSL properties used when creating the custom hostname.",
@@ -176,6 +190,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"custom_origin_server": schema.StringAttribute{
 				Description: "a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.",
@@ -191,9 +206,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"created_at": schema.StringAttribute{
-				Description: "This is the time the hostname was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "This is the time the hostname was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of the hostname's activation.\nAvailable values: \"active\", \"pending\", \"active_redeploying\", \"moved\", \"pending_deletion\", \"deleted\", \"pending_blocked\", \"pending_migration\", \"pending_provisioned\", \"test_pending\", \"test_active\", \"test_active_apex\", \"test_blocked\", \"test_failed\", \"provisioned\", \"blocked\".",

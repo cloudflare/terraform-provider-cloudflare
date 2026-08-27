@@ -253,12 +253,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Computed:    true,
 									},
 									"created_at": schema.StringAttribute{
-										Computed:   true,
-										CustomType: timetypes.RFC3339Type{},
+										Computed:      true,
+										CustomType:    timetypes.RFC3339Type{},
+										PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 									},
 									"is_learned": schema.BoolAttribute{
-										Description: "True if schema is Cloudflare-provided.",
-										Computed:    true,
+										Description:        "Deprecated. Always false.",
+										Computed:           true,
+										DeprecationMessage: "This attribute is deprecated.",
 									},
 									"name": schema.StringAttribute{
 										Description: "Schema file name.",

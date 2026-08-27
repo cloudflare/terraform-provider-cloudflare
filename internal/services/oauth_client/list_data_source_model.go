@@ -42,6 +42,7 @@ type OAuthClientsResultDataSourceModel struct {
 	GrantTypes              customfield.List[types.String]                                             `tfsdk:"grant_types" json:"grant_types,computed"`
 	HasRotatedSecret        types.Bool                                                                 `tfsdk:"has_rotated_secret" json:"has_rotated_secret,computed"`
 	LogoURI                 types.String                                                               `tfsdk:"logo_uri" json:"logo_uri,computed"`
+	OptionalScopes          customfield.List[types.String]                                             `tfsdk:"optional_scopes" json:"optional_scopes,computed"`
 	PolicyURI               types.String                                                               `tfsdk:"policy_uri" json:"policy_uri,computed"`
 	PostLogoutRedirectURIs  customfield.List[types.String]                                             `tfsdk:"post_logout_redirect_uris" json:"post_logout_redirect_uris,computed"`
 	PromotedAt              timetypes.RFC3339                                                          `tfsdk:"promoted_at" json:"promoted_at,computed" format:"date-time"`

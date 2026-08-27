@@ -95,14 +95,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     int64default.StaticInt64(60),
 			},
 			"method": schema.StringAttribute{
-				Description: "The method to use for the health check. This defaults to 'GET' for HTTP/HTTPS based checks and 'connection_established' for TCP based health checks.",
-				Computed:    true,
-				Optional:    true,
+				Description:   "The method to use for the health check. This defaults to 'GET' for HTTP/HTTPS based checks and 'connection_established' for TCP based health checks.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"path": schema.StringAttribute{
-				Description: "The endpoint path you want to conduct a health check against. This parameter is only valid for HTTP and HTTPS monitors.",
-				Computed:    true,
-				Optional:    true,
+				Description:   "The endpoint path you want to conduct a health check against. This parameter is only valid for HTTP and HTTPS monitors.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"probe_zone": schema.StringAttribute{
 				Description: "Assign this monitor to emulate the specified zone while probing. This parameter is only valid for HTTP and HTTPS monitors.",
@@ -139,7 +141,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default: stringdefault.StaticString("http"),
 			},
 			"created_on": schema.StringAttribute{
-				Computed: true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified_on": schema.StringAttribute{
 				Computed: true,

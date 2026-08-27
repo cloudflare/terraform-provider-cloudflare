@@ -212,7 +212,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "When the profile was created.",
 				Computed:      true,
 				CustomType:    timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"open_access": schema.BoolAttribute{
 				Description: "Whether this profile can be accessed by anyone.",

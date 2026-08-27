@@ -5,7 +5,6 @@ package zero_trust_access_ai_controls_mcp_portal
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -69,17 +68,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Optional description of the MCP portal.",
 				Optional:    true,
 			},
-			"secure_web_gateway": schema.BoolAttribute{
-				Description: "Route outbound MCP traffic through Zero Trust Secure Web Gateway.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
 			"servers": schema.SetNestedAttribute{
 				Description: "MCP servers attached to the portal and their portal-specific settings.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessAIControlsMcpPortalServersModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"server_id": schema.StringAttribute{
@@ -88,15 +79,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"default_disabled": schema.BoolAttribute{
 							Description: "Disable this server by default for clients connecting through the portal.",
-							Computed:    true,
 							Optional:    true,
-							Default:     booldefault.StaticBool(false),
 						},
 						"on_behalf": schema.BoolAttribute{
 							Description: "Use end-user OAuth credentials when connecting this server to the portal.",
-							Computed:    true,
 							Optional:    true,
-							Default:     booldefault.StaticBool(true),
 						},
 						"updated_prompts": schema.ListNestedAttribute{
 							Description: "Portal-specific prompt overrides.",
@@ -149,9 +136,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"secure_web_gateway": schema.BoolAttribute{
+				Description: "Route outbound MCP traffic through Zero Trust Secure Web Gateway.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
 			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"created_by": schema.StringAttribute{
 				Computed: true,

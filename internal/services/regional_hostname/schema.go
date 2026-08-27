@@ -53,9 +53,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"created_on": schema.StringAttribute{
-				Description: "When the regional hostname was created",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "When the regional hostname was created",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 		},
 	}

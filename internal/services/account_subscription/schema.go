@@ -62,6 +62,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"id": schema.StringAttribute{
 						Description: "The ID of the rate plan.",
 						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"free",
+								"lite",
+								"pro",
+								"pro_plus",
+								"business",
+								"enterprise",
+								"partners_free",
+								"partners_pro",
+								"partners_business",
+								"partners_enterprise",
+							),
+						},
 					},
 					"currency": schema.StringAttribute{
 						Description: "The currency applied to the rate plan subscription.",
@@ -80,9 +94,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"scope": schema.StringAttribute{
-						Description: "The scope that this rate plan applies to.",
-						Computed:    true,
-						Optional:    true,
+						Description:   "The scope that this rate plan applies to.",
+						Computed:      true,
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"sets": schema.ListAttribute{
 						Description: "The list of sets this rate plan applies to. Returns array of strings.",
@@ -91,6 +106,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						ElementType: types.StringType,
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"currency": schema.StringAttribute{
 				Description: "The monetary unit in which pricing information is displayed.",

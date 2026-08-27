@@ -193,6 +193,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Description: "IdP Entity ID or Issuer URL",
 									Computed:    true,
 								},
+								"max_sso_url_length": schema.Int64Attribute{
+									Description: "The maximum URL length the IdP accepts for the SSO redirect URL.\nWhen the constructed SSO URL would exceed this length, the RelayState\nis stored server-side and a short nonce is passed to the IdP instead.\nSet this if your IdP enforces a URL length limit.",
+									Computed:    true,
+									Validators: []validator.Int64{
+										int64validator.Between(512, 100000),
+									},
+								},
 								"sign_request": schema.BoolAttribute{
 									Description: "Sign the SAML authentication request with Access credentials. To verify the signature, use the public key from the Access certs endpoints.",
 									Computed:    true,

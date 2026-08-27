@@ -139,32 +139,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Widget item identifier tag.",
 							Computed:    true,
 						},
-						"deployed_via": schema.StringAttribute{
-							Description: "Origin that created this widget, recorded at creation time and\nimmutable afterward. Server-derived from the create request; not\nclient-settable. Omitted from the response for widgets created\nbefore this field existed.\nAvailable values: \"wrangler\", \"dashboard\", \"spin\", \"api\", \"unknown\".",
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive(
-									"wrangler",
-									"dashboard",
-									"spin",
-									"api",
-									"unknown",
-								),
-							},
-						},
-						"last_modified_via": schema.StringAttribute{
-							Description: "Origin of the most recent mutation (create, update, delete, or\nsecret rotation). Server-derived; not client-settable. Omitted for\nwidgets last mutated before this field existed.\nAvailable values: \"wrangler\", \"dashboard\", \"spin\", \"api\", \"unknown\".",
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive(
-									"wrangler",
-									"dashboard",
-									"spin",
-									"api",
-									"unknown",
-								),
-							},
-						},
 					},
 				},
 			},

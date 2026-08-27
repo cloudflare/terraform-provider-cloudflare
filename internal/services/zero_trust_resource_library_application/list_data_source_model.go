@@ -19,6 +19,7 @@ type ZeroTrustResourceLibraryApplicationsResultListDataSourceEnvelope struct {
 
 type ZeroTrustResourceLibraryApplicationsDataSourceModel struct {
 	AccountID types.String                                                                            `tfsdk:"account_id" path:"account_id,required"`
+	Fields    types.String                                                                            `tfsdk:"fields" query:"fields,optional"`
 	Filter    types.String                                                                            `tfsdk:"filter" query:"filter,optional"`
 	OrderBy   types.String                                                                            `tfsdk:"order_by" query:"order_by,optional"`
 	Search    types.String                                                                            `tfsdk:"search" query:"search,optional"`
@@ -33,6 +34,9 @@ func (m *ZeroTrustResourceLibraryApplicationsDataSourceModel) toListParams(_ con
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
+	if !m.Fields.IsNull() {
+		params.Fields = cloudflare.F(m.Fields.ValueString())
+	}
 	if !m.Filter.IsNull() {
 		params.Filter = cloudflare.F(m.Filter.ValueString())
 	}
@@ -55,6 +59,7 @@ func (m *ZeroTrustResourceLibraryApplicationsDataSourceModel) toListParams(_ con
 type ZeroTrustResourceLibraryApplicationsResultDataSourceModel struct {
 	ID                          types.Int64                   `tfsdk:"id" json:"id,computed"`
 	ApplicationConfidenceScore  types.Float64                 `tfsdk:"application_confidence_score" json:"application_confidence_score,computed"`
+	ApplicationScoreComposition jsontypes.Normalized          `tfsdk:"application_score_composition" json:"application_score_composition,computed"`
 	ApplicationSource           types.String                  `tfsdk:"application_source" json:"application_source,computed"`
 	ApplicationType             types.String                  `tfsdk:"application_type" json:"application_type,computed"`
 	ApplicationTypeDescription  types.String                  `tfsdk:"application_type_description" json:"application_type_description,computed"`
@@ -66,9 +71,9 @@ type ZeroTrustResourceLibraryApplicationsResultDataSourceModel struct {
 	IPSubnets                   customfield.Set[types.String] `tfsdk:"ip_subnets" json:"ip_subnets,computed"`
 	Name                        types.String                  `tfsdk:"name" json:"name,computed"`
 	PortProtocols               customfield.Set[types.String] `tfsdk:"port_protocols" json:"port_protocols,computed"`
+	ReviewStatus                types.String                  `tfsdk:"review_status" json:"review_status,computed"`
 	SupportDomains              customfield.Set[types.String] `tfsdk:"support_domains" json:"support_domains,computed"`
 	Supported                   customfield.Set[types.String] `tfsdk:"supported" json:"supported,computed"`
 	UpdatedAt                   types.String                  `tfsdk:"updated_at" json:"updated_at,computed"`
 	Version                     types.String                  `tfsdk:"version" json:"version,computed"`
-	ApplicationScoreComposition jsontypes.Normalized          `tfsdk:"application_score_composition" json:"application_score_composition,computed"`
 }

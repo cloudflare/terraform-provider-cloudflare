@@ -108,6 +108,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the widget was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplaxnmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the widget was modified.",

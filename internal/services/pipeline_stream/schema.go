@@ -232,6 +232,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"worker_binding": schema.SingleNestedAttribute{
 				Computed:   true,
@@ -243,10 +244,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Required:    true,
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"endpoint": schema.StringAttribute{
 				Description: "Indicates the endpoint URL of this stream.",

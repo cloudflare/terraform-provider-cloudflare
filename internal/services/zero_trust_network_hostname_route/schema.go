@@ -52,9 +52,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
-				Description: "Timestamp of when the resource was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "Timestamp of when the resource was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"deleted_at": schema.StringAttribute{
 				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
