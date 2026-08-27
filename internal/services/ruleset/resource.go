@@ -4,6 +4,7 @@ package ruleset
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/tidwall/gjson"
@@ -296,6 +298,8 @@ func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportSt
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+const privateStateKeySeen = "seen"
+
 func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
 	var state *RulesetModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
@@ -308,6 +312,34 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	// Mark every plan that has state. A replacement plans its create half with no
+	// state, exactly like a plain create, and reads the mark to tell them apart
+	if !req.State.Raw.IsNull() {
+		resp.Diagnostics.Append(resp.Private.SetKey(ctx, privateStateKeySeen, []byte("true"))...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+	}
+
+	// Validate the plan once the planned rules below have been populated
+	defer func() {
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		// A ruleset that is not changing is not written during apply, so skip dry-run
+		if !req.State.Raw.IsNull() && !resp.Plan.Raw.IsNull() && req.State.Raw.Equal(resp.Plan.Raw) {
+			return
+		}
+
+		// Check if enough of the plan is known to build a request for the dry-run
+		if !req.Config.Raw.IsFullyKnown() {
+			return
+		}
+
+		r.validateWithDryRun(ctx, req, state, plan, &resp.Diagnostics)
+	}()
 
 	// Do nothing if there is no state or no plan.
 	if state == nil || plan == nil {
@@ -429,4 +461,106 @@ func transformQueryStringJSON(jsonBytes []byte) []byte {
 		return []byte(jsonStr)
 	}
 	return jsonBytes
+}
+
+func (r *RulesetResource) validateWithDryRun(
+	ctx context.Context,
+	req resource.ModifyPlanRequest,
+	state *RulesetModel,
+	plan *RulesetModel,
+	diagnostics *diag.Diagnostics,
+) {
+	if r.client == nil {
+		return
+	}
+
+	requestOptions := []option.RequestOption{
+		option.WithQuery("dry_run", "true"),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	}
+
+	var err error
+	switch {
+	// Terraform plans a create as a null state
+	case req.State.Raw.IsNull():
+		// skip the dry run when creating as part of a replacement
+		if replacesExistingRuleset(ctx, req) {
+			return
+		}
+
+		dataBytes, marshalErr := plan.MarshalJSON()
+		if marshalErr != nil {
+			diagnostics.AddWarning("failed to serialize http request for the dry run", marshalErr.Error())
+			return
+		}
+
+		params := rulesets.RulesetNewParams{}
+		if !plan.AccountID.IsNull() {
+			params.AccountID = cloudflare.F(plan.AccountID.ValueString())
+		} else {
+			params.ZoneID = cloudflare.F(plan.ZoneID.ValueString())
+		}
+
+		_, err = r.client.Rulesets.New(ctx, params,
+			append(requestOptions, option.WithRequestBody("application/json", dataBytes))...)
+
+	// Terraform plans a destroy as a null plan
+	case req.Plan.Raw.IsNull():
+		return
+
+	// Terraform carries out a replacement as a destroy followed by a create that it
+	// plans in a separate call, skip dry run
+	case replacesRuleset(state, plan):
+		return
+
+	// Updating a ruleset that already exists
+	default:
+		dataBytes, marshalErr := plan.MarshalJSONForUpdate(*state)
+		if marshalErr != nil {
+			diagnostics.AddWarning("failed to serialize http request for the dry run", marshalErr.Error())
+			return
+		}
+
+		params := rulesets.RulesetUpdateParams{}
+		if !plan.AccountID.IsNull() {
+			params.AccountID = cloudflare.F(plan.AccountID.ValueString())
+		} else {
+			params.ZoneID = cloudflare.F(plan.ZoneID.ValueString())
+		}
+
+		_, err = r.client.Rulesets.Update(ctx, plan.ID.ValueString(), params,
+			append(requestOptions, option.WithRequestBody("application/json", dataBytes))...)
+	}
+
+	if err == nil {
+		return
+	}
+
+	var apiErr *cloudflare.Error
+	if !errors.As(err, &apiErr) || apiErr.StatusCode != http.StatusBadRequest || len(apiErr.Errors) == 0 {
+		diagnostics.AddWarning("failed to make http request for the dry run", err.Error())
+		return
+	}
+
+	for _, apiError := range apiErr.Errors {
+		diagnostics.AddError("failed to make http request for the dry run", apiError.Message)
+	}
+}
+
+// replacesExistingRuleset checks whether a planned create is the second half of a
+// replacement, by looking for the mark ModifyPlan leaves on a ruleset that is there
+func replacesExistingRuleset(ctx context.Context, req resource.ModifyPlanRequest) bool {
+	existing, _ := req.Private.GetKey(ctx, privateStateKeySeen)
+
+	return existing != nil
+}
+
+// replacesRuleset reports whether changing from the state to the plan replaces the
+// ruleset instead of updating it in place
+func replacesRuleset(state, plan *RulesetModel) bool {
+	return !plan.AccountID.Equal(state.AccountID) ||
+		!plan.ZoneID.Equal(state.ZoneID) ||
+		!plan.Kind.Equal(state.Kind) ||
+		!plan.Name.Equal(state.Name) ||
+		!plan.Phase.Equal(state.Phase)
 }
