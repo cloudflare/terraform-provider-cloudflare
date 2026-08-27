@@ -20,11 +20,10 @@ type FlagshipFlagResultDataSourceEnvelope struct {
 type FlagshipFlagDataSourceModel struct {
 	AccountID        types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
 	AppID            types.String                                                   `tfsdk:"app_id" path:"app_id,required"`
-	FlagKey          types.String                                                   `tfsdk:"flag_key" path:"flag_key,required"`
+	Key              types.String                                                   `tfsdk:"key" json:"key,required"`
 	DefaultVariation types.String                                                   `tfsdk:"default_variation" json:"default_variation,computed"`
 	Description      types.String                                                   `tfsdk:"description" json:"description,computed"`
 	Enabled          types.Bool                                                     `tfsdk:"enabled" json:"enabled,computed"`
-	Key              types.String                                                   `tfsdk:"key" json:"key,computed"`
 	Type             types.String                                                   `tfsdk:"type" json:"type,computed"`
 	UpdatedAt        types.String                                                   `tfsdk:"updated_at" json:"updated_at,computed"`
 	UpdatedBy        types.String                                                   `tfsdk:"updated_by" json:"updated_by,computed"`

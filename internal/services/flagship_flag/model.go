@@ -15,7 +15,6 @@ type FlagshipFlagResultEnvelope struct {
 type FlagshipFlagModel struct {
 	AccountID        types.String               `tfsdk:"account_id" path:"account_id,required"`
 	AppID            types.String               `tfsdk:"app_id" path:"app_id,required"`
-	FlagKey          types.String               `tfsdk:"flag_key" path:"flag_key,optional"`
 	DefaultVariation types.String               `tfsdk:"default_variation" json:"default_variation,required"`
 	Enabled          types.Bool                 `tfsdk:"enabled" json:"enabled,required"`
 	Key              types.String               `tfsdk:"key" json:"key,required"`

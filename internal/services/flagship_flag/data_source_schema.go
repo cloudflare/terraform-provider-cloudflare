@@ -35,8 +35,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "App identifier.",
 				Required:    true,
 			},
-			"flag_key": schema.StringAttribute{
-				Description: "Flag key (slug).",
+			"key": schema.StringAttribute{
+				Description: "Unique identifier for the flag within an app. Used in all evaluation and SDK calls.",
 				Required:    true,
 			},
 			"default_variation": schema.StringAttribute{
@@ -48,10 +48,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "When false, the flag bypasses all rules and always serves `default_variation`.",
-				Computed:    true,
-			},
-			"key": schema.StringAttribute{
-				Description: "Unique identifier for the flag within an app. Used in all evaluation and SDK calls.",
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{

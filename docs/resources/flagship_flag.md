@@ -21,7 +21,7 @@ resource "cloudflare_flagship_flag" "example_flagship_flag" {
   app_id = "app_id"
   default_variation = "x"
   enabled = true
-  key = "x"
+  key = "example-flag"
   rules = [{
     conditions = [{
       attribute = "x"
@@ -61,7 +61,6 @@ resource "cloudflare_flagship_flag" "example_flagship_flag" {
 ### Optional
 
 - `description` (String)
-- `flag_key` (String) Flag key (slug).
 - `type` (String) Value type of the flag's variations. Inferred from the variation values on write, so it may be omitted in requests.
 Available values: "boolean", "string", "number", "json".
 

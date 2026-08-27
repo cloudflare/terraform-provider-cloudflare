@@ -68,7 +68,7 @@ func (d *FlagshipFlagDataSource) Read(ctx context.Context, req datasource.ReadRe
 	_, err := d.client.Flagship.Apps.Flags.Get(
 		ctx,
 		data.AppID.ValueString(),
-		data.FlagKey.ValueString(),
+		data.Key.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
