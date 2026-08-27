@@ -53,6 +53,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"script_name": schema.StringAttribute{
 				Required: true,
 			},
+			"concurrency": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"limit": schema.Int64Attribute{
+						Description: "Maximum number of instances of this workflow that can run concurrently. Additional instances are queued and started as running instances complete. Must not exceed the account concurrency limit.",
+						Optional:    true,
+						Validators: []validator.Int64{
+							int64validator.AtLeast(1),
+						},
+					},
+				},
+			},
 			"default_retention": schema.SingleNestedAttribute{
 				Description: "Default retention applied to instances of this version when they do not set their own retention.",
 				Optional:    true,
