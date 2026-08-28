@@ -2096,18 +2096,21 @@ func TestAccCloudflareAccessApplication_MCPSetup(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
-				ImportStateVerifyIgnore: []string{"enable_binding_cookie", "options_preflight_bypass", "auto_redirect_to_identity"},
+				ImportStateVerifyIgnore: []string{"auto_redirect_to_identity"},
 			},
 			{
 				ResourceName:            mcpAppName,
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
-				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "enable_binding_cookie", "options_preflight_bypass", "self_hosted_domains", "tags", "auto_redirect_to_identity"},
+				ImportStateVerifyIgnore: []string{"service_auth_401_redirect", "destinations", "self_hosted_domains", "tags", "auto_redirect_to_identity"},
 			},
+			// Verify no plan drift after import — enable_binding_cookie, options_preflight_bypass,
+			// and cors_headers must not show false -> null changes for mcp/mcp_portal types.
 			{
-				Config:   testAccCloudflareAccessApplicationMCPConfig(rnd, domain, accountID),
-				PlanOnly: true,
+				Config:             testAccCloudflareAccessApplicationMCPConfig(rnd, domain, accountID),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
 			},
 		},
 	})

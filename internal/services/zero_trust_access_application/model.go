@@ -28,7 +28,7 @@ type ZeroTrustAccessApplicationModel struct {
 	HeaderBgColor               types.String                                                               `tfsdk:"header_bg_color" json:"header_bg_color,optional"`
 	LogoURL                     types.String                                                               `tfsdk:"logo_url" json:"logo_url,optional"`
 	Name                        types.String                                                               `tfsdk:"name" json:"name,computed_optional"`
-	OptionsPreflightBypass      types.Bool                                                                 `tfsdk:"options_preflight_bypass" json:"options_preflight_bypass,optional"`
+	OptionsPreflightBypass      types.Bool                                                                 `tfsdk:"options_preflight_bypass" json:"options_preflight_bypass,computed_optional"`
 	ReadServiceTokensFromHeader types.String                                                               `tfsdk:"read_service_tokens_from_header" json:"read_service_tokens_from_header,optional"`
 	SameSiteCookieAttribute     types.String                                                               `tfsdk:"same_site_cookie_attribute" json:"same_site_cookie_attribute,optional"`
 	ServiceAuth401Redirect      types.Bool                                                                 `tfsdk:"service_auth_401_redirect" json:"service_auth_401_redirect,optional"`
@@ -36,14 +36,14 @@ type ZeroTrustAccessApplicationModel struct {
 	Type                        types.String                                                               `tfsdk:"type" json:"type,computed_optional"`
 	AllowedIdPs                 *[]types.String                                                            `tfsdk:"allowed_idps" json:"allowed_idps,optional"`
 	CustomPages                 *[]types.String                                                            `tfsdk:"custom_pages" json:"custom_pages,optional"`
-	CORSHeaders                 *ZeroTrustAccessApplicationCORSHeadersModel                                `tfsdk:"cors_headers" json:"cors_headers,optional"`
+	CORSHeaders                 *ZeroTrustAccessApplicationCORSHeadersModel                                `tfsdk:"cors_headers" json:"cors_headers,computed_optional"`
 	FooterLinks                 *[]*ZeroTrustAccessApplicationFooterLinksModel                             `tfsdk:"footer_links" json:"footer_links,optional"`
 	OAuthConfiguration          *ZeroTrustAccessApplicationOAuthConfigurationModel                         `tfsdk:"oauth_configuration" json:"oauth_configuration,optional"`
 	SCIMConfig                  *ZeroTrustAccessApplicationSCIMConfigModel                                 `tfsdk:"scim_config" json:"scim_config,optional"`
 	TargetCriteria              *[]*ZeroTrustAccessApplicationTargetCriteriaModel                          `tfsdk:"target_criteria" json:"target_criteria,optional"`
 	AppLauncherVisible          types.Bool                                                                 `tfsdk:"app_launcher_visible" json:"app_launcher_visible,computed_optional"`
 	AutoRedirectToIdentity      types.Bool                                                                 `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,optional"`
-	EnableBindingCookie         types.Bool                                                                 `tfsdk:"enable_binding_cookie" json:"enable_binding_cookie,optional"`
+	EnableBindingCookie         types.Bool                                                                 `tfsdk:"enable_binding_cookie" json:"enable_binding_cookie,computed_optional"`
 	HTTPOnlyCookieAttribute     types.Bool                                                                 `tfsdk:"http_only_cookie_attribute" json:"http_only_cookie_attribute,computed_optional"`
 	PathCookieAttribute         types.Bool                                                                 `tfsdk:"path_cookie_attribute" json:"path_cookie_attribute,optional"`
 	SessionDuration             types.String                                                               `tfsdk:"session_duration" json:"session_duration,computed_optional"`

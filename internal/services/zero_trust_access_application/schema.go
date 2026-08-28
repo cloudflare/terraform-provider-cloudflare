@@ -107,6 +107,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"options_preflight_bypass": schema.BoolAttribute{
 				Description: "Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.Bool{
 					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
@@ -174,6 +175,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"cors_headers": schema.SingleNestedAttribute{
+				Computed: true,
 				Optional: true,
 				Validators: []validator.Object{
 					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),
@@ -479,6 +481,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"enable_binding_cookie": schema.BoolAttribute{
 				Description: "Enables the binding cookie, which increases security against compromised authorization tokens and CSRF attacks.",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.Bool{
 					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), selfHostedAppTypes...),

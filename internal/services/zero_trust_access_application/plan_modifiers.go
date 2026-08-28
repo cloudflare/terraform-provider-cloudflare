@@ -130,6 +130,21 @@ func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resour
 
 	// Add default values for some app type specific attributes
 	setDefaultAccordingToAppTypes(append(selfHostedAppTypes, "mcp"), appType, &planApp.HTTPOnlyCookieAttribute, types.BoolValue(true), types.BoolNull())
+	// For non-selfHosted types (e.g. mcp), enable_binding_cookie, options_preflight_bypass, and cors_headers
+	// are returned by the API but cannot be set in config. Copy state into plan to suppress false -> null diffs.
+	if !slices.Contains(selfHostedAppTypes, appType) && stateApp != nil {
+		if planApp.EnableBindingCookie.IsNull() {
+			planApp.EnableBindingCookie = stateApp.EnableBindingCookie
+		}
+		if planApp.OptionsPreflightBypass.IsNull() {
+			planApp.OptionsPreflightBypass = stateApp.OptionsPreflightBypass
+		}
+		if planApp.CORSHeaders == nil {
+			planApp.CORSHeaders = stateApp.CORSHeaders
+		}
+	}
+	setDefaultAccordingToAppTypes(selfHostedAppTypes, appType, &planApp.EnableBindingCookie, types.BoolValue(false), types.BoolNull())
+	setDefaultAccordingToAppTypes(selfHostedAppTypes, appType, &planApp.OptionsPreflightBypass, types.BoolValue(false), types.BoolNull())
 	setDefaultAccordingToAppTypes(appLauncherVisibleAppTypes, appType, &planApp.AppLauncherVisible, types.BoolValue(true), types.BoolNull())
 	setDefaultAccordingToAppType("app_launcher", appType, &planApp.SkipAppLauncherLoginPage, types.BoolValue(false), types.BoolNull())
 	setDefaultAccordingToAppTypes(sessionDurationCompatibleAppTypes, appType, &planApp.SessionDuration, types.StringValue("24h"), types.StringNull())
