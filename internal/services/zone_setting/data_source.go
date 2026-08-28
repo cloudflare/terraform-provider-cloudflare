@@ -56,6 +56,10 @@ func (d *ZoneSettingDataSource) Read(ctx context.Context, req datasource.ReadReq
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	if isCNAMEFlatteningSetting(data.SettingID) {
+		addCNAMEFlatteningDeprecationError(&resp.Diagnostics)
+		return
+	}
 
 	params, diags := data.toReadParams(ctx)
 	resp.Diagnostics.Append(diags...)
