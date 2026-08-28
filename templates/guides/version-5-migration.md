@@ -45,8 +45,8 @@ Before starting the migration:
 - **Terraform 1.8+** is recommended if you use any
   [renamed resources](#resource-rename-reference). It enables `moved` blocks,
   which provide the smoothest migration experience. On older Terraform
-  versions, you can use `terraform state mv` instead -- see
-  [Using `terraform state mv` (Terraform < 1.8)](#using-terraform-state-mv-terraform--18).
+  versions, cross-resource-type moves are not supported; use
+  `terraform state rm` followed by `terraform import` instead.
 - **tf-migrate** -- Install the [tf-migrate] CLI tool for automatic HCL
   configuration changes. Download the latest release for your platform from
   the [tf-migrate releases page](https://github.com/cloudflare/tf-migrate/releases):
@@ -596,9 +596,9 @@ a `moved` block operation. Resources marked **Manual** require
 `terraform state rm` + `terraform import` because they do not include
 automatic state transformation for the rename.
 
-~> Terraform 1.8+ is recommended for `moved` blocks. On older versions, use
-`terraform state mv` instead -- see
-[below](#using-terraform-state-mv-terraform--18).
+~> Terraform 1.8+ is required for cross-resource-type `moved` blocks. On older
+versions, use `terraform state rm` followed by `terraform import` -- see
+[below](#migrating-renamed-resources-on-terraform--18).
 
 | v4 Resource | v5 Resource | State |
 |---|---|---|
@@ -619,7 +619,7 @@ automatic state transformation for the rename.
 | `cloudflare_authenticated_origin_pulls` | `cloudflare_authenticated_origin_pulls_settings` | Auto |
 | `cloudflare_authenticated_origin_pulls_certificate` (per-hostname) | `cloudflare_authenticated_origin_pulls_hostname_certificate` | Auto |
 | `cloudflare_device_dex_test` | `cloudflare_zero_trust_dex_test` | Auto |
-| `cloudflare_device_managed_networks` | `cloudflare_zero_trust_device_managed_networks` | Auto* |
+| `cloudflare_device_managed_networks` | `cloudflare_zero_trust_device_managed_networks` | Auto |
 | `cloudflare_device_policy_certificates` | `cloudflare_zero_trust_device_certificates` | Manual |
 | `cloudflare_device_posture_integration` | `cloudflare_zero_trust_device_posture_integration` | Manual |
 | `cloudflare_device_posture_rule` | `cloudflare_zero_trust_device_posture_rule` | Auto |
@@ -650,11 +650,6 @@ automatic state transformation for the rename.
 | `cloudflare_worker_route` | `cloudflare_workers_route` | Auto |
 | `cloudflare_worker_script` | `cloudflare_workers_script` | Auto |
 | `cloudflare_workers_for_platforms_namespace` | `cloudflare_workers_for_platforms_dispatch_namespace` | Auto |
-
-\* Exception for Terraform < 1.8: `cloudflare_device_managed_networks` ->
-`cloudflare_zero_trust_device_managed_networks` does not support
-`terraform state mv`. Use Terraform 1.8+ `moved` blocks, or use
-`terraform state rm` + `terraform import`.
 
 ### Using `moved` Blocks (Terraform 1.8+)
 
@@ -691,32 +686,17 @@ terraform import cloudflare_zero_trust_access_custom_page.example <account_id>/<
 Refer to the individual [resource documentation](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs)
 for the correct import string format.
 
-### Using `terraform state mv` (Terraform < 1.8)
+### Migrating Renamed Resources on Terraform < 1.8
 
-If you are on a Terraform version older than 1.8, you cannot use `moved`
-blocks for cross-resource-type renames. Instead, use `terraform state mv` to
-rename resources directly in the state. The provider's state upgraders will
-automatically transform the state on the next `terraform plan` or
-`terraform apply`.
+Terraform versions older than 1.8 cannot move state between different
+resource types. The `terraform state mv` command rejects these moves even when
+the provider has a state upgrader.
 
-For resources marked **Auto** in the rename table:
-
-```bash
-# Move the resource in state from the old type to the new type
-terraform state mv cloudflare_record.example cloudflare_dns_record.example
-```
-
-~> Exception: `cloudflare_device_managed_networks` ->
-`cloudflare_zero_trust_device_managed_networks` cannot be migrated via
-`terraform state mv` on Terraform < 1.8. Use Terraform 1.8+ with `moved`
-blocks, or use `terraform state rm` + `terraform import`.
-
-Then update the resource type in your HCL to match the new name. On the next
-`terraform plan`, the provider's state upgrader detects the old
-`schema_version` and transforms the state automatically.
-
-For resources marked **Manual**, use `terraform state rm` + `terraform import`
-as described [above](#using-terraform-state-rm-and-import-manual-resources).
+Upgrade to Terraform 1.8+ and use [`moved` blocks](#using-moved-blocks-terraform-18)
+when possible. If upgrading is not possible, update the resource type in HCL,
+then use `terraform state rm` and `terraform import` as described
+[above](#using-terraform-state-rm-and-import-manual-resources). Confirm the
+correct import identifier in the resource documentation before removing state.
 
 ---
 
@@ -1789,13 +1769,10 @@ you do, upgrade to v5.18 first.
 
 **What if I am on Terraform < 1.8?**
 
-You can still migrate. `moved` blocks require Terraform 1.8+, but the
-provider also supports migration via `terraform state mv` for most renamed
-resources. When you run `terraform state mv cloudflare_record.x
-cloudflare_dns_record.x`, the provider's state upgraders automatically
-transform the state on the next plan/apply. See exceptions in
-[Using `terraform state mv` (Terraform < 1.8)](#using-terraform-state-mv-terraform--18)
-for details.
+Cross-resource-type moves require Terraform 1.8+. Upgrade and use `moved`
+blocks when possible. Otherwise, migrate renamed resources with
+`terraform state rm` followed by `terraform import`; `terraform state mv`
+cannot move an object to a different resource type.
 
 **What about `cloudflare_worker_secret` / `cloudflare_workers_secret`?**
 
