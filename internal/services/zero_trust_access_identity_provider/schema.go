@@ -373,7 +373,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     booldefault.StaticBool(false),
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"read_only": schema.BoolAttribute{
 				Description: "Indicates that the identity provider is immutable and cannot be updated or deleted via the API.",
