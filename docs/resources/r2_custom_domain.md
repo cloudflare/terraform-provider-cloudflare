@@ -62,5 +62,8 @@ Available values: "initializing", "pending", "active", "deactivated", "error", "
 
 ## Import
 
+Import is supported using the following syntax:
 
-~> This resource does not currently support `terraform import`.
+```shell
+$ terraform import cloudflare_r2_custom_domain.example '<account_id>/<bucket_name>/<jurisdiction>/<domain>'
+```
