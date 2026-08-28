@@ -1,0 +1,21 @@
+templates/guides/version-5-migration.md
+  s_537daf13a688e9::t_aa98a03b385be9 24-60
+docs/guides/version-5-migration.md
+  s_537daf13a688e9::t_3437eefd66b0d5 24-60,1912,1918,1920
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "93801d9e42b3fb23f901367187e821b1958929af",
+  "prompts": {},
+  "sessions": {
+    "s_537daf13a688e9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdb0cefd6ffebXWHZpYJGcm7t6",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Sarah Sicard <ssicard@cloudflare.com>"
+    }
+  }
+}
