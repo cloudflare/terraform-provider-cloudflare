@@ -288,7 +288,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"default": schema.BoolAttribute{
 				Description:   "Whether the policy is the default policy for an account.",

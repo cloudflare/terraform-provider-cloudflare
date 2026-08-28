@@ -136,7 +136,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(true),
 							},
 						},
-						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"redact_query_string": schema.BoolAttribute{
 						Description: "Whether query strings are removed from request URLs in logs and traces.",
@@ -244,10 +243,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							boolplanmodifier.UseStateForUnknown(),
 						},
 					},
-				"url": schema.StringAttribute{
-					Description: "The address the Worker would serve on once its *.workers.dev subdomain is enabled. Present whenever the account owns a workers.dev subdomain, regardless of whether `enabled` is true, so presence does not imply the Worker is currently live at this URL. Absent only when the account owns no workers.dev subdomain.",
-					Computed:    true,
-				},
+					"url": schema.StringAttribute{
+						Description: "The address the Worker would serve on once its *.workers.dev subdomain is enabled. Present whenever the account owns a workers.dev subdomain, regardless of whether `enabled` is true, so presence does not imply the Worker is currently live at this URL. Absent only when the account owns no workers.dev subdomain.",
+						Computed:    true,
+					},
 				},
 				Default: objectdefault.StaticValue(customfield.NewObjectMust(ctx, &WorkerSubdomainModel{
 					Enabled:         types.BoolValue(false),
