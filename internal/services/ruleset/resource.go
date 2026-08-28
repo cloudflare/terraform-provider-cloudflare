@@ -478,6 +478,11 @@ func (r *RulesetResource) validateWithDryRun(
 	}
 
 	res := new(http.Response)
+	defer func() {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+	}()
 	requestOptions := []option.RequestOption{
 		option.WithQuery("dry_run", "true"),
 		option.WithMiddleware(logging.Middleware(ctx)),
