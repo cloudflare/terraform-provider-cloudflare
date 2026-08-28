@@ -343,7 +343,7 @@ func TestAccCloudflareRuleset_Name(t *testing.T) {
 
 var dryRunErrorPattern = regexp.MustCompile(`failed to make http request for the dry run`)
 
-var httpRequestErrorPattern = regexp.MustCompile(`failed to make http request`)
+var httpRequestErrorPattern = regexp.MustCompile(`failed to make http request\n`)
 
 var refusedDeleteErrorPattern = regexp.MustCompile(
 	`(?s)DELETE\s.*/rulesets/[0-9a-f]{32}.*400 Bad Request`,
@@ -359,6 +359,11 @@ func TestAccCloudflareRuleset_DryRunInvalidOnCreate(t *testing.T) {
 				ConfigVariables:    configVariables,
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
+			},
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ExpectError:     httpRequestErrorPattern,
 			},
 		},
 	})
