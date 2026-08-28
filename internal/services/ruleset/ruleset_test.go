@@ -5505,6 +5505,9 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 										"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 											"disable_stale_while_updating": knownvalue.Bool(false),
 										}),
+										"origin_range_requests": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"mode": knownvalue.StringExact("on"),
+										}),
 									}),
 								}),
 							}),
@@ -5583,6 +5586,9 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 									"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 										"disable_stale_while_updating": knownvalue.Bool(false),
 									}),
+									"origin_range_requests": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"mode": knownvalue.StringExact("on"),
+									}),
 								}),
 							}),
 						}),
@@ -5657,6 +5663,9 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 									"respect_strong_etags":       knownvalue.Bool(true),
 									"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 										"disable_stale_while_updating": knownvalue.Bool(false),
+									}),
+									"origin_range_requests": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"mode": knownvalue.StringExact("on"),
 									}),
 								}),
 							}),
@@ -5721,6 +5730,7 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 										"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 											"disable_stale_while_updating": knownvalue.Bool(true),
 										}),
+										"origin_range_requests": knownvalue.Null(),
 									}),
 								}),
 							}),
@@ -5776,6 +5786,7 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 									"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 										"disable_stale_while_updating": knownvalue.Bool(true),
 									}),
+									"origin_range_requests": knownvalue.Null(),
 								}),
 							}),
 						}),
@@ -5828,6 +5839,7 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 									"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 										"disable_stale_while_updating": knownvalue.Bool(true),
 									}),
+									"origin_range_requests": knownvalue.Null(),
 								}),
 							}),
 						}),
@@ -5910,6 +5922,13 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 								}),
 							}),
 						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("origin_range_requests"),
+							knownvalue.ObjectExact(map[string]knownvalue.Check{
+								"mode": knownvalue.StringExact("default"),
+							}),
+						),
 					},
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
@@ -6045,6 +6064,20 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 									"serve_stale":                knownvalue.Null(),
 								}),
 							}),
+						}),
+					),
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("origin_range_requests"),
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"mode": knownvalue.StringExact("default"),
+						}),
+					),
+					statecheck.ExpectKnownValue(
+						"data.cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("origin_range_requests"),
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"mode": knownvalue.StringExact("default"),
 						}),
 					),
 				},

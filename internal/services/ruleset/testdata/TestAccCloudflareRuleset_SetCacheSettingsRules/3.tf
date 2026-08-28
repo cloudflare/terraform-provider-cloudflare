@@ -59,6 +59,9 @@ resource "cloudflare_ruleset" "my_ruleset" {
         serve_stale = {
           disable_stale_while_updating = false
         }
+        origin_range_requests = {
+          mode = "on"
+        }
       }
     }
   ]

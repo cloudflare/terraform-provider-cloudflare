@@ -321,20 +321,21 @@ type TargetV5RuleModel struct {
 //   - map[string][]types.String for customfield.Map[customfield.List[types.String]] (MapAttribute)
 type TargetV5ActionParametersModel struct {
 	// Nested objects (MaxItems:1 blocks → SingleNestedAttribute)
-	Response     *TargetV5ResponseModel     `tfsdk:"response"`
-	Autominify   *TargetV5AutoMinifyModel   `tfsdk:"autominify"`
-	BrowserTTL   *TargetV5BrowserTTLModel   `tfsdk:"browser_ttl"`
-	CacheKey     *TargetV5CacheKeyModel     `tfsdk:"cache_key"`
-	CacheReserve *TargetV5CacheReserveModel `tfsdk:"cache_reserve"`
-	EdgeTTL      *TargetV5EdgeTTLModel      `tfsdk:"edge_ttl"`
-	FromList     *TargetV5FromListModel     `tfsdk:"from_list"`
-	FromValue    *TargetV5FromValueModel    `tfsdk:"from_value"`
-	MatchedData  *TargetV5MatchedDataModel  `tfsdk:"matched_data"`
-	Overrides    *TargetV5OverridesModel    `tfsdk:"overrides"`
-	Origin       *TargetV5OriginModel       `tfsdk:"origin"`
-	SNI          *TargetV5SNIModel          `tfsdk:"sni"`
-	ServeStale   *TargetV5ServeStaleModel   `tfsdk:"serve_stale"`
-	URI          *TargetV5URIModel          `tfsdk:"uri"`
+	Response            *TargetV5ResponseModel            `tfsdk:"response"`
+	Autominify          *TargetV5AutoMinifyModel          `tfsdk:"autominify"`
+	BrowserTTL          *TargetV5BrowserTTLModel          `tfsdk:"browser_ttl"`
+	CacheKey            *TargetV5CacheKeyModel            `tfsdk:"cache_key"`
+	CacheReserve        *TargetV5CacheReserveModel        `tfsdk:"cache_reserve"`
+	EdgeTTL             *TargetV5EdgeTTLModel             `tfsdk:"edge_ttl"`
+	FromList            *TargetV5FromListModel            `tfsdk:"from_list"`
+	FromValue           *TargetV5FromValueModel           `tfsdk:"from_value"`
+	MatchedData         *TargetV5MatchedDataModel         `tfsdk:"matched_data"`
+	Overrides           *TargetV5OverridesModel           `tfsdk:"overrides"`
+	Origin              *TargetV5OriginModel              `tfsdk:"origin"`
+	SNI                 *TargetV5SNIModel                 `tfsdk:"sni"`
+	ServeStale          *TargetV5ServeStaleModel          `tfsdk:"serve_stale"`
+	OriginRangeRequests *TargetV5OriginRangeRequestsModel `tfsdk:"origin_range_requests"`
+	URI                 *TargetV5URIModel                 `tfsdk:"uri"`
 
 	// Nested object lists
 	Algorithms               []*TargetV5AlgorithmModel        `tfsdk:"algorithms"`
@@ -585,6 +586,10 @@ type TargetV5TargetURLModel struct {
 
 type TargetV5ServeStaleModel struct {
 	DisableStaleWhileUpdating types.Bool `tfsdk:"disable_stale_while_updating"`
+}
+
+type TargetV5OriginRangeRequestsModel struct {
+	Mode types.String `tfsdk:"mode"`
 }
 
 // Cache control directive models for set_cache_settings action
