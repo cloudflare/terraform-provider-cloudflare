@@ -1,0 +1,26 @@
+internal/services/zero_trust_device_custom_profile/migration/v500/model.go
+  s_db4c30aa458e22::t_2e396feea06463 91-92
+internal/services/zero_trust_organization/migration/v500/model.go
+  s_db4c30aa458e22::t_2e80d12b4a39ef 29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4cf67a3b89aab4758fd1868fe002727db29dfd3d",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_db4c30aa458e22": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fca722fd9ffebF8COOcm9kj8Ht",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
