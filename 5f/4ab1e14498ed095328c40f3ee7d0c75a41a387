@@ -1,0 +1,24 @@
+internal/services/zero_trust_resource_library_application/resource_test.go
+  s_4616493795e62b::t_519b6e5d419159 145
+  s_4616493795e62b::t_2ebf4ebbbd7a6a 6,11,101-104,120-135,137-139,141-144,146,150-152,154
+  s_4616493795e62b::t_a3661baa02c37f 16
+  s_4616493795e62b::t_1a160fa78f8532 42,55-59,66,68-71,77-88
+  s_4616493795e62b::t_59cb2fcc59f00e 136
+  s_4616493795e62b::t_2361ae3248d0c8 147-149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5f4ab1e14498ed095328c40f3ee7d0c75a41a387",
+  "prompts": {},
+  "sessions": {
+    "s_4616493795e62b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_000274110ffe4u2ViMoY3f7zl2",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "rahul <rbhati@cloudflare.com>"
+    }
+  }
+}
