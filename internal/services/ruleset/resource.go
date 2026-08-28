@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/option"
@@ -96,6 +97,7 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	addRulesetWarnings(&resp.Diagnostics, bytes)
 	bytes = transformQueryStringJSON(bytes)
 	err = apijsoncustom.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -148,6 +150,7 @@ func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	addRulesetWarnings(&resp.Diagnostics, bytes)
 	bytes = transformQueryStringJSON(bytes)
 	err = apijsoncustom.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -474,9 +477,11 @@ func (r *RulesetResource) validateWithDryRun(
 		return
 	}
 
+	res := new(http.Response)
 	requestOptions := []option.RequestOption{
 		option.WithQuery("dry_run", "true"),
 		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithResponseBodyInto(&res),
 	}
 
 	var err error
@@ -533,6 +538,8 @@ func (r *RulesetResource) validateWithDryRun(
 	}
 
 	if err == nil {
+		bytes, _ := io.ReadAll(res.Body)
+		addRulesetWarnings(diagnostics, bytes)
 		return
 	}
 
@@ -563,4 +570,15 @@ func replacesRuleset(state, plan *RulesetModel) bool {
 		!plan.Kind.Equal(state.Kind) ||
 		!plan.Name.Equal(state.Name) ||
 		!plan.Phase.Equal(state.Phase)
+}
+
+func addRulesetWarnings(diagnostics *diag.Diagnostics, body []byte) {
+	for _, message := range gjson.GetBytes(body, "messages").Array() {
+		text := strings.TrimPrefix(message.Get("message").String(), "warning: ")
+		if text == "" {
+			continue
+		}
+
+		diagnostics.AddWarning("the http request returned a warning", text)
+	}
 }
