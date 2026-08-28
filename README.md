@@ -85,10 +85,10 @@ We are keen for your feedback; please open an [issue](https://www.github.com/clo
 
 ## Maintenance
 
-This SDK is actively maintained, however, many issues are tracked outside of GitHub on internal Cloudflare systems. Members of the community are welcome to join and discuss your issues during our weekly triage meetings. For urgent issues, please contact [Cloudflare support](https://developers.cloudflare.com/support/contacting-cloudflare-support/). 
+This SDK is actively maintained, however, it is **auto-generated** and maintained internally at Cloudflare, so **we are no longer accepting pull requests from the community.** Many issues are tracked outside of GitHub on internal Cloudflare systems. Please open an [issue](https://www.github.com/cloudflare/terraform-provider-cloudflare/issues) rather than a pull request. Members of the community are welcome to join and discuss your issues during our weekly triage meetings. For urgent issues, please contact [Cloudflare support](https://developers.cloudflare.com/support/contacting-cloudflare-support/).
 
 * [Community triage meeting](https://calendar.google.com/calendar/embed?src=c_dbf6ce250643f2e60f806d28f3fc09a9de24cbe0ab3ffb699838303d2adfc9e4%40group.calendar.google.com&ctz=America%2FLos_Angeles)
 
 ## Contributing
 
-See [the contributing documentation](./CONTRIBUTING.md).
+This repository is auto-generated, and **we are no longer accepting pull requests.** If you have a bug or feature request, please open an [issue](https://www.github.com/cloudflare/terraform-provider-cloudflare/issues). See [the contributing documentation](./CONTRIBUTING.md) for more details.

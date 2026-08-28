@@ -1,3 +1,20 @@
+## We are not accepting pull requests
+
+> [!IMPORTANT]
+> This repository is **auto-generated** and maintained internally at Cloudflare.
+> Because of this, **we are no longer accepting pull requests from the community.**
+> Any pull requests that are opened will not be merged.
+
+If you have found a bug or would like to request a feature, please open an
+[issue](https://www.github.com/cloudflare/terraform-provider-cloudflare/issues)
+instead. Issues are triaged by the team on internal Cloudflare systems, and you
+are welcome to join and discuss them during our weekly
+[community triage meeting](https://calendar.google.com/calendar/embed?src=c_dbf6ce250643f2e60f806d28f3fc09a9de24cbe0ab3ffb699838303d2adfc9e4%40group.calendar.google.com&ctz=America%2FLos_Angeles).
+For urgent issues, please contact
+[Cloudflare support](https://developers.cloudflare.com/support/contacting-cloudflare-support/).
+
+The rest of this document is retained for reference and for the internal team.
+
 ## Setting up the environment
 
 To set up the repository, run:
