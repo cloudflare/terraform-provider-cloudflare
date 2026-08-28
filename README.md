@@ -89,4 +89,8 @@ This SDK is actively maintained, however, it is **auto-generated** and maintaine
 
 ## Contributing
 
-This repository is auto-generated, and **we are no longer accepting pull requests.** If you have a bug or feature request, please open an [issue](https://www.github.com/cloudflare/terraform-provider-cloudflare/issues). See [the contributing documentation](./CONTRIBUTING.md) for more details.
+This repository is auto-generated, and **we are no longer accepting pull requests.** If you have a bug or feature request, please open an [issue](https://www.github.com/cloudflare/terraform-provider-cloudflare/issues).
+
+That said, if you have a fix that is known to work, a pull request can still be helpful as a reference implementation for the team, even though it will not be merged directly. Please open an issue alongside it so we can track the change.
+
+See [the contributing documentation](./CONTRIBUTING.md) for more details.

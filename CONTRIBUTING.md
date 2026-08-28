@@ -11,6 +11,10 @@ instead. Issues are triaged by the team on internal Cloudflare systems. For
 urgent issues, please contact
 [Cloudflare support](https://developers.cloudflare.com/support/contacting-cloudflare-support/).
 
+If you have a fix that is known to work, a pull request can still be helpful as
+a reference implementation for the team, even though it will not be merged
+directly. Please open an issue alongside it so we can track the change.
+
 The rest of this document is retained for reference and for the internal team.
 
 ## Setting up the environment
