@@ -11,7 +11,6 @@ import (
 )
 
 func TestImagesDataSourceModelSchemaParity(t *testing.T) {
-	t.Skip("need investigation: currently broken")
 	t.Parallel()
 	model := (*image.ImagesDataSourceModel)(nil)
 	schema := image.ListDataSourceSchema(context.TODO())

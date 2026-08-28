@@ -64,7 +64,10 @@ func (r *ImageResource) Create(ctx context.Context, req resource.CreateRequest, 
 		return
 	}
 
-	dataBytes, contentType, err := data.MarshalMultipart()
+	// NOTE: uses the localized marshaler in marshal.go instead of the generated
+	// MarshalMultipart so that a null/unknown `metadata` is omitted rather than
+	// sent as an empty application/json part (which the API rejects with 5400).
+	dataBytes, contentType, err := data.marshalCreateMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
 		return
@@ -112,9 +115,13 @@ func (r *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		return
 	}
 
-	dataBytes, contentType, err := data.MarshalMultipart()
+	// NOTE: the edit endpoint expects a JSON body (image_patch_request), not the
+	// multipart body produced by the generated MarshalMultipart. Sending
+	// multipart here makes the API fail JSON decoding with 5400. Use the
+	// localized JSON marshaler in marshal.go instead.
+	dataBytes, err := data.marshalEditJSON()
 	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
+		resp.Diagnostics.AddError("failed to serialize json http request", err.Error())
 		return
 	}
 	res := new(http.Response)
@@ -125,7 +132,7 @@ func (r *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		images.V1EditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody(contentType, dataBytes),
+		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
