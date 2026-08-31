@@ -170,6 +170,10 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										Optional:            true,
 										MarkdownDescription: "Content of the custom error response.",
 									},
+									"content_converter": schema.BoolAttribute{
+										Optional:            true,
+										MarkdownDescription: "Whether to enable content conversion (e.g., HTML to Markdown).",
+									},
 									"content_type": schema.StringAttribute{
 										Optional:            true,
 										MarkdownDescription: "Content-Type of the custom error response.",

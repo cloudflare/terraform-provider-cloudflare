@@ -37,6 +37,7 @@ type ActionParametersModel struct {
 	CacheKey                 []*ActionParameterCacheKeyModel              `tfsdk:"cache_key"`
 	CacheReserve             []*ActionParameterCacheReserveModel          `tfsdk:"cache_reserve"`
 	Content                  types.String                                 `tfsdk:"content"`
+	ContentConverter         types.Bool                                   `tfsdk:"content_converter"`
 	ContentType              types.String                                 `tfsdk:"content_type"`
 	CookieFields             types.Set                                    `tfsdk:"cookie_fields"`
 	DisableApps              types.Bool                                   `tfsdk:"disable_apps"`
