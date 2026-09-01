@@ -480,6 +480,7 @@ func (r *RulesetResource) validateWithDryRun(
 	}
 
 	var err error
+	var isCreate bool
 	switch {
 	// Terraform plans a create as a null state
 	case req.State.Raw.IsNull():
@@ -487,6 +488,8 @@ func (r *RulesetResource) validateWithDryRun(
 		if replacesExistingRuleset(ctx, req) {
 			return
 		}
+
+		isCreate = true
 
 		dataBytes, marshalErr := plan.MarshalJSON()
 		if marshalErr != nil {
@@ -539,6 +542,14 @@ func (r *RulesetResource) validateWithDryRun(
 	var apiErr *cloudflare.Error
 	if !errors.As(err, &apiErr) || apiErr.StatusCode != http.StatusBadRequest || len(apiErr.Errors) == 0 {
 		diagnostics.AddWarning("failed to make http request for the dry run", err.Error())
+		return
+	}
+
+	// warn instead of error for create
+	if isCreate {
+		for _, apiError := range apiErr.Errors {
+			diagnostics.AddWarning("failed to make http request for the dry run", apiError.Message)
+		}
 		return
 	}
 

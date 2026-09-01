@@ -343,6 +343,8 @@ func TestAccCloudflareRuleset_Name(t *testing.T) {
 
 var dryRunErrorPattern = regexp.MustCompile(`failed to make http request for the dry run`)
 
+var httpRequestErrorPattern = regexp.MustCompile(`failed to make http request\n`)
+
 var refusedDeleteErrorPattern = regexp.MustCompile(
 	`(?s)DELETE\s.*/rulesets/[0-9a-f]{32}.*400 Bad Request`,
 )
@@ -353,10 +355,15 @@ func TestAccCloudflareRuleset_DryRunInvalidOnCreate(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				ConfigFile:         config.TestNameFile("1.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
 				ConfigFile:      config.TestNameFile("1.tf"),
 				ConfigVariables: configVariables,
-				PlanOnly:        true,
-				ExpectError:     dryRunErrorPattern,
+				ExpectError:     httpRequestErrorPattern,
 			},
 		},
 	})
@@ -395,7 +402,7 @@ func TestAccCloudflareRuleset_DryRunSkippedWhenDependencyIsUnknown(t *testing.T)
 			{
 				ConfigFile:      config.TestNameFile("1.tf"),
 				ConfigVariables: configVariables,
-				ExpectError:     dryRunErrorPattern,
+				ExpectError:     httpRequestErrorPattern,
 			},
 		},
 	})
@@ -415,7 +422,7 @@ func TestAccCloudflareRuleset_DryRunSkippedWhenRefIsUnknown(t *testing.T) {
 			{
 				ConfigFile:      config.TestNameFile("1.tf"),
 				ConfigVariables: configVariables,
-				ExpectError:     dryRunErrorPattern,
+				ExpectError:     httpRequestErrorPattern,
 			},
 		},
 	})
@@ -482,7 +489,7 @@ func TestAccCloudflareRuleset_DryRunSkippedOnInvalidEntryPointReplacement(t *tes
 			{
 				ConfigFile:      config.TestNameFile("2.tf"),
 				ConfigVariables: configVariables,
-				ExpectError:     dryRunErrorPattern,
+				ExpectError:     httpRequestErrorPattern,
 			},
 		},
 	})
