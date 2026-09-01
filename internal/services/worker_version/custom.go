@@ -21,7 +21,87 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	"github.com/tidwall/gjson"
+	"github.com/tidwall/sjson"
 )
+
+func sortByName[T any](values []T, name func(T) string) bool {
+	compare := func(a, b T) int {
+		return strings.Compare(name(a), name(b))
+	}
+	reordered := !slices.IsSortedFunc(values, compare)
+	slices.SortFunc(values, compare)
+	return reordered
+}
+
+func bindingName(binding attr.Value, diags *diag.Diagnostics) (types.String, bool) {
+	obj, ok := binding.(basetypes.ObjectValue)
+	if !ok {
+		if diags != nil {
+			diags.AddError("Invalid element type", "Expected element type to be basetypes.ObjectType.")
+		}
+		return types.StringNull(), false
+	}
+	nameAttr, ok := obj.Attributes()["name"]
+	if !ok {
+		if diags != nil {
+			diags.AddError("Invalid element", "Missing 'name' attribute")
+		}
+		return types.StringNull(), false
+	}
+	name, ok := nameAttr.(types.String)
+	if !ok {
+		if diags != nil {
+			diags.AddError("Invalid element", "'name' attribute must be a string")
+		}
+		return types.StringNull(), false
+	}
+	return name, true
+}
+
+// ReorderResponseBindingsToMatchPlan returns the response unchanged unless its
+// bindings have the same unique names as the planned bindings. In that case,
+// it places response bindings in plan order so UnmarshalComputed merges each
+// binding's computed fields with the matching planned binding.
+func ReorderResponseBindingsToMatchPlan(response []byte, planBindings customfield.NestedObjectList[WorkerVersionBindingsModel]) []byte {
+	if planBindings.IsNull() || planBindings.IsUnknown() {
+		return response
+	}
+
+	responseBindings := gjson.GetBytes(response, "result.bindings")
+	bindings := responseBindings.Array()
+	plan := planBindings.Elements()
+	if !responseBindings.IsArray() || len(bindings) == 0 || len(bindings) != len(plan) {
+		return response
+	}
+
+	reordered := sortByName(bindings, func(binding gjson.Result) string {
+		return binding.Get("name").String()
+	})
+
+	reorderedBindings := make([]string, len(bindings))
+	for i, binding := range bindings {
+		planName, ok := bindingName(plan[i], nil)
+		responseName := binding.Get("name")
+		if !ok || planName.IsNull() || planName.IsUnknown() ||
+			!responseName.Exists() || responseName.Type != gjson.String ||
+			planName.ValueString() != responseName.String() ||
+			(i > 0 && responseName.String() == bindings[i-1].Get("name").String()) {
+			return response
+		}
+		reorderedBindings[i] = binding.Raw
+	}
+	if !reordered {
+		return response
+	}
+
+	reorderedResponse, err := sjson.SetRawBytes(response, "result.bindings", []byte("["+strings.Join(reorderedBindings, ",")+"]"))
+	if err != nil {
+		return response
+	}
+
+	return reorderedResponse
+}
 
 func readFile(path string) (string, error) {
 	if strings.HasPrefix(path, "~/") {
@@ -235,25 +315,11 @@ func SortRefreshedBindingsToMatchPrevious[T any](
 	// Mapping of binding name to refreshed binding value.
 	refreshedBindingsByName := make(map[string]attr.Value, len(refreshedBindingElements))
 	for _, val := range refreshedBindingElements {
-		refreshedObj, ok := val.(basetypes.ObjectValue)
+		name, ok := bindingName(val, &diags)
 		if !ok {
-			diags.AddError("Invalid element type", "Expected element type to be basetypes.ObjectType.")
 			return refreshedBindings, diags
 		}
-
-		refreshedAttrs := refreshedObj.Attributes()
-		nameAttr, ok := refreshedAttrs["name"]
-		if !ok {
-			diags.AddError("Invalid element", "Missing 'name' attribute")
-			return refreshedBindings, diags
-		}
-
-		nameString, ok := nameAttr.(types.String)
-		if !ok {
-			diags.AddError("Invalid element", "'name' attribute must be a string")
-			return refreshedBindings, diags
-		}
-		refreshedBindingsByName[nameString.ValueString()] = refreshedObj
+		refreshedBindingsByName[name.ValueString()] = val
 	}
 
 	// Refreshed bindings sorted to match the order they appear in state (or
@@ -261,32 +327,18 @@ func SortRefreshedBindingsToMatchPrevious[T any](
 	// ordered last.
 	sortedBindings := make([]attr.Value, 0, len(refreshedBindingElements))
 	for _, val := range previousBindings.Elements() {
-		stateObj, ok := val.(basetypes.ObjectValue)
+		name, ok := bindingName(val, &diags)
 		if !ok {
-			diags.AddError("Invalid element type", "Expected element type to be basetypes.ObjectType.")
-			return refreshedBindings, diags
-		}
-
-		stateAttrs := stateObj.Attributes()
-		nameAttr, ok := stateAttrs["name"]
-		if !ok {
-			diags.AddError("Invalid element", "Missing 'name' attribute")
-			return refreshedBindings, diags
-		}
-
-		nameString, ok := nameAttr.(types.String)
-		if !ok {
-			diags.AddError("Invalid element", "'name' attribute must be a string")
 			return refreshedBindings, diags
 		}
 
 		// Reorder refreshed bindings that exist in state (or planned state) to
 		// match the order they appear in state.
-		if refreshedBinding, ok := refreshedBindingsByName[nameString.ValueString()]; ok {
+		if refreshedBinding, ok := refreshedBindingsByName[name.ValueString()]; ok {
 			sortedBindings = append(sortedBindings, refreshedBinding)
 			// Binding names must be unique, the API will never return multiple
 			// bindings with the same name.
-			delete(refreshedBindingsByName, nameString.ValueString())
+			delete(refreshedBindingsByName, name.ValueString())
 		}
 	}
 
@@ -303,8 +355,8 @@ func SortRefreshedBindingsToMatchPrevious[T any](
 	}, diags
 }
 
-// Sorts the given list of bindings in ascending order by name. This matches the
-// order that the Workers API returns bindings.
+// Sorts the given list of bindings in ascending order by name for deterministic
+// request serialization.
 func SortBindingsByName[T any](
 	ctx context.Context,
 	bindings customfield.NestedObjectList[T],
@@ -315,41 +367,12 @@ func SortBindingsByName[T any](
 	}
 
 	sortedBindings := bindings.Elements()
-	slices.SortFunc(sortedBindings, func(a, b attr.Value) int {
-		aObj, ok := a.(basetypes.ObjectValue)
+	sortByName(sortedBindings, func(binding attr.Value) string {
+		name, ok := bindingName(binding, &diags)
 		if !ok {
-			diags.AddError("Invalid element type", "Expected element type to be basetypes.ObjectType.")
-			return 0
+			return ""
 		}
-		aAttrs := aObj.Attributes()
-		aNameAttr, ok := aAttrs["name"]
-		if !ok {
-			diags.AddError("Invalid element", "Missing 'name' attribute")
-			return 0
-		}
-		aNameString, ok := aNameAttr.(types.String)
-		if !ok {
-			diags.AddError("Invalid element", "'name' attribute must be a string")
-			return 0
-		}
-
-		bObj, ok := b.(basetypes.ObjectValue)
-		if !ok {
-			diags.AddError("Invalid element type", "Expected element type to be basetypes.ObjectType.")
-			return 0
-		}
-		bAttrs := bObj.Attributes()
-		bNameAttr, ok := bAttrs["name"]
-		if !ok {
-			diags.AddError("Invalid element", "Missing 'name' attribute")
-			return 0
-		}
-		bNameString, ok := bNameAttr.(types.String)
-		if !ok {
-			diags.AddError("Invalid element", "'name' attribute must be a string")
-			return 0
-		}
-		return strings.Compare(aNameString.ValueString(), bNameString.ValueString())
+		return name.ValueString()
 	})
 
 	value, d := types.ListValue(bindings.ElementType(ctx), sortedBindings)

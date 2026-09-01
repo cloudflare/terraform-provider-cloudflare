@@ -117,11 +117,8 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	planBindings := data.Bindings
 
 	var diags diag.Diagnostics
-	// Reorder plan bindings to be sorted in ascending order by name, which
-	// matches the order that the API returns them. This is important for
-	// apijson.UnmarshalComputed to work correctly. If the unmarshal target
-	// doesn't match the order that the API returns the bindings, the unmarshal
-	// operation will assign computed properties to the wrong bindings.
+	// Keep request serialization deterministic. API response bindings are matched
+	// to these planned bindings by name before computed fields are unmarshaled.
 	data.Bindings, diags = SortBindingsByName(ctx, planBindings)
 	resp.Diagnostics.Append(diags...)
 
@@ -151,6 +148,7 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	bytes = ReorderResponseBindingsToMatchPlan(bytes, data.Bindings)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())

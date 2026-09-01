@@ -288,3 +288,83 @@ func TestJsonBindingBackwardsCompatibility(t *testing.T) {
 
 	t.Logf("Successfully marshaled binding: %s", output)
 }
+
+func TestReorderResponseBindingsToMatchPlan(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+	planBindings, diags := customfield.NewObjectList(ctx, []worker_version.WorkerVersionBindingsModel{
+		{
+			Name:        types.StringValue("KV_PRIMARY"),
+			Type:        types.StringValue("kv_namespace"),
+			NamespaceID: types.StringUnknown(),
+		},
+		{
+			Name:       types.StringValue("claudeflare_users"),
+			Type:       types.StringValue("d1"),
+			ID:         types.StringValue("d1-id"),
+			DatabaseID: types.StringUnknown(),
+		},
+		{
+			Name:        types.StringValue("KV_ARCHIVE"),
+			Type:        types.StringValue("kv_namespace"),
+			NamespaceID: types.StringUnknown(),
+		},
+	})
+	if diags.HasError() {
+		t.Fatalf("create plan bindings: %v", diags)
+	}
+
+	sortedPlanBindings, diags := worker_version.SortBindingsByName(ctx, planBindings)
+	if diags.HasError() {
+		t.Fatalf("sort plan bindings: %v", diags)
+	}
+
+	env := worker_version.WorkerVersionResultEnvelope{Result: worker_version.WorkerVersionModel{Bindings: sortedPlanBindings}}
+	response := []byte(`{
+		"result": {
+			"bindings": [
+				{"name":"claudeflare_users","type":"d1","id":"d1-id","database_id":"database-id"},
+				{"name":"KV_PRIMARY","type":"kv_namespace","namespace_id":"primary-namespace-id"},
+				{"name":"KV_ARCHIVE","type":"kv_namespace","namespace_id":"archive-namespace-id"}
+			]
+		}
+	}`)
+
+	if err := apijson.UnmarshalComputed(worker_version.ReorderResponseBindingsToMatchPlan(response, sortedPlanBindings), &env); err != nil {
+		t.Fatalf("unmarshal computed response: %v", err)
+	}
+
+	bindings, diags := env.Result.Bindings.AsStructSliceT(ctx)
+	if diags.HasError() {
+		t.Fatalf("read reconciled bindings: %v", diags)
+	}
+	computedByName := map[string]worker_version.WorkerVersionBindingsModel{}
+	for _, binding := range bindings {
+		computedByName[binding.Name.ValueString()] = binding
+	}
+
+	if got := computedByName["claudeflare_users"].DatabaseID.ValueString(); got != "database-id" {
+		t.Errorf("D1 database_id = %q, want %q", got, "database-id")
+	}
+	if got := computedByName["KV_PRIMARY"].NamespaceID.ValueString(); got != "primary-namespace-id" {
+		t.Errorf("KV_PRIMARY namespace_id = %q, want %q", got, "primary-namespace-id")
+	}
+	if got := computedByName["KV_ARCHIVE"].NamespaceID.ValueString(); got != "archive-namespace-id" {
+		t.Errorf("KV_ARCHIVE namespace_id = %q, want %q", got, "archive-namespace-id")
+	}
+
+	orderedBindings, diags := worker_version.SortRefreshedBindingsToMatchPrevious(ctx, env.Result.Bindings, planBindings)
+	if diags.HasError() {
+		t.Fatalf("restore plan order: %v", diags)
+	}
+	bindings, diags = orderedBindings.AsStructSliceT(ctx)
+	if diags.HasError() {
+		t.Fatalf("read ordered bindings: %v", diags)
+	}
+	for i, want := range []string{"KV_PRIMARY", "claudeflare_users", "KV_ARCHIVE"} {
+		if got := bindings[i].Name.ValueString(); got != want {
+			t.Errorf("binding %d name = %q, want %q", i, got, want)
+		}
+	}
+}
