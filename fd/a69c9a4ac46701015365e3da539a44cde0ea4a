@@ -1,0 +1,21 @@
+README.md
+  s_ff4d11aad08749::t_d5264d031d0286 88
+CONTRIBUTING.md
+  s_ff4d11aad08749::t_7669eb390f6dff 10-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "fda69c9a4ac46701015365e3da539a44cde0ea4a",
+  "prompts": {},
+  "sessions": {
+    "s_ff4d11aad08749": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb615cf25ffesvhDxliGmtb6Ew",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
