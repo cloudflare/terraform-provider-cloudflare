@@ -1,0 +1,21 @@
+internal/services/zero_trust_device_default_profile/model.go
+  s_9cb006b030f5fd::t_eebafd2ef73e6d 35,76-88
+internal/services/zero_trust_dex_test/data_source_model.go
+  s_9cb006b030f5fd::t_b4a2b7c02d6f40 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "42f329011953d86851ffc026ce4d90df6ac4c6e5",
+  "prompts": {},
+  "sessions": {
+    "s_9cb006b030f5fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04ff8d518ffe893PX6qqInJ9Ve",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

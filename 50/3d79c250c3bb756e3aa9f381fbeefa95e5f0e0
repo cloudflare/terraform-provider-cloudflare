@@ -1,0 +1,21 @@
+internal/version.go
+  s_b08c188f1b3435::t_3065512d10d665 5
+.release-please-manifest.json
+  s_b08c188f1b3435::t_92bedc9e085e8c 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "503d79c250c3bb756e3aa9f381fbeefa95e5f0e0",
+  "prompts": {},
+  "sessions": {
+    "s_b08c188f1b3435": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_06961b944ffennjiN5ZwhrBTEU",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

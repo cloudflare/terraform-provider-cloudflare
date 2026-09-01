@@ -1,0 +1,161 @@
+internal/services/secrets_store_secret/schema.go
+  s_9cb006b030f5fd::t_63617e58f3912f 37,42,47,52,56-57,71-73
+internal/acctest/acctest.go
+  s_9cb006b030f5fd::t_a656f87c146785 1278-1279
+internal/services/user_group/migrations.go
+  s_9cb006b030f5fd::t_b320c73749f3f0 14-22
+internal/services/workers_script/schema.go
+  s_9cb006b030f5fd::t_c9585bf9364799 719-726
+  s_9cb006b030f5fd::t_3d951b7ccc10c0 223-226
+internal/services/worker/resource.go
+  s_9cb006b030f5fd::t_aed729864f8330 68-74,103-107,128-134,164-167
+  s_9cb006b030f5fd::t_e6d308ef4d7dc8 168
+internal/services/zero_trust_access_ai_controls_mcp_server/schema.go
+  s_9cb006b030f5fd::t_2ca40095e72196 125-127,130-131,134-135,146-148,151-152
+internal/services/zero_trust_device_custom_profile/schema.go
+  s_9cb006b030f5fd::t_7cdb7ffab82b2f 17,59-62,267-270
+internal/services/logpush_job/resource_test.go
+  s_9cb006b030f5fd::t_50b46cc620079e 168,176,228,244,257,320,342,357,502,511,576,585,634,654,663,708,724,733,797,810
+internal/services/pages_project/model.go
+  s_9cb006b030f5fd::t_366125401a7b65 21,45-50,60,62,65,67-68,71,145,160,233,248
+internal/services/ai_gateway_dynamic_routing/migrations.go
+  s_9cb006b030f5fd::t_c0f061b690789d 14-22
+internal/services/vulnerability_scanner_target_environment/migrations.go
+  s_9cb006b030f5fd::t_c0ef9d33a83b65 14-22
+internal/services/zero_trust_gateway_policy/schema.go
+  s_9cb006b030f5fd::t_7abb9b19dfd6ef 72,388
+internal/services/zero_trust_dlp_settings/migrations.go
+  s_9cb006b030f5fd::t_6fd80931eebf44 14-22
+internal/services/ruleset/ruleset_test.go
+  s_9cb006b030f5fd::t_1b28c843b0333d 5508-5532,5611-5635,5711-5735,5799,5855,5908,5991-6007,6145-6178
+internal/services/page_rule/migrations_test.go
+  s_9cb006b030f5fd::t_b64f1704d4ba13 225
+internal/services/ruleset/model.go
+  s_9cb006b030f5fd::t_1b28c843b0333d 106,363-377
+internal/services/logpush_job/testdata/update.tf
+  s_9cb006b030f5fd::t_fbc88dfbf644ff 5
+internal/services/ruleset/schema.go
+  s_9cb006b030f5fd::t_1b28c843b0333d 1545-1629
+internal/services/logpush_job/testdata/output_options.tf
+  s_9cb006b030f5fd::t_aea84b704420d2 5
+internal/services/user_group/data_source_model.go
+  s_9cb006b030f5fd::t_3e00641de7c6c0 79-82
+internal/services/user_group/list_data_source_model.go
+  s_9cb006b030f5fd::t_09987604717b16 78-81
+internal/services/zero_trust_access_policy/resource.go
+  s_9cb006b030f5fd::t_de1ee9c1fa0f49 15,88-91,152-155,207-210,292-295,304-306,310-337,339
+internal/services/zero_trust_device_custom_profile/model.go
+  s_9cb006b030f5fd::t_513e59c2412fee 21
+internal/services/zero_trust_device_default_profile/schema.go
+  s_9cb006b030f5fd::t_41c812dd73204a 15,253-255,263-264,270-272
+internal/services/pages_project/schema.go
+  s_9cb006b030f5fd::t_94146c249c5921 645,703-705
+  s_9cb006b030f5fd::t_8d78385c416261 389,447-449
+  s_9cb006b030f5fd::t_7af00e5fd30c69 58,64,69,74,79,84,89
+  s_9cb006b030f5fd::t_d8f5ff39a64dba 111,124,149,166,178,199
+  s_9cb006b030f5fd::t_d4a82b38e65d83 436,692
+internal/acctest/zero_trust_access_group.go
+  s_9cb006b030f5fd::t_8c29399886a99b 288-289,301
+  s_9cb006b030f5fd::t_a0c6ba41cb9263 153,162,220,226,240
+internal/services/secrets_store_secret/data_source_schema.go
+  s_9cb006b030f5fd::t_654c8c141b9405 33-34,37-38,41-42,45-46
+internal/services/argo_tiered_caching/resource_test.go
+  s_9cb006b030f5fd::t_b0181b90192822 47,112,137
+internal/services/leaked_credential_check_rule/resource_test.go
+  s_9cb006b030f5fd::t_cbfb7b22dc8a1a 122,157
+internal/services/logpush_job/testdata/immutable_fields.tf
+  s_9cb006b030f5fd::t_e0fe43e3b9c540 5
+internal/services/user_group_members/migrations.go
+  s_9cb006b030f5fd::t_48f932fb9dee03 14-22
+internal/services/zero_trust_gateway_certificate/resource_test.go
+  s_9cb006b030f5fd::t_a2d3c491d73dff 9,65,96,113
+internal/services/resource_group/data_source_model.go
+  s_9cb006b030f5fd::t_ddfcb46cb47008 20-25
+internal/services/logpush_job/testdata/basic.tf
+  s_9cb006b030f5fd::t_d130d063054dec 5
+internal/services/user_group/data_source_schema.go
+  s_9cb006b030f5fd::t_34841bf0679417 114-115,117-133
+internal/services/resource_group/data_source_schema.go
+  s_9cb006b030f5fd::t_4491414adc17f8 55-56,58-74
+internal/services/logpush_job/testdata/basic_enabled.tf
+  s_9cb006b030f5fd::t_6d7f58e79c5c41 5
+internal/services/vulnerability_scanner_credential/migrations.go
+  s_9cb006b030f5fd::t_92254c07cb8c6a 14-22
+internal/services/ai_gateway/migrations.go
+  s_9cb006b030f5fd::t_2346b484f3946b 14-22
+internal/services/worker/custom.go
+  s_9cb006b030f5fd::t_dabe97898b52a3 10-60
+internal/services/zero_trust_gateway_policy/model.go
+  s_9cb006b030f5fd::t_2a6c783c769efc 22,69
+internal/services/resource_group/list_data_source_schema.go
+  s_9cb006b030f5fd::t_c587b8977d127e 57-58,60-76
+internal/services/resource_group/list_data_source_model.go
+  s_9cb006b030f5fd::t_06def1882e959c 43-46
+internal/services/custom_page_asset/migrations.go
+  s_9cb006b030f5fd::t_b4adf1e668c828 14-22
+internal/services/worker/schema.go
+  s_9cb006b030f5fd::t_1d46dcaa2bd2b2 184-186,190-193,208-211
+internal/services/account_member/list_data_source_model.go
+  s_9cb006b030f5fd::t_9c3e699bfcf704 74-77
+internal/services/secrets_store/list_data_source_schema.go
+  s_9cb006b030f5fd::t_0b7cec18445f65 30-31
+internal/services/workers_script/migration/v500/model.go
+  s_9cb006b030f5fd::t_1abebac22815bb 134-147,151-152,204,312-316
+internal/services/secrets_store_secret/model.go
+  s_9cb006b030f5fd::t_1309592a912a89 24-25,28
+internal/services/zero_trust_gateway_certificate/resource_schema_test.go
+  s_9cb006b030f5fd::t_9df7b156798f24 8-12,44,51-54,112-154,161-164
+  s_9cb006b030f5fd::t_b2ec8040d32982 155-160
+internal/services/account_member/data_source_schema.go
+  s_9cb006b030f5fd::t_26bc487153f98a 110-111,113-129
+internal/services/ai_search_instance/data_source_schema.go
+  s_9cb006b030f5fd::t_2f0022c10ef68c 529,532-555
+internal/services/account_member/list_data_source_schema.go
+  s_9cb006b030f5fd::t_dbd75db9ce9825 141-142,144-160
+internal/services/secrets_store/data_source_schema.go
+  s_9cb006b030f5fd::t_9f9cd1d57e49c5 30-31,34-35,38-39
+internal/services/logpush_job/testdata/omitempty_field.tf
+  s_9cb006b030f5fd::t_2d00c046e8a3b8 5
+internal/provider.go
+  s_9cb006b030f5fd::t_d9049f72fa336a 7,9,13-14,295,297,301,317-322,333-336,338-351,353-363,365-369,371-379,415-416,421-422,427,435-440
+internal/services/vulnerability_scanner_credential_set/migrations.go
+  s_9cb006b030f5fd::t_e8f3dff4b4f4de 14-22
+internal/services/workers_script/resource_test.go
+  s_9cb006b030f5fd::t_b44aca6211aa16 1310-1355
+internal/services/user_group/list_data_source_schema.go
+  s_9cb006b030f5fd::t_b49a4b8be1634e 142-143,145-161
+internal/services/worker/testdata/observability_traces_disabled.tf
+  s_9cb006b030f5fd::t_decacdb77c8df0 9-10
+internal/services/argo_tiered_caching/data_source_test.go
+  s_9cb006b030f5fd::t_8e3aaf2801bbaf 24
+internal/services/account_member/data_source_model.go
+  s_9cb006b030f5fd::t_dadc12bf3db93a 76-79
+internal/services/zero_trust_gateway_certificate/resource.go
+  s_9cb006b030f5fd::t_6dc138ae33c635 174,177,211,236
+  s_9cb006b030f5fd::t_eef94656d3cd52 67-69,98-136
+  s_9cb006b030f5fd::t_5e0f3d5cd9f285 137
+internal/services/worker/observability.go
+  s_9cb006b030f5fd::t_7de412712cab65 24-76
+internal/services/zero_trust_access_ai_controls_mcp_portal/model.go
+  s_9cb006b030f5fd::t_e2799c45660503 40
+internal/services/worker/resource_test.go
+  s_9cb006b030f5fd::t_df3a46fe587ad0 229-392
+internal/services/zero_trust_access_policy/schema.go
+  s_9cb006b030f5fd::t_e4d06e54f40727 9,175-177,468-470,761-763
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8a1e4ed49494d6b0b5d478a71f9a1aed1264ef20",
+  "prompts": {},
+  "sessions": {
+    "s_9cb006b030f5fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04ff8d518ffe893PX6qqInJ9Ve",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

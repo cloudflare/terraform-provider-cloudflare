@@ -1,0 +1,23 @@
+CHANGELOG.md
+  s_71787840f8df50::t_f1a423298c3e8b 3-71
+go.mod
+  s_71787840f8df50::t_03779c3bc5dd04 6-11,43-56
+go.sum
+  s_71787840f8df50::t_3aad8f653b236a 24-59,200,252-253,303,329,339
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "46841eeb00ca21ac60a0127beb8bdd80ce0ddca7",
+  "prompts": {},
+  "sessions": {
+    "s_71787840f8df50": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdf38afbbffedT41GmfeOjVARg",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

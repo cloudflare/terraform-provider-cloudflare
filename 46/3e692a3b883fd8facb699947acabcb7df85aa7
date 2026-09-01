@@ -1,0 +1,19 @@
+CHANGELOG.md
+  s_b08c188f1b3435::t_75a1ab1f3bd483 3-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "463e692a3b883fd8facb699947acabcb7df85aa7",
+  "prompts": {},
+  "sessions": {
+    "s_b08c188f1b3435": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_06961b944ffennjiN5ZwhrBTEU",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": null
+    }
+  }
+}

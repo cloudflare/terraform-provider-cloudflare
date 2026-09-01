@@ -1,0 +1,20 @@
+internal/services/zero_trust_tunnel_cloudflared_config/model.go
+  s_0eb764e4c2d4f5::t_fc24956e37b468 19
+  s_0eb764e4c2d4f5::t_d5af6ac9ed44c3 39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3ae72b273eecf389f9cc679ef67c9541b9be3860",
+  "prompts": {},
+  "sessions": {
+    "s_0eb764e4c2d4f5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_055f0e367ffeqQk5Hrpf02YxXB",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

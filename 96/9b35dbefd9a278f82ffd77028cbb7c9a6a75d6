@@ -1,0 +1,29 @@
+internal/services/zero_trust_device_custom_profile/custom_test.go
+  s_4c2cb0a634f774::t_5a815479a2bc5a 208-211
+  s_4c2cb0a634f774::t_8a2d69fb243cbd 177-180,185-188
+  s_4c2cb0a634f774::t_f8687545da5f76 28-31,44
+  s_4c2cb0a634f774::t_87ff3896e5c8d8 84-87,90
+  s_4c2cb0a634f774::t_6f05acde363502 135-138,141
+internal/services/zero_trust_device_custom_profile/custom.go
+  s_4c2cb0a634f774::t_a30a26f0242cc6 8
+  s_4c2cb0a634f774::t_1a4eaff40e42b4 26
+  s_4c2cb0a634f774::t_0627e33e56af92 96-101,106-108,110,115,137,149-150,167-169,181,184-187,189
+  s_4c2cb0a634f774::t_7f9f56b759061e 32-38
+  s_4c2cb0a634f774::t_4385f7548e9e64 75-82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "969b35dbefd9a278f82ffd77028cbb7c9a6a75d6",
+  "prompts": {},
+  "sessions": {
+    "s_4c2cb0a634f774": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_07a5256ffffe6LxUTgBhKp8Rg6",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}

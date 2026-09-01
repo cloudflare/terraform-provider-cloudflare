@@ -1,0 +1,30 @@
+internal/services/worker/resource_test.go
+  s_3ab626c845f645::t_abb73c5574eafe 188-268
+  s_3ab626c845f645::t_2aa70056b41d8d 323-326
+  s_3ab626c845f645::t_4483f7950c1445 105,115,140,150
+internal/services/worker/testdata/observability_traces_disabled.tf
+  s_3ab626c845f645::t_ea1fcc6c256d03 1-13
+internal/services/worker/custom.go
+  s_3ab626c845f645::t_55fa671e8ae9df 10-62
+internal/services/worker/resource.go
+  s_3ab626c845f645::t_d96b1da3833f5a 264-269
+internal/services/worker/schema.go
+  s_3ab626c845f645::t_b9f2bb3df2884b 184-186
+  s_3ab626c845f645::t_b2dd9db93aa3c9 190-193,208-211
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "546a9572291ef53ecfe70e62c03a3f8601cc2326",
+  "prompts": {},
+  "sessions": {
+    "s_3ab626c845f645": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_012e5e14dffee1epjyKx7iimZB",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Sarah Sicard <ssicard@cloudflare.com>"
+    }
+  }
+}

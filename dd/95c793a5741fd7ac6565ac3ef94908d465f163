@@ -1,0 +1,19 @@
+internal/services/zero_trust_organization/normalizations.go
+  s_1b68589264847f::t_a97adb48b4189f 57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "dd95c793a5741fd7ac6565ac3ef94908d465f163",
+  "prompts": {},
+  "sessions": {
+    "s_1b68589264847f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_05621617fffe8lxgKipR0s1yeC",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
