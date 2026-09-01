@@ -34,11 +34,21 @@ func (v EdgeTTLValidator) ValidateObject(ctx context.Context, req validator.Obje
 	}
 
 	if parameter.Mode.ValueString() == "override_origin" {
-		if parameter.Default.ValueInt64() <= 0 {
+		// override_origin still requires a default to be set, but an explicit
+		// default of 0 is valid (no edge caching / always revalidate) and is
+		// accepted by the Cloudflare API. Only treat an unset default or a
+		// negative value as invalid. (Mirrors the v5 provider's AtLeast(0).)
+		if parameter.Default.IsNull() {
 			resp.Diagnostics.AddAttributeError(
 				req.Path,
 				errInvalidConfiguration,
 				fmt.Sprintf("using mode '%s' requires setting a default for ttl", parameter.Mode.ValueString()),
+			)
+		} else if parameter.Default.ValueInt64() < 0 {
+			resp.Diagnostics.AddAttributeError(
+				req.Path,
+				errInvalidConfiguration,
+				fmt.Sprintf("using mode '%s' requires a default ttl of 0 or greater", parameter.Mode.ValueString()),
 			)
 		}
 	} else if parameter.Mode.ValueString() == "bypass_by_default" {

@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: allow `edge_ttl.default` of `0` for `override_origin` mode (no edge caching / always revalidate), which the Cloudflare API accepts
+```

@@ -44,7 +44,7 @@ func TestEdgeTTLValidation(t *testing.T) {
 				}
 			})
 
-			t.Run("errors when invalid ttl is passed", func(t *testing.T) {
+			t.Run("errors when negative ttl is passed", func(t *testing.T) {
 				t.Parallel()
 
 				resp := &validator.ObjectResponse{}
@@ -53,7 +53,7 @@ func TestEdgeTTLValidation(t *testing.T) {
 
 				expected := &validator.ObjectResponse{
 					Diagnostics: diag.Diagnostics{
-						diag.NewAttributeErrorDiagnostic(path.Root("edge_ttl"), "invalid configuration", "using mode 'override_origin' requires setting a default for ttl"),
+						diag.NewAttributeErrorDiagnostic(path.Root("edge_ttl"), "invalid configuration", "using mode 'override_origin' requires a default ttl of 0 or greater"),
 					},
 				}
 				if diff := cmp.Diff(resp, expected); diff != "" {
@@ -66,6 +66,21 @@ func TestEdgeTTLValidation(t *testing.T) {
 
 				resp := &validator.ObjectResponse{}
 				req := constructEdgeTTLObjectRequest("override_origin", big.NewFloat(10))
+				edgeValidator.ValidateObject(ctx, req, resp)
+
+				expected := &validator.ObjectResponse{
+					Diagnostics: nil,
+				}
+				if diff := cmp.Diff(resp, expected); diff != "" {
+					t.Errorf("unexpected difference: %s", diff)
+				}
+			})
+
+			t.Run("passes when ttl of 0 is passed (no edge caching / always revalidate)", func(t *testing.T) {
+				t.Parallel()
+
+				resp := &validator.ObjectResponse{}
+				req := constructEdgeTTLObjectRequest("override_origin", big.NewFloat(0))
 				edgeValidator.ValidateObject(ctx, req, resp)
 
 				expected := &validator.ObjectResponse{
