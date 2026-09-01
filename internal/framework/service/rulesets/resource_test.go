@@ -2022,6 +2022,7 @@ func TestAccCloudflareRuleset_Config(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.autominify.0.css", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.autominify.0.js", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.bic", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.content_converter", "false"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.disable_apps", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.disable_zaraz", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.disable_railgun", "true"),
@@ -4268,6 +4269,7 @@ func testAccCloudflareRulesetConfigAllEnabled(rnd, accountID, zoneID string) str
 			js = true
 		}
 		bic = true
+		content_converter = false
 		disable_apps = true
 		disable_zaraz = true
 		disable_rum = true

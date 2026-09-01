@@ -322,6 +322,7 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				BIC:                     flatteners.Bool(ruleResponse.ActionParameters.BrowserIntegrityCheck),
 				Cache:                   flatteners.Bool(ruleResponse.ActionParameters.Cache),
 				Content:                 flatteners.String(ruleResponse.ActionParameters.Content),
+				ContentConverter:        flatteners.Bool(ruleResponse.ActionParameters.ContentConverter),
 				ContentType:             flatteners.String(ruleResponse.ActionParameters.ContentType),
 				DisableApps:             flatteners.Bool(ruleResponse.ActionParameters.DisableApps),
 				DisableRailgun:          flatteners.Bool(ruleResponse.ActionParameters.DisableRailgun),
@@ -830,6 +831,10 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 
 		if !ap.Content.IsNull() {
 			rr.ActionParameters.Content = ap.Content.ValueString()
+		}
+
+		if !ap.ContentConverter.IsNull() {
+			rr.ActionParameters.ContentConverter = cfv1.BoolPtr(ap.ContentConverter.ValueBool())
 		}
 
 		if !ap.ContentType.IsNull() {
