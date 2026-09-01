@@ -1,0 +1,21 @@
+go.mod
+  s_84a0da130b5ecd::t_f61136bbf13008 7
+go.sum
+  s_84a0da130b5ecd::t_91d658700c67fe 54-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "adf2a1b86e6f482d92f5ba25d45fe71802249459",
+  "prompts": {},
+  "sessions": {
+    "s_84a0da130b5ecd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa29ee199ffeSN6G2uwMDxXAYf",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
