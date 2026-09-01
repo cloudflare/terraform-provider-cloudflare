@@ -266,6 +266,36 @@ func TestAccCloudflareR2Bucket_AllJurisdictions(t *testing.T) {
 	}
 }
 
+func TestAccCloudflareR2Bucket_FedRAMPHighJurisdiction(t *testing.T) {
+	if !strings.Contains(os.Getenv("CLOUDFLARE_BASE_URL"), "api.fed.cloudflare.com") {
+		t.Skip("skipping: fedramp-high requires the FedRAMP API endpoint and account credentials")
+	}
+
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_r2_bucket." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareR2BucketDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareR2BucketJurisdictionSpecific(rnd, accountID, "fedramp-high"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("jurisdiction"), knownvalue.StringExact("fedramp-high")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("storage_class"), knownvalue.StringExact("Standard")),
+				},
+			},
+		},
+	})
+}
+
 func TestAccCloudflareR2Bucket_ComprehensiveConfiguration(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

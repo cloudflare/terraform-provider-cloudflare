@@ -33,13 +33,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"jurisdiction": schema.StringAttribute{
-				Description: "Jurisdiction where objects in this bucket are guaranteed to be stored.\nAvailable values: \"default\", \"eu\", \"fedramp\", \"us\".",
+				Description: "Jurisdiction where objects in this bucket are guaranteed to be stored.\nAvailable values: \"default\", \"eu\", \"fedramp\", \"fedramp-high\", \"us\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"default",
 						"eu",
 						"fedramp",
+						"fedramp-high",
 						"us",
 					),
 				},
