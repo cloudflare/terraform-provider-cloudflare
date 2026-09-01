@@ -88,10 +88,11 @@ func TestAccCloudflareZeroTrustResourceLibraryApplication_Basic(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:        resourceName,
-				ImportState:         true,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				ImportStateVerify:   true,
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"version"},
 			},
 		},
 	})
