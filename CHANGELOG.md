@@ -1,3 +1,29 @@
+## 4.52.9 (September 1st, 2026)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: add `content_converter` to `action_parameters` for `http_config_settings` `set_config` rules ([#7348](https://github.com/cloudflare/terraform-provider-cloudflare/pull/7348))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/cloudflare/cloudflare-go` from v0.117.0 to v0.118.0 ([#7349](https://github.com/cloudflare/terraform-provider-cloudflare/pull/7349))
+
+## 4.52.8 (June 23rd, 2026)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: add `asset_name` to `action_parameters` for `http_custom_errors` `serve_error` rules ([#7141](https://github.com/cloudflare/terraform-provider-cloudflare/pull/7141))
+
+BUG FIXES:
+
+* resource/cloudflare_ruleset: allow `edge_ttl.default` of `0` for `override_origin` mode (no edge caching / always revalidate), which the Cloudflare API accepts ([#7210](https://github.com/cloudflare/terraform-provider-cloudflare/pull/7210))
+
+## 4.52.7 (March 24th, 2026)
+
+BUG FIXES:
+
+* provider: mark credential fields as sensitive and update validation for new key formats ([#6958](https://github.com/cloudflare/terraform-provider-cloudflare/pull/6958))
+
 ## 4.52.6 (March 19th, 2026)
 
 BUG FIXES:
