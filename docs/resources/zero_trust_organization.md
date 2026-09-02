@@ -130,5 +130,8 @@ Available values: "never", "always", "cached".
 
 ## Import
 
+Import is supported using the following syntax:
 
-~> This resource does not currently support `terraform import`.
+```shell
+$ terraform import cloudflare_zero_trust_organization.example '<account_id>'
+```
