@@ -5,8 +5,10 @@ package zero_trust_resource_library_category
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustResourceLibraryCategoryDataSource)(nil)
@@ -17,8 +19,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Required: true,
 			},
-			"id": schema.StringAttribute{
+			"id": schema.Int64Attribute{
 				Required: true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 4294967295),
+				},
 			},
 			"created_at": schema.StringAttribute{
 				Description: "Returns the category creation time.",

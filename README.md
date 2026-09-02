@@ -12,13 +12,15 @@ on Hashicorp's website.
 
 Add the following to your `main.tf` file:
 
+<!-- x-release-please-start-version -->
+
 ```hcl
 # Declare the provider and version
 terraform {
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 5.21.1"
+      version = "~> 5.24.0"
     }
   }
 }
@@ -48,6 +50,8 @@ resource "cloudflare_zone" "example_zone" {
   type = "full"
 }
 ```
+
+<!-- x-release-please-end -->
 
 Initialize your project by running `terraform init` in the directory.
 

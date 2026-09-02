@@ -3,14 +3,13 @@ page_title: "cloudflare_hostname_tls_setting Resource - Cloudflare"
 subcategory: ""
 description: |-
   Accepted Permissions
-  SSL and Certificates ReadSSL and Certificates Write
+  SSL and Certificates Write
 ---
 
 # cloudflare_hostname_tls_setting (Resource)
 
 Accepted Permissions
 
-- `SSL and Certificates Read`
 - `SSL and Certificates Write`
 
 ## Example Usage
@@ -61,7 +60,7 @@ Available values: "ciphers", "min_tls_version", "http2".
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_hostname_tls_setting.example '<zone_id>/<setting_id>'
+$ terraform import cloudflare_hostname_tls_setting.example '<zone_id>/<setting_id>/<hostname>'
 ```
 
 

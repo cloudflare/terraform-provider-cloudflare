@@ -67,7 +67,6 @@ Read-Only:
 - `client_version` (String) The cloudflared version used to establish this connection.
 - `colo_name` (String) The Cloudflare data center used for this connection.
 - `id` (String) UUID of the Cloudflare Tunnel connection.
-- `is_pending_reconnect` (Boolean) Cloudflare continues to track connections for several minutes after they disconnect. This is an optimization to improve latency and reliability of reconnecting.  If `true`, the connection has disconnected but is still being tracked. If `false`, the connection is actively serving traffic.
 - `opened_at` (String) Timestamp of when the connection was established.
 - `origin_ip` (String) The public IP address of the host running cloudflared.
 - `uuid` (String) UUID of the Cloudflare Tunnel connection.

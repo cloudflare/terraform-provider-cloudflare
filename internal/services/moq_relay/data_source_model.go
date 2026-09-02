@@ -87,5 +87,5 @@ type MoQRelayFindOneByDataSourceModel struct {
 	Asc           types.Bool        `tfsdk:"asc" query:"asc,computed_optional"`
 	CreatedAfter  timetypes.RFC3339 `tfsdk:"created_after" query:"created_after,optional" format:"date-time"`
 	CreatedBefore timetypes.RFC3339 `tfsdk:"created_before" query:"created_before,optional" format:"date-time"`
-	PerPage       types.Int64       `tfsdk:"per_page" query:"per_page,optional"`
+	PerPage       types.Int64       `tfsdk:"per_page" query:"per_page,computed_optional"`
 }

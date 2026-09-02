@@ -46,7 +46,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"hostname": schema.SingleNestedAttribute{
-				Description: "Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-).",
+				Description: "Hostnames support ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-).",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[ListItemHostnameDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
@@ -54,7 +54,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"exclude_exact_hostname": schema.BoolAttribute{
-						Description: "Only applies to wildcard hostnames (e.g., *.example.com). When true (default), only subdomains are blocked. When false, both the root domain and subdomains are blocked.",
+						Description: "Only applies to wildcard hostnames (e.g., *.example.com). When true (default), the rule blocks only subdomains. When false, the rule blocks both the root domain and subdomains.",
 						Computed:    true,
 					},
 				},

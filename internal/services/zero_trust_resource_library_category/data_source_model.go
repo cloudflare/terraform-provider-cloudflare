@@ -17,7 +17,7 @@ type ZeroTrustResourceLibraryCategoryResultDataSourceEnvelope struct {
 
 type ZeroTrustResourceLibraryCategoryDataSourceModel struct {
 	AccountID   types.String `tfsdk:"account_id" path:"account_id,required"`
-	ID          types.String `tfsdk:"id" path:"id,required"`
+	ID          types.Int64  `tfsdk:"id" path:"id,required"`
 	CreatedAt   types.String `tfsdk:"created_at" json:"created_at,computed"`
 	Description types.String `tfsdk:"description" json:"description,computed"`
 	Name        types.String `tfsdk:"name" json:"name,computed"`

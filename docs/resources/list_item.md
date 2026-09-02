@@ -35,7 +35,7 @@ resource "cloudflare_list_item" "example_list_item" {
 
 - `asn` (Number) A non-negative 32 bit integer
 - `comment` (String) An informative summary of the list item.
-- `hostname` (Attributes) Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-). (see [below for nested schema](#nestedatt--hostname))
+- `hostname` (Attributes) Hostnames support ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-). (see [below for nested schema](#nestedatt--hostname))
 - `ip` (String) An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.
 - `redirect` (Attributes) The definition of the redirect. (see [below for nested schema](#nestedatt--redirect))
 
@@ -55,7 +55,7 @@ Required:
 
 Optional:
 
-- `exclude_exact_hostname` (Boolean) Only applies to wildcard hostnames (e.g., *.example.com). When true (default), only subdomains are blocked. When false, both the root domain and subdomains are blocked.
+- `exclude_exact_hostname` (Boolean) Only applies to wildcard hostnames (e.g., *.example.com). When true (default), the rule blocks only subdomains. When false, the rule blocks both the root domain and subdomains.
 
 
 <a id="nestedatt--redirect"></a>

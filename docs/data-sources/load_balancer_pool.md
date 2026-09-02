@@ -38,6 +38,7 @@ data "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
 - `description` (String) A human-readable description of the pool.
 - `disabled_at` (String) This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.
 - `enabled` (Boolean) Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).
+- `health_sources` (List of String) A list of health sources, ordered from highest to lowest priority, used to evaluate individual origin health and overall pool health. The load balancer uses the first source that has data and falls back to the next. Currently accepted values are null or the exact array ["regional", "global"]; any other combination is rejected. Null (the default) behaves like ["local", "global"]. ["regional", "global"] makes each region steer on its own health, falling back to the global decision when a region has no fresh data. Setting regional requires at least one region in check_regions.
 - `id` (String) The ID of this resource.
 - `latitude` (Number) The latitude of the data center containing the origins used in this pool in decimal degrees. If this is set, longitude must also be set.
 - `load_shedding` (Attributes) Configures load shedding policies and percentages for the pool. (see [below for nested schema](#nestedatt--load_shedding))

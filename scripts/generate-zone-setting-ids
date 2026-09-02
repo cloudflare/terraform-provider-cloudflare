@@ -137,7 +137,14 @@ def extract_settings(spec):
     collection = spec["components"]["schemas"][
         "zones_zone_settings_response_collection"
     ]
-    any_of = collection["properties"]["result"]["items"]["anyOf"]
+    # The collection schema may be wrapped in allOf; find the object with "properties"
+    props_container = collection
+    if "allOf" in collection and "properties" not in collection:
+        for entry in collection["allOf"]:
+            if "properties" in entry:
+                props_container = entry
+                break
+    any_of = props_container["properties"]["result"]["items"]["anyOf"]
 
     settings = []
     for ref_obj in any_of:
@@ -145,7 +152,15 @@ def extract_settings(spec):
         schema_name = ref.split("/")[-1]
         schema = spec["components"]["schemas"][schema_name]
 
-        props = schema.get("properties", {})
+        # Individual setting schemas may also be wrapped in allOf
+        if "allOf" in schema and "properties" not in schema:
+            props = {}
+            for entry in schema["allOf"]:
+                if "properties" in entry:
+                    props = entry["properties"]
+                    break
+        else:
+            props = schema.get("properties", {})
         id_prop = props.get("id", {})
         value_prop = props.get("value", {})
 

@@ -216,6 +216,7 @@ type ZeroTrustAccessApplicationDestinationsModel struct {
 	PortRange   types.String `tfsdk:"port_range" json:"port_range,optional"`
 	VnetID      types.String `tfsdk:"vnet_id" json:"vnet_id,optional"`
 	McpServerID types.String `tfsdk:"mcp_server_id" json:"mcp_server_id,optional"`
+	WorkerID    types.String `tfsdk:"worker_id" json:"worker_id,optional"`
 }
 
 type ZeroTrustAccessApplicationLandingPageDesignModel struct {

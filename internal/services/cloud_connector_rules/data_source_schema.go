@@ -65,6 +65,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									"cloudflare_r2",
 									"gcp_storage",
 									"azure_storage",
+									"oci_storage",
 								),
 							},
 						},

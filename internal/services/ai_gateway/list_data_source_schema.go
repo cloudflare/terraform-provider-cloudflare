@@ -362,6 +362,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"is_default": schema.BoolAttribute{
 							Computed: true,
 						},
+						"log_classification": schema.BoolAttribute{
+							Computed: true,
+						},
 						"log_management": schema.Int64Attribute{
 							Computed: true,
 							Validators: []validator.Int64{
@@ -568,10 +571,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"workers_ai_billing_mode": schema.StringAttribute{
-							Description: "Controls how Workers AI inference calls routed through this gateway are billed. Only 'postpaid' is currently supported.\nAvailable values: \"postpaid\".",
+							Description: "Controls how Workers AI inference calls routed through this gateway are billed. 'postpaid' bills the account directly through Workers AI; 'unified' deducts credits via AI Gateway using neuron-based pricing and delegates billing to AI Gateway.\nAvailable values: \"postpaid\", \"unified\".",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("postpaid"),
+								stringvalidator.OneOfCaseInsensitive("postpaid", "unified"),
 							},
 						},
 						"zdr": schema.BoolAttribute{

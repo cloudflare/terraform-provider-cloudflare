@@ -43,6 +43,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"deprecated": schema.BoolAttribute{
+				Description: "Whether this entry is deprecated for new use. This is computed from the static catalog and\nemitted only when true.",
+				Computed:    true,
+			},
 			"description": schema.StringAttribute{
 				Computed: true,
 			},

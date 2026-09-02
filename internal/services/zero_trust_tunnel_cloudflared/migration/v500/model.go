@@ -40,7 +40,9 @@ type TargetTunnelCloudflaredModel struct {
 	Metadata        jsontypes.Normalized                                                  `tfsdk:"metadata"`
 }
 
-// TargetTunnelCloudflaredConnectionsModel mirrors the v5 connections nested object.
+// TargetTunnelCloudflaredConnectionsModel mirrors the v5.0–v5.23 connections
+// nested object, which included is_pending_reconnect. Used only to decode old
+// state; new state is written via CurrentTunnelCloudflaredConnectionsModel.
 type TargetTunnelCloudflaredConnectionsModel struct {
 	ID                 types.String      `tfsdk:"id"`
 	ClientID           types.String      `tfsdk:"client_id"`
@@ -50,4 +52,36 @@ type TargetTunnelCloudflaredConnectionsModel struct {
 	OpenedAt           timetypes.RFC3339 `tfsdk:"opened_at"`
 	OriginIP           types.String      `tfsdk:"origin_ip"`
 	UUID               types.String      `tfsdk:"uuid"`
+}
+
+// CurrentTunnelCloudflaredConnectionsModel mirrors the v5.24.0+ connections
+// nested object (is_pending_reconnect removed).
+type CurrentTunnelCloudflaredConnectionsModel struct {
+	ID            types.String      `tfsdk:"id"`
+	ClientID      types.String      `tfsdk:"client_id"`
+	ClientVersion types.String      `tfsdk:"client_version"`
+	ColoName      types.String      `tfsdk:"colo_name"`
+	OpenedAt      timetypes.RFC3339 `tfsdk:"opened_at"`
+	OriginIP      types.String      `tfsdk:"origin_ip"`
+	UUID          types.String      `tfsdk:"uuid"`
+}
+
+// CurrentTunnelCloudflaredModel mirrors the v5.24.0+ resource model.
+// Used to write new state in UpgradeFromV5.
+type CurrentTunnelCloudflaredModel struct {
+	ID              types.String                                                             `tfsdk:"id"`
+	AccountID       types.String                                                             `tfsdk:"account_id"`
+	ConfigSrc       types.String                                                             `tfsdk:"config_src"`
+	Name            types.String                                                             `tfsdk:"name"`
+	TunnelSecret    types.String                                                             `tfsdk:"tunnel_secret"`
+	AccountTag      types.String                                                             `tfsdk:"account_tag"`
+	ConnsActiveAt   timetypes.RFC3339                                                        `tfsdk:"conns_active_at"`
+	ConnsInactiveAt timetypes.RFC3339                                                        `tfsdk:"conns_inactive_at"`
+	CreatedAt       timetypes.RFC3339                                                        `tfsdk:"created_at"`
+	DeletedAt       timetypes.RFC3339                                                        `tfsdk:"deleted_at"`
+	RemoteConfig    types.Bool                                                               `tfsdk:"remote_config"`
+	Status          types.String                                                             `tfsdk:"status"`
+	TunType         types.String                                                             `tfsdk:"tun_type"`
+	Connections     customfield.NestedObjectList[CurrentTunnelCloudflaredConnectionsModel]   `tfsdk:"connections"`
+	Metadata        jsontypes.Normalized                                                     `tfsdk:"metadata"`
 }

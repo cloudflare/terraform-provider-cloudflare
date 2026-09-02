@@ -24,6 +24,7 @@ type ZeroTrustDLPCustomEntryModel struct {
 	Description   types.String                                                       `tfsdk:"description" json:"description,optional"`
 	CaseSensitive types.Bool                                                         `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	CreatedAt     timetypes.RFC3339                                                  `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Deprecated    types.Bool                                                         `tfsdk:"deprecated" json:"deprecated,computed"`
 	Secret        types.Bool                                                         `tfsdk:"secret" json:"secret,computed"`
 	Type          types.String                                                       `tfsdk:"type" json:"type,computed"`
 	UpdatedAt     timetypes.RFC3339                                                  `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`

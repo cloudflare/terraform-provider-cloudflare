@@ -163,6 +163,7 @@ func (r *HostnameTLSSettingResource) Read(ctx context.Context, req resource.Read
 	_, err := r.client.Hostnames.Settings.TLS.Get(
 		ctx,
 		hostnames.SettingTLSGetParamsSettingID(data.SettingID.ValueString()),
+		data.Hostname.ValueString(),
 		hostnames.SettingTLSGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -222,11 +223,13 @@ func (r *HostnameTLSSettingResource) ImportState(ctx context.Context, req resour
 
 	path_zone_id := ""
 	path_setting_id := ""
+	path_hostname := ""
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<zone_id>/<setting_id>",
+		"<zone_id>/<setting_id>/<hostname>",
 		&path_zone_id,
 		&path_setting_id,
+		&path_hostname,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -234,13 +237,15 @@ func (r *HostnameTLSSettingResource) ImportState(ctx context.Context, req resour
 	}
 
 	data.ZoneID = types.StringValue(path_zone_id)
-	data.SettingID = types.StringValue(path_setting_id)
+	data.ID = types.StringValue(path_setting_id)
+	data.Hostname = types.StringValue(path_hostname)
 
 	res := new(http.Response)
 	env := HostnameTLSSettingResultEnvelope{*data}
 	_, err := r.client.Hostnames.Settings.TLS.Get(
 		ctx,
 		hostnames.SettingTLSGetParamsSettingID(path_setting_id),
+		path_hostname,
 		hostnames.SettingTLSGetParams{
 			ZoneID: cloudflare.F(path_zone_id),
 		},

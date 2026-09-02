@@ -56,7 +56,7 @@ Optional:
 - `expression` (String)
 - `parameters` (Attributes) Parameters of Cloud Connector Rule (see [below for nested schema](#nestedatt--rules--parameters))
 - `provider` (String) Cloud Provider type
-Available values: "aws_s3", "cloudflare_r2", "gcp_storage", "azure_storage".
+Available values: "aws_s3", "cloudflare_r2", "gcp_storage", "azure_storage", "oci_storage".
 
 Read-Only:
 

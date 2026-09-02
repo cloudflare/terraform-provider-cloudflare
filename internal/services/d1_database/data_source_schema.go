@@ -71,10 +71,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"jurisdiction": schema.StringAttribute{
-				Description: "Specify the location to restrict the D1 database to run and store data. If this option is present, the location hint is ignored.\nAvailable values: \"eu\", \"fedramp\".",
+				Description: "Specify the location to restrict the D1 database to run and store data. If this option is present, the location hint is ignored.\nAvailable values: \"eu\", \"fedramp\", \"us\".",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("eu", "fedramp"),
+					stringvalidator.OneOfCaseInsensitive(
+						"eu",
+						"fedramp",
+						"us",
+					),
 				},
 			},
 			"name": schema.StringAttribute{

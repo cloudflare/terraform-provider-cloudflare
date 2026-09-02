@@ -186,8 +186,8 @@ Available values: "asc", "desc", "exists", "not_exists".
 
 Optional:
 
-- `exclude_items` (List of String) List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)
-- `include_items` (List of String) List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)
+- `exclude_items` (List of String) List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.
+- `include_items` (List of String) List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.
 - `prefix` (String)
 - `r2_jurisdiction` (String)
 - `web_crawler` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler))
@@ -197,9 +197,25 @@ Optional:
 
 Optional:
 
+- `discover_options` (Attributes) Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'. (see [below for nested schema](#nestedatt--source_params--web_crawler--discover_options))
 - `parse_options` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler--parse_options))
-- `parse_type` (String) Available values: "sitemap", "feed-rss", "crawl".
+- `parse_type` (String) How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.
+Available values: "sitemap", "discover".
 - `store_options` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler--store_options))
+
+<a id="nestedatt--source_params--web_crawler--discover_options"></a>
+### Nested Schema for `source_params.web_crawler.discover_options`
+
+Optional:
+
+- `depth` (Number) Maximum link-follow depth from the seed URL.
+- `include_external_links` (Boolean) Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.
+- `include_subdomains` (Boolean) Follow links to subdomains of the source host.
+- `limit` (Number) Maximum number of pages to crawl (1-100000).
+- `max_age` (Number) Maximum content age in seconds to accept (0–604800).
+- `source` (String) Where the crawler looks for URLs: 'sitemaps' reads sitemap XML only, 'links' follows page links only, 'all' does both.
+Available values: "all", "sitemaps", "links".
+
 
 <a id="nestedatt--source_params--web_crawler--parse_options"></a>
 ### Nested Schema for `source_params.web_crawler.parse_options`

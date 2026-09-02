@@ -207,10 +207,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"type": schema.StringAttribute{
-										Description: `Available values: "public", "private".`,
+										Description: `Available values: "public", "private", "via_mcp_server_portal", "worker", "preview_worker", "all_workers", "all_preview_workers".`,
 										Computed:    true,
 										Validators: []validator.String{
-											stringvalidator.OneOfCaseInsensitive("public", "private", "via_mcp_server_portal"),
+											stringvalidator.OneOfCaseInsensitive("public", "private", "via_mcp_server_portal", "worker", "preview_worker", "all_workers", "all_preview_workers"),
 										},
 									},
 									"uri": schema.StringAttribute{
@@ -243,6 +243,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"mcp_server_id": schema.StringAttribute{
 										Description: "A MCP server id configured in ai-controls. Access will secure the MCP server if accessed through a MCP portal.",
 										Optional:    true,
+									},
+									"worker_id": schema.StringAttribute{
+										Description: "The ID of the Cloudflare Worker to protect with Access. Required when type is `worker` or `preview_worker`.",
+										Computed:    true,
 									},
 								},
 							},

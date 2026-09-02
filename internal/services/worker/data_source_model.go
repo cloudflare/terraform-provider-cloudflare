@@ -122,8 +122,10 @@ type WorkerReferencesWorkersDataSourceModel struct {
 }
 
 type WorkerSubdomainDataSourceModel struct {
-	Enabled         types.Bool `tfsdk:"enabled" json:"enabled,computed"`
-	PreviewsEnabled types.Bool `tfsdk:"previews_enabled" json:"previews_enabled,computed"`
+	Enabled          types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
+	PreviewURLSuffix types.String `tfsdk:"preview_url_suffix" json:"preview_url_suffix,computed"`
+	PreviewsEnabled  types.Bool   `tfsdk:"previews_enabled" json:"previews_enabled,computed"`
+	URL              types.String `tfsdk:"url" json:"url,computed"`
 }
 
 type WorkerTailConsumersDataSourceModel struct {

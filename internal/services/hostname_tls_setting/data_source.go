@@ -69,6 +69,7 @@ func (d *HostnameTLSSettingDataSource) Read(ctx context.Context, req datasource.
 	_, err := d.client.Hostnames.Settings.TLS.Get(
 		ctx,
 		hostnames.SettingTLSGetParamsSettingID(data.SettingID.ValueString()),
+		data.Hostname.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -84,7 +85,6 @@ func (d *HostnameTLSSettingDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 	data = &env.Result
-	data.ID = data.SettingID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

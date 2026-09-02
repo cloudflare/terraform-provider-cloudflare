@@ -14,7 +14,7 @@ description: |-
 ```terraform
 data "cloudflare_zero_trust_resource_library_category" "example_zero_trust_resource_library_category" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  id = "0b63249c-95bf-4cc0-a7cc-d7faaaf1dac0"
+  id = 12
 }
 ```
 
@@ -29,7 +29,7 @@ data "cloudflare_zero_trust_resource_library_category" "example_zero_trust_resou
 
 - `created_at` (String) Returns the category creation time.
 - `description` (String) Returns the category description.
-- `id` (String) The ID of this resource.
+- `id` (Number) The ID of this resource.
 - `name` (String) Returns the category name.
 
 

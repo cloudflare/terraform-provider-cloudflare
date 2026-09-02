@@ -43,9 +43,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustResourceLibraryCategoriesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
+						"id": schema.Int64Attribute{
 							Description: "Returns the category ID.",
 							Computed:    true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 4294967295),
+							},
 						},
 						"created_at": schema.StringAttribute{
 							Description: "Returns the category creation time.",

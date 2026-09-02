@@ -1607,6 +1607,24 @@ func TestAccCloudflareAccessApplicationWithInvalidPrivateDestination(t *testing.
 	})
 }
 
+func TestAccCloudflareAccessApplicationWithInvalidWorkerDestination(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessApplicationWithInvalidWorkerDestination(rnd, accountID),
+				ExpectError: regexp.MustCompile(`"destinations\[0]\.worker_id" can only be set if "<\.type" is one of: "worker",\s*"preview_worker"`),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessApplicationWithDestinations(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 
@@ -1637,6 +1655,44 @@ func TestAccCloudflareAccessApplicationWithDestinations(t *testing.T) {
 			{
 				// Ensures no diff on last plan
 				Config:   testAccessApplicationWithDestinations(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplicationWithWorkerDestinations(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessApplicationWithWorkerDestinations(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "destinations.#", "2"),
+					resource.TestCheckResourceAttr(name, "destinations.0.type", "worker"),
+					// worker_id is the Worker's server-assigned immutable id, so
+					// assert it is set rather than to a known value.
+					resource.TestCheckResourceAttrSet(name, "destinations.0.worker_id"),
+					resource.TestCheckResourceAttr(name, "destinations.1.type", "preview_worker"),
+					resource.TestCheckResourceAttrSet(name, "destinations.1.worker_id"),
+					// Both destinations point at the same Worker.
+					resource.TestCheckResourceAttrPair(name, "destinations.0.worker_id", name, "destinations.1.worker_id"),
+				),
+			},
+			{
+				// Ensures no diff on last plan
+				Config:   testAccessApplicationWithWorkerDestinations(rnd, accountID),
 				PlanOnly: true,
 			},
 		},
@@ -1725,8 +1781,16 @@ func testAccessApplicationWithInvalidPrivateDestination(resourceID, accountID st
 	return acctest.LoadTestCase("accessapplicationconfiginvalidprivatedestination.tf", resourceID, accountID)
 }
 
+func testAccessApplicationWithInvalidWorkerDestination(resourceID, accountID string) string {
+	return acctest.LoadTestCase("accessapplicationconfiginvalidworkerdestination.tf", resourceID, accountID)
+}
+
 func testAccessApplicationWithDestinations(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
 	return acctest.LoadTestCase("accessapplicationconfigwithdestinations.tf", rnd, domain, identifier.Type, identifier.Identifier)
+}
+
+func testAccessApplicationWithWorkerDestinations(rnd, accountID string) string {
+	return acctest.LoadTestCase("accessapplicationconfigwithworkerdestinations.tf", rnd, accountID)
 }
 
 func testAccessApplicationMisconfiguredCORSAllowAllOriginsWithCredentials(resourceID, zone, zoneID string) string {

@@ -198,9 +198,23 @@ Read-Only:
 
 Read-Only:
 
+- `discover_options` (Attributes) (see [below for nested schema](#nestedatt--result--source_params--web_crawler--discover_options))
 - `parse_options` (Attributes) (see [below for nested schema](#nestedatt--result--source_params--web_crawler--parse_options))
 - `parse_type` (String) Available values: "sitemap", "feed-rss", "crawl".
 - `store_options` (Attributes) (see [below for nested schema](#nestedatt--result--source_params--web_crawler--store_options))
+
+<a id="nestedatt--result--source_params--web_crawler--discover_options"></a>
+### Nested Schema for `result.source_params.web_crawler.discover_options`
+
+Read-Only:
+
+- `depth` (Number)
+- `include_external_links` (Boolean)
+- `include_subdomains` (Boolean)
+- `limit` (Number) Maximum number of pages to crawl. New values are capped at 100000; instances configured before that cap may report a higher stored value, which the crawler clamps at run time.
+- `max_age` (Number)
+- `source` (String) Available values: "all", "sitemaps", "links".
+
 
 <a id="nestedatt--result--source_params--web_crawler--parse_options"></a>
 ### Nested Schema for `result.source_params.web_crawler.parse_options`

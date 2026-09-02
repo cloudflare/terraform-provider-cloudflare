@@ -37,7 +37,40 @@ func (m *AISearchNamespacesDataSourceModel) toListParams(_ context.Context) (par
 }
 
 type AISearchNamespacesResultDataSourceModel struct {
-	CreatedAt   timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Name        types.String      `tfsdk:"name" json:"name,computed"`
-	Description types.String      `tfsdk:"description" json:"description,computed"`
+	CreatedAt            timetypes.RFC3339                                                               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Name                 types.String                                                                    `tfsdk:"name" json:"name,computed"`
+	Description          types.String                                                                    `tfsdk:"description" json:"description,computed"`
+	PublicEndpointID     types.String                                                                    `tfsdk:"public_endpoint_id" json:"public_endpoint_id,computed"`
+	PublicEndpointParams customfield.NestedObject[AISearchNamespacesPublicEndpointParamsDataSourceModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed"`
+}
+
+type AISearchNamespacesPublicEndpointParamsDataSourceModel struct {
+	AuthorizedHosts         customfield.List[types.String]                                                                         `tfsdk:"authorized_hosts" json:"authorized_hosts,computed"`
+	ChatCompletionsEndpoint customfield.NestedObject[AISearchNamespacesPublicEndpointParamsChatCompletionsEndpointDataSourceModel] `tfsdk:"chat_completions_endpoint" json:"chat_completions_endpoint,computed"`
+	CustomDomains           customfield.List[types.String]                                                                         `tfsdk:"custom_domains" json:"custom_domains,computed"`
+	DefaultDomainEnabled    types.Bool                                                                                             `tfsdk:"default_domain_enabled" json:"default_domain_enabled,computed"`
+	Enabled                 types.Bool                                                                                             `tfsdk:"enabled" json:"enabled,computed"`
+	InstancesAllowed        customfield.List[types.String]                                                                         `tfsdk:"instances_allowed" json:"instances_allowed,computed"`
+	Mcp                     customfield.NestedObject[AISearchNamespacesPublicEndpointParamsMcpDataSourceModel]                     `tfsdk:"mcp" json:"mcp,computed"`
+	RateLimit               customfield.NestedObject[AISearchNamespacesPublicEndpointParamsRateLimitDataSourceModel]               `tfsdk:"rate_limit" json:"rate_limit,computed"`
+	SearchEndpoint          customfield.NestedObject[AISearchNamespacesPublicEndpointParamsSearchEndpointDataSourceModel]          `tfsdk:"search_endpoint" json:"search_endpoint,computed"`
+}
+
+type AISearchNamespacesPublicEndpointParamsChatCompletionsEndpointDataSourceModel struct {
+	Disabled types.Bool `tfsdk:"disabled" json:"disabled,computed"`
+}
+
+type AISearchNamespacesPublicEndpointParamsMcpDataSourceModel struct {
+	Description types.String `tfsdk:"description" json:"description,computed"`
+	Disabled    types.Bool   `tfsdk:"disabled" json:"disabled,computed"`
+}
+
+type AISearchNamespacesPublicEndpointParamsRateLimitDataSourceModel struct {
+	PeriodMs  types.Int64  `tfsdk:"period_ms" json:"period_ms,computed"`
+	Requests  types.Int64  `tfsdk:"requests" json:"requests,computed"`
+	Technique types.String `tfsdk:"technique" json:"technique,computed"`
+}
+
+type AISearchNamespacesPublicEndpointParamsSearchEndpointDataSourceModel struct {
+	Disabled types.Bool `tfsdk:"disabled" json:"disabled,computed"`
 }

@@ -49,6 +49,7 @@ Read-Only:
 - `guardrails` (Attributes) (see [below for nested schema](#nestedatt--result--guardrails))
 - `id` (String) gateway id
 - `is_default` (Boolean)
+- `log_classification` (Boolean)
 - `log_management` (Number)
 - `log_management_strategy` (String) Available values: "STOP_INSERTING", "DELETE_OLDEST".
 - `logpush` (Boolean)
@@ -65,8 +66,8 @@ Available values: "constant", "linear", "exponential".
 - `spend_limits` (Attributes) (see [below for nested schema](#nestedatt--result--spend_limits))
 - `store_id` (String)
 - `stripe` (Attributes) (see [below for nested schema](#nestedatt--result--stripe))
-- `workers_ai_billing_mode` (String) Controls how Workers AI inference calls routed through this gateway are billed. Only 'postpaid' is currently supported.
-Available values: "postpaid".
+- `workers_ai_billing_mode` (String) Controls how Workers AI inference calls routed through this gateway are billed. 'postpaid' bills the account directly through Workers AI; 'unified' deducts credits via AI Gateway using neuron-based pricing and delegates billing to AI Gateway.
+Available values: "postpaid", "unified".
 - `zdr` (Boolean)
 
 <a id="nestedatt--result--dlp"></a>

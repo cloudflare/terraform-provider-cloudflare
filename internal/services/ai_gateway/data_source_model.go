@@ -26,6 +26,7 @@ type AIGatewayDataSourceModel struct {
 	CollectLogs             types.Bool                                                    `tfsdk:"collect_logs" json:"collect_logs,computed"`
 	CreatedAt               timetypes.RFC3339                                             `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IsDefault               types.Bool                                                    `tfsdk:"is_default" json:"is_default,computed"`
+	LogClassification       types.Bool                                                    `tfsdk:"log_classification" json:"log_classification,computed"`
 	LogManagement           types.Int64                                                   `tfsdk:"log_management" json:"log_management,computed"`
 	LogManagementStrategy   types.String                                                  `tfsdk:"log_management_strategy" json:"log_management_strategy,computed"`
 	Logpush                 types.Bool                                                    `tfsdk:"logpush" json:"logpush,computed"`

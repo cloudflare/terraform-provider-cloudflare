@@ -22,9 +22,9 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
   auth_type = "unauthenticated"
   hostname = "https://example.com/mcp"
   name = "My MCP Server"
-  auth_credentials = "auth_credentials"
+  auth_credentials = "sk-my-bearer-token"
   client_secret = "client_secret"
-  description = "This is one remote mcp server"
+  description = "This is one remote MCP server"
   is_shared_oauth_callback_enabled = true
   secure_web_gateway = false
   updated_prompts = [{
@@ -48,24 +48,27 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
 ### Required
 
 - `account_id` (String)
-- `auth_type` (String) Available values: "oauth", "bearer", "unauthenticated".
-- `hostname` (String)
-- `id` (String) server id
-- `name` (String)
+- `auth_type` (String) Authentication method used to connect to the upstream MCP server.
+Available values: "oauth", "bearer", "unauthenticated".
+- `hostname` (String) URL of the upstream MCP endpoint.
+- `id` (String) Unique identifier for the MCP server.
+- `name` (String) Display name for the MCP server.
 
 ### Optional
 
-- `auth_credentials` (String, Sensitive)
+- `auth_credentials` (String, Sensitive) Static credential for the upstream MCP server. For auth_type "bearer", either a raw token string (e.g. "sk-abc123"), which is wrapped server-side as `Authorization: Bearer <token>`, or a JSON-encoded object of the form `{"headers":{"Header-Name":"value",...}}` for custom or multiple static headers (e.g. Cloudflare Access service tokens: `{"headers":{"cf-access-client-id":"...","cf-access-client-secret":"..."}}`).
 - `client_secret` (String, Sensitive) Pre-registered OAuth client_secret. Write-only - accepted on create/update when auth_credentials.auth_mode is 'manual'. Stored AES-GCM-encrypted in server_oauth_secrets; never returned by read endpoints.
-- `description` (String)
-- `is_shared_oauth_callback_enabled` (Boolean) When true, the gateway worker uses the shared Cloudflare-owned OAuth callback endpoint as the redirect_uri for upstream on-behalf OAuth, instead of the customer portal hostname. Defaults to false (off); opt in per server by setting true. Effective behavior is gated by the gateway worker's per-env rollout mode KV key.
-- `secure_web_gateway` (Boolean) Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway
-- `updated_prompts` (Attributes List) (see [below for nested schema](#nestedatt--updated_prompts))
-- `updated_tools` (Attributes List) (see [below for nested schema](#nestedatt--updated_tools))
+- `description` (String) Optional description of the MCP server.
+- `is_shared_oauth_callback_enabled` (Boolean) When true, the gateway worker uses the shared Cloudflare-owned OAuth callback endpoint as the redirect_uri for upstream on-behalf OAuth, instead of the customer portal hostname. Defaults to false (off); opt in per server by setting true.
+- `secure_web_gateway` (Boolean) Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway.
+- `updated_prompts` (Attributes List) Server-wide prompt capability overrides. (see [below for nested schema](#nestedatt--updated_prompts))
+- `updated_tools` (Attributes List) Server-wide tool capability overrides. (see [below for nested schema](#nestedatt--updated_tools))
 
 ### Read-Only
 
 - `auth_config_summary` (Attributes) Safe subset of auth_credentials surfaced to the dashboard. Includes auth_mode (dcr|manual), has_client_secret, client_secret_version, and the OAuth endpoints + client_id for manual servers. Never includes the secret value. (see [below for nested schema](#nestedatt--auth_config_summary))
+- `authentication_status` (String) Whether administrative authentication is required before capabilities can be synced. Manual OAuth is user-managed and has no administrative authentication flow.
+Available values: "not_required", "required", "connected", "stale", "manual".
 - `created_at` (String)
 - `created_by` (String)
 - `error` (String)
@@ -83,13 +86,13 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_tru
 
 Required:
 
-- `name` (String)
+- `name` (String) Name of the tool or prompt capability to override.
 
 Optional:
 
-- `alias` (String)
-- `description` (String)
-- `enabled` (Boolean)
+- `alias` (String) Custom name exposed for the capability.
+- `description` (String) Custom description exposed for the capability.
+- `enabled` (Boolean) Whether the capability is available through the MCP server.
 
 
 <a id="nestedatt--updated_tools"></a>
@@ -97,13 +100,13 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) Name of the tool or prompt capability to override.
 
 Optional:
 
-- `alias` (String)
-- `description` (String)
-- `enabled` (Boolean)
+- `alias` (String) Custom name exposed for the capability.
+- `description` (String) Custom description exposed for the capability.
+- `enabled` (Boolean) Whether the capability is available through the MCP server.
 
 
 <a id="nestedatt--auth_config_summary"></a>

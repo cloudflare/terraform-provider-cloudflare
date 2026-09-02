@@ -44,6 +44,7 @@ type ZeroTrustDLPIntegrationEntriesResultDataSourceModel struct {
 	ProfileID     types.String                                                                      `tfsdk:"profile_id" json:"profile_id,computed"`
 	UploadStatus  types.String                                                                      `tfsdk:"upload_status" json:"upload_status,computed"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPIntegrationEntriesConfidenceDataSourceModel] `tfsdk:"confidence" json:"confidence,computed"`
+	Deprecated    types.Bool                                                                        `tfsdk:"deprecated" json:"deprecated,computed"`
 	Variant       customfield.NestedObject[ZeroTrustDLPIntegrationEntriesVariantDataSourceModel]    `tfsdk:"variant" json:"variant,computed"`
 	CaseSensitive types.Bool                                                                        `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	Secret        types.Bool                                                                        `tfsdk:"secret" json:"secret,computed"`

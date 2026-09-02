@@ -43,6 +43,7 @@ type TargetAccessServiceTokenModel struct {
 	AccountID                     types.String      `tfsdk:"account_id"`
 	ZoneID                        types.String      `tfsdk:"zone_id"`
 	Name                          types.String      `tfsdk:"name"`
+	Enabled                       types.Bool        `tfsdk:"enabled"`
 	PreviousClientSecretExpiresAt timetypes.RFC3339 `tfsdk:"previous_client_secret_expires_at"`
 	ClientSecretVersion           types.Float64     `tfsdk:"client_secret_version"`
 	Duration                      types.String      `tfsdk:"duration"`

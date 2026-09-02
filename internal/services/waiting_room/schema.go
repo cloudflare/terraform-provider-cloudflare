@@ -78,7 +78,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     stringdefault.StaticString(""),
 			},
 			"default_template_language": schema.StringAttribute{
-				Description: "The language of the default page template. If no default_template_language is provided, then `en-US` (English) will be used.\nAvailable values: \"en-US\", \"es-ES\", \"de-DE\", \"fr-FR\", \"it-IT\", \"ja-JP\", \"ko-KR\", \"pt-BR\", \"zh-CN\", \"zh-TW\", \"nl-NL\", \"pl-PL\", \"id-ID\", \"tr-TR\", \"ar-EG\", \"ru-RU\", \"fa-IR\", \"bg-BG\", \"hr-HR\", \"cs-CZ\", \"da-DK\", \"fi-FI\", \"lt-LT\", \"ms-MY\", \"nb-NO\", \"ro-RO\", \"el-GR\", \"he-IL\", \"hi-IN\", \"hu-HU\", \"sr-BA\", \"sk-SK\", \"sl-SI\", \"sv-SE\", \"tl-PH\", \"th-TH\", \"uk-UA\", \"vi-VN\".",
+				Description: "The language of the default page template. If no default_template_language is provided, then `en-US` (English) will be used.\nAvailable values: \"en-US\", \"es-ES\", \"de-DE\", \"fr-FR\", \"it-IT\", \"ja-JP\", \"ko-KR\", \"pt-BR\", \"zh-CN\", \"zh-TW\", \"nl-NL\", \"pl-PL\", \"id-ID\", \"tr-TR\", \"ar-EG\", \"ru-RU\", \"fa-IR\", \"bg-BG\", \"hr-HR\", \"cs-CZ\", \"da-DK\", \"fi-FI\", \"lt-LT\", \"lv-LV\", \"ms-MY\", \"nb-NO\", \"ro-RO\", \"el-GR\", \"he-IL\", \"hi-IN\", \"hu-HU\", \"sr-BA\", \"sk-SK\", \"sl-SI\", \"sv-SE\", \"tl-PH\", \"th-TH\", \"uk-UA\", \"vi-VN\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -106,6 +106,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"da-DK",
 						"fi-FI",
 						"lt-LT",
+						"lv-LV",
 						"ms-MY",
 						"nb-NO",
 						"ro-RO",

@@ -21,6 +21,7 @@ resource "cloudflare_zero_trust_access_custom_page" "example_zero_trust_access_c
   custom_html = "<html><body><h1>Access Denied</h1></body></html>"
   name = "name"
   type = "identity_denied"
+  contract_version = 0
 }
 ```
 
@@ -33,12 +34,26 @@ resource "cloudflare_zero_trust_access_custom_page" "example_zero_trust_access_c
 - `custom_html` (String) Custom page HTML.
 - `name` (String) Custom page name.
 - `type` (String) Custom page type.
-Available values: "identity_denied", "forbidden".
+Available values: "identity_denied", "forbidden", "login", "interstitial".
+
+### Optional
+
+- `contract_version` (Number) Contract version of the page's Liquid template. Present (>= 1) marks a sanitized template; absent or 0 marks a legacy page served verbatim.
 
 ### Read-Only
 
 - `id` (String) UUID.
 - `uid` (String) UUID.
+- `warnings` (Attributes List) Advisory validation findings returned when creating or updating a template. Omitted when empty. (see [below for nested schema](#nestedatt--warnings))
+
+<a id="nestedatt--warnings"></a>
+### Nested Schema for `warnings`
+
+Read-Only:
+
+- `message` (String) Human-readable description of the finding.
+- `ref` (String) Optional pointer to the part of the template the finding refers to.
+- `tier` (String) The validation tier that produced the finding (e.g. html, liquid).
 
 ## Import
 

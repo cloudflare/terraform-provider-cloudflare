@@ -9,8 +9,20 @@ cat << EOT > examples/resources/cloudflare_list_item/import.sh
 $ terraform import cloudflare_list_item.example '<account_id>/<list_id>/<item_id>'
 EOT
 
+OPENAPI_SPEC_URL=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --openapi-spec) OPENAPI_SPEC_URL="$2"; shift 2 ;;
+    *) echo "Usage: $0 [--openapi-spec <url>]" >&2; exit 1 ;;
+  esac
+done
+
 echo "==> Generating zone setting IDs from OpenAPI spec"
-python3 "$(dirname "$0")/generate-zone-setting-ids"
+if [ -n "$OPENAPI_SPEC_URL" ]; then
+  python3 "$(dirname "$0")/generate-zone-setting-ids" "$OPENAPI_SPEC_URL"
+else
+  python3 "$(dirname "$0")/generate-zone-setting-ids"
+fi
 # Mark the necessary Go modules as private to avoid Go's proxy
 export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/cloudflare/cloudflare-go,github.com/gitlab.cfdata.org/cloudflare/sdks/cloudflare-go"
 

@@ -67,7 +67,7 @@ func (d *ZeroTrustResourceLibraryApplicationDataSource) Read(ctx context.Context
 	env := ZeroTrustResourceLibraryApplicationResultDataSourceEnvelope{*data}
 	_, err := d.client.ZeroTrust.ResourceLibrary.Applications.Get(
 		ctx,
-		data.ID.ValueString(),
+		data.ID.ValueInt64(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

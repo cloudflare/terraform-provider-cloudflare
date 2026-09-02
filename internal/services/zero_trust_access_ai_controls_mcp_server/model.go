@@ -27,6 +27,7 @@ type ZeroTrustAccessAIControlsMcpServerModel struct {
 	UpdatedTools                 *[]*ZeroTrustAccessAIControlsMcpServerUpdatedToolsModel                            `tfsdk:"updated_tools" json:"updated_tools,optional"`
 	IsSharedOAuthCallbackEnabled types.Bool                                                                         `tfsdk:"is_shared_oauth_callback_enabled" json:"is_shared_oauth_callback_enabled,computed_optional"`
 	SecureWebGateway             types.Bool                                                                         `tfsdk:"secure_web_gateway" json:"secure_web_gateway,computed_optional"`
+	AuthenticationStatus         types.String                                                                       `tfsdk:"authentication_status" json:"authentication_status,computed"`
 	CreatedAt                    timetypes.RFC3339                                                                  `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy                    types.String                                                                       `tfsdk:"created_by" json:"created_by,computed"`
 	Error                        types.String                                                                       `tfsdk:"error" json:"error,computed"`

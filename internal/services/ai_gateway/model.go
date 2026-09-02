@@ -22,6 +22,7 @@ type AIGatewayModel struct {
 	RateLimitingInterval    types.Int64                                         `tfsdk:"rate_limiting_interval" json:"rate_limiting_interval,required"`
 	RateLimitingLimit       types.Int64                                         `tfsdk:"rate_limiting_limit" json:"rate_limiting_limit,required"`
 	Authentication          types.Bool                                          `tfsdk:"authentication" json:"authentication,optional"`
+	LogClassification       types.Bool                                          `tfsdk:"log_classification" json:"log_classification,optional"`
 	LogManagement           types.Int64                                         `tfsdk:"log_management" json:"log_management,optional"`
 	LogManagementStrategy   types.String                                        `tfsdk:"log_management_strategy" json:"log_management_strategy,optional"`
 	Logpush                 types.Bool                                          `tfsdk:"logpush" json:"logpush,optional"`

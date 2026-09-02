@@ -18,8 +18,9 @@ type ZeroTrustAccessAIControlsMcpPortalModel struct {
 	AccountID        types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
 	Hostname         types.String                                                                `tfsdk:"hostname" json:"hostname,required"`
 	Name             types.String                                                                `tfsdk:"name" json:"name,required"`
-	Description      types.String                                                                `tfsdk:"description" json:"description,optional"`
 	AllowCodeMode    types.Bool                                                                  `tfsdk:"allow_code_mode" json:"allow_code_mode,computed_optional"`
+	CodeMode         types.String                                                                `tfsdk:"code_mode" json:"code_mode,computed_optional"`
+	Description      types.String                                                                `tfsdk:"description" json:"description,optional"`
 	SecureWebGateway types.Bool                                                                  `tfsdk:"secure_web_gateway" json:"secure_web_gateway,computed_optional"`
 	Servers          customfield.NestedObjectSet[ZeroTrustAccessAIControlsMcpPortalServersModel] `tfsdk:"servers" json:"servers,computed_optional"`
 	CreatedAt        timetypes.RFC3339                                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -37,7 +38,7 @@ func (m ZeroTrustAccessAIControlsMcpPortalModel) MarshalJSONForUpdate(state Zero
 }
 
 type ZeroTrustAccessAIControlsMcpPortalServersModel struct {
-	ServerID        types.String                                                     `tfsdk:"server_id" json:"server_id,required,no_refresh"`
+	ServerID        types.String                                                     `tfsdk:"server_id" json:"server_id,required"`
 	DefaultDisabled types.Bool                                                       `tfsdk:"default_disabled" json:"default_disabled,computed_optional"`
 	OnBehalf        types.Bool                                                       `tfsdk:"on_behalf" json:"on_behalf,computed_optional"`
 	UpdatedPrompts  *[]*ZeroTrustAccessAIControlsMcpPortalServersUpdatedPromptsModel `tfsdk:"updated_prompts" json:"updated_prompts,optional"`

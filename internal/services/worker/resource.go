@@ -281,19 +281,37 @@ func (r *WorkerResource) ModifyPlan(ctx context.Context, req resource.ModifyPlan
 		return
 	}
 
+	// Compare only the user-configurable subdomain attributes (enabled,
+	// previews_enabled). The subdomain block also contains computed-only fields
+	// (preview_url_suffix, url) that are unknown in the plan whenever the
+	// framework re-evaluates them, which would make a full plan.Subdomain.Equal
+	// check return false even when the user changed nothing.
+	var planSubdomainEnabled, stateSubdomainEnabled types.Bool
+	var planSubdomainPreviewsEnabled, stateSubdomainPreviewsEnabled types.Bool
+	resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, path.Root("subdomain").AtName("enabled"), &planSubdomainEnabled)...)
+	resp.Diagnostics.Append(req.State.GetAttribute(ctx, path.Root("subdomain").AtName("enabled"), &stateSubdomainEnabled)...)
+	resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, path.Root("subdomain").AtName("previews_enabled"), &planSubdomainPreviewsEnabled)...)
+	resp.Diagnostics.Append(req.State.GetAttribute(ctx, path.Root("subdomain").AtName("previews_enabled"), &stateSubdomainPreviewsEnabled)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	subdomainChanged := (!planSubdomainEnabled.IsUnknown() && !planSubdomainEnabled.Equal(stateSubdomainEnabled)) ||
+		(!planSubdomainPreviewsEnabled.IsUnknown() && !planSubdomainPreviewsEnabled.Equal(stateSubdomainPreviewsEnabled))
+
 	// If there are any meaningful changes to user-configurable attributes, do
 	// nothing so that updated_on can legitimately change on update.
 	if (!plan.Name.IsUnknown() && !plan.Name.Equal(state.Name)) ||
 		(!plan.Logpush.IsUnknown() && !plan.Logpush.Equal(state.Logpush)) ||
 		(!plan.Tags.IsUnknown() && !plan.Tags.Equal(state.Tags)) ||
 		(!plan.Observability.IsUnknown() && !plan.Observability.Equal(state.Observability)) ||
-		(!plan.Subdomain.IsUnknown() && !plan.Subdomain.Equal(state.Subdomain)) ||
+		subdomainChanged ||
 		(!plan.TailConsumers.IsUnknown() && !plan.TailConsumers.Equal(state.TailConsumers)) {
 		return
 	}
 
-	// No changes to user-configurable attributes, so copy updated_on timestamp
-	// from state to avoid spurious changes.
+	// No changes to user-configurable attributes: stabilize computed fields by
+	// copying them from state so they don't appear as (known after apply).
 	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("updated_on"), state.UpdatedOn)...)
 	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("references"), state.References)...)
+	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("subdomain"), state.Subdomain)...)
 }

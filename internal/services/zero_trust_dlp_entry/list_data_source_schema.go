@@ -126,6 +126,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"deprecated": schema.BoolAttribute{
+							Description: "Whether this entry is deprecated for new use. This is computed from the static catalog and\nemitted only when true.",
+							Computed:    true,
+						},
 						"variant": schema.SingleNestedAttribute{
 							Description: "A Predefined AI prompt classification topic entry.",
 							Computed:    true,

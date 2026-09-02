@@ -5,6 +5,7 @@ package zone_dns_settings
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -71,7 +72,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"internal_dns": schema.SingleNestedAttribute{
 				Description: "Settings for this internal zone.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZoneDNSSettingsInternalDNSModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"reference_zone_id": schema.StringAttribute{
 						Description: "The ID of the zone to fallback to.",
@@ -81,7 +84,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"nameservers": schema.SingleNestedAttribute{
 				Description: "Settings determining the nameservers through which the zone should be available.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZoneDNSSettingsNameserversModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"ns_set": schema.Int64Attribute{
 						Description: "Configured nameserver set to be used for this zone",
@@ -106,7 +111,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"soa": schema.SingleNestedAttribute{
 				Description: "Components of the zone's SOA record.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZoneDNSSettingsSOAModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"expire": schema.Float64Attribute{
 						Description: "Time in seconds of being unable to query the primary server after which secondary servers should stop serving the zone.",

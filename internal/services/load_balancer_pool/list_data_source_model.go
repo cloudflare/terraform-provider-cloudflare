@@ -43,6 +43,7 @@ type LoadBalancerPoolsResultDataSourceModel struct {
 	Description        types.String                                                                 `tfsdk:"description" json:"description,computed"`
 	DisabledAt         timetypes.RFC3339                                                            `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
 	Enabled            types.Bool                                                                   `tfsdk:"enabled" json:"enabled,computed"`
+	HealthSources      customfield.List[types.String]                                               `tfsdk:"health_sources" json:"health_sources,computed"`
 	Latitude           types.Float64                                                                `tfsdk:"latitude" json:"latitude,computed"`
 	LoadShedding       customfield.NestedObject[LoadBalancerPoolsLoadSheddingDataSourceModel]       `tfsdk:"load_shedding" json:"load_shedding,computed"`
 	Longitude          types.Float64                                                                `tfsdk:"longitude" json:"longitude,computed"`

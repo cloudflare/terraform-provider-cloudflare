@@ -142,10 +142,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The Cloudflare data center used for this connection.",
 							Computed:    true,
 						},
-						"is_pending_reconnect": schema.BoolAttribute{
-							Description: "Cloudflare continues to track connections for several minutes after they disconnect. This is an optimization to improve latency and reliability of reconnecting.  If `true`, the connection has disconnected but is still being tracked. If `false`, the connection is actively serving traffic.",
-							Computed:    true,
-						},
 						"opened_at": schema.StringAttribute{
 							Description: "Timestamp of when the connection was established.",
 							Computed:    true,

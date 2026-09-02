@@ -93,7 +93,7 @@ Read-Only:
 - `id` (String) Identifier of the resource group.
 - `meta` (Attributes) Attributes associated to the resource group. (see [below for nested schema](#nestedatt--policies--resource_groups--meta))
 - `name` (String) Name of the resource group.
-- `scope` (Attributes) A scope is a combination of scope objects which provides additional context. (see [below for nested schema](#nestedatt--policies--resource_groups--scope))
+- `scope` (Attributes List) The scope associated to the resource group (see [below for nested schema](#nestedatt--policies--resource_groups--scope))
 
 <a id="nestedatt--policies--resource_groups--meta"></a>
 ### Nested Schema for `policies.resource_groups.meta`

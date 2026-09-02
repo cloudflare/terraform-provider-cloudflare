@@ -34,6 +34,7 @@ type LoadBalancerPoolDataSourceModel struct {
 	Name               types.String                                                                `tfsdk:"name" json:"name,computed"`
 	NotificationEmail  types.String                                                                `tfsdk:"notification_email" json:"notification_email,computed"`
 	CheckRegions       customfield.List[types.String]                                              `tfsdk:"check_regions" json:"check_regions,computed"`
+	HealthSources      customfield.List[types.String]                                              `tfsdk:"health_sources" json:"health_sources,computed"`
 	Networks           customfield.List[types.String]                                              `tfsdk:"networks" json:"networks,computed"`
 	LoadShedding       customfield.NestedObject[LoadBalancerPoolLoadSheddingDataSourceModel]       `tfsdk:"load_shedding" json:"load_shedding,computed"`
 	NotificationFilter customfield.NestedObject[LoadBalancerPoolNotificationFilterDataSourceModel] `tfsdk:"notification_filter" json:"notification_filter,computed"`

@@ -45,6 +45,7 @@ type ZeroTrustAccessAIControlsMcpServersResultDataSourceModel struct {
 	Prompts                      customfield.List[customfield.Map[jsontypes.Normalized]]                                        `tfsdk:"prompts" json:"prompts,computed"`
 	Tools                        customfield.List[customfield.Map[jsontypes.Normalized]]                                        `tfsdk:"tools" json:"tools,computed"`
 	AuthConfigSummary            customfield.NestedObject[ZeroTrustAccessAIControlsMcpServersAuthConfigSummaryDataSourceModel]  `tfsdk:"auth_config_summary" json:"auth_config_summary,computed"`
+	AuthenticationStatus         types.String                                                                                   `tfsdk:"authentication_status" json:"authentication_status,computed"`
 	CreatedAt                    timetypes.RFC3339                                                                              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy                    types.String                                                                                   `tfsdk:"created_by" json:"created_by,computed"`
 	Description                  types.String                                                                                   `tfsdk:"description" json:"description,computed"`

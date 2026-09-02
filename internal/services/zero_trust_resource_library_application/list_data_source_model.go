@@ -53,22 +53,22 @@ func (m *ZeroTrustResourceLibraryApplicationsDataSourceModel) toListParams(_ con
 }
 
 type ZeroTrustResourceLibraryApplicationsResultDataSourceModel struct {
-	ID                          types.String                   `tfsdk:"id" json:"id,computed"`
-	ApplicationConfidenceScore  types.Float64                  `tfsdk:"application_confidence_score" json:"application_confidence_score,computed"`
-	ApplicationSource           types.String                   `tfsdk:"application_source" json:"application_source,computed"`
-	ApplicationType             types.String                   `tfsdk:"application_type" json:"application_type,computed"`
-	ApplicationTypeDescription  types.String                   `tfsdk:"application_type_description" json:"application_type_description,computed"`
-	CreatedAt                   types.String                   `tfsdk:"created_at" json:"created_at,computed"`
-	GenAIScore                  types.Float64                  `tfsdk:"gen_ai_score" json:"gen_ai_score,computed"`
-	Hostnames                   customfield.List[types.String] `tfsdk:"hostnames" json:"hostnames,computed"`
-	HumanID                     types.String                   `tfsdk:"human_id" json:"human_id,computed"`
-	IPSubnets                   customfield.List[types.String] `tfsdk:"ip_subnets" json:"ip_subnets,computed"`
-	Name                        types.String                   `tfsdk:"name" json:"name,computed"`
-	PortProtocols               customfield.List[types.String] `tfsdk:"port_protocols" json:"port_protocols,computed"`
-	SupportDomains              customfield.List[types.String] `tfsdk:"support_domains" json:"support_domains,computed"`
-	Supported                   customfield.List[types.String] `tfsdk:"supported" json:"supported,computed"`
-	UpdatedAt                   types.String                   `tfsdk:"updated_at" json:"updated_at,computed"`
-	Version                     types.String                   `tfsdk:"version" json:"version,computed"`
-	ApplicationScoreComposition jsontypes.Normalized           `tfsdk:"application_score_composition" json:"application_score_composition,computed"`
-	IntelID                     types.Int64                    `tfsdk:"intel_id" json:"intel_id,computed"`
+	ID                          types.Int64                   `tfsdk:"id" json:"id,computed"`
+	ApplicationConfidenceScore  types.Float64                 `tfsdk:"application_confidence_score" json:"application_confidence_score,computed"`
+	ApplicationSource           types.String                  `tfsdk:"application_source" json:"application_source,computed"`
+	ApplicationType             types.String                  `tfsdk:"application_type" json:"application_type,computed"`
+	ApplicationTypeDescription  types.String                  `tfsdk:"application_type_description" json:"application_type_description,computed"`
+	CategoryID                  types.Int64                   `tfsdk:"category_id" json:"category_id,computed"`
+	CreatedAt                   types.String                  `tfsdk:"created_at" json:"created_at,computed"`
+	GenAIScore                  types.Float64                 `tfsdk:"gen_ai_score" json:"gen_ai_score,computed"`
+	Hostnames                   customfield.Set[types.String] `tfsdk:"hostnames" json:"hostnames,computed"`
+	HumanID                     types.String                  `tfsdk:"human_id" json:"human_id,computed"`
+	IPSubnets                   customfield.Set[types.String] `tfsdk:"ip_subnets" json:"ip_subnets,computed"`
+	Name                        types.String                  `tfsdk:"name" json:"name,computed"`
+	PortProtocols               customfield.Set[types.String] `tfsdk:"port_protocols" json:"port_protocols,computed"`
+	SupportDomains              customfield.Set[types.String] `tfsdk:"support_domains" json:"support_domains,computed"`
+	Supported                   customfield.Set[types.String] `tfsdk:"supported" json:"supported,computed"`
+	UpdatedAt                   types.String                  `tfsdk:"updated_at" json:"updated_at,computed"`
+	Version                     types.String                  `tfsdk:"version" json:"version,computed"`
+	ApplicationScoreComposition jsontypes.Normalized          `tfsdk:"application_score_composition" json:"application_score_composition,computed"`
 }

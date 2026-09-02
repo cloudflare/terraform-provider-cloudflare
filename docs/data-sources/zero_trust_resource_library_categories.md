@@ -35,7 +35,7 @@ Read-Only:
 
 - `created_at` (String) Returns the category creation time.
 - `description` (String) Returns the category description.
-- `id` (String) Returns the category ID.
+- `id` (Number) Returns the category ID.
 - `name` (String) Returns the category name.
 
 

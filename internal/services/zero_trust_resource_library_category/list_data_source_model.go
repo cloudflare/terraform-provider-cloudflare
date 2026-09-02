@@ -40,7 +40,7 @@ func (m *ZeroTrustResourceLibraryCategoriesDataSourceModel) toListParams(_ conte
 }
 
 type ZeroTrustResourceLibraryCategoriesResultDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"id,computed"`
+	ID          types.Int64  `tfsdk:"id" json:"id,computed"`
 	CreatedAt   types.String `tfsdk:"created_at" json:"created_at,computed"`
 	Description types.String `tfsdk:"description" json:"description,computed"`
 	Name        types.String `tfsdk:"name" json:"name,computed"`

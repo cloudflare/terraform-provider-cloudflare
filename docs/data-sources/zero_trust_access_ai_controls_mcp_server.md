@@ -29,31 +29,34 @@ data "cloudflare_zero_trust_access_ai_controls_mcp_server" "example_zero_trust_a
 
 - `account_id` (String)
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `id` (String) server id
+- `id` (String) Unique identifier for the MCP server.
 
 ### Read-Only
 
 - `auth_config_summary` (Attributes) Safe subset of auth_credentials surfaced to the dashboard. Includes auth_mode (dcr|manual), has_client_secret, client_secret_version, and the OAuth endpoints + client_id for manual servers. Never includes the secret value. (see [below for nested schema](#nestedatt--auth_config_summary))
-- `auth_type` (String) Available values: "oauth", "bearer", "unauthenticated".
+- `auth_type` (String) Authentication method used to connect to the upstream MCP server.
+Available values: "oauth", "bearer", "unauthenticated".
+- `authentication_status` (String) Whether administrative authentication is required before capabilities can be synced. Manual OAuth is user-managed and has no administrative authentication flow.
+Available values: "not_required", "required", "connected", "stale", "manual".
 - `created_at` (String)
 - `created_by` (String)
-- `description` (String)
+- `description` (String) Optional description of the MCP server.
 - `error` (String)
 - `error_details` (Attributes) (see [below for nested schema](#nestedatt--error_details))
-- `hostname` (String)
+- `hostname` (String) URL of the upstream MCP endpoint.
 - `is_shared_oauth_callback_enabled` (Boolean) When true, the gateway worker uses the shared Cloudflare-owned OAuth callback endpoint as the redirect_uri for upstream on-behalf OAuth, instead of the customer portal hostname. New public server creates default to true; existing servers default to false from migration until explicitly updated. Effective behavior is gated by the gateway worker's per-env rollout mode KV key.
 - `last_successful_sync` (String)
 - `last_synced` (String)
 - `modified_at` (String)
 - `modified_by` (String)
-- `name` (String)
+- `name` (String) Display name for the MCP server.
 - `prompts` (List of Map of String)
-- `secure_web_gateway` (Boolean) Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway
+- `secure_web_gateway` (Boolean) Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway.
 - `status` (String) Current sync state of the server
 Available values: "waiting", "ready", "stale", "error".
 - `tools` (List of Map of String)
-- `updated_prompts` (Attributes List) (see [below for nested schema](#nestedatt--updated_prompts))
-- `updated_tools` (Attributes List) (see [below for nested schema](#nestedatt--updated_tools))
+- `updated_prompts` (Attributes List) Server-wide prompt capability overrides. (see [below for nested schema](#nestedatt--updated_prompts))
+- `updated_tools` (Attributes List) Server-wide tool capability overrides. (see [below for nested schema](#nestedatt--updated_tools))
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -115,10 +118,10 @@ Read-Only:
 
 Read-Only:
 
-- `alias` (String)
-- `description` (String)
-- `enabled` (Boolean)
-- `name` (String)
+- `alias` (String) Custom name exposed for the capability.
+- `description` (String) Custom description exposed for the capability.
+- `enabled` (Boolean) Whether the capability is available through the MCP server.
+- `name` (String) Name of the tool or prompt capability to override.
 
 
 <a id="nestedatt--updated_tools"></a>
@@ -126,9 +129,9 @@ Read-Only:
 
 Read-Only:
 
-- `alias` (String)
-- `description` (String)
-- `enabled` (Boolean)
-- `name` (String)
+- `alias` (String) Custom name exposed for the capability.
+- `description` (String) Custom description exposed for the capability.
+- `enabled` (Boolean) Whether the capability is available through the MCP server.
+- `name` (String) Name of the tool or prompt capability to override.
 
 

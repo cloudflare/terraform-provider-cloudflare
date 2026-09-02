@@ -32,17 +32,18 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"per_page": schema.Int64Attribute{
-				Description: "Maximum number of relays to return per page.",
-				Optional:    true,
-				Validators: []validator.Int64{
-					int64validator.AtLeast(1),
-				},
-			},
 			"asc": schema.BoolAttribute{
 				Description: "Sort order by `created`. When true, results are returned oldest-first\n(ascending); otherwise newest-first (descending, the default).",
 				Computed:    true,
 				Optional:    true,
+			},
+			"per_page": schema.Int64Attribute{
+				Description: "Maximum number of relays to return per page. Values above the maximum are\nclamped to it rather than rejected.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 1000),
+				},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

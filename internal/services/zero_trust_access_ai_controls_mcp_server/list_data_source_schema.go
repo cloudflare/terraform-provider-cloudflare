@@ -49,11 +49,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "server id",
+							Description: "Unique identifier for the MCP server.",
 							Computed:    true,
 						},
 						"auth_type": schema.StringAttribute{
-							Description: `Available values: "oauth", "bearer", "unauthenticated".`,
+							Description: "Authentication method used to connect to the upstream MCP server.\nAvailable values: \"oauth\", \"bearer\", \"unauthenticated\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -64,10 +64,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"hostname": schema.StringAttribute{
-							Computed: true,
+							Description: "URL of the upstream MCP endpoint.",
+							Computed:    true,
 						},
 						"name": schema.StringAttribute{
-							Computed: true,
+							Description: "Display name for the MCP server.",
+							Computed:    true,
 						},
 						"prompts": schema.ListAttribute{
 							Computed:   true,
@@ -144,6 +146,19 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"authentication_status": schema.StringAttribute{
+							Description: "Whether administrative authentication is required before capabilities can be synced. Manual OAuth is user-managed and has no administrative authentication flow.\nAvailable values: \"not_required\", \"required\", \"connected\", \"stale\", \"manual\".",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"not_required",
+									"required",
+									"connected",
+									"stale",
+									"manual",
+								),
+							},
+						},
 						"created_at": schema.StringAttribute{
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
@@ -152,7 +167,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"description": schema.StringAttribute{
-							Computed: true,
+							Description: "Optional description of the MCP server.",
+							Computed:    true,
 						},
 						"error": schema.StringAttribute{
 							Computed: true,
@@ -203,7 +219,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"secure_web_gateway": schema.BoolAttribute{
-							Description: "Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway",
+							Description: "Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway.",
 							Computed:    true,
 						},
 						"status": schema.StringAttribute{
@@ -219,41 +235,51 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"updated_prompts": schema.ListNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpServersUpdatedPromptsDataSourceModel](ctx),
+							Description: "Server-wide prompt capability overrides.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpServersUpdatedPromptsDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"name": schema.StringAttribute{
-										Computed: true,
+										Description: "Name of the tool or prompt capability to override.",
+										Computed:    true,
 									},
 									"alias": schema.StringAttribute{
-										Computed: true,
+										Description: "Custom name exposed for the capability.",
+										Computed:    true,
 									},
 									"description": schema.StringAttribute{
-										Computed: true,
+										Description: "Custom description exposed for the capability.",
+										Computed:    true,
 									},
 									"enabled": schema.BoolAttribute{
-										Computed: true,
+										Description: "Whether the capability is available through the MCP server.",
+										Computed:    true,
 									},
 								},
 							},
 						},
 						"updated_tools": schema.ListNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpServersUpdatedToolsDataSourceModel](ctx),
+							Description: "Server-wide tool capability overrides.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessAIControlsMcpServersUpdatedToolsDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"name": schema.StringAttribute{
-										Computed: true,
+										Description: "Name of the tool or prompt capability to override.",
+										Computed:    true,
 									},
 									"alias": schema.StringAttribute{
-										Computed: true,
+										Description: "Custom name exposed for the capability.",
+										Computed:    true,
 									},
 									"description": schema.StringAttribute{
-										Computed: true,
+										Description: "Custom description exposed for the capability.",
+										Computed:    true,
 									},
 									"enabled": schema.BoolAttribute{
-										Computed: true,
+										Description: "Whether the capability is available through the MCP server.",
+										Computed:    true,
 									},
 								},
 							},

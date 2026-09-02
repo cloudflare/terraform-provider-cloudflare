@@ -102,7 +102,7 @@ get_product_group_services() {
             echo "zero_trust_access_mtls_certificate zero_trust_access_mtls_hostname_settings zero_trust_access_short_lived_certificate"
             ;;
         access-applications)
-            echo "zero_trust_access_application zero_trust_access_service_token"
+            echo "zero_trust_access_ai_controls_mcp_portal zero_trust_access_ai_controls_mcp_server zero_trust_access_application zero_trust_access_service_token"
             ;;
         account-core)
             echo "account_token account_member account_subscription"
@@ -265,6 +265,8 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/workers_route"
     "resource=./internal/services/workers_script"
     "resource=./internal/services/workflow"
+    "resource=./internal/services/zero_trust_access_ai_controls_mcp_portal"
+    "resource=./internal/services/zero_trust_access_ai_controls_mcp_server"
     "resource=./internal/services/zero_trust_access_application"
     "resource=./internal/services/zero_trust_access_custom_page"
     "resource=./internal/services/zero_trust_access_group"
@@ -457,7 +459,7 @@ resolve_dependencies() {
 set -e
 
 # Configuration
-PARALLEL_JOBS=${PARALLEL_JOBS:-3}  # Number of parallel jobs (can be overridden)
+PARALLEL_JOBS=${PARALLEL_JOBS:-1}  # Number of parallel jobs (can be overridden)
 LOG_DIR="./test-logs"
 SWEEP_TIMEOUT="5m"
 TEST_TIMEOUT="15m"

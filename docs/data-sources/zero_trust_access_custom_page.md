@@ -35,11 +35,12 @@ data "cloudflare_zero_trust_access_custom_page" "example_zero_trust_access_custo
 
 ### Read-Only
 
+- `contract_version` (Number) Contract version of the page's Liquid template. Present (>= 1) marks a sanitized template; absent or 0 marks a legacy page served verbatim.
 - `custom_html` (String) Custom page HTML.
 - `id` (String) UUID.
 - `name` (String) Custom page name.
 - `type` (String) Custom page type.
-Available values: "identity_denied", "forbidden".
+Available values: "identity_denied", "forbidden", "login", "interstitial".
 - `uid` (String) UUID.
 
 

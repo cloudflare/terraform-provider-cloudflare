@@ -67,7 +67,9 @@ added in the future without another breaking change. (see [below for nested sche
 
 Optional:
 
-- `url` (String) Upstream MOQT server publisher URL.
+- `url` (String) Upstream MOQT server publisher URL. Must be an absolute URL with a
+host and a scheme the relay can dial: moqt:// (raw QUIC) or https://
+(WebTransport). Validated on update (PUT); rejected with 21013.
 
 ## Import
 

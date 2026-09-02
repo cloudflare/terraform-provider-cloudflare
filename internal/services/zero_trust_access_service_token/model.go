@@ -17,6 +17,7 @@ type ZeroTrustAccessServiceTokenModel struct {
 	AccountID                     types.String      `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID                        types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
 	Name                          types.String      `tfsdk:"name" json:"name,required"`
+	Enabled                       types.Bool        `tfsdk:"enabled" json:"enabled,computed_optional"`
 	PreviousClientSecretExpiresAt timetypes.RFC3339 `tfsdk:"previous_client_secret_expires_at" json:"previous_client_secret_expires_at,optional,no_refresh" format:"date-time"`
 	ClientSecretVersion           types.Float64     `tfsdk:"client_secret_version" json:"client_secret_version,computed_optional,no_refresh"`
 	Duration                      types.String      `tfsdk:"duration" json:"duration,computed_optional"`

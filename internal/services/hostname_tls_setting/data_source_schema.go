@@ -5,7 +5,6 @@ package hostname_tls_setting
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -17,23 +16,10 @@ var _ datasource.DataSourceWithConfigValidators = (*HostnameTLSSettingDataSource
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: schemata.Description{
-			Scopes: []string{
-				"SSL and Certificates Read",
-				"SSL and Certificates Write",
-			},
-		}.String(),
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "The TLS Setting name.\nThe value type depends on the setting:\n- `ciphers`: value is an array of cipher suite strings (e.g., `[\"ECDHE-RSA-AES128-GCM-SHA256\", \"AES128-GCM-SHA256\"]`).\n- `min_tls_version`: value is a TLS version string (`\"1.0\"`, `\"1.1\"`, `\"1.2\"`, or `\"1.3\"`).\n- `http2`: value is `\"on\"` or `\"off\"`.\nAvailable values: \"ciphers\", \"min_tls_version\", \"http2\".",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"ciphers",
-						"min_tls_version",
-						"http2",
-					),
-				},
+			"hostname": schema.StringAttribute{
+				Description: "The hostname for which the tls settings are set.",
+				Required:    true,
 			},
 			"setting_id": schema.StringAttribute{
 				Description: "The TLS Setting name.\nThe value type depends on the setting:\n- `ciphers`: value is an array of cipher suite strings (e.g., `[\"ECDHE-RSA-AES128-GCM-SHA256\", \"AES128-GCM-SHA256\"]`).\n- `min_tls_version`: value is a TLS version string (`\"1.0\"`, `\"1.1\"`, `\"1.2\"`, or `\"1.3\"`).\n- `http2`: value is `\"on\"` or `\"off\"`.\nAvailable values: \"ciphers\", \"min_tls_version\", \"http2\".",
@@ -54,10 +40,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "This is the time the tls setting was originally created for this hostname.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"hostname": schema.StringAttribute{
-				Description: "The hostname for which the tls settings are set.",
-				Computed:    true,
 			},
 			"status": schema.StringAttribute{
 				Description: "Deployment status for the given tls setting.",

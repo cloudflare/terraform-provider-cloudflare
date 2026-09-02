@@ -14,7 +14,7 @@ description: |-
 ```terraform
 data "cloudflare_zero_trust_resource_library_application" "example_zero_trust_resource_library_application" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  id = "0b63249c-95bf-4cc0-a7cc-d7faaaf1dac0"
+  id = 498
 }
 ```
 
@@ -32,17 +32,17 @@ data "cloudflare_zero_trust_resource_library_application" "example_zero_trust_re
 - `application_source` (String) Returns the application source.
 - `application_type` (String) Returns the application type.
 - `application_type_description` (String) Returns the application type description.
+- `category_id` (Number) Returns the category ID.
 - `created_at` (String) Returns the application creation time.
 - `gen_ai_score` (Number) GenAI score for the application. Returns -1 when no score is available.
-- `hostnames` (List of String) Returns the list of hostnames for the application.
+- `hostnames` (Set of String) Hostnames matched by the application.
 - `human_id` (String) Returns the human readable ID.
-- `id` (String) The ID of this resource.
-- `intel_id` (Number) Returns the Intel API ID for the application.
-- `ip_subnets` (List of String) Returns the list of IP subnets for the application.
+- `id` (Number) The ID of this resource.
+- `ip_subnets` (Set of String) IP subnets matched by the application.
 - `name` (String) Returns the application name.
-- `port_protocols` (List of String) Returns the list of port protocols for the application.
-- `support_domains` (List of String) Returns the list of support domains for the application.
-- `supported` (List of String) Cloudflare products that support this application.
+- `port_protocols` (Set of String) Port and protocol pairs matched by the application.
+- `support_domains` (Set of String) Support domains matched by the application.
+- `supported` (Set of String) Cloudflare products that support this application.
 - `updated_at` (String) Returns the application update time.
 - `version` (String) Returns the application version.
 

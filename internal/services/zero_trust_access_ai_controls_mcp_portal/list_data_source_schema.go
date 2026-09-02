@@ -49,14 +49,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "portal id",
+							Description: "Unique identifier for the MCP portal.",
 							Computed:    true,
 						},
 						"hostname": schema.StringAttribute{
-							Computed: true,
+							Description: "Hostname where the MCP portal is available.",
+							Computed:    true,
 						},
 						"name": schema.StringAttribute{
-							Computed: true,
+							Description: "Display name for the MCP portal.",
+							Computed:    true,
 						},
 						"servers": schema.SetNestedAttribute{
 							Computed:   true,
@@ -64,11 +66,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
-										Description: "server id",
+										Description: "Unique identifier for the MCP server.",
 										Computed:    true,
 									},
 									"auth_type": schema.StringAttribute{
-										Description: `Available values: "oauth", "bearer", "unauthenticated".`,
+										Description: "Authentication method used to connect to the upstream MCP server.\nAvailable values: \"oauth\", \"bearer\", \"unauthenticated\".",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -79,10 +81,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"hostname": schema.StringAttribute{
-										Computed: true,
+										Description: "URL of the upstream MCP endpoint.",
+										Computed:    true,
 									},
 									"name": schema.StringAttribute{
-										Computed: true,
+										Description: "Display name for the MCP server.",
+										Computed:    true,
 									},
 									"prompts": schema.ListAttribute{
 										Computed:   true,
@@ -92,7 +96,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"server_id": schema.StringAttribute{
-										Description: "server id",
+										Description: "Unique identifier for the MCP server.",
 										Computed:    true,
 									},
 									"tools": schema.ListAttribute{
@@ -163,6 +167,19 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"authentication_status": schema.StringAttribute{
+										Description: "Whether administrative authentication is required before capabilities can be synced. Manual OAuth is user-managed and has no administrative authentication flow.\nAvailable values: \"not_required\", \"required\", \"connected\", \"stale\", \"manual\".",
+										Computed:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"not_required",
+												"required",
+												"connected",
+												"stale",
+												"manual",
+											),
+										},
+									},
 									"created_at": schema.StringAttribute{
 										Computed:   true,
 										CustomType: timetypes.RFC3339Type{},
@@ -174,7 +191,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Computed: true,
 									},
 									"description": schema.StringAttribute{
-										Computed: true,
+										Description: "Optional description of the MCP server.",
+										Computed:    true,
 									},
 									"error": schema.StringAttribute{
 										Computed: true,
@@ -228,7 +246,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Computed: true,
 									},
 									"secure_web_gateway": schema.BoolAttribute{
-										Description: "Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway",
+										Description: "Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway.",
 										Computed:    true,
 									},
 									"status": schema.StringAttribute{
@@ -299,8 +317,21 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"allow_code_mode": schema.BoolAttribute{
-							Description: "Allow remote code execution in Dynamic Workers (beta)",
+							Description:        "Deprecated: use `code_mode` for new integrations. `true` maps to any non-off Code Mode policy; `false` maps to `code_mode: off`. If both fields are sent, they must be consistent or the request returns a 400.",
+							Computed:           true,
+							DeprecationMessage: "This attribute is deprecated.",
+						},
+						"code_mode": schema.StringAttribute{
+							Description: "Code Mode policy for this portal. `off`: Code Mode is unavailable; query parameters are ignored. `opt_in`: Code Mode is off by default; clients turn it on with `?codemode=search_and_execute`. `default_on`: Code Mode is on by default; clients can opt out with `?codemode=off`. `enforced`: Code Mode is always on; query parameters are ignored. Defaults to `opt_in` when omitted on create. If both `code_mode` and `allow_code_mode` are sent, they must be consistent or the request returns a 400.\nAvailable values: \"off\", \"opt_in\", \"default_on\", \"enforced\".",
 							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"off",
+									"opt_in",
+									"default_on",
+									"enforced",
+								),
+							},
 						},
 						"created_at": schema.StringAttribute{
 							Computed:   true,
@@ -310,7 +341,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"description": schema.StringAttribute{
-							Computed: true,
+							Description: "Optional description of the MCP portal.",
+							Computed:    true,
 						},
 						"modified_at": schema.StringAttribute{
 							Computed:   true,
@@ -320,7 +352,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"secure_web_gateway": schema.BoolAttribute{
-							Description: "Route outbound MCP traffic through Zero Trust Secure Web Gateway",
+							Description: "Route outbound MCP traffic through Zero Trust Secure Web Gateway.",
 							Computed:    true,
 						},
 					},

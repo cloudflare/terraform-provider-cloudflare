@@ -95,12 +95,11 @@ type ZeroTrustTunnelCloudflaredsResultDataSourceModel struct {
 }
 
 type ZeroTrustTunnelCloudflaredsConnectionsDataSourceModel struct {
-	ID                 types.String      `tfsdk:"id" json:"id,computed"`
-	ClientID           types.String      `tfsdk:"client_id" json:"client_id,computed"`
-	ClientVersion      types.String      `tfsdk:"client_version" json:"client_version,computed"`
-	ColoName           types.String      `tfsdk:"colo_name" json:"colo_name,computed"`
-	IsPendingReconnect types.Bool        `tfsdk:"is_pending_reconnect" json:"is_pending_reconnect,computed"`
-	OpenedAt           timetypes.RFC3339 `tfsdk:"opened_at" json:"opened_at,computed" format:"date-time"`
-	OriginIP           types.String      `tfsdk:"origin_ip" json:"origin_ip,computed"`
-	UUID               types.String      `tfsdk:"uuid" json:"uuid,computed"`
+	ID            types.String      `tfsdk:"id" json:"id,computed"`
+	ClientID      types.String      `tfsdk:"client_id" json:"client_id,computed"`
+	ClientVersion types.String      `tfsdk:"client_version" json:"client_version,computed"`
+	ColoName      types.String      `tfsdk:"colo_name" json:"colo_name,computed"`
+	OpenedAt      timetypes.RFC3339 `tfsdk:"opened_at" json:"opened_at,computed" format:"date-time"`
+	OriginIP      types.String      `tfsdk:"origin_ip" json:"origin_ip,computed"`
+	UUID          types.String      `tfsdk:"uuid" json:"uuid,computed"`
 }

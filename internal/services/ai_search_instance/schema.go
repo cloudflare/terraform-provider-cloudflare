@@ -559,12 +559,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Object{useStateForUnknownIncludingNullObject()},
 				Attributes: map[string]schema.Attribute{
 					"exclude_items": schema.ListAttribute{
-						Description: "List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)",
+						Description: "List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.",
 						Optional:    true,
 						ElementType: types.StringType,
 					},
 					"include_items": schema.ListAttribute{
-						Description: "List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)",
+						Description: "List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.",
 						Optional:    true,
 						ElementType: types.StringType,
 					},
@@ -581,6 +581,64 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:   true,
 						CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsWebCrawlerModel](ctx),
 						Attributes: map[string]schema.Attribute{
+							"discover_options": schema.SingleNestedAttribute{
+								Description: "Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'.",
+								Optional:    true,
+								Attributes: map[string]schema.Attribute{
+									"depth": schema.Float64Attribute{
+										Description: "Maximum link-follow depth from the seed URL.",
+										Computed:    true,
+										Optional:    true,
+										Validators: []validator.Float64{
+											float64validator.Between(1, 100000),
+										},
+										Default: float64default.StaticFloat64(5),
+									},
+									"include_external_links": schema.BoolAttribute{
+										Description: "Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.",
+										Computed:    true,
+										Optional:    true,
+										Default:     booldefault.StaticBool(false),
+									},
+									"include_subdomains": schema.BoolAttribute{
+										Description: "Follow links to subdomains of the source host.",
+										Computed:    true,
+										Optional:    true,
+										Default:     booldefault.StaticBool(false),
+									},
+									"limit": schema.Float64Attribute{
+										Description: "Maximum number of pages to crawl (1-100000).",
+										Computed:    true,
+										Optional:    true,
+										Validators: []validator.Float64{
+											float64validator.Between(1, 100000),
+										},
+										Default: float64default.StaticFloat64(100000),
+									},
+									"max_age": schema.Float64Attribute{
+										Description: "Maximum content age in seconds to accept (0–604800).",
+										Computed:    true,
+										Optional:    true,
+										Validators: []validator.Float64{
+											float64validator.Between(0, 604800),
+										},
+										Default: float64default.StaticFloat64(86400),
+									},
+									"source": schema.StringAttribute{
+										Description: "Where the crawler looks for URLs: 'sitemaps' reads sitemap XML only, 'links' follows page links only, 'all' does both.\nAvailable values: \"all\", \"sitemaps\", \"links\".",
+										Computed:    true,
+										Optional:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"all",
+												"sitemaps",
+												"links",
+											),
+										},
+										Default: stringdefault.StaticString("all"),
+									},
+								},
+							},
 							"parse_options": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
@@ -623,7 +681,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"parse_type": schema.StringAttribute{
-								Description: `Available values: "sitemap", "feed-rss", "crawl".`,
+								Description: "How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.\nAvailable values: \"sitemap\", \"discover\".",
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{

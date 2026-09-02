@@ -119,6 +119,7 @@ type ZeroTrustAccessApplicationsDestinationsDataSourceModel struct {
 	PortRange   types.String `tfsdk:"port_range" json:"port_range,computed"`
 	VnetID      types.String `tfsdk:"vnet_id" json:"vnet_id,computed"`
 	McpServerID types.String `tfsdk:"mcp_server_id" json:"mcp_server_id,optional"`
+	WorkerID    types.String `tfsdk:"worker_id" json:"worker_id,computed"`
 }
 
 type ZeroTrustAccessApplicationsPoliciesDataSourceModel struct {

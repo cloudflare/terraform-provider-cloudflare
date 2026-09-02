@@ -70,6 +70,7 @@ type TargetZeroTrustOrganizationModel struct {
 	MfaConfigurationAllowed                types.Bool              `tfsdk:"mfa_configuration_allowed"`
 	MfaRequiredForAllApps                  types.Bool              `tfsdk:"mfa_required_for_all_apps"`
 	UIReadOnlyToggleReason                 types.String            `tfsdk:"ui_read_only_toggle_reason"`
+	WarpAuthNonBrowser401                  types.Bool              `tfsdk:"warp_auth_non_browser_401"`
 }
 
 // TargetCustomPagesModel represents the custom_pages nested structure in v5.

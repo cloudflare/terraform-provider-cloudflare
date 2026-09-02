@@ -60,8 +60,10 @@ type WorkerObservabilityTracesModel struct {
 }
 
 type WorkerSubdomainModel struct {
-	Enabled         types.Bool `tfsdk:"enabled" json:"enabled,computed_optional"`
-	PreviewsEnabled types.Bool `tfsdk:"previews_enabled" json:"previews_enabled,computed_optional"`
+	Enabled          types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	PreviewURLSuffix types.String `tfsdk:"preview_url_suffix" json:"preview_url_suffix,computed"`
+	PreviewsEnabled  types.Bool   `tfsdk:"previews_enabled" json:"previews_enabled,computed_optional"`
+	URL              types.String `tfsdk:"url" json:"url,computed"`
 }
 
 type WorkerTailConsumersModel struct {

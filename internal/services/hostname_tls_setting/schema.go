@@ -23,7 +23,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
-				"SSL and Certificates Read",
 				"SSL and Certificates Write",
 			},
 		}.String(),
@@ -55,13 +54,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"zone_id": schema.StringAttribute{
-				Description:   "Identifier.",
+			"hostname": schema.StringAttribute{
+				Description:   "The hostname for which the tls settings are set.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"hostname": schema.StringAttribute{
-				Description:   "The hostname for which the tls settings are set.",
+			"zone_id": schema.StringAttribute{
+				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

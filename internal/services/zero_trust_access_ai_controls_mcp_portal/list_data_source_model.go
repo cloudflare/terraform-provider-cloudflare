@@ -43,6 +43,7 @@ type ZeroTrustAccessAIControlsMcpPortalsResultDataSourceModel struct {
 	Name             types.String                                                                           `tfsdk:"name" json:"name,computed"`
 	Servers          customfield.NestedObjectSet[ZeroTrustAccessAIControlsMcpPortalsServersDataSourceModel] `tfsdk:"servers" json:"servers,computed"`
 	AllowCodeMode    types.Bool                                                                             `tfsdk:"allow_code_mode" json:"allow_code_mode,computed"`
+	CodeMode         types.String                                                                           `tfsdk:"code_mode" json:"code_mode,computed"`
 	CreatedAt        timetypes.RFC3339                                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy        types.String                                                                           `tfsdk:"created_by" json:"created_by,computed"`
 	Description      types.String                                                                           `tfsdk:"description" json:"description,computed"`
@@ -60,6 +61,7 @@ type ZeroTrustAccessAIControlsMcpPortalsServersDataSourceModel struct {
 	ServerID                     types.String                                                                                          `tfsdk:"server_id" json:"server_id,computed"`
 	Tools                        customfield.List[customfield.Map[jsontypes.Normalized]]                                               `tfsdk:"tools" json:"tools,computed"`
 	AuthConfigSummary            customfield.NestedObject[ZeroTrustAccessAIControlsMcpPortalsServersAuthConfigSummaryDataSourceModel]  `tfsdk:"auth_config_summary" json:"auth_config_summary,computed"`
+	AuthenticationStatus         types.String                                                                                          `tfsdk:"authentication_status" json:"authentication_status,computed"`
 	CreatedAt                    timetypes.RFC3339                                                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CreatedBy                    types.String                                                                                          `tfsdk:"created_by" json:"created_by,computed"`
 	DefaultDisabled              types.Bool                                                                                            `tfsdk:"default_disabled" json:"default_disabled,computed"`

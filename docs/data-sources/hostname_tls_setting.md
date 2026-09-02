@@ -2,16 +2,12 @@
 page_title: "cloudflare_hostname_tls_setting Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Accepted Permissions
-  SSL and Certificates ReadSSL and Certificates Write
+  
 ---
 
 # cloudflare_hostname_tls_setting (Data Source)
 
-Accepted Permissions
 
-- `SSL and Certificates Read`
-- `SSL and Certificates Write`
 
 ## Example Usage
 
@@ -19,6 +15,7 @@ Accepted Permissions
 data "cloudflare_hostname_tls_setting" "example_hostname_tls_setting" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
   setting_id = "ciphers"
+  hostname = "app.example.com"
 }
 ```
 
@@ -27,6 +24,7 @@ data "cloudflare_hostname_tls_setting" "example_hostname_tls_setting" {
 
 ### Required
 
+- `hostname` (String) The hostname for which the tls settings are set.
 - `setting_id` (String) The TLS Setting name.
 The value type depends on the setting:
 - `ciphers`: value is an array of cipher suite strings (e.g., `["ECDHE-RSA-AES128-GCM-SHA256", "AES128-GCM-SHA256"]`).
@@ -41,13 +39,6 @@ Available values: "ciphers", "min_tls_version", "http2".
 ### Read-Only
 
 - `created_at` (String) This is the time the tls setting was originally created for this hostname.
-- `hostname` (String) The hostname for which the tls settings are set.
-- `id` (String) The TLS Setting name.
-The value type depends on the setting:
-- `ciphers`: value is an array of cipher suite strings (e.g., `["ECDHE-RSA-AES128-GCM-SHA256", "AES128-GCM-SHA256"]`).
-- `min_tls_version`: value is a TLS version string (`"1.0"`, `"1.1"`, `"1.2"`, or `"1.3"`).
-- `http2`: value is `"on"` or `"off"`.
-Available values: "ciphers", "min_tls_version", "http2".
 - `status` (String) Deployment status for the given tls setting.
 - `updated_at` (String) This is the time the tls setting was updated.
 - `value` (String) The TLS setting value.

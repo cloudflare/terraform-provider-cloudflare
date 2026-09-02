@@ -38,7 +38,7 @@ resource "cloudflare_d1_database" "example_d1_database" {
 ### Optional
 
 - `jurisdiction` (String) Specify the location to restrict the D1 database to run and store data. If this option is present, the location hint is ignored.
-Available values: "eu", "fedramp".
+Available values: "eu", "fedramp", "us".
 - `primary_location_hint` (String) Specify the region to create the D1 primary, if available. If this option is omitted, the D1 will be created as close as possible to the current user.
 Available values: "wnam", "enam", "weur", "eeur", "apac", "oc".
 - `read_replication` (Attributes) Configuration for D1 read replication. (see [below for nested schema](#nestedatt--read_replication))

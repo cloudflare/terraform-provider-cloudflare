@@ -43,6 +43,8 @@ Determines if the words should be matched in a case-sensitive manner
 Cannot be set to false if secret is true
 - `confidence` (Attributes) (see [below for nested schema](#nestedatt--result--confidence))
 - `created_at` (String)
+- `deprecated` (Boolean) Whether this entry is deprecated for new use. This is computed from the static catalog and
+emitted only when true.
 - `description` (String)
 - `enabled` (Boolean)
 - `id` (String)

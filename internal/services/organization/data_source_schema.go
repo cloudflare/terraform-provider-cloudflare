@@ -45,10 +45,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[OrganizationMetaDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
-					"flags": schema.SingleNestedAttribute{
+					"hierarchy_tags": schema.ListAttribute{
+						Description: "Ordered chain of organization tags from the root organization down to\n(and including) this organization itself. Root organizations return a\nsingle-element array containing their own tag; sub-organizations return\n`[rootTag, ...intermediateTags, parentTag, selfTag]`. Useful for\nconstructing authorization scopes that need to cover every ancestor\nin the hierarchy.",
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
+					"managed_by": schema.StringAttribute{
+						Computed: true,
+					},
+					"tenant_flags": schema.SingleNestedAttribute{
 						Description: "Enable features for Organizations.",
 						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[OrganizationMetaFlagsDataSourceModel](ctx),
+						CustomType:  customfield.NewNestedObjectType[OrganizationMetaTenantFlagsDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"account_creation": schema.StringAttribute{
 								Computed: true,
@@ -62,19 +71,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"account_mobility": schema.StringAttribute{
 								Computed: true,
 							},
+							"enterprise_capability": schema.StringAttribute{
+								Computed: true,
+							},
+							"member_management": schema.StringAttribute{
+								Computed: true,
+							},
 							"sub_org_creation": schema.StringAttribute{
 								Computed: true,
 							},
 						},
-					},
-					"hierarchy_tags": schema.ListAttribute{
-						Description: "Ordered chain of organization tags from the root organization down to\n(and including) this organization itself. Root organizations return a\nsingle-element array containing their own tag; sub-organizations return\n`[rootTag, ...intermediateTags, parentTag, selfTag]`. Useful for\nconstructing authorization scopes that need to cover every ancestor\nin the hierarchy.",
-						Computed:    true,
-						CustomType:  customfield.NewListType[types.String](ctx),
-						ElementType: types.StringType,
-					},
-					"managed_by": schema.StringAttribute{
-						Computed: true,
 					},
 				},
 			},

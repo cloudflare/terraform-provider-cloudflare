@@ -31,13 +31,12 @@ data "cloudflare_zero_trust_resource_library_applications" "example_zero_trust_r
 
 - `filter` (String) Filter applications using key:value format. Supported filter keys:
 - name: Filter by application name (e.g., name:HR)
-- id: Filter by application ID (e.g., id:0b63249c-95bf-4cc0-a7cc-d7faaaf1dac0)
+- id: Filter by application ID (e.g., id:498)
 - human_id: Filter by human-readable ID (e.g., human_id:HR)
 - hostname: Filter by hostname or support domain (e.g., hostname:portal.example.com)
 - source: Filter by application source name (e.g., source:cloudflare)
 - ip_subnet: Filter by IP subnet using CIDR containment — returns applications where any stored subnet contains the search value (e.g., ip_subnet:10.0.1.5/32 matches apps with 10.0.0.0/16)
-- intel_id: Filter by Intel API ID (e.g., intel_id:498). also supports multiple values (e.g., intel_id:498,1001)
-- category_id: Filter by category ID (e.g., category_id:37f8ec03-8766-49d4-9a15-369b044c842c).
+- category_id: Filter by category ID (e.g., category_id:12).
 - category_name: Filter by category name (e.g., category_name:HR).
 - supported: Filter by supported Cloudflare product (e.g., supported:ACCESS). Values: GATEWAY, ACCESS, CASB.
 .
@@ -61,17 +60,17 @@ Read-Only:
 - `application_source` (String) Returns the application source.
 - `application_type` (String) Returns the application type.
 - `application_type_description` (String) Returns the application type description.
+- `category_id` (Number) Returns the category ID.
 - `created_at` (String) Returns the application creation time.
 - `gen_ai_score` (Number) GenAI score for the application. Returns -1 when no score is available.
-- `hostnames` (List of String) Returns the list of hostnames for the application.
+- `hostnames` (Set of String) Hostnames matched by the application.
 - `human_id` (String) Returns the human readable ID.
-- `id` (String) Returns the application ID.
-- `intel_id` (Number) Returns the Intel API ID for the application.
-- `ip_subnets` (List of String) Returns the list of IP subnets for the application.
+- `id` (Number) Returns the application ID.
+- `ip_subnets` (Set of String) IP subnets matched by the application.
 - `name` (String) Returns the application name.
-- `port_protocols` (List of String) Returns the list of port protocols for the application.
-- `support_domains` (List of String) Returns the list of support domains for the application.
-- `supported` (List of String) Cloudflare products that support this application.
+- `port_protocols` (Set of String) Port and protocol pairs matched by the application.
+- `support_domains` (Set of String) Support domains matched by the application.
+- `supported` (Set of String) Cloudflare products that support this application.
 - `updated_at` (String) Returns the application update time.
 - `version` (String) Returns the application version.
 

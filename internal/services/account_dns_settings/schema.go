@@ -5,6 +5,7 @@ package account_dns_settings
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -37,7 +38,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"zone_defaults": schema.SingleNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectType[AccountDNSSettingsZoneDefaultsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"flatten_all_cnames": schema.BoolAttribute{
 						Description: "Whether to flatten all CNAME records in the zone. Note that, due to DNS limitations, a CNAME record at the zone apex will always be flattened.",
@@ -49,7 +52,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"internal_dns": schema.SingleNestedAttribute{
 						Description: "Settings for this internal zone.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[AccountDNSSettingsZoneDefaultsInternalDNSModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"reference_zone_id": schema.StringAttribute{
 								Description: "The ID of the zone to fallback to.",
@@ -63,7 +68,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"nameservers": schema.SingleNestedAttribute{
 						Description: "Settings determining the nameservers through which the zone should be available.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[AccountDNSSettingsZoneDefaultsNameserversModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"type": schema.StringAttribute{
 								Description: "Nameserver type\nAvailable values: \"cloudflare.standard\", \"cloudflare.standard.random\", \"custom.account\", \"custom.tenant\".",
@@ -92,7 +99,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"soa": schema.SingleNestedAttribute{
 						Description: "Components of the zone's SOA record.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[AccountDNSSettingsZoneDefaultsSOAModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"expire": schema.Float64Attribute{
 								Description: "Time in seconds of being unable to query the primary server after which secondary servers should stop serving the zone.",

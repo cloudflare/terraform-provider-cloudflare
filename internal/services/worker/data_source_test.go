@@ -50,7 +50,7 @@ func TestAccCloudflareWorkerDataSource_Basic(t *testing.T) {
 						"persist":            knownvalue.Bool(true),
 					}),
 				})),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("subdomain"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
 						"enabled":          knownvalue.Bool(false),
 						"previews_enabled": knownvalue.Bool(false),
 					})),
@@ -87,7 +87,7 @@ func TestAccCloudflareWorkerDataSource_Basic(t *testing.T) {
 							"propagation_policy": knownvalue.Null(),
 						}),
 					})),
-					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("subdomain"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("subdomain"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
 						"enabled":          knownvalue.Bool(false),
 						"previews_enabled": knownvalue.Bool(false),
 					})),

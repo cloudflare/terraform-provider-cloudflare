@@ -33,6 +33,7 @@ resource "cloudflare_ai_gateway" "example_ai_gateway" {
   retry_backoff = "constant"
   retry_delay = 0
   retry_max_attempts = 1
+  store_id = "store_id"
   workers_ai_billing_mode = "postpaid"
   zdr = true
 }
@@ -56,6 +57,7 @@ resource "cloudflare_ai_gateway" "example_ai_gateway" {
 - `authentication` (Boolean)
 - `dlp` (Attributes) (see [below for nested schema](#nestedatt--dlp))
 - `guardrails` (Attributes) (see [below for nested schema](#nestedatt--guardrails))
+- `log_classification` (Boolean)
 - `log_management` (Number)
 - `log_management_strategy` (String) Available values: "STOP_INSERTING", "DELETE_OLDEST".
 - `logpush` (Boolean)
@@ -69,8 +71,8 @@ Available values: "constant", "linear", "exponential".
 - `spend_limits` (Attributes) (see [below for nested schema](#nestedatt--spend_limits))
 - `store_id` (String)
 - `stripe` (Attributes) (see [below for nested schema](#nestedatt--stripe))
-- `workers_ai_billing_mode` (String) Controls how Workers AI inference calls routed through this gateway are billed. Only 'postpaid' is currently supported.
-Available values: "postpaid".
+- `workers_ai_billing_mode` (String) Controls how Workers AI inference calls routed through this gateway are billed. 'postpaid' bills the account directly through Workers AI; 'unified' deducts credits via AI Gateway using neuron-based pricing and delegates billing to AI Gateway.
+Available values: "postpaid", "unified".
 - `zdr` (Boolean)
 
 ### Read-Only

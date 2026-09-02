@@ -70,7 +70,8 @@ func (r *ImageVariantResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	res := new(http.Response)
-	env := ImageVariantResultEnvelope{*data}
+	env := ImageVariantWriteResultEnvelope{}
+	env.Result.Variant = *data
 	_, err = r.client.Images.V1.Variants.New(
 		ctx,
 		images.V1VariantNewParams{
@@ -90,7 +91,7 @@ func (r *ImageVariantResource) Create(ctx context.Context, req resource.CreateRe
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data = &env.Result.Variant
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -118,7 +119,8 @@ func (r *ImageVariantResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	res := new(http.Response)
-	env := ImageVariantResultEnvelope{*data}
+	env := ImageVariantWriteResultEnvelope{}
+	env.Result.Variant = *data
 	_, err = r.client.Images.V1.Variants.Edit(
 		ctx,
 		data.ID.ValueString(),
@@ -139,7 +141,7 @@ func (r *ImageVariantResource) Update(ctx context.Context, req resource.UpdateRe
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data = &env.Result.Variant
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -154,7 +156,8 @@ func (r *ImageVariantResource) Read(ctx context.Context, req resource.ReadReques
 	}
 
 	res := new(http.Response)
-	env := ImageVariantResultEnvelope{*data}
+	env := ImageVariantWriteResultEnvelope{}
+	env.Result.Variant = *data
 	_, err := r.client.Images.V1.Variants.Get(
 		ctx,
 		data.ID.ValueString(),
@@ -179,7 +182,7 @@ func (r *ImageVariantResource) Read(ctx context.Context, req resource.ReadReques
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data = &env.Result.Variant
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -229,7 +232,8 @@ func (r *ImageVariantResource) ImportState(ctx context.Context, req resource.Imp
 	data.ID = types.StringValue(path_variant_id)
 
 	res := new(http.Response)
-	env := ImageVariantResultEnvelope{*data}
+	env := ImageVariantWriteResultEnvelope{}
+	env.Result.Variant = *data
 	_, err := r.client.Images.V1.Variants.Get(
 		ctx,
 		path_variant_id,
@@ -249,7 +253,7 @@ func (r *ImageVariantResource) ImportState(ctx context.Context, req resource.Imp
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data = &env.Result.Variant
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

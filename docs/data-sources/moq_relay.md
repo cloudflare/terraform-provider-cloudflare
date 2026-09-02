@@ -47,7 +47,8 @@ on the current page, to fetch the next page).
 - `created_before` (String) Cursor for pagination. Returns relays created strictly before this
 RFC 3339 timestamp (typically the `created` value of the first item
 on the current page, to fetch the previous page).
-- `per_page` (Number) Maximum number of relays to return per page.
+- `per_page` (Number) Maximum number of relays to return per page. Values above the maximum are
+clamped to it rather than rejected.
 
 
 <a id="nestedatt--config"></a>
@@ -83,6 +84,8 @@ added in the future without another breaking change. (see [below for nested sche
 
 Read-Only:
 
-- `url` (String) Upstream MOQT server publisher URL.
+- `url` (String) Upstream MOQT server publisher URL. Must be an absolute URL with a
+host and a scheme the relay can dial: moqt:// (raw QUIC) or https://
+(WebTransport). Validated on update (PUT); rejected with 21013.
 
 

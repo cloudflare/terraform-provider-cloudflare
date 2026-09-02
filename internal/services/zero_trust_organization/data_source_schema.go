@@ -59,7 +59,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"mfa_required_for_all_apps": schema.BoolAttribute{
-				Description: "Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured. Note: 'allowed_authenticators' cannot only contain 'ssh_piv_key' if the organization has any non-infrastructure applications because PIV keys are only compatible with infrastructure apps.",
+				Description: "Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured. Note: 'allowed_authenticators' cannot contain only the infrastructure SSH authenticators ('piv_key' and 'ssh_fido2_key') if the organization has any non-infrastructure applications.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
@@ -76,6 +76,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"user_seat_expiration_inactive_time": schema.StringAttribute{
 				Description: "The amount of time a user seat is inactive before it expires. When the user seat exceeds the set time of inactivity, the user is removed as an active seat and no longer counts against your Teams seat count.  Minimum value for this setting is 1 month (730h). Must be in the format `300ms` or `2h45m`. Valid time units are: `ns`, `us` (or `µs`), `ms`, `s`, `m`, `h`.",
+				Computed:    true,
+			},
+			"warp_auth_non_browser_401": schema.BoolAttribute{
+				Description: "When enabled, unsuccessful WARP authentication requests with a non-HTML Accept header return a 401 response instead of redirecting to the login page.",
 				Computed:    true,
 			},
 			"warp_auth_session_duration": schema.StringAttribute{
@@ -134,7 +138,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustOrganizationMfaConfigDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"allowed_authenticators": schema.ListAttribute{
-						Description: "Lists the MFA methods that users can authenticate with.",
+						Description: "Lists the MFA methods that users can authenticate with. The `piv_key` and `ssh_fido2_key` values are supported only for infrastructure applications.",
 						Computed:    true,
 						Validators: []validator.List{
 							listvalidator.ValueStringsAre(
@@ -142,7 +146,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									"totp",
 									"biometrics",
 									"security_key",
-									"ssh_piv_key",
+									"piv_key",
+									"ssh_fido2_key",
 								),
 							),
 						},

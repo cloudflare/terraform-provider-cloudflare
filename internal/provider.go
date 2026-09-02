@@ -58,6 +58,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/connectivity_directory_service"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/content_scanning_expression"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ct_alerting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_csr"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname_fallback_origin"
@@ -143,6 +144,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pipeline"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pipeline_sink"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pipeline_stream"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/precursor"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue_consumer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket"
@@ -474,6 +476,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zone_setting.NewResource,
 		zone_hold.NewResource,
 		zone_subscription.NewResource,
+		ct_alerting.NewResource,
 		load_balancer.NewResource,
 		load_balancer_monitor.NewResource,
 		load_balancer_monitor_group.NewResource,
@@ -672,6 +675,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		vulnerability_scanner_credential.NewResource,
 		vulnerability_scanner_target_environment.NewResource,
 		bot_management.NewResource,
+		precursor.NewResource,
 		origin_tls_compliance_modes.NewResource,
 		google_tag_gateway.NewResource,
 		observatory_scheduled_test.NewResource,
@@ -749,6 +753,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zone_setting.NewZoneSettingDataSource,
 		zone_hold.NewZoneHoldDataSource,
 		zone_subscription.NewZoneSubscriptionDataSource,
+		ct_alerting.NewCTAlertingDataSource,
 		load_balancer.NewLoadBalancerDataSource,
 		load_balancer.NewLoadBalancersDataSource,
 		load_balancer_monitor.NewLoadBalancerMonitorDataSource,
@@ -1085,11 +1090,13 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		vulnerability_scanner_target_environment.NewVulnerabilityScannerTargetEnvironmentDataSource,
 		vulnerability_scanner_target_environment.NewVulnerabilityScannerTargetEnvironmentsDataSource,
 		bot_management.NewBotManagementDataSource,
+		precursor.NewPrecursorDataSource,
 		origin_tls_compliance_modes.NewOriginTLSComplianceModesDataSource,
 		google_tag_gateway.NewGoogleTagGatewayDataSource,
 		observatory_scheduled_test.NewObservatoryScheduledTestDataSource,
 		dcv_delegation.NewDCVDelegationDataSource,
 		hostname_tls_setting.NewHostnameTLSSettingDataSource,
+		hostname_tls_setting.NewHostnameTLSSettingsDataSource,
 		snippet.NewSnippetDataSource,
 		snippet.NewSnippetsDataSource,
 		snippet_rules.NewSnippetRulesDataSource,

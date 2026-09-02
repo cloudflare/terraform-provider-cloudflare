@@ -190,9 +190,10 @@ Optional:
 Available values: "tcp", "udp".
 - `mcp_server_id` (String) A MCP server id configured in ai-controls. Access will secure the MCP server if accessed through a MCP portal.
 - `port_range` (String) The port range of the destination. Can be a single port or a range of ports. When omitted, all ports will match.
-- `type` (String) Available values: "public", "private".
+- `type` (String) Available values: "public", "private", "via_mcp_server_portal", "worker", "preview_worker", "all_workers", "all_preview_workers".
 - `uri` (String) The URI of the destination. Public destinations' URIs can include a domain and path with [wildcards](https://developers.cloudflare.com/cloudflare-one/policies/access/app-paths/).
 - `vnet_id` (String) The VNET ID to match the destination. When omitted, all VNETs will match.
+- `worker_id` (String) The ID of the Cloudflare Worker to protect with Access. Required when type is `worker` or `preview_worker`.
 
 
 <a id="nestedatt--footer_links"></a>

@@ -158,9 +158,19 @@ type AISearchInstanceSourceParamsDataSourceModel struct {
 }
 
 type AISearchInstanceSourceParamsWebCrawlerDataSourceModel struct {
-	ParseOptions customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerParseOptionsDataSourceModel] `tfsdk:"parse_options" json:"parse_options,computed"`
-	ParseType    types.String                                                                                `tfsdk:"parse_type" json:"parse_type,computed"`
-	StoreOptions customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerStoreOptionsDataSourceModel] `tfsdk:"store_options" json:"store_options,computed"`
+	DiscoverOptions customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerDiscoverOptionsDataSourceModel] `tfsdk:"discover_options" json:"discover_options,computed"`
+	ParseOptions    customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerParseOptionsDataSourceModel]    `tfsdk:"parse_options" json:"parse_options,computed"`
+	ParseType       types.String                                                                                   `tfsdk:"parse_type" json:"parse_type,computed"`
+	StoreOptions    customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerStoreOptionsDataSourceModel]    `tfsdk:"store_options" json:"store_options,computed"`
+}
+
+type AISearchInstanceSourceParamsWebCrawlerDiscoverOptionsDataSourceModel struct {
+	Depth                types.Float64 `tfsdk:"depth" json:"depth,computed"`
+	IncludeExternalLinks types.Bool    `tfsdk:"include_external_links" json:"include_external_links,computed"`
+	IncludeSubdomains    types.Bool    `tfsdk:"include_subdomains" json:"include_subdomains,computed"`
+	Limit                types.Float64 `tfsdk:"limit" json:"limit,computed"`
+	MaxAge               types.Float64 `tfsdk:"max_age" json:"max_age,computed"`
+	Source               types.String  `tfsdk:"source" json:"source,computed"`
 }
 
 type AISearchInstanceSourceParamsWebCrawlerParseOptionsDataSourceModel struct {

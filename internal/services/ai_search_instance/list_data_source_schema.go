@@ -489,6 +489,48 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:   true,
 									CustomType: customfield.NewNestedObjectType[AISearchInstancesSourceParamsWebCrawlerDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
+										"discover_options": schema.SingleNestedAttribute{
+											Computed:   true,
+											CustomType: customfield.NewNestedObjectType[AISearchInstancesSourceParamsWebCrawlerDiscoverOptionsDataSourceModel](ctx),
+											Attributes: map[string]schema.Attribute{
+												"depth": schema.Float64Attribute{
+													Computed: true,
+													Validators: []validator.Float64{
+														float64validator.Between(1, 100000),
+													},
+												},
+												"include_external_links": schema.BoolAttribute{
+													Computed: true,
+												},
+												"include_subdomains": schema.BoolAttribute{
+													Computed: true,
+												},
+												"limit": schema.Float64Attribute{
+													Description: "Maximum number of pages to crawl. New values are capped at 100000; instances configured before that cap may report a higher stored value, which the crawler clamps at run time.",
+													Computed:    true,
+													Validators: []validator.Float64{
+														float64validator.Between(1, 100000),
+													},
+												},
+												"max_age": schema.Float64Attribute{
+													Computed: true,
+													Validators: []validator.Float64{
+														float64validator.Between(0, 604800),
+													},
+												},
+												"source": schema.StringAttribute{
+													Description: `Available values: "all", "sitemaps", "links".`,
+													Computed:    true,
+													Validators: []validator.String{
+														stringvalidator.OneOfCaseInsensitive(
+															"all",
+															"sitemaps",
+															"links",
+														),
+													},
+												},
+											},
+										},
 										"parse_options": schema.SingleNestedAttribute{
 											Computed:   true,
 											CustomType: customfield.NewNestedObjectType[AISearchInstancesSourceParamsWebCrawlerParseOptionsDataSourceModel](ctx),

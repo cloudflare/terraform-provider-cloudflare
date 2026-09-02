@@ -154,6 +154,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				ElementType: types.StringType,
 			},
+			"health_sources": schema.ListAttribute{
+				Description: `A list of health sources, ordered from highest to lowest priority, used to evaluate individual origin health and overall pool health. The load balancer uses the first source that has data and falls back to the next. Currently accepted values are null or the exact array ["regional", "global"]; any other combination is rejected. Null (the default) behaves like ["local", "global"]. ["regional", "global"] makes each region steer on its own health, falling back to the global decision when a region has no fresh data. Setting regional requires at least one region in check_regions.`,
+				Optional:    true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive(
+							"local",
+							"regional",
+							"global",
+						),
+					),
+				},
+				ElementType: types.StringType,
+			},
 			"description": schema.StringAttribute{
 				Description: "A human-readable description of the pool.",
 				Computed:    true,

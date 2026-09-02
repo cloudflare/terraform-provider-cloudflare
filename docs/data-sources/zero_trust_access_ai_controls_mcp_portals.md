@@ -40,16 +40,18 @@ data "cloudflare_zero_trust_access_ai_controls_mcp_portals" "example_zero_trust_
 
 Read-Only:
 
-- `allow_code_mode` (Boolean) Allow remote code execution in Dynamic Workers (beta)
+- `allow_code_mode` (Boolean, Deprecated) Deprecated: use `code_mode` for new integrations. `true` maps to any non-off Code Mode policy; `false` maps to `code_mode: off`. If both fields are sent, they must be consistent or the request returns a 400.
+- `code_mode` (String) Code Mode policy for this portal. `off`: Code Mode is unavailable; query parameters are ignored. `opt_in`: Code Mode is off by default; clients turn it on with `?codemode=search_and_execute`. `default_on`: Code Mode is on by default; clients can opt out with `?codemode=off`. `enforced`: Code Mode is always on; query parameters are ignored. Defaults to `opt_in` when omitted on create. If both `code_mode` and `allow_code_mode` are sent, they must be consistent or the request returns a 400.
+Available values: "off", "opt_in", "default_on", "enforced".
 - `created_at` (String)
 - `created_by` (String)
-- `description` (String)
-- `hostname` (String)
-- `id` (String) portal id
+- `description` (String) Optional description of the MCP portal.
+- `hostname` (String) Hostname where the MCP portal is available.
+- `id` (String) Unique identifier for the MCP portal.
 - `modified_at` (String)
 - `modified_by` (String)
-- `name` (String)
-- `secure_web_gateway` (Boolean) Route outbound MCP traffic through Zero Trust Secure Web Gateway
+- `name` (String) Display name for the MCP portal.
+- `secure_web_gateway` (Boolean) Route outbound MCP traffic through Zero Trust Secure Web Gateway.
 - `servers` (Attributes Set) (see [below for nested schema](#nestedatt--result--servers))
 
 <a id="nestedatt--result--servers"></a>
@@ -58,25 +60,28 @@ Read-Only:
 Read-Only:
 
 - `auth_config_summary` (Attributes) Safe subset of auth_credentials surfaced to the dashboard. Includes auth_mode (dcr|manual), has_client_secret, client_secret_version, and the OAuth endpoints + client_id for manual servers. Never includes the secret value. (see [below for nested schema](#nestedatt--result--servers--auth_config_summary))
-- `auth_type` (String) Available values: "oauth", "bearer", "unauthenticated".
+- `auth_type` (String) Authentication method used to connect to the upstream MCP server.
+Available values: "oauth", "bearer", "unauthenticated".
+- `authentication_status` (String) Whether administrative authentication is required before capabilities can be synced. Manual OAuth is user-managed and has no administrative authentication flow.
+Available values: "not_required", "required", "connected", "stale", "manual".
 - `created_at` (String)
 - `created_by` (String)
 - `default_disabled` (Boolean)
-- `description` (String)
+- `description` (String) Optional description of the MCP server.
 - `error` (String)
 - `error_details` (Attributes) (see [below for nested schema](#nestedatt--result--servers--error_details))
-- `hostname` (String)
-- `id` (String) server id
+- `hostname` (String) URL of the upstream MCP endpoint.
+- `id` (String) Unique identifier for the MCP server.
 - `is_shared_oauth_callback_enabled` (Boolean) When true, the gateway worker uses the shared Cloudflare-owned OAuth callback endpoint as the redirect_uri for upstream on-behalf OAuth, instead of the customer portal hostname. New public server creates default to true; existing servers default to false from migration until explicitly updated. Effective behavior is gated by the gateway worker's per-env rollout mode KV key.
 - `last_successful_sync` (String)
 - `last_synced` (String)
 - `modified_at` (String)
 - `modified_by` (String)
-- `name` (String)
+- `name` (String) Display name for the MCP server.
 - `on_behalf` (Boolean)
 - `prompts` (List of Map of String)
-- `secure_web_gateway` (Boolean) Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway
-- `server_id` (String) server id
+- `secure_web_gateway` (Boolean) Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway.
+- `server_id` (String) Unique identifier for the MCP server.
 - `status` (String) Current sync state of the server
 Available values: "waiting", "ready", "stale", "error".
 - `tools` (List of Map of String)

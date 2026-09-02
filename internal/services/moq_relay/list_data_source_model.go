@@ -21,8 +21,8 @@ type MoQRelaysDataSourceModel struct {
 	AccountID     types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
 	CreatedAfter  timetypes.RFC3339                                            `tfsdk:"created_after" query:"created_after,optional" format:"date-time"`
 	CreatedBefore timetypes.RFC3339                                            `tfsdk:"created_before" query:"created_before,optional" format:"date-time"`
-	PerPage       types.Int64                                                  `tfsdk:"per_page" query:"per_page,optional"`
 	Asc           types.Bool                                                   `tfsdk:"asc" query:"asc,computed_optional"`
+	PerPage       types.Int64                                                  `tfsdk:"per_page" query:"per_page,computed_optional"`
 	MaxItems      types.Int64                                                  `tfsdk:"max_items"`
 	Result        customfield.NestedObjectList[MoQRelaysResultDataSourceModel] `tfsdk:"result"`
 }

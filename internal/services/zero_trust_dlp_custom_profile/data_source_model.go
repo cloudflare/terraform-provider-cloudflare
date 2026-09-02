@@ -68,6 +68,7 @@ type ZeroTrustDLPCustomProfileEntriesDataSourceModel struct {
 	Description   types.String                                                                        `tfsdk:"description" json:"description,computed"`
 	ProfileID     types.String                                                                        `tfsdk:"profile_id" json:"profile_id,computed"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPCustomProfileEntriesConfidenceDataSourceModel] `tfsdk:"confidence" json:"confidence,computed"`
+	Deprecated    types.Bool                                                                          `tfsdk:"deprecated" json:"deprecated,computed"`
 	Variant       customfield.NestedObject[ZeroTrustDLPCustomProfileEntriesVariantDataSourceModel]    `tfsdk:"variant" json:"variant,computed"`
 	CaseSensitive types.Bool                                                                          `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	Secret        types.Bool                                                                          `tfsdk:"secret" json:"secret,computed"`
@@ -106,6 +107,7 @@ type ZeroTrustDLPCustomProfileSharedEntriesDataSourceModel struct {
 	Description   types.String                                                                              `tfsdk:"description" json:"description,computed"`
 	ProfileID     types.String                                                                              `tfsdk:"profile_id" json:"profile_id,computed"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPCustomProfileSharedEntriesConfidenceDataSourceModel] `tfsdk:"confidence" json:"confidence,computed"`
+	Deprecated    types.Bool                                                                                `tfsdk:"deprecated" json:"deprecated,computed"`
 	Variant       customfield.NestedObject[ZeroTrustDLPCustomProfileSharedEntriesVariantDataSourceModel]    `tfsdk:"variant" json:"variant,computed"`
 	CaseSensitive types.Bool                                                                                `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	Secret        types.Bool                                                                                `tfsdk:"secret" json:"secret,computed"`

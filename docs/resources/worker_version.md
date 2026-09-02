@@ -46,6 +46,30 @@ resource "cloudflare_worker_version" "example_worker_version" {
   containers = [{
     class_name = "MyDurableObject"
   }]
+  exports = {
+    Admin = {
+      type = "worker"
+      cache = {
+        enabled = true
+      }
+      renamed_to = "renamed_to"
+      state = "created"
+      storage = "sqlite"
+      transfer_from = "transfer_from"
+      transferred_to = "transferred_to"
+    }
+    default = {
+      type = "worker"
+      cache = {
+        enabled = false
+      }
+      renamed_to = "renamed_to"
+      state = "created"
+      storage = "sqlite"
+      transfer_from = "transfer_from"
+      transferred_to = "transferred_to"
+    }
+  }
   limits = {
     cpu_ms = 50
     subrequests = 1000
@@ -185,7 +209,7 @@ Required:
 
 - `name` (String) A JavaScript variable name for the binding.
 - `type` (String) The kind of resource that the binding provides.
-Available values: "ai", "ai_search", "ai_search_namespace", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "media", "mtls_certificate", "plain_text", "pipelines", "queue", "ratelimit", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "flagship", "secret_key", "workflow", "wasm_module", "vpc_service", "vpc_network".
+Available values: "ai", "ai_search", "ai_search_namespace", "messaging", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "media", "mtls_certificate", "plain_text", "pipelines", "queue", "ratelimit", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "flagship", "secret_key", "workflow", "wasm_module", "vpc_service", "vpc_network".
 
 Optional:
 
@@ -475,4 +499,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_worker_version.example '<account_id>/<worker_id>/<version_id>'
 ```
+
 

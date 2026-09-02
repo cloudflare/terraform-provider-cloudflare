@@ -7,8 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -23,8 +22,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Required: true,
 			},
-			"id": schema.StringAttribute{
+			"id": schema.Int64Attribute{
 				Required: true,
+				Validators: []validator.Int64{
+					int64validator.Between(0, 4294967295),
+				},
 			},
 			"application_confidence_score": schema.Float64Attribute{
 				Description: "Confidence score for the application. Returns -1 when no score is available.",
@@ -42,6 +44,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Returns the application type description.",
 				Computed:    true,
 			},
+			"category_id": schema.Int64Attribute{
+				Description: "Returns the category ID.",
+				Computed:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 4294967295),
+				},
+			},
 			"created_at": schema.StringAttribute{
 				Description: "Returns the application creation time.",
 				Computed:    true,
@@ -52,10 +61,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"human_id": schema.StringAttribute{
 				Description: "Returns the human readable ID.",
-				Computed:    true,
-			},
-			"intel_id": schema.Int64Attribute{
-				Description: "Returns the Intel API ID for the application.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
@@ -70,43 +75,34 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Returns the application version.",
 				Computed:    true,
 			},
-			"hostnames": schema.ListAttribute{
-				Description: "Returns the list of hostnames for the application.",
+			"hostnames": schema.SetAttribute{
+				Description: "Hostnames matched by the application.",
 				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
-			"ip_subnets": schema.ListAttribute{
-				Description: "Returns the list of IP subnets for the application.",
+			"ip_subnets": schema.SetAttribute{
+				Description: "IP subnets matched by the application.",
 				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
-			"port_protocols": schema.ListAttribute{
-				Description: "Returns the list of port protocols for the application.",
+			"port_protocols": schema.SetAttribute{
+				Description: "Port and protocol pairs matched by the application.",
 				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
-			"support_domains": schema.ListAttribute{
-				Description: "Returns the list of support domains for the application.",
+			"support_domains": schema.SetAttribute{
+				Description: "Support domains matched by the application.",
 				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
-			"supported": schema.ListAttribute{
+			"supported": schema.SetAttribute{
 				Description: "Cloudflare products that support this application.",
 				Computed:    true,
-				Validators: []validator.List{
-					listvalidator.ValueStringsAre(
-						stringvalidator.OneOfCaseInsensitive(
-							"GATEWAY",
-							"ACCESS",
-							"CASB",
-						),
-					),
-				},
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"application_score_composition": schema.StringAttribute{

@@ -44,15 +44,17 @@ type OrganizationParentModel struct {
 }
 
 type OrganizationMetaModel struct {
-	Flags         customfield.NestedObject[OrganizationMetaFlagsModel] `tfsdk:"flags" json:"flags,computed"`
-	HierarchyTags customfield.List[types.String]                       `tfsdk:"hierarchy_tags" json:"hierarchy_tags,computed"`
-	ManagedBy     types.String                                         `tfsdk:"managed_by" json:"managed_by,computed"`
+	HierarchyTags customfield.List[types.String]                             `tfsdk:"hierarchy_tags" json:"hierarchy_tags,computed"`
+	ManagedBy     types.String                                               `tfsdk:"managed_by" json:"managed_by,computed"`
+	TenantFlags   customfield.NestedObject[OrganizationMetaTenantFlagsModel] `tfsdk:"tenant_flags" json:"tenant_flags,computed"`
 }
 
-type OrganizationMetaFlagsModel struct {
-	AccountCreation  types.String `tfsdk:"account_creation" json:"account_creation,computed"`
-	AccountDeletion  types.String `tfsdk:"account_deletion" json:"account_deletion,computed"`
-	AccountMigration types.String `tfsdk:"account_migration" json:"account_migration,computed"`
-	AccountMobility  types.String `tfsdk:"account_mobility" json:"account_mobility,computed"`
-	SubOrgCreation   types.String `tfsdk:"sub_org_creation" json:"sub_org_creation,computed"`
+type OrganizationMetaTenantFlagsModel struct {
+	AccountCreation      types.String `tfsdk:"account_creation" json:"account_creation,computed"`
+	AccountDeletion      types.String `tfsdk:"account_deletion" json:"account_deletion,computed"`
+	AccountMigration     types.String `tfsdk:"account_migration" json:"account_migration,computed"`
+	AccountMobility      types.String `tfsdk:"account_mobility" json:"account_mobility,computed"`
+	EnterpriseCapability types.String `tfsdk:"enterprise_capability" json:"enterprise_capability,computed"`
+	MemberManagement     types.String `tfsdk:"member_management" json:"member_management,computed"`
+	SubOrgCreation       types.String `tfsdk:"sub_org_creation" json:"sub_org_creation,computed"`
 }

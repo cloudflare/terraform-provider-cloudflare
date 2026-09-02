@@ -53,7 +53,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"association_status": schema.StringAttribute{
-							Description: "Share Recipient association status.\nAvailable values: \"associating\", \"associated\", \"disassociating\", \"disassociated\".",
+							Description: "The current state of the recipient relative to the share. The\n`desired_association_status` (not exposed in the response) tracks the\ntarget state set by the API; the background reconciliation workflow\ndrives `current_association_status` toward it.\n\n- `associating` — The recipient was recently added; the workflow is\n  pushing shared resources into the recipient account.\n- `associated` — Shared resources have been successfully applied to\n  the recipient account.\n- `disassociating` — The recipient was removed (via DELETE or PUT\n  replacement); the workflow is removing shared resources from the\n  recipient account.\n- `disassociated` — Shared resources have been removed from the\n  recipient account. The recipient record remains in the database.\nAvailable values: \"associating\", \"associated\", \"disassociating\", \"disassociated\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

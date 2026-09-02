@@ -19,9 +19,10 @@ Accepted Permissions
 resource "cloudflare_zero_trust_access_ai_controls_mcp_portal" "example_zero_trust_access_ai_controls_mcp_portal" {
   account_id = "a86a8f5c339544d7bdc89926de14fb8c"
   id = "my-mcp-portal"
-  hostname = "exmaple.com"
+  hostname = "example.com"
   name = "My MCP Portal"
   allow_code_mode = true
+  code_mode = "opt_in"
   description = "This is my custom MCP Portal"
   secure_web_gateway = false
   servers = [{
@@ -50,16 +51,18 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_portal" "example_zero_tru
 ### Required
 
 - `account_id` (String)
-- `hostname` (String)
-- `id` (String) portal id
-- `name` (String)
+- `hostname` (String) Hostname where the MCP portal is available.
+- `id` (String) Unique identifier for the MCP portal.
+- `name` (String) Display name for the MCP portal.
 
 ### Optional
 
-- `allow_code_mode` (Boolean) Allow remote code execution in Dynamic Workers (beta)
-- `description` (String)
-- `secure_web_gateway` (Boolean) Route outbound MCP traffic through Zero Trust Secure Web Gateway
-- `servers` (Attributes Set) (see [below for nested schema](#nestedatt--servers))
+- `allow_code_mode` (Boolean, Deprecated) Deprecated: use `code_mode` for new integrations. `true` maps to any non-off Code Mode policy; `false` maps to `code_mode: off`. If both fields are sent, they must be consistent or the request returns a 400.
+- `code_mode` (String) Code Mode policy for this portal. `off`: Code Mode is unavailable; query parameters are ignored. `opt_in`: Code Mode is off by default; clients turn it on with `?codemode=search_and_execute`. `default_on`: Code Mode is on by default; clients can opt out with `?codemode=off`. `enforced`: Code Mode is always on; query parameters are ignored. Defaults to `opt_in` when omitted on create. If both `code_mode` and `allow_code_mode` are sent, they must be consistent or the request returns a 400.
+Available values: "off", "opt_in", "default_on", "enforced".
+- `description` (String) Optional description of the MCP portal.
+- `secure_web_gateway` (Boolean) Route outbound MCP traffic through Zero Trust Secure Web Gateway.
+- `servers` (Attributes Set) MCP servers attached to the portal and their portal-specific settings. (see [below for nested schema](#nestedatt--servers))
 
 ### Read-Only
 
@@ -73,27 +76,27 @@ resource "cloudflare_zero_trust_access_ai_controls_mcp_portal" "example_zero_tru
 
 Required:
 
-- `server_id` (String) server id
+- `server_id` (String) Unique identifier for the MCP server.
 
 Optional:
 
-- `default_disabled` (Boolean)
-- `on_behalf` (Boolean)
-- `updated_prompts` (Attributes List) (see [below for nested schema](#nestedatt--servers--updated_prompts))
-- `updated_tools` (Attributes List) (see [below for nested schema](#nestedatt--servers--updated_tools))
+- `default_disabled` (Boolean) Disable this server by default for clients connecting through the portal.
+- `on_behalf` (Boolean) Use end-user OAuth credentials when connecting this server to the portal.
+- `updated_prompts` (Attributes List) Portal-specific prompt overrides. (see [below for nested schema](#nestedatt--servers--updated_prompts))
+- `updated_tools` (Attributes List) Portal-specific tool overrides. (see [below for nested schema](#nestedatt--servers--updated_tools))
 
 <a id="nestedatt--servers--updated_prompts"></a>
 ### Nested Schema for `servers.updated_prompts`
 
 Required:
 
-- `name` (String)
+- `name` (String) Name of the tool or prompt capability to override.
 
 Optional:
 
-- `alias` (String)
-- `description` (String)
-- `enabled` (Boolean)
+- `alias` (String) Custom name exposed for the capability.
+- `description` (String) Custom description exposed for the capability.
+- `enabled` (Boolean) Whether the capability is available through the MCP server.
 
 
 <a id="nestedatt--servers--updated_tools"></a>
@@ -101,13 +104,13 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) Name of the tool or prompt capability to override.
 
 Optional:
 
-- `alias` (String)
-- `description` (String)
-- `enabled` (Boolean)
+- `alias` (String) Custom name exposed for the capability.
+- `description` (String) Custom description exposed for the capability.
+- `enabled` (Boolean) Whether the capability is available through the MCP server.
 
 ## Import
 
