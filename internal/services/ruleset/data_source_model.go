@@ -113,6 +113,7 @@ type RulesetRulesActionParametersDataSourceModel struct {
 	ReadTimeout              types.Int64                                                                                       `tfsdk:"read_timeout" json:"read_timeout,computed"`
 	RespectStrongEtags       types.Bool                                                                                        `tfsdk:"respect_strong_etags" json:"respect_strong_etags,computed"`
 	ServeStale               customfield.NestedObject[RulesetRulesActionParametersServeStaleDataSourceModel]                   `tfsdk:"serve_stale" json:"serve_stale,computed"`
+	OriginRangeRequests      customfield.NestedObject[RulesetRulesActionParametersOriginRangeRequestsDataSourceModel]          `tfsdk:"origin_range_requests" json:"origin_range_requests,computed"`
 	Vary                     customfield.NestedObject[RulesetRulesActionParametersVaryDataSourceModel]                         `tfsdk:"vary" json:"vary,computed"`
 	StripETags               types.Bool                                                                                        `tfsdk:"strip_etags" json:"strip_etags,computed"`
 	StripLastModified        types.Bool                                                                                        `tfsdk:"strip_last_modified" json:"strip_last_modified,computed"`
@@ -311,6 +312,10 @@ type RulesetRulesActionParametersEdgeTTLStatusCodeTTLStatusCodeRangeDataSourceMo
 
 type RulesetRulesActionParametersServeStaleDataSourceModel struct {
 	DisableStaleWhileUpdating types.Bool `tfsdk:"disable_stale_while_updating" json:"disable_stale_while_updating,computed"`
+}
+
+type RulesetRulesActionParametersOriginRangeRequestsDataSourceModel struct {
+	Mode types.String `tfsdk:"mode" json:"mode,computed"`
 }
 
 type RulesetRulesActionParametersCookieFieldsDataSourceModel struct {

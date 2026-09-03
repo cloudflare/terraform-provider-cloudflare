@@ -50,6 +50,9 @@ resource "cloudflare_ruleset" "my_ruleset" {
             }
           }
         }
+        origin_range_requests = {
+          mode = "default"
+        }
       }
     }
   ]

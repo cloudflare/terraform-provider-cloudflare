@@ -1616,6 +1616,26 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
+								"origin_range_requests": schema.SingleNestedAttribute{
+									Description: "Controls whether Cloudflare fetches a large asset from the origin as a series of range requests instead of one whole-body request.",
+									Computed:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersOriginRangeRequestsDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"mode": schema.StringAttribute{
+											Description: "Whether to use range requests. `default` is the behaviour the zone gets without this rule.\nAvailable values: \"on\", \"off\", \"default\".",
+											Computed:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOf("on", "off", "default"),
+											},
+										},
+									},
+								},
 								"strip_etags": schema.BoolAttribute{
 									Description: "Whether to strip the ETag header from the response.",
 									Computed:    true,
