@@ -1,0 +1,42 @@
+internal/services/load_balancer_monitor/model.go
+  s_0eb764e4c2d4f5::t_c7b65e0910ca65 17-18
+internal/services/r2_bucket/model.go
+  s_0eb764e4c2d4f5::t_15fba232fb6041 18-19
+internal/services/load_balancer_monitor/schema.go
+  s_0eb764e4c2d4f5::t_29312b53d8604a 44,49
+internal/services/list/data_source.go
+  s_0eb764e4c2d4f5::t_ccff9eade1472a 89-101
+  s_0eb764e4c2d4f5::t_ecf71a2484e0d6 14
+internal/services/zero_trust_organization/normalizations.go
+  s_0eb764e4c2d4f5::t_997db364a64d74 57
+internal/services/api_token/migration/v501/model.go
+  s_0eb764e4c2d4f5::t_5d837625399dc0 26
+internal/services/spectrum_application/model.go
+  s_0eb764e4c2d4f5::t_712ebc362f939a 55-56
+internal/services/spectrum_application/schema.go
+  s_0eb764e4c2d4f5::t_5a1746eeda9e63 180,192
+internal/services/healthcheck/resource.go
+  s_0eb764e4c2d4f5::t_712003ca5ffb70 177
+internal/services/load_balancer_pool/resource.go
+  s_0eb764e4c2d4f5::t_350a7904e188c3 143-146
+internal/services/worker/resource.go
+  s_0eb764e4c2d4f5::t_f907ebe26ae7c5 96-101
+internal/services/origin_ca_certificate/resource.go
+  s_0eb764e4c2d4f5::t_dd63d167037e91 109-111,136-137
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "26381ecc7b9ac1d254d9b791b3ee3ff43418540c",
+  "prompts": {},
+  "sessions": {
+    "s_0eb764e4c2d4f5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_055f0e367ffeqQk5Hrpf02YxXB",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

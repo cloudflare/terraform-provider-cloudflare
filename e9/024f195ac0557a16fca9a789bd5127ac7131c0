@@ -1,0 +1,19 @@
+internal/services/api_token/migration/v500/model.go
+  s_0eb764e4c2d4f5::t_ce9ee4811490af 79,87-95
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e9024f195ac0557a16fca9a789bd5127ac7131c0",
+  "prompts": {},
+  "sessions": {
+    "s_0eb764e4c2d4f5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_055f0e367ffeqQk5Hrpf02YxXB",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

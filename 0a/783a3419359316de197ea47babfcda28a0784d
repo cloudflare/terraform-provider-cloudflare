@@ -1,0 +1,48 @@
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_DryRunInvalidOnUpdate/1.tf
+  s_ecafaeae890c8b::t_7ee4c57acb64fe 1-16
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_DryRunSkippedWhenDependencyIsUnknown/1.tf
+  s_ecafaeae890c8b::t_7ee4c57acb64fe 1-40
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_DryRunInvalidUpdateWithNewDependency/1.tf
+  s_ecafaeae890c8b::t_7ee4c57acb64fe 1-16
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_DryRunInvalidUpdateWithNewDependency/2.tf
+  s_ecafaeae890c8b::t_7ee4c57acb64fe 1-40
+internal/services/ruleset/resource.go
+  s_ecafaeae890c8b::t_7ee4c57acb64fe 18,313-340,462-553
+internal/services/ruleset/ruleset_test.go
+  s_ecafaeae890c8b::t_7ee4c57acb64fe 7,344-519
+  s_ecafaeae890c8b::t_ef4f1e341220a8 520
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_DryRunDependencyOnCreateThenInvalidUpdate/1.tf
+  s_ecafaeae890c8b::t_7ee4c57acb64fe 1-22
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_DryRunInvalidOnUpdate/2.tf
+  s_ecafaeae890c8b::t_7ee4c57acb64fe 1-34
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_DryRunSkippedOnReferencedReplacement/1.tf
+  s_ecafaeae890c8b::t_7ee4c57acb64fe 1-38
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_DryRunDependencyOnCreateThenInvalidUpdate/2.tf
+  s_ecafaeae890c8b::t_7ee4c57acb64fe 1-40
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_DryRunInvalidOnCreate/1.tf
+  s_ecafaeae890c8b::t_7ee4c57acb64fe 1-34
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_DryRunSkippedOnInvalidEntryPointReplacement/1.tf
+  s_ecafaeae890c8b::t_7ee4c57acb64fe 1-19
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_DryRunSkippedOnInvalidEntryPointReplacement/2.tf
+  s_ecafaeae890c8b::t_7ee4c57acb64fe 1-19
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_DryRunSkippedOnReferencedReplacement/2.tf
+  s_ecafaeae890c8b::t_7ee4c57acb64fe 1-38
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_DryRunSkippedWhenRefIsUnknown/1.tf
+  s_ecafaeae890c8b::t_7ee4c57acb64fe 1-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0a783a3419359316de197ea47babfcda28a0784d",
+  "prompts": {},
+  "sessions": {
+    "s_ecafaeae890c8b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fff86d891ffejaPPUNiXjpXgxr",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Jahnavi Malhotra <jahnavi@cloudflare.com>"
+    }
+  }
+}

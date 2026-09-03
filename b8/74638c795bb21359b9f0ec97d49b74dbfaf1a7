@@ -1,0 +1,21 @@
+internal/services/queue/resource.go
+  s_0eb764e4c2d4f5::t_ad3a2449f0c62c 96,147,189,262
+internal/services/r2_bucket/model.go
+  s_0eb764e4c2d4f5::t_f0e12dfb6893ae 18-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b874638c795bb21359b9f0ec97d49b74dbfaf1a7",
+  "prompts": {},
+  "sessions": {
+    "s_0eb764e4c2d4f5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_055f0e367ffeqQk5Hrpf02YxXB",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

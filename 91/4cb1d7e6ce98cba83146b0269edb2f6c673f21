@@ -1,0 +1,28 @@
+internal/services/turnstile_widget/resource_test.go
+  s_0a921b8a160bc0::t_2a4bbba99e2ad1 15,234-278
+  s_0a921b8a160bc0::t_2121c6996424fe 279
+internal/services/turnstile_widget/custom_test.go
+  s_0a921b8a160bc0::t_2a4bbba99e2ad1 1-162
+internal/services/turnstile_widget/custom.go
+  s_0a921b8a160bc0::t_2a4bbba99e2ad1 1-122
+internal/services/turnstile_widget/testdata/turnstilewidgetconfigdomainsorder.tf
+  s_0a921b8a160bc0::t_2a4bbba99e2ad1 1-16
+internal/services/turnstile_widget/resource.go
+  s_0a921b8a160bc0::t_2a4bbba99e2ad1 87,137,178,250
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "914cb1d7e6ce98cba83146b0269edb2f6c673f21",
+  "prompts": {},
+  "sessions": {
+    "s_0a921b8a160bc0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe05bdbc1ffe3ZxMsGQi732UWP",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Sarah Sicard <ssicard@cloudflare.com>"
+    }
+  }
+}

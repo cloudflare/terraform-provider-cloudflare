@@ -1,0 +1,2013 @@
+internal/services/zero_trust_device_custom_profile_local_domain_fallback/schema.go
+  s_7b495323128f16::t_1adcc30dd7c86f 39
+internal/services/hyperdrive_config/list_data_source_schema.go
+  s_b08c188f1b3435::t_08a0b3a4e22752 31
+internal/services/user_group_members/resource.go
+  s_b08c188f1b3435::t_ec58153cbac2c1 160,180,185,241-256
+internal/services/token_validation_config/list_data_source_schema.go
+  s_b08c188f1b3435::t_f2cdb3c52364b1 34,67,79-81,94,97-101
+internal/services/r2_bucket/resource.go
+  s_b08c188f1b3435::t_1f98d9d21d16cb 67,116-120,123,129,223,262-263
+internal/services/r2_bucket/schema.go
+  s_7b495323128f16::t_735700601e69fa 45,58-65,67-72,75,83,86
+internal/services/schema_validation_schemas/data_source_schema.go
+  s_b08c188f1b3435::t_778526483274c6 42
+internal/services/hyperdrive_config/resource.go
+  s_b08c188f1b3435::t_e44f6a701fdd92 257-258
+internal/services/email_security_impersonation_registry/data_source_schema.go
+  s_b08c188f1b3435::t_2b07e6941dc5cd 30,34,39
+scripts/build
+  s_b08c188f1b3435::t_9c1ea98b150380 8
+internal/services/zero_trust_dlp_custom_prompt_topic/list_data_source.go
+  s_b08c188f1b3435::t_8deb1d894034fd 1-100
+internal/services/pipeline_stream/list_data_source_schema.go
+  s_b08c188f1b3435::t_4f7b466cf44d44 32
+internal/services/zero_trust_dlp_integration_entry/list_data_source_schema.go
+  s_b08c188f1b3435::t_0841991a03d994 31
+internal/services/stream_webhook/data_source_schema.go
+  s_b08c188f1b3435::t_41c0621286c644 27
+examples/resources/cloudflare_aisearch_token/resource.tf
+  s_b08c188f1b3435::t_03e8f90372f15f 1-7
+internal/services/email_security_impersonation_registry/schema.go
+  s_7b495323128f16::t_ba2bb2276b7af9 31
+examples/resources/cloudflare_aisearch_namespace/resource.tf
+  s_b08c188f1b3435::t_c3a897463ae047 1-5
+internal/services/client_certificate/schema.go
+  s_7b495323128f16::t_84d5a3b6eb8603 44
+internal/services/flagship_app/list_data_source_schema.go
+  s_b08c188f1b3435::t_f8e29c5c6f55c6 23,57
+internal/services/load_balancer_monitor/list_data_source_model.go
+  s_b08c188f1b3435::t_57f545a0652756 20
+internal/services/page_shield_policy/data_source_schema.go
+  s_b08c188f1b3435::t_cbf25a957481ee 40
+internal/services/web_analytics_site/data_source_model.go
+  s_b08c188f1b3435::t_85432ad49ff710 23
+internal/services/notification_policy_webhooks/list_data_source_model.go
+  s_b08c188f1b3435::t_b0ed06d51e9d48 21
+internal/services/connectivity_directory_service/data_source_schema.go
+  s_b08c188f1b3435::t_cd6207729f7ce0 33
+examples/resources/cloudflare_email_security_impersonation_registry/import.sh
+  s_b08c188f1b3435::t_641e6fc0aee6ed 1
+internal/services/dns_zone_transfers_tsig/list_data_source_schema.go
+  s_b08c188f1b3435::t_3c79394cd58460 28
+internal/services/stream_webhook/data_source_model.go
+  s_b08c188f1b3435::t_3fa3bc0db65e05 20
+internal/services/moq_relay/schema.go
+  s_b08c188f1b3435::t_107cc8cfb05f6c 92-93
+internal/services/zero_trust_access_tag/list_data_source_schema.go
+  s_b08c188f1b3435::t_45ea4c7a24ffda 22
+internal/services/zero_trust_gateway_policy/model.go
+  s_b08c188f1b3435::t_944af87d8d910d 22,65,69,76,82
+internal/services/healthcheck/model.go
+  s_b08c188f1b3435::t_f477e9e6577e36 21
+internal/services/zone_subscription/data_source_model.go
+  s_b08c188f1b3435::t_e5260cc80c89d9 22
+internal/services/r2_bucket_cors/model.go
+  s_b08c188f1b3435::t_8603407f693af8 15-17
+internal/services/zero_trust_tunnel_cloudflared_route/list_data_source_schema.go
+  s_b08c188f1b3435::t_a377da560f02bc 35
+examples/resources/cloudflare_worker_version/resource.tf
+  s_b08c188f1b3435::t_24f59595f47fc7 30-56,79,91
+internal/services/healthcheck/data_source_model.go
+  s_b08c188f1b3435::t_aa7b62118f2b32 23
+internal/services/ai_gateway/list_data_source_schema.go
+  s_b08c188f1b3435::t_417413bfe39ccc 33
+internal/services/load_balancer_monitor/data_source_schema.go
+  s_b08c188f1b3435::t_6db6a0f7fff911 36
+internal/services/page_shield_scripts/data_source_model.go
+  s_b08c188f1b3435::t_a4ba9fe97d94ed 22
+internal/services/dns_firewall/data_source_model.go
+  s_b08c188f1b3435::t_7e3df492b559d8 23
+internal/services/zone_setting/model.go
+  s_b08c188f1b3435::t_983ea297b26873 7,17-24
+internal/services/zero_trust_tunnel_cloudflared_virtual_network/data_source_model.go
+  s_b08c188f1b3435::t_33c85239f8d187 22
+internal/services/dns_zone_transfers_tsig/data_source_model.go
+  s_b08c188f1b3435::t_f4ca2160124dae 21
+internal/services/zero_trust_device_posture_rule/data_source_schema.go
+  s_b08c188f1b3435::t_1473403a4648a3 31,37-40
+internal/services/ai_search_instance/list_data_source_schema.go
+  s_b08c188f1b3435::t_1aba583aa89980 25,65,71,89,106,109,111-117,146,162,165-166,169,172,181,193,208-211,238,247-249,261,295,305,312-313,317-320,322-329,332,347,356,396-397,401,404,428,431,441-446,448,463-471
+internal/services/custom_hostname/data_source_schema.go
+  s_b08c188f1b3435::t_00b7258d3215c9 42
+examples/resources/cloudflare_magic_transit_connector/resource.tf
+  s_b08c188f1b3435::t_640ba941228ac8 14-15
+internal/services/rate_limit/list_data_source_schema.go
+  s_b08c188f1b3435::t_1d0895bc32cb95 34
+internal/services/zero_trust_access_policy/resource.go
+  s_b08c188f1b3435::t_2a73fa0d24d090 102-104,162-165,213-215,290
+internal/services/workers_kv_namespace/list_data_source_model.go
+  s_b08c188f1b3435::t_9f76684b08b59c 20
+internal/services/ai_gateway_dynamic_routing/data_source_schema.go
+  s_b08c188f1b3435::t_373b594fd74114 30
+internal/services/argo_smart_routing/data_source_schema.go
+  s_b08c188f1b3435::t_eb6ae71cf77a50 33
+internal/services/zero_trust_device_managed_networks/list_data_source_schema.go
+  s_b08c188f1b3435::t_236ebb90457e1e 22
+internal/services/zone_dns_settings/schema.go
+  s_7b495323128f16::t_a1211e5387e195 43-45,95,100
+internal/services/connectivity_directory_service/data_source_model.go
+  s_b08c188f1b3435::t_3c05f4af5178f9 23
+internal/services/logpull_retention/data_source_model.go
+  s_b08c188f1b3435::t_313f390b458bce 20
+internal/services/r2_bucket_sippy/schema.go
+  s_7b495323128f16::t_45a40a6a5471a2 46,72
+internal/services/zero_trust_device_settings/data_source_model.go
+  s_b08c188f1b3435::t_e0425ade7fccd3 19
+internal/services/email_routing_rule/list_data_source_schema.go
+  s_b08c188f1b3435::t_0d375212baaf5c 9,15,25-28,30,121-127,133-147,160-162
+internal/services/worker/list_data_source_model.go
+  s_b08c188f1b3435::t_6c992f12826352 21
+internal/services/account_member/data_source_schema.go
+  s_b08c188f1b3435::t_7a4dafde9ff436 40
+internal/services/authenticated_origin_pulls_settings/data_source_schema.go
+  s_b08c188f1b3435::t_ea36d6a40aa506 30
+examples/resources/cloudflare_zero_trust_access_identity_provider/resource.tf
+  s_b08c188f1b3435::t_d0e76c34c267b3 15
+internal/services/magic_network_monitoring_configuration/data_source_schema.go
+  s_b08c188f1b3435::t_654200f158eab2 30
+internal/services/custom_origin_trust_store/list_data_source_schema.go
+  s_b08c188f1b3435::t_177154712dcb95 31
+internal/services/zero_trust_dns_location/list_data_source_model.go
+  s_b08c188f1b3435::t_9b5d5a800c1cf6 21
+internal/services/magic_wan_gre_tunnel/data_source_schema.go
+  s_b08c188f1b3435::t_db2497810df53e 42,83-86,93-96
+internal/services/workers_custom_domain/model.go
+  s_b08c188f1b3435::t_0294bebbf53811 22
+internal/services/load_balancer_pool/custom.go
+  s_b08c188f1b3435::t_f672c7468827bf 1-3,6-8,11-28,30-38,41-48,52-125,129-135,138-156
+internal/services/api_shield/data_source_schema.go
+  s_b08c188f1b3435::t_e22e6765e159ef 35
+internal/services/workers_route/list_data_source_model.go
+  s_b08c188f1b3435::t_12fe1ce8505e6d 20
+internal/services/zero_trust_dlp_dataset/list_data_source_model.go
+  s_b08c188f1b3435::t_ae47c828a9ef13 21
+internal/services/zero_trust_device_posture_integration/data_source_model.go
+  s_b08c188f1b3435::t_031fed130ab5f1 22
+scripts/lint
+  s_b08c188f1b3435::t_46a63251bd08ed 13-14
+internal/services/d1_database/model.go
+  s_b08c188f1b3435::t_1e5b01b70569e1 7,17-27
+internal/services/magic_transit_site_wan/list_data_source_schema.go
+  s_b08c188f1b3435::t_fc25d7b8479184 32
+internal/services/zero_trust_tunnel_cloudflared_virtual_network/list_data_source_model.go
+  s_b08c188f1b3435::t_7bb4433b69763d 21
+internal/services/client_certificate/data_source_model.go
+  s_b08c188f1b3435::t_8bc125ed1e30ef 22
+internal/services/custom_hostname/model.go
+  s_b08c188f1b3435::t_22c8c984d905d7 23,41
+internal/services/ai_search_token/list_data_source_schema.go
+  s_b08c188f1b3435::t_89b07675c4cba4 22
+internal/services/firewall_rule/data_source_model.go
+  s_b08c188f1b3435::t_0b1faf53c445e0 20,22
+internal/services/load_balancer_pool/schema.go
+  s_7b495323128f16::t_6b0fb62b7f97c9 8,51,96
+internal/services/zero_trust_gateway_certificate/resource.go
+  s_b08c188f1b3435::t_44461af921dc9a 99
+internal/services/user_group_members/data_source_model.go
+  s_b08c188f1b3435::t_a24dcf3dd318ea 15,19-25
+internal/services/zero_trust_device_managed_networks/data_source_schema.go
+  s_b08c188f1b3435::t_87bc800a32dcfc 29
+internal/services/zero_trust_gateway_pacfile/data_source_schema.go
+  s_b08c188f1b3435::t_7ff3ae42f8e4ec 32
+examples/resources/cloudflare_token_validation_config/resource.tf
+  s_b08c188f1b3435::t_8d90e805d67529 5-9
+internal/services/zero_trust_dex_test/data_source_model.go
+  s_b08c188f1b3435::t_922789f1c42b1a 11,23-24,31,33
+internal/services/zero_trust_access_infrastructure_target/data_source_schema.go
+  s_b08c188f1b3435::t_3cb6e1980e27c8 34
+internal/services/list_item/list_data_source_schema.go
+  s_b08c188f1b3435::t_7c81ce0a7679e6 29,64,72,76
+internal/services/api_shield_operation_schema_validation_settings/data_source_model.go
+  s_b08c188f1b3435::t_95651831bddad7 16
+internal/services/zero_trust_device_custom_profile/testdata/devicecustomprofilewithexcludedriftupdated.tf
+  s_b08c188f1b3435::t_87347c59acf41c 1,3-7,9-21
+internal/services/zero_trust_dlp_predefined_profile/resource.go
+  s_b08c188f1b3435::t_6da80e589b5314 263
+internal/services/zero_trust_list/data_source_model.go
+  s_b08c188f1b3435::t_b332ad76758919 23
+internal/services/zero_trust_dlp_custom_prompt_topic/data_source.go
+  s_b08c188f1b3435::t_6ee8742771d6a0 3-70
+  s_b08c188f1b3435::t_621c189a4db388 1-2,71-88
+internal/services/image/list_data_source_model.go
+  s_b08c188f1b3435::t_7f0049e2b1a67d 22
+internal/services/keyless_certificate/list_data_source_schema.go
+  s_b08c188f1b3435::t_8437681050565f 32
+scripts/mock
+  s_b08c188f1b3435::t_79bed61c8bae7c 14
+internal/services/zero_trust_device_ip_profile/data_source_model.go
+  s_b08c188f1b3435::t_7492967721acf4 19-29
+internal/services/zero_trust_device_custom_profile/resource_test.go
+  s_b08c188f1b3435::t_be1ef2705db41b 299-413,469-476
+internal/services/secrets_store_secret/model.go
+  s_b08c188f1b3435::t_85d429049404b0 20-21,24
+internal/services/byo_ip_prefix/list_data_source_schema.go
+  s_b08c188f1b3435::t_1c7a73dc74e32d 34
+internal/services/page_rule/resource.go
+  s_b08c188f1b3435::t_d130ea2bad7686 18,177,232,247,252,254
+internal/services/regional_hostname/resource_test.go
+  s_b08c188f1b3435::t_c694829b3a90f8 9-11
+internal/services/ai_search_instance/data_source_model.go
+  s_b08c188f1b3435::t_833dafc2ffeceb 22,116
+internal/services/zero_trust_device_posture_rule/resource.go
+  s_b08c188f1b3435::t_d14bfdf95d2b38 257
+examples/resources/cloudflare_email_security_impersonation_registry/resource.tf
+  s_b08c188f1b3435::t_1f89fab3076a5d 3-10
+internal/services/zero_trust_tunnel_warp_connector_token/data_source_model.go
+  s_b08c188f1b3435::t_4803e953f9957f 15
+internal/services/zero_trust_device_custom_profile/schema.go
+  s_7b495323128f16::t_80da6f2fd3d48a 9,15,58-59,127-151,158-161,163-175,224-229,273-276,298-300,303,306-307,328-329
+internal/services/zero_trust_access_policy/schema.go
+  s_b08c188f1b3435::t_6193f006e8841e 11,170,750,1038-1052
+internal/services/custom_hostname/data_source_model.go
+  s_b08c188f1b3435::t_17e42852fec35d 23
+internal/services/zero_trust_tunnel_cloudflared/data_source_model.go
+  s_b08c188f1b3435::t_38097dd6b07fc4 24,49-53,80,83
+internal/services/pipeline_stream/data_source_schema.go
+  s_b08c188f1b3435::t_06e1d302e4e207 42
+internal/services/spectrum_application/model.go
+  s_b08c188f1b3435::t_40e6f552c4e205 55-57
+internal/services/magic_wan_gre_tunnel/model.go
+  s_b08c188f1b3435::t_55af0ccf9d8016 47-51,97-101,147-151
+internal/services/notification_policy_webhooks/list_data_source_schema.go
+  s_b08c188f1b3435::t_f82306065f2304 34
+internal/services/regional_hostname/list_data_source_model.go
+  s_b08c188f1b3435::t_7b9065b78910b6 21,27-28
+internal/services/zero_trust_device_settings/data_source_schema.go
+  s_b08c188f1b3435::t_643683e60f2ceb 18
+internal/services/zero_trust_device_posture_rule/list_data_source_model.go
+  s_b08c188f1b3435::t_272e191bb375a2 20,36
+examples/resources/cloudflare_load_balancer/import.sh
+  s_b08c188f1b3435::t_cb2d557671b01b 1
+internal/services/r2_data_catalog/data_source_model.go
+  s_b08c188f1b3435::t_3b1cd924fb83ea 22
+internal/services/image/list_data_source_schema.go
+  s_b08c188f1b3435::t_4f59bae881ad67 32
+internal/services/ai_gateway_dynamic_routing/data_source_model.go
+  s_b08c188f1b3435::t_d0babf2c5ac2ce 22
+internal/services/list_item/data_source.go
+  s_b08c188f1b3435::t_1b7f0d8b8c9ea0 15
+internal/services/zero_trust_gateway_certificate/data_source_schema.go
+  s_b08c188f1b3435::t_b0409e1fe0f824 29
+internal/services/page_shield_connections/data_source_model.go
+  s_b08c188f1b3435::t_b37361bb9c75af 22
+internal/services/total_tls/data_source_model.go
+  s_b08c188f1b3435::t_cd938e5e14669d 20
+internal/services/custom_pages/schema.go
+  s_7b495323128f16::t_44ab188ad3025c 92
+internal/services/moq_relay/list_data_source.go
+  s_b08c188f1b3435::t_1a11254178e3b3 8-9
+internal/services/account_dns_settings_internal_view/list_data_source_model.go
+  s_b08c188f1b3435::t_6dba8a2547e285 21
+examples/resources/cloudflare_zero_trust_device_default_profile/resource.tf
+  s_b08c188f1b3435::t_9325914b734c56 9-12,18-23,39-42
+examples/provider/provider.tf
+  s_b08c188f1b3435::t_a57c67f0524f60 2-5
+internal/services/registrar_domain/list_data_source_schema.go
+  s_b08c188f1b3435::t_8b66f0eb712b91 24
+internal/services/account_token/list_data_source_model.go
+  s_b08c188f1b3435::t_e49402de0af023 21-25,36-38
+internal/services/workers_kv/data_source.go
+  s_b08c188f1b3435::t_19e506ded4bc6d 70
+examples/resources/cloudflare_spectrum_application/resource.tf
+  s_b08c188f1b3435::t_8ba20706d66c72 24
+internal/services/pages_domain/list_data_source_model.go
+  s_b08c188f1b3435::t_6ce916b8cf5e7e 20
+internal/services/web_analytics_site/list_data_source_schema.go
+  s_b08c188f1b3435::t_dfbce304973662 31
+internal/services/universal_ssl_setting/data_source_schema.go
+  s_b08c188f1b3435::t_aff04ae439beae 30
+internal/services/leaked_credential_check_rule/list_data_source_schema.go
+  s_b08c188f1b3435::t_1578566740fea2 31
+internal/services/waiting_room_event/list_data_source_schema.go
+  s_b08c188f1b3435::t_ba42bdd1a1ec6e 34
+internal/services/zero_trust_access_service_token/schema.go
+  s_7b495323128f16::t_b921d26cc0da97 61,67-68,71-73
+internal/services/page_shield_policy/list_data_source_model.go
+  s_b08c188f1b3435::t_d6ea9e93d63638 20
+examples/data-sources/cloudflare_aisearch_instance/data-source.tf
+  s_b08c188f1b3435::t_b45e067c9c698f 1-4
+internal/services/workers_for_platforms_dispatch_namespace/list_data_source_model.go
+  s_b08c188f1b3435::t_fc8c9bef9fc656 21,35-43
+internal/services/leaked_credential_check_rule/data_source_schema.go
+  s_b08c188f1b3435::t_6007fada089d4d 36
+internal/services/email_routing_settings/data_source_model.go
+  s_b08c188f1b3435::t_f91b0df3db815b 20-29
+internal/services/queue_consumer/data_source_model.go
+  s_b08c188f1b3435::t_50d02f5b05a673 11,22,24
+internal/services/schema_validation_settings/data_source_model.go
+  s_b08c188f1b3435::t_1139332b1868ef 19
+internal/services/zero_trust_dlp_integration_entry/list_data_source_model.go
+  s_b08c188f1b3435::t_543338d78a96cb 22
+internal/services/zero_trust_dlp_custom_profile/resource.go
+  s_b08c188f1b3435::t_7809723caa6ce8 177,213-214,228-230,232,252
+internal/services/pipeline_stream/data_source_model.go
+  s_b08c188f1b3435::t_c25a39683c9692 23
+internal/services/cloudforce_one_request/data_source_schema.go
+  s_b08c188f1b3435::t_2bd91568b5cf88 39
+internal/services/flagship_app/data_source_schema.go
+  s_b08c188f1b3435::t_cb1c7168e6d74c 20,46
+internal/services/moq_relay/data_source_schema.go
+  s_b08c188f1b3435::t_c998c616042c19 91
+internal/services/dns_zone_transfers_acl/list_data_source_schema.go
+  s_b08c188f1b3435::t_32bf81ab84fd12 28
+internal/services/email_routing_rule/data_source_model.go
+  s_b08c188f1b3435::t_c4434f8d91299a 21-22
+internal/services/zone_hold/model.go
+  s_b08c188f1b3435::t_e8eddceaeaff74 17
+examples/resources/cloudflare_email_security_block_sender/resource.tf
+  s_b08c188f1b3435::t_fbd1d2d9a869b3 6
+internal/services/image/list_data_source.go
+  s_b08c188f1b3435::t_fc9b492289248e 10-12,52-97
+internal/services/zero_trust_access_ai_controls_mcp_portal/testdata/servers_set_reordered.tf
+  s_b08c188f1b3435::t_058e4f3ae13c46 1-31
+internal/services/flagship_flag/schema.go
+  s_7b495323128f16::t_e5286997a96b5e 48,60,97,126,155,184,213,242,309,316,342
+internal/services/moq_relay/list_data_source_model.go
+  s_b08c188f1b3435::t_9d17315e6536f6 7,10
+internal/services/schema_validation_schemas/data_source_model.go
+  s_b08c188f1b3435::t_6ad7888669b4ad 22
+internal/services/zero_trust_device_default_profile/data_source_schema.go
+  s_b08c188f1b3435::t_f9ab2eeaac569d 23,147-175
+internal/services/workers_cron_trigger/resource.go
+  s_b08c188f1b3435::t_6dd32d30350266 73,94,123,144,160,185,215,235
+.goreleaser.yml
+  s_b08c188f1b3435::t_e2c40de36eb9c9 1-50
+internal/services/ai_gateway/data_source_model.go
+  s_b08c188f1b3435::t_00a9705be39591 22
+internal/services/account_role/data_source_schema.go
+  s_b08c188f1b3435::t_70ed5dccec0fd9 25
+internal/services/zero_trust_device_posture_rule/schema.go
+  s_7b495323128f16::t_f9873e45f08be2 41,411-414
+internal/services/custom_origin_trust_store/list_data_source_model.go
+  s_b08c188f1b3435::t_22b111b5d49d63 21
+internal/services/account_dns_settings/schema.go
+  s_7b495323128f16::t_a4695a42c6c3c2 47-49,70,75
+internal/services/stream_download/resource.go
+  s_b08c188f1b3435::t_533eabbfccdb73 110,129-135
+internal/services/vulnerability_scanner_credential/data_source_schema.go
+  s_b08c188f1b3435::t_031f4d50fe834c 27
+internal/services/notification_policy_webhooks/data_source_schema.go
+  s_b08c188f1b3435::t_9e9434b44262e0 40
+examples/resources/cloudflare_flagship_flag/resource.tf
+  s_b08c188f1b3435::t_34f0fafd862640 11
+internal/services/moq_relay/list_data_source_schema.go
+  s_b08c188f1b3435::t_7c42602f23113b 8
+internal/services/zero_trust_dex_test/schema.go
+  s_b08c188f1b3435::t_7a0c9c18384cf1 45
+internal/services/zero_trust_access_application/schema.go
+  s_b08c188f1b3435::t_0661fbef022c23 1016,1026
+internal/services/resource_group/list_data_source_schema.go
+  s_b08c188f1b3435::t_93543674d0972f 30
+internal/services/zone_setting/data_source_schema.go
+  s_b08c188f1b3435::t_7435e2ae92a7cc 37
+internal/services/snippet_rules/data_source.go
+  s_b08c188f1b3435::t_384fe636994e83 3-85
+  s_b08c188f1b3435::t_4f226d228bfd67 1-2,86-88
+internal/services/zero_trust_organization/schema.go
+  s_7b495323128f16::t_e92f45300dd6bb 116,124,144-145,160,226,229
+internal/services/pipeline/data_source_model.go
+  s_b08c188f1b3435::t_8beea1c623baf8 22
+internal/services/zero_trust_dlp_integration_entry/data_source_schema.go
+  s_b08c188f1b3435::t_dcaac8530df16a 36
+internal/services/worker_version/data_source_schema.go
+  s_b08c188f1b3435::t_2ceca87c230110 498-779
+internal/services/snippet_rules/data_source_model.go
+  s_b08c188f1b3435::t_3fe9a33fc1f235 3-29
+  s_b08c188f1b3435::t_4e83b3c7badf97 1-2
+internal/services/spectrum_application/list_data_source_schema.go
+  s_b08c188f1b3435::t_9f94bd2a90e023 30,61,64
+internal/services/r2_bucket/data_source_schema.go
+  s_b08c188f1b3435::t_715f32a742f05f 29,36,43
+internal/services/vulnerability_scanner_target_environment/data_source_schema.go
+  s_b08c188f1b3435::t_985700ea98d0f3 28
+internal/services/zero_trust_access_policy/data_source_model.go
+  s_b08c188f1b3435::t_6a275a16b2b27a 23
+internal/services/zero_trust_gateway_settings/data_source_schema.go
+  s_b08c188f1b3435::t_93ba9c57962363 26
+examples/resources/cloudflare_zero_trust_organization/resource.tf
+  s_b08c188f1b3435::t_34144920902a8e 26,33
+internal/services/sso_connector/list_data_source_schema.go
+  s_b08c188f1b3435::t_71c371eb28ae20 30
+internal/services/zero_trust_tunnel_warp_connector/data_source_model.go
+  s_b08c188f1b3435::t_2ecf594610273a 24
+internal/services/magic_transit_site_wan/list_data_source_model.go
+  s_b08c188f1b3435::t_f5107f5f702545 20
+internal/services/list_item/data_source_model.go
+  s_b08c188f1b3435::t_ced3d586818dfd 20,22,26
+internal/services/workers_script/resource.go
+  s_b08c188f1b3435::t_5210dc6e791b7e 67,80,117,130,160,162-166,178,253
+internal/services/dns_firewall/list_data_source_model.go
+  s_b08c188f1b3435::t_1d100266c9daf0 21
+internal/services/magic_network_monitoring_rule/list_data_source_schema.go
+  s_b08c188f1b3435::t_23453916e73af3 32
+internal/services/workflow/list_data_source_model.go
+  s_b08c188f1b3435::t_12fa2ca01ccf3f 21
+internal/services/zero_trust_tunnel_cloudflared_config/model.go
+  s_b08c188f1b3435::t_16aa7ce1232e48 16-22,34,39
+internal/services/content_scanning_expression/list_data_source_model.go
+  s_b08c188f1b3435::t_adb3b31a4c10db 20
+internal/services/magic_transit_site_lan/list_data_source_schema.go
+  s_b08c188f1b3435::t_f41dc101c316e8 33
+internal/services/vulnerability_scanner_credential_set/data_source_model.go
+  s_b08c188f1b3435::t_4b1d4064efacee 21
+internal/services/zero_trust_gateway_certificate/list_data_source_model.go
+  s_b08c188f1b3435::t_8c42f454e1011b 21
+internal/services/schema_validation_operation_settings/list_data_source_model.go
+  s_b08c188f1b3435::t_461744fb8513dc 20
+internal/services/turnstile_widget/list_data_source_model.go
+  s_b08c188f1b3435::t_4156a34a2bfa5d 21,48-61
+internal/services/email_security_trusted_domains/list_data_source_model.go
+  s_b08c188f1b3435::t_c3f0c96f14925f 21
+internal/services/zero_trust_access_key_configuration/data_source_schema.go
+  s_b08c188f1b3435::t_ef7ca56bcd50a4 33
+internal/services/stream_key/data_source_model.go
+  s_b08c188f1b3435::t_2f81161ca03426 21
+internal/services/web3_hostname/list_data_source_schema.go
+  s_b08c188f1b3435::t_a4667dbab913f4 31
+internal/services/zero_trust_dlp_predefined_entry/list_data_source_model.go
+  s_b08c188f1b3435::t_efb1dd74269e58 22
+internal/services/queue/list_data_source_model.go
+  s_b08c188f1b3435::t_8867d6cd6b0264 21
+internal/services/zone/data_source_schema_test.go
+  s_b08c188f1b3435::t_bcab040982928e 14
+internal/services/argo_smart_routing/testdata/datasource_basic.tf
+  s_b08c188f1b3435::t_2d1c85565491c3 1,3-9
+internal/services/regional_hostname/data_source_model.go
+  s_b08c188f1b3435::t_104cd8a0edd383 22,29-30
+internal/services/filter/schema.go
+  s_7b495323128f16::t_c74afe4332b274 20
+templates/guides/version-5-upgrade.md
+  s_b08c188f1b3435::t_36e2dfe7b8ab2a 459-465,1105-1111
+internal/services/zero_trust_tunnel_warp_connector_token/data_source.go
+  s_b08c188f1b3435::t_0021840d285bb9 67,85
+internal/services/flagship_flag/list_data_source_model.go
+  s_b08c188f1b3435::t_2db4ebc687c00a 61,69,77,85,93,101
+internal/services/cloud_connector_rules/data_source_model.go
+  s_b08c188f1b3435::t_184b69ea3e3abc 10,20-26
+examples/resources/cloudflare_zone_setting/resource.tf
+  s_b08c188f1b3435::t_a593024dfa9a19 1-2,4
+internal/services/email_security_trusted_domains/schema.go
+  s_7b495323128f16::t_b8393cc48bace8 29,40,43,47
+internal/services/access_rule/data_source_schema_test.go
+  s_b08c188f1b3435::t_af1e3f51f82bec 14
+internal/services/zero_trust_device_custom_profile/data_source_schema.go
+  s_b08c188f1b3435::t_f423c829f64b14 26,171-199
+internal/services/zone/resource.go
+  s_b08c188f1b3435::t_0b95606c10b6f4 248
+internal/services/snippet/schema.go
+  s_7b495323128f16::t_918a2f450d728e 54-56
+examples/resources/cloudflare_magic_transit_site_lan/resource.tf
+  s_b08c188f1b3435::t_7981cb7ec58b68 26-30
+internal/services/zero_trust_dlp_custom_entry/list_data_source_model.go
+  s_b08c188f1b3435::t_45cef1df7b4ee5 22
+internal/services/zero_trust_tunnel_cloudflared/list_data_source_schema.go
+  s_b08c188f1b3435::t_7fca9434d480d1 36
+internal/services/email_routing_catch_all/data_source_model.go
+  s_b08c188f1b3435::t_ed71a6f1e3471d 21
+internal/services/magic_transit_connector/list_data_source_schema.go
+  s_b08c188f1b3435::t_b780dbd4edf459 33,101-103,135-137
+internal/services/leaked_credential_check/data_source_schema.go
+  s_b08c188f1b3435::t_bb75b26d052548 28
+internal/services/token_validation_config/data_source_schema.go
+  s_b08c188f1b3435::t_b2c411479396fa 41,79,91-93,106,109-113
+examples/data-sources/cloudflare_email_security_block_sender/data-source.tf
+  s_b08c188f1b3435::t_9858408d3dab2e 3
+internal/services/email_routing_rule/data_source_schema.go
+  s_b08c188f1b3435::t_3fe87b59e4d849 35,39,129
+examples/data-sources/cloudflare_email_security_trusted_domains/data-source.tf
+  s_b08c188f1b3435::t_e86e96bb483af4 3
+internal/services/vulnerability_scanner_credential/data_source_model.go
+  s_b08c188f1b3435::t_4371e1ef785da9 21
+internal/services/firewall_rule/list_data_source_model.go
+  s_b08c188f1b3435::t_919c2e15c8b63c 20
+internal/services/workers_for_platforms_dispatch_namespace/schema.go
+  s_7b495323128f16::t_91b7e7f32a32d3 12,79
+internal/services/zero_trust_dlp_custom_prompt_topic/list_data_source_model.go
+  s_b08c188f1b3435::t_5f752fe4f97f27 3-42
+  s_b08c188f1b3435::t_dc80f37338a6bf 1-2,43
+internal/services/flagship_flag/model.go
+  s_b08c188f1b3435::t_248c7dec01b3e6 47,55,63,71,79,85-89
+internal/services/list/resource.go
+  s_b08c188f1b3435::t_ff8c66e38ed204 67-71,74,77,79,95-96,98-99,101,103-104,115-119,122,126,128
+internal/services/custom_ssl/data_source_schema.go
+  s_b08c188f1b3435::t_09794e16f5a00d 43
+internal/services/zero_trust_dlp_predefined_entry/data_source_schema.go
+  s_b08c188f1b3435::t_1b10f24295de17 36
+internal/services/connectivity_directory_service/list_data_source_model.go
+  s_b08c188f1b3435::t_d9061e0a48cc66 21
+internal/services/email_security_block_sender/schema.go
+  s_7b495323128f16::t_3f16825e9ff7fb 31,44-45,48
+internal/services/zero_trust_risk_scoring_integration/data_source_model.go
+  s_b08c188f1b3435::t_3f05259ff9dd77 22
+internal/services/vulnerability_scanner_credential/list_data_source_model.go
+  s_b08c188f1b3435::t_e559f0fce29760 20
+internal/services/zero_trust_gateway_policy/list_data_source_schema.go
+  s_b08c188f1b3435::t_6e8453fd037678 25,155,311-316,550-557
+internal/services/hostname_tls_setting/model.go
+  s_b08c188f1b3435::t_e3a14d0d89144f 16-23
+internal/services/user_group_members/data_source.go
+  s_b08c188f1b3435::t_845e1a22300453 67,85
+internal/services/zero_trust_tunnel_cloudflared_route/data_source_schema.go
+  s_b08c188f1b3435::t_f7c5ea855cd61c 43
+examples/data-sources/cloudflare_zero_trust_dlp_custom_prompt_topics/data-source.tf
+  s_b08c188f1b3435::t_780a9b385b9b71 1-3
+internal/services/pipeline_sink/data_source_schema.go
+  s_b08c188f1b3435::t_f011132186b5b7 41
+internal/services/r2_bucket/model.go
+  s_b08c188f1b3435::t_c732910a8b719c 20-21,24,27-30
+internal/services/zero_trust_dex_test/list_data_source_schema.go
+  s_b08c188f1b3435::t_3fd3108d5b432b 10,33,100-104,137-141
+examples/data-sources/cloudflare_aisearch_token/data-source.tf
+  s_b08c188f1b3435::t_3157348fb8c651 1-4
+internal/services/resource_group/list_data_source_model.go
+  s_b08c188f1b3435::t_5e6d02081ee269 20
+examples/resources/cloudflare_list_item/resource.tf
+  s_b08c188f1b3435::t_eb8ba62ac26e52 4-7
+internal/version.go
+  s_b08c188f1b3435::t_7e19fa648cda59 5
+internal/services/byo_ip_prefix/list_data_source_model.go
+  s_b08c188f1b3435::t_5710e27ee0962b 21
+internal/services/zero_trust_dns_location/data_source_schema.go
+  s_b08c188f1b3435::t_11b9e4e4f191f1 37
+internal/services/zero_trust_dlp_custom_prompt_topic/data_source_model.go
+  s_b08c188f1b3435::t_502e488530af9c 1-38
+internal/services/notification_policy_webhooks/model.go
+  s_b08c188f1b3435::t_b0f103d68b2406 20
+internal/services/zero_trust_gateway_certificate/resource_test.go
+  s_b08c188f1b3435::t_aedcd597a3090b 9,65,96,113
+internal/services/url_normalization_settings/data_source_schema.go
+  s_b08c188f1b3435::t_3e5a0282f54c1f 70
+internal/services/zero_trust_network_hostname_route/data_source_schema.go
+  s_b08c188f1b3435::t_14916011098d99 41
+internal/services/custom_ssl/list_data_source_model.go
+  s_b08c188f1b3435::t_a1c7b0ec42bfc2 21
+internal/services/zero_trust_gateway_proxy_endpoint/data_source_model.go
+  s_b08c188f1b3435::t_04296e812471c6 23
+internal/services/certificate_pack/schema.go
+  s_7b495323128f16::t_f0c9bdf59e628f 105-106,109-110,138-140,257-259,270-272
+internal/services/zero_trust_access_mtls_certificate/schema.go
+  s_7b495323128f16::t_ea531293dea5e2 53
+internal/services/filter/data_source_model.go
+  s_b08c188f1b3435::t_0cd8f809163dbf 21
+internal/services/api_shield_operation/list_data_source_model.go
+  s_b08c188f1b3435::t_78b86eb608ab40 22
+internal/services/healthcheck/data_source_schema.go
+  s_b08c188f1b3435::t_32209f1fe341ee 40
+internal/services/logpush_job/resource.go
+  s_b08c188f1b3435::t_a183345b85a277 14,94,149,195,280
+examples/resources/cloudflare_zero_trust_gateway_policy/resource.tf
+  s_b08c188f1b3435::t_7dec94a1a48bf4 50,105-107
+internal/services/zero_trust_network_hostname_route/list_data_source_schema.go
+  s_b08c188f1b3435::t_93d218f9a6490b 33
+internal/services/vulnerability_scanner_target_environment/list_data_source_model.go
+  s_b08c188f1b3435::t_cfcd21cc7495d7 20
+internal/services/custom_origin_trust_store/schema.go
+  s_7b495323128f16::t_fbf4edfba793e4 43
+examples/resources/cloudflare_zero_trust_device_custom_profile/resource.tf
+  s_b08c188f1b3435::t_994e89290c1d80 13-16,23-28,44-47
+internal/services/hyperdrive_config/migration/v500/transform.go
+  s_b08c188f1b3435::t_6b209f8d1819ff 1-136
+internal/services/image_variant/data_source_model.go
+  s_b08c188f1b3435::t_cea2bec0592350 22
+internal/services/magic_transit_connector/model.go
+  s_b08c188f1b3435::t_6e736c30e3e246 24-25
+internal/services/magic_transit_site/list_data_source_schema.go
+  s_b08c188f1b3435::t_742e82b7eabd34 31
+internal/services/d1_database/migration/v500/transform.go
+  s_b08c188f1b3435::t_20a46c7e604f28 39-45
+internal/services/snippet/data_source_model.go
+  s_b08c188f1b3435::t_9ce7cf311e161f 22
+internal/services/workers_cron_trigger/data_source_model.go
+  s_b08c188f1b3435::t_fc7c026c9dcab2 22
+internal/services/workers_custom_domain/resource_test.go
+  s_b08c188f1b3435::t_3c1ac70c1da5b0 117-350,489-496
+internal/services/account_subscription/model.go
+  s_b08c188f1b3435::t_279232265ce1f4 17-26,38-43
+internal/services/email_security_block_sender/list_data_source_model.go
+  s_b08c188f1b3435::t_41d4e1a48c154f 21
+internal/services/dns_zone_transfers_incoming/data_source_model.go
+  s_b08c188f1b3435::t_2a927eca037fc1 21
+internal/services/queue_consumer/list_data_source_model.go
+  s_b08c188f1b3435::t_a04ba7b4fe71f9 21
+internal/services/managed_transforms/schema.go
+  s_7b495323128f16::t_8b6ab753e82b81 75,91
+internal/services/zero_trust_dns_location/data_source_model.go
+  s_b08c188f1b3435::t_7d94d0f7cb4411 23
+internal/services/access_rule/resource_schema_test.go
+  s_b08c188f1b3435::t_c13487c33382e2 14
+internal/services/magic_wan_ipsec_tunnel/data_source_schema.go
+  s_b08c188f1b3435::t_0f26d6e62a3c4b 42,83-86,93-96
+internal/services/dls_prefix_binding/data_source_schema.go
+  s_b08c188f1b3435::t_dd81002addd4ca 8,17-22
+internal/services/magic_wan_ipsec_tunnel/schema.go
+  s_7b495323128f16::t_79a74af71c3d8a 86-89,95-98,288-291,298-301,498-501,508-511,685
+internal/services/zero_trust_tunnel_cloudflared_config/schema.go
+  s_7b495323128f16::t_fbf75aec5bbb99 61
+internal/services/zone/list_data_source_schema_test.go
+  s_b08c188f1b3435::t_dcc0a84e9908d2 14
+internal/services/load_balancer_pool/list_data_source_schema.go
+  s_b08c188f1b3435::t_1068664282da1b 34
+internal/services/list/list_data_source_schema.go
+  s_b08c188f1b3435::t_c639c78677567b 30
+internal/services/zero_trust_gateway_policy/data_source_schema.go
+  s_b08c188f1b3435::t_ecb9d1e2cb4ced 33,166,322-327,561-568
+internal/services/magic_transit_site_lan/list_data_source_model.go
+  s_b08c188f1b3435::t_e3c66740cd66c4 20
+internal/services/zero_trust_access_ai_controls_mcp_server/list_data_source_model.go
+  s_b08c188f1b3435::t_d10eb3b5a2cbdc 22,47,64-86
+internal/services/turnstile_widget/list_data_source_schema.go
+  s_b08c188f1b3435::t_f846e9130e8884 34,142-167
+internal/services/moq_relay/resource.go
+  s_b08c188f1b3435::t_fa9725b16c81d6 11-16
+internal/services/schema_validation_operation_settings/data_source_model.go
+  s_b08c188f1b3435::t_0cc48b97cfc22e 20
+internal/services/dns_zone_transfers_peer/list_data_source_schema.go
+  s_b08c188f1b3435::t_f203f067abdbf2 28
+internal/services/pipeline_stream/list_data_source_model.go
+  s_b08c188f1b3435::t_0d01401c9e6abd 21
+internal/services/page_rule/migrations_test.go
+  s_b08c188f1b3435::t_9e74099f714f3e 11,219-241,261-265,508
+internal/services/vulnerability_scanner_credential_set/data_source_schema.go
+  s_b08c188f1b3435::t_0ed43d01559675 25
+examples/data-sources/cloudflare_snippet_rules/data-source.tf
+  s_b08c188f1b3435::t_08a0fea688e210 1-2
+internal/services/authenticated_origin_pulls_settings/data_source_model.go
+  s_b08c188f1b3435::t_cdcd894f1c0b3f 20
+internal/services/zero_trust_gateway_logging/data_source_model.go
+  s_b08c188f1b3435::t_00e627337d7008 21
+internal/services/schema_validation_settings/data_source_schema.go
+  s_b08c188f1b3435::t_fb8bbdb85b0dc8 30
+internal/services/account_api_token_permission_groups/data_source_model.go
+  s_b08c188f1b3435::t_664eff4dfb0b03 20,42-45
+internal/services/regional_tiered_cache/data_source_schema.go
+  s_b08c188f1b3435::t_a5b71cb526a79f 35
+internal/services/magic_wan_ipsec_tunnel/resource.go
+  s_b08c188f1b3435::t_1a52a7945d7ad7 59,73,99,107,121,137,148,157,177,188,213,232,247
+internal/services/zero_trust_tunnel_cloudflared_virtual_network/list_data_source_schema.go
+  s_b08c188f1b3435::t_3a4790effe9c9a 32
+internal/services/zero_trust_gateway_categories/list_data_source_model.go
+  s_b08c188f1b3435::t_f679613d73a8dc 20
+internal/services/ai_gateway/data_source_schema.go
+  s_b08c188f1b3435::t_32a67b3b3a2dde 40
+internal/services/r2_bucket/resource_test.go
+  s_b08c188f1b3435::t_ddc287dab69eea 230
+internal/services/notification_policy/data_source_model.go
+  s_b08c188f1b3435::t_70030312d5ee02 23
+internal/services/ai_search_token/data_source_schema.go
+  s_b08c188f1b3435::t_a181190d688b4a 25
+internal/services/zero_trust_dlp_predefined_entry/data_source_model.go
+  s_b08c188f1b3435::t_0ffb1382d9ff17 24
+internal/services/workers_custom_domain/data_source_model.go
+  s_b08c188f1b3435::t_677ca9fb2cc690 21
+internal/services/zero_trust_device_posture_integration/list_data_source_model.go
+  s_b08c188f1b3435::t_8c5ddbd93807bc 20
+internal/services/stream_download/data_source_model.go
+  s_b08c188f1b3435::t_563692c1314867 10,20-23,33-44
+internal/services/zero_trust_device_default_profile/resource.go
+  s_b08c188f1b3435::t_d53c81f938b7e0 123,125,128
+internal/services/hostname_tls_setting/data_source_model.go
+  s_b08c188f1b3435::t_5297a8c50ff966 22
+internal/services/web_analytics_site/list_data_source_model.go
+  s_b08c188f1b3435::t_3848f0216413a4 21
+internal/services/zero_trust_access_mtls_certificate/resource.go
+  s_b08c188f1b3435::t_e1648dfdebe247 222,225,290
+internal/services/stream/data_source_schema.go
+  s_b08c188f1b3435::t_28e2793a1abffb 198
+internal/services/observatory_scheduled_test/data_source_model.go
+  s_b08c188f1b3435::t_4d0594571fe4d1 20
+internal/services/zero_trust_access_policy/testdata/accesspolicybypassemptysessionduration.tf
+  s_b08c188f1b3435::t_6cfbde6072d132 1-9
+internal/services/stream/list_data_source_model.go
+  s_b08c188f1b3435::t_50b498eaa42b49 10,22,98-100
+internal/services/argo_tiered_caching/resource_test.go
+  s_b08c188f1b3435::t_1af4aae313631f 7,47,61-69,78-87,106-128,137
+internal/services/email_security_block_sender/list_data_source_schema.go
+  s_b08c188f1b3435::t_f65f588c1d14f5 31,81,105-106,109
+internal/services/zero_trust_access_ai_controls_mcp_portal/migrations_internal_test.go
+  s_b08c188f1b3435::t_c04f33fae57146 1-306
+internal/services/google_tag_gateway/schema.go
+  s_7b495323128f16::t_ffdc10b6b538c9 22-24
+internal/services/zero_trust_device_custom_profile/list_data_source_model.go
+  s_b08c188f1b3435::t_cb49e84caf6763 20,49,84-90
+internal/services/zero_trust_device_default_profile_certificates/data_source_schema.go
+  s_b08c188f1b3435::t_3385bdeac8581f 25
+internal/services/account_api_token_permission_groups/list_data_source_model.go
+  s_b08c188f1b3435::t_0ec1ff162881cb 20,43-46
+internal/services/magic_transit_site_acl/list_data_source_schema.go
+  s_b08c188f1b3435::t_6ab887218a449c 34
+internal/services/magic_transit_connector/data_source_model.go
+  s_b08c188f1b3435::t_d46764a85ce26a 22,31-32
+internal/services/waiting_room_settings/data_source_model.go
+  s_b08c188f1b3435::t_494a1b4c612b6e 20
+internal/services/zero_trust_network_hostname_route/list_data_source_model.go
+  s_b08c188f1b3435::t_57ffc2d5029feb 21
+internal/services/workers_kv/resource.go
+  s_b08c188f1b3435::t_dee74bac649809 67,69,77,81,118,120,128,132,165,198,239,251-254
+scripts/unlink
+  s_b08c188f1b3435::t_e173bc3211300e 8
+internal/services/zero_trust_dlp_predefined_profile/schema.go
+  s_7b495323128f16::t_094b8a6db90406 76
+examples/data-sources/cloudflare_email_routing_rules/data-source.tf
+  s_b08c188f1b3435::t_c186d44d0c9f56 2-3
+internal/customfield/dynamic_test.go
+  s_b08c188f1b3435::t_f2feccf645c072 1,4-5,8-10,13-42,44-48
+internal/services/api_token/schema.go
+  s_7b495323128f16::t_53566556a08eac 41,45-48,65-80,84-85,87
+internal/services/zero_trust_device_custom_profile/model.go
+  s_b08c188f1b3435::t_88ceb65c285948 21,24,31,58-64
+internal/services/zero_trust_device_default_profile/model.go
+  s_b08c188f1b3435::t_3514704abafa94 20,53-59,71-73,77-79,83-84
+internal/services/r2_managed_domain/model.go
+  s_b08c188f1b3435::t_f9b3514d5fb44d 15-19
+internal/services/zero_trust_gateway_policy/list_data_source_model.go
+  s_b08c188f1b3435::t_2153a121500d18 21,74,91
+internal/services/zero_trust_access_policy/data_source_schema.go
+  s_b08c188f1b3435::t_f0b9f8b9372022 41,135,146
+internal/services/workers_custom_domain/testdata/workerdomainattach_different_service.tf
+  s_b08c188f1b3435::t_d58cec68ac01c7 1-6
+internal/services/zero_trust_device_ip_profile/data_source_schema.go
+  s_b08c188f1b3435::t_d4bcd4c0113469 28,31,74
+internal/services/zero_trust_tunnel_warp_connector/list_data_source_schema.go
+  s_b08c188f1b3435::t_6d74941086934a 34
+internal/services/zero_trust_access_infrastructure_target/data_source_model.go
+  s_b08c188f1b3435::t_9831bbd06b37b5 23
+internal/services/zero_trust_device_default_profile_local_domain_fallback/data_source_schema.go
+  s_b08c188f1b3435::t_137660ca06d515 23
+internal/services/waiting_room_settings/data_source_schema.go
+  s_b08c188f1b3435::t_036bc510287c51 30
+examples/resources/cloudflare_account_subscription/resource.tf
+  s_b08c188f1b3435::t_76cd3fbed9614a 3
+internal/services/token_validation_rules/data_source_model.go
+  s_b08c188f1b3435::t_50765e6d33fafa 23
+internal/services/client_certificate/data_source_schema.go
+  s_b08c188f1b3435::t_ed3e849ea8abcf 39
+internal/services/zero_trust_access_policy/list_data_source_model.go
+  s_b08c188f1b3435::t_a4efa0ecbef64c 21
+internal/services/zone_subscription/model.go
+  s_b08c188f1b3435::t_16bec276aa6926 19,37-43
+internal/services/hyperdrive_config/migration/v500/model.go
+  s_b08c188f1b3435::t_2ec9ea9fd07b9f 1-73
+internal/services/dns_record/resource.go
+  s_b08c188f1b3435::t_cb683803130f8e 256-257
+internal/services/workers_cron_trigger/schema.go
+  s_7b495323128f16::t_d8832b1d00887e 7-8,43,59-75
+internal/services/zero_trust_access_ai_controls_mcp_portal/model.go
+  s_b08c188f1b3435::t_6b48452455582e 40
+internal/services/custom_hostname/list_data_source_model.go
+  s_b08c188f1b3435::t_8875404dc57562 21
+internal/services/calls_sfu_app/list_data_source_model.go
+  s_b08c188f1b3435::t_2ad0e00002fa78 21
+internal/services/api_shield_schema/data_source_schema.go
+  s_b08c188f1b3435::t_b524eaea60b974 35
+internal/services/schema_validation_operation_settings/data_source_schema.go
+  s_b08c188f1b3435::t_0680ea04c43200 34
+internal/services/notification_policy/list_data_source_model.go
+  s_b08c188f1b3435::t_fd846745fd32b8 21
+internal/services/zero_trust_access_ai_controls_mcp_portal/resource_test.go
+  s_b08c188f1b3435::t_e89fafb0cffcf9 15-17,19,106-157
+internal/services/workers_kv_namespace/data_source_model.go
+  s_b08c188f1b3435::t_dae3e09991650d 21
+internal/services/d1_database/schema.go
+  s_7b495323128f16::t_37131d2b9a4464 7-8,76,78
+internal/services/zone/data_source_model.go
+  s_b08c188f1b3435::t_5973b32721ca55 22
+internal/services/calls_turn_app/list_data_source_schema.go
+  s_b08c188f1b3435::t_3ade184c999043 30
+internal/services/zero_trust_device_posture_integration/list_data_source_schema.go
+  s_b08c188f1b3435::t_bbef9efdb98454 22
+internal/services/certificate_authorities_hostname_associations/resource.go
+  s_b08c188f1b3435::t_7b7256ebf77907 15,161-163,195-202,206,212-214
+internal/services/worker/resource.go
+  s_b08c188f1b3435::t_e1b6f4e8774467 257
+internal/services/zone_lockdown/data_source_schema.go
+  s_b08c188f1b3435::t_3044c7147a6972 41
+internal/services/ai_search_instance/list_data_source_model.go
+  s_b08c188f1b3435::t_db66bae58d5808 21,52-96,122,155
+internal/services/zero_trust_dex_test/model.go
+  s_b08c188f1b3435::t_dd48e7386d80cd 8,26,28,40-41
+internal/services/zero_trust_dlp_custom_prompt_topic/list_data_source_schema_test.go
+  s_b08c188f1b3435::t_7fa8302fc62a0d 3,9,13,15-16
+internal/services/secrets_store_secret/resource.go
+  s_b08c188f1b3435::t_d40ff3810285b3 67,73,94,122,159,239
+internal/services/dns_zone_transfers_acl/list_data_source_model.go
+  s_b08c188f1b3435::t_662772ae9560df 20
+internal/services/account_member/data_source_model.go
+  s_b08c188f1b3435::t_04fbf8efb31fa1 22
+internal/services/zero_trust_risk_behavior/data_source_model.go
+  s_b08c188f1b3435::t_4ef92bd98172ea 20
+internal/services/waiting_room/data_source_model.go
+  s_b08c188f1b3435::t_f264ddbafdad11 23
+internal/services/zone_subscription/resource.go
+  s_b08c188f1b3435::t_7e27be600a8ff1 158,209
+internal/services/regional_hostname/data_source_schema.go
+  s_b08c188f1b3435::t_db96d89000223b 35
+internal/services/filter/list_data_source_model.go
+  s_b08c188f1b3435::t_f50dc2de17b0dd 20
+internal/services/hyperdrive_config/model.go
+  s_b08c188f1b3435::t_c536c56d8b07f6 48
+internal/services/observatory_scheduled_test/data_source_schema.go
+  s_b08c188f1b3435::t_51694c963bd5cb 32
+internal/services/d1_database/list_data_source_schema.go
+  s_b08c188f1b3435::t_d60a8fad6af7a7 31
+internal/services/content_scanning/data_source_schema.go
+  s_b08c188f1b3435::t_891fdf4ebf6f4b 28
+internal/services/zone_hold/schema.go
+  s_7b495323128f16::t_b2ffa24c94b17e 13,77
+internal/services/stream_download/model.go
+  s_b08c188f1b3435::t_c2656d66131fc1 16-19
+internal/services/zero_trust_tunnel_cloudflared/list_data_source_model.go
+  s_b08c188f1b3435::t_902aef8d27eab2 22,37-40,68,71
+internal/services/zero_trust_dlp_custom_entry/list_data_source_schema.go
+  s_b08c188f1b3435::t_d45b7d8cdbc7cd 31
+internal/services/zero_trust_access_mtls_hostname_settings/resource.go
+  s_b08c188f1b3435::t_6310c6bbde3ec0 79-85,133-139
+internal/services/r2_data_catalog/data_source_schema.go
+  s_b08c188f1b3435::t_4556ffdba1367c 38
+internal/services/argo_tiered_caching/data_source_schema.go
+  s_b08c188f1b3435::t_1747ddd3894b4d 26
+internal/services/turnstile_widget/data_source_model.go
+  s_b08c188f1b3435::t_4b9ae8a4afe06c 21-37
+internal/services/r2_bucket_lifecycle/model.go
+  s_b08c188f1b3435::t_53807e8076839e 16-18
+internal/services/token_validation_config/list_data_source_model.go
+  s_b08c188f1b3435::t_ea9467e58a3e0f 21
+internal/services/magic_wan_static_route/data_source_schema_test.go
+  s_b08c188f1b3435::t_1e49d7dcd22b4a 12
+internal/services/r2_bucket_lock/model.go
+  s_b08c188f1b3435::t_d2bdd495af88ae 16-18
+internal/services/worker/schema.go
+  s_7b495323128f16::t_0d74e80cc0ed3c 17,158
+internal/acctest/acctest.go
+  s_b08c188f1b3435::t_8f9dfe1941a9cb 1176-1280,1330-1373
+internal/services/api_shield/schema.go
+  s_b08c188f1b3435::t_1f8293f703b3ad 46
+internal/services/zero_trust_dex_rule/data_source_schema.go
+  s_b08c188f1b3435::t_345a5ddc1c60f6 39
+internal/services/address_map/data_source_model.go
+  s_b08c188f1b3435::t_9923a9170f2144 23
+internal/services/zero_trust_dlp_predefined_profile/data_source_schema.go
+  s_b08c188f1b3435::t_aab3251c2b476a 37
+internal/services/dns_firewall/list_data_source_schema.go
+  s_b08c188f1b3435::t_6e7e07000b3afe 32
+internal/services/bot_management/schema.go
+  s_7b495323128f16::t_246ffe921ac56a 72-74
+internal/services/workers_custom_domain/list_data_source_schema.go
+  s_b08c188f1b3435::t_c35b5e53882896 29
+examples/resources/cloudflare_custom_hostname/resource.tf
+  s_b08c188f1b3435::t_4d0696784d6fee 4-8
+internal/services/zero_trust_device_custom_profile_local_domain_fallback/data_source_schema.go
+  s_b08c188f1b3435::t_fc667b5f61a2de 26
+internal/services/vulnerability_scanner_target_environment/data_source_model.go
+  s_b08c188f1b3435::t_5300a33ed4549f 22
+internal/services/zero_trust_device_default_profile_local_domain_fallback/schema.go
+  s_7b495323128f16::t_90ba00a32a0716 35
+internal/services/vulnerability_scanner_credential_set/list_data_source_schema.go
+  s_b08c188f1b3435::t_27fcb6b7c21714 22
+internal/services/token_validation_rules/data_source_schema.go
+  s_b08c188f1b3435::t_cdc646f096a400 43
+internal/services/bot_management/resource.go
+  s_b08c188f1b3435::t_18e8c76a7651ba 14,67,73,88,93,116,122,137,142,158,177,182,209,223,228
+internal/services/account_permission_group/list_data_source_schema.go
+  s_b08c188f1b3435::t_eaae093c82c735 56
+internal/services/zero_trust_dlp_dataset/list_data_source_schema.go
+  s_b08c188f1b3435::t_a1a69c82e89362 30
+internal/services/zero_trust_device_ip_profile/list_data_source_schema.go
+  s_b08c188f1b3435::t_fe124ce99a5103 28
+examples/data-sources/cloudflare_aisearch_namespaces/data-source.tf
+  s_b08c188f1b3435::t_20c75c947bd085 1-4
+internal/services/page_shield_connections/list_data_source_model.go
+  s_b08c188f1b3435::t_051717c36e07f4 21
+internal/services/workers_custom_domain/resource.go
+  s_b08c188f1b3435::t_561c13678b7971 160-161
+internal/services/zero_trust_access_ai_controls_mcp_portal/schema.go
+  s_b08c188f1b3435::t_833d29de4a87e3 22
+internal/services/zero_trust_tunnel_cloudflared_virtual_network/data_source_schema.go
+  s_b08c188f1b3435::t_08fda1cc344dc6 39
+internal/services/email_routing_address/data_source_model.go
+  s_b08c188f1b3435::t_fc69b9382037f7 22
+internal/services/email_security_block_sender/data_source_model.go
+  s_b08c188f1b3435::t_d2b6e557be2517 22
+internal/services/zero_trust_access_custom_page/model.go
+  s_b08c188f1b3435::t_e9d18983f5be3f 7
+internal/services/r2_custom_domain/model.go
+  s_b08c188f1b3435::t_4e4214a00d299f 16-24
+internal/services/client_certificate/list_data_source_schema.go
+  s_b08c188f1b3435::t_167c9a53a60103 30
+internal/services/hyperdrive_config/data_source_schema.go
+  s_b08c188f1b3435::t_935e6a6d4036c9 39
+internal/services/zero_trust_access_tag/data_source_model.go
+  s_b08c188f1b3435::t_eb3e3b5e79cf4b 21
+internal/services/zero_trust_access_mtls_certificate/model.go
+  s_b08c188f1b3435::t_758b8c5c47da07 21
+internal/services/magic_wan_gre_tunnel/schema.go
+  s_7b495323128f16::t_b1cf29a9b7c16d 59-62,68-71,279-282,289-292,468-471,478-481,622
+internal/services/magic_wan_ipsec_tunnel/data_source_model.go
+  s_b08c188f1b3435::t_e23743a6e67a9e 23,56-60
+internal/services/load_balancer_pool/data_source_model.go
+  s_b08c188f1b3435::t_b3043d35c7c22d 23
+CHANGELOG.md
+  s_b08c188f1b3435::t_7478bbab5d0e70 3-40
+internal/services/api_shield/data_source_model.go
+  s_b08c188f1b3435::t_d3ade306cd771d 21
+internal/services/flagship_flag/list_data_source_schema.go
+  s_b08c188f1b3435::t_fa20c6ebce2fa3 26,56,102,132,162,192,222,252,320,327,351,360
+internal/services/email_security_trusted_domains/data_source_schema.go
+  s_b08c188f1b3435::t_83b8c4c997430f 30,34,39
+internal/services/token_validation_rules/list_data_source_model.go
+  s_b08c188f1b3435::t_4ef0d1cf887e51 21
+internal/services/logpush_job/model.go
+  s_b08c188f1b3435::t_a5e65d303bf3ff 6,21-26,38,42,48
+internal/services/waiting_room_rules/data_source_model.go
+  s_b08c188f1b3435::t_afac4918a55e7e 22
+internal/services/zero_trust_gateway_policy/schema.go
+  s_7b495323128f16::t_0805d411a60e75 299-303,524-530
+internal/services/observatory_scheduled_test/schema.go
+  s_7b495323128f16::t_72424f9c279ba7 47
+internal/services/workers_script/data_source_schema.go
+  s_b08c188f1b3435::t_bb9021660af6f4 37
+internal/services/cloudforce_one_request/list_data_source_schema.go
+  s_b08c188f1b3435::t_1c26edac8b552a 30
+internal/services/dns_zone_transfers_acl/data_source_model.go
+  s_b08c188f1b3435::t_80e7423e69ba7c 21
+internal/services/organization/data_source_model.go
+  s_b08c188f1b3435::t_fdfccde4968da4 114,119
+internal/services/email_routing_dns/data_source_schema.go
+  s_b08c188f1b3435::t_6b16921e6fdfee 35
+internal/services/zero_trust_gateway_settings/model.go
+  s_b08c188f1b3435::t_25216d4a58a4a9 33,41,45,79-80,83,102-103
+internal/services/zero_trust_dlp_custom_prompt_topic/list_data_source_schema.go
+  s_b08c188f1b3435::t_6f998adc2b6da6 3-83
+  s_b08c188f1b3435::t_aea3c8ff98c28e 1-2,84-85
+internal/services/zero_trust_tunnel_warp_connector/data_source_schema.go
+  s_b08c188f1b3435::t_d94770bda6389e 43
+internal/services/universal_ssl_setting/data_source_model.go
+  s_b08c188f1b3435::t_46086993c67b23 20
+internal/acctest/zero_trust_access_group.go
+  s_b08c188f1b3435::t_c3d297969a8837 1,4,6-7,10,16-45,48-93,96-182,184-302
+internal/services/stream/list_data_source_schema.go
+  s_b08c188f1b3435::t_f1560ddab154a0 34,267
+internal/services/zero_trust_dns_location/model.go
+  s_b08c188f1b3435::t_f1e4545611bcec 16-31,50-52,60-61,73-74
+internal/services/healthcheck/list_data_source_model.go
+  s_b08c188f1b3435::t_d7463be05494ec 21
+internal/services/managed_transforms/data_source_schema.go
+  s_b08c188f1b3435::t_95237c60de7f56 69
+internal/services/zero_trust_dlp_custom_entry/data_source_model.go
+  s_b08c188f1b3435::t_a9d6c65dca954b 24
+internal/services/worker_version/migrations_test.go
+  s_b08c188f1b3435::t_b3ece02699af73 263-266
+internal/services/waiting_room/data_source_schema.go
+  s_b08c188f1b3435::t_65671168dc74b7 39
+internal/services/user_agent_blocking_rule/list_data_source_schema.go
+  s_b08c188f1b3435::t_7f129c29bfc9eb 30
+internal/services/pages_domain/list_data_source_schema.go
+  s_b08c188f1b3435::t_f52538662db25a 30
+examples/resources/cloudflare_aisearch_instance/resource.tf
+  s_b08c188f1b3435::t_1dffbd13eaf635 37
+internal/services/zero_trust_dlp_custom_profile/data_source_schema_test.go
+  s_b08c188f1b3435::t_5fb64ad35c5d61 3,9,13,15-16
+internal/services/zero_trust_access_infrastructure_target/list_data_source_schema.go
+  s_b08c188f1b3435::t_b366a36c0d1b54 25
+internal/services/zone_lockdown/data_source_model.go
+  s_b08c188f1b3435::t_589edd33e76642 23
+internal/services/queue_consumer/list_data_source_schema.go
+  s_b08c188f1b3435::t_ba7d41b9795bde 33
+internal/services/zero_trust_access_service_token/resource.go
+  s_b08c188f1b3435::t_2a21b63d5d89e8 290-291
+internal/services/zero_trust_access_policy/normalizations.go
+  s_b08c188f1b3435::t_94c320318cced7 54-58,61,64,68-69,72,75,79-88
+internal/services/cloudforce_one_request_priority/data_source_model.go
+  s_b08c188f1b3435::t_ba5e08133ad1a4 22
+internal/services/url_normalization_settings/data_source_model.go
+  s_b08c188f1b3435::t_c2ba7199dfd966 20
+internal/services/api_shield_operation/schema.go
+  s_7b495323128f16::t_e7d01c1d1e1c8c 270
+internal/services/leaked_credential_check_rule/data_source_model.go
+  s_b08c188f1b3435::t_2b70917a1c05a3 21
+internal/services/email_security_trusted_domains/model.go
+  s_b08c188f1b3435::t_bc90d817d52bbe 18-20
+internal/services/zero_trust_device_default_profile/data_source_model.go
+  s_b08c188f1b3435::t_289a83e442ef3b 21,41,72-78
+internal/services/api_shield_schema/data_source_model.go
+  s_b08c188f1b3435::t_9cf491a4ff4813 21
+internal/services/waiting_room_rules/data_source_schema.go
+  s_b08c188f1b3435::t_be4dfeeb069b55 35
+internal/services/token_validation_config/data_source_model.go
+  s_b08c188f1b3435::t_37f3ff25cd1ce5 23
+go.mod
+  s_b08c188f1b3435::t_fe9f5a2e8181b6 6-10,12,22-23,29,40,43-56,82,94,109,114
+internal/services/notification_policy/schema.go
+  s_7b495323128f16::t_f3506b589f6938 131-132,142-143,153-154
+internal/services/keyless_certificate/data_source_model.go
+  s_b08c188f1b3435::t_6d9efb146d5046 23
+examples/resources/cloudflare_load_balancer/resource.tf
+  s_b08c188f1b3435::t_c5c469b0af1b39 5,14,61-66
+internal/services/zero_trust_access_policy/model.go
+  s_b08c188f1b3435::t_e055048165cabf 8,32-35
+internal/services/web_analytics_site/data_source_schema.go
+  s_b08c188f1b3435::t_817ec72e9dd439 40
+internal/services/magic_transit_site/list_data_source_model.go
+  s_b08c188f1b3435::t_3c3cc6d9cc1676 20
+internal/services/zero_trust_access_key_configuration/data_source_model.go
+  s_b08c188f1b3435::t_3f9f948010eb74 21
+internal/services/email_security_block_sender/data_source_schema.go
+  s_b08c188f1b3435::t_25530772af023b 30,34,39,62-63,66
+internal/services/tiered_cache/data_source_model.go
+  s_b08c188f1b3435::t_74ddad9e6e8767 21
+internal/services/zone_dnssec/data_source_model.go
+  s_b08c188f1b3435::t_90bc6d2f789d56 21
+internal/services/turnstile_widget/data_source_schema.go
+  s_b08c188f1b3435::t_560e6b38544be1 44,67-79,84-96
+internal/services/d1_database/data_source_schema.go
+  s_b08c188f1b3435::t_abcd468738f1e7 42
+examples/data-sources/cloudflare_zones/data-source.tf
+  s_b08c188f1b3435::t_fcdc30560a40c3 10
+internal/services/zone_cache_reserve/data_source_schema.go
+  s_b08c188f1b3435::t_93e0b97b970814 35
+internal/services/pipeline_sink/list_data_source_model.go
+  s_b08c188f1b3435::t_772acd099abb61 21
+internal/services/load_balancer_pool/resource.go
+  s_b08c188f1b3435::t_c742d4164bb5d2 87,136,176,246
+examples/data-sources/cloudflare_aisearch_tokens/data-source.tf
+  s_b08c188f1b3435::t_e2755e91305573 1-4
+examples/data-sources/cloudflare_zero_trust_resource_library_categories/data-source.tf
+  s_b08c188f1b3435::t_c44215f1d51dcf 1-3
+internal/services/magic_transit_site_acl/list_data_source_model.go
+  s_b08c188f1b3435::t_cc5782411111b8 20
+internal/services/magic_network_monitoring_rule/list_data_source_model.go
+  s_b08c188f1b3435::t_8db3b7ab733011 20
+internal/services/api_token/data_source_schema.go
+  s_b08c188f1b3435::t_9207d947c08170 170-174
+examples/resources/cloudflare_custom_ssl/resource.tf
+  s_b08c188f1b3435::t_c5a9340905072b 28-34
+internal/services/api_token/resource.go
+  s_b08c188f1b3435::t_fce5652d502bda 14,86,133,170,231
+internal/services/zero_trust_gateway_settings/data_source_model.go
+  s_b08c188f1b3435::t_fe4d03ddc2dcce 22
+internal/services/list/data_source_schema.go
+  s_b08c188f1b3435::t_7b92dc07e2f7e6 25-27,33-35
+internal/services/d1_database/list_data_source_model.go
+  s_b08c188f1b3435::t_4ddd14012eaf6b 21
+internal/services/workers_script/list_data_source_model.go
+  s_b08c188f1b3435::t_bd7978be89be6a 21,46,71-85
+internal/services/cloudforce_one_request_priority/data_source_schema.go
+  s_b08c188f1b3435::t_31aa95bca44d17 37
+internal/services/notification_policy/data_source_schema.go
+  s_b08c188f1b3435::t_79d2d7a707f79b 43
+internal/services/zero_trust_tunnel_cloudflared_config/data_source_model.go
+  s_b08c188f1b3435::t_9cc77b08d5ff0a 21-26
+internal/services/dns_zone_transfers_peer/data_source_model.go
+  s_b08c188f1b3435::t_f484807194c9a0 21
+internal/services/workers_kv_namespace/list_data_source_schema.go
+  s_b08c188f1b3435::t_fadf7e9b29c7da 30
+internal/services/schema_validation_schemas/list_data_source_model.go
+  s_b08c188f1b3435::t_82713c29f33201 21
+internal/services/queue/schema.go
+  s_7b495323128f16::t_d9cffb5548c8ff 50
+internal/services/vulnerability_scanner_credential/list_data_source_schema.go
+  s_b08c188f1b3435::t_5f96379e1e7988 23
+internal/services/zone/resource_test.go
+  s_b08c188f1b3435::t_2f074735125e0a 7,64-65,74,83-87,90-93,95-100,102-103
+internal/services/certificate_pack/data_source_model.go
+  s_b08c188f1b3435::t_f06bbecd090866 23
+internal/services/magic_transit_connector/list_data_source_model.go
+  s_b08c188f1b3435::t_fd5de589579ced 20,47,53
+docs/data-sources/ruleset.md
+  s_b08c188f1b3435::t_b74249aca17626 669
+internal/services/leaked_credential_check/data_source_model.go
+  s_b08c188f1b3435::t_2063df05556223 19
+internal/services/zero_trust_device_custom_profile/custom.go
+  s_b08c188f1b3435::t_44c07949e3c653 1-190
+internal/services/workers_cron_trigger/data_source_schema.go
+  s_b08c188f1b3435::t_19e5583500c62b 35
+internal/services/dns_record/list_data_source_schema.go
+  s_b08c188f1b3435::t_964fe6141a3e91 30,228,231
+internal/services/sso_connector/data_source_model.go
+  s_b08c188f1b3435::t_309379eaa61290 23
+internal/services/worker_version/data_source_model.go
+  s_b08c188f1b3435::t_1098d3b77015aa 22-49,156-213
+examples/data-sources/cloudflare_zero_trust_device_deployment_groups_list/data-source.tf
+  s_b08c188f1b3435::t_b7d123ecad1901 1-3
+internal/services/hostname_tls_setting/schema.go
+  s_7b495323128f16::t_d13aecb7ed8c2d 52,61,64,67-75
+internal/services/api_token/data_source_model.go
+  s_b08c188f1b3435::t_df6e23919a6be9 41-43,76-77
+internal/services/pages_project/schema.go
+  s_7b495323128f16::t_57a24bbac560c8 17,191-194,216-219,222-224,276-279,331,395,432-435,457-460,463-465,517-520,572,636,658-660,663-664,667-668,671-672,675-676,679-680,683-684,687-690
+examples/data-sources/cloudflare_load_balancers/data-source.tf
+  s_b08c188f1b3435::t_a6abe114c38af6 2-3
+internal/services/zone/list_data_source_model.go
+  s_b08c188f1b3435::t_8543d51e53dc4b 74-75
+internal/services/email_routing_settings/model.go
+  s_b08c188f1b3435::t_78e478ba37a0c1 16-25
+internal/services/zero_trust_dlp_custom_profile/schema.go
+  s_7b495323128f16::t_e5c8223c070637 68,72,76,82,85,133,172-174,181-182
+internal/services/argo_smart_routing/resource_test.go
+  s_b08c188f1b3435::t_7c168247f08032 16,59-62,107,132-167
+internal/services/pipeline_sink/list_data_source_schema.go
+  s_b08c188f1b3435::t_0e0720d6d7abf2 31
+internal/services/page_shield_scripts/data_source_schema.go
+  s_b08c188f1b3435::t_c93d66e144ccaf 39
+examples/data-sources/cloudflare_moq_relay/data-source.tf
+  s_b08c188f1b3435::t_89ef6a2d47b934 1-4
+internal/services/load_balancer_pool/resource_test.go
+  s_b08c188f1b3435::t_ca8aa0d9e0cd8c 213-254,636-639
+internal/services/zero_trust_access_policy/resource_test.go
+  s_b08c188f1b3435::t_a1ad4c20100ea6 17,807-841
+internal/services/account_token/data_source_model.go
+  s_b08c188f1b3435::t_f1bbf79917381e 23,52-54,87-88
+internal/services/zero_trust_gateway_logging/data_source_schema.go
+  s_b08c188f1b3435::t_0376eafcd7e496 22
+internal/services/firewall_rule/data_source_schema.go
+  s_b08c188f1b3435::t_b2bada03909a65 43
+internal/services/load_balancer_monitor/data_source_model.go
+  s_b08c188f1b3435::t_aa788ab72bc7b8 22
+internal/services/hyperdrive_config/migration/v500/schema.go
+  s_b08c188f1b3435::t_cc6f8c07c7dbbd 1,4,7-15,17-18,20-21,23-50,53-67,71,73
+internal/services/account_dns_settings_internal_view/data_source_schema.go
+  s_b08c188f1b3435::t_9892bbdf8db2e6 41
+internal/services/workers_route/list_data_source_schema.go
+  s_b08c188f1b3435::t_f5b0222ab5356e 29
+internal/services/zero_trust_gateway_app_types/list_data_source_schema.go
+  s_b08c188f1b3435::t_7578759695b4d3 30
+internal/services/page_shield_connections/data_source_schema.go
+  s_b08c188f1b3435::t_2061b9d2f57f00 37
+internal/services/zone_dns_settings/data_source_schema.go
+  s_b08c188f1b3435::t_b6f1221cfff009 33,40-42,87,92
+internal/services/magic_network_monitoring_rule/data_source_model.go
+  s_b08c188f1b3435::t_061fd0dae174cb 22
+internal/services/cloudforce_one_request/data_source_model.go
+  s_b08c188f1b3435::t_f4e7de8a393ccb 22
+internal/services/zone_setting/data_source_model.go
+  s_b08c188f1b3435::t_a0ba4f5c15b2c8 22
+internal/services/zero_trust_dex_rule/schema.go
+  s_7b495323128f16::t_dc0af73e4d8f67 39
+internal/services/account_dns_settings/data_source_model.go
+  s_b08c188f1b3435::t_811224f80b9f97 20
+internal/services/registrar_domain/list_data_source_model.go
+  s_b08c188f1b3435::t_85bc0a76d7d03d 21
+internal/services/zero_trust_gateway_pacfile/list_data_source_schema.go
+  s_b08c188f1b3435::t_8566af18b164e0 29
+internal/services/zero_trust_access_infrastructure_target/list_data_source_model.go
+  s_b08c188f1b3435::t_64b2b65b786384 21
+internal/services/account_member/list_data_source_schema.go
+  s_b08c188f1b3435::t_b834274eda951b 31
+internal/services/magic_wan_ipsec_tunnel/model.go
+  s_b08c188f1b3435::t_e4c84f71ba31be 50-54,106-110,166-170
+internal/services/account_dns_settings_internal_view/list_data_source_schema.go
+  s_b08c188f1b3435::t_2275bf3d0693e9 32
+scripts/test
+  s_b08c188f1b3435::t_8f379339810ed8 11
+internal/services/flagship_flag/data_source_model.go
+  s_b08c188f1b3435::t_249e058591ade9 52,60,68,76,84,92
+internal/services/content_scanning/data_source_model.go
+  s_b08c188f1b3435::t_31a83fd085353f 19
+internal/services/custom_hostname/schema.go
+  s_7b495323128f16::t_115677a4e32077 48-60,63,65
+docs/guides/version-5-migration.md
+  s_b08c188f1b3435::t_3ad0ba14dacd79 18-58,1255-1362,1794-1796,1836-1842,1844,1911,1917,1919
+internal/services/list/data_source_model.go
+  s_b08c188f1b3435::t_3706ac9bc3ca37 19-28
+internal/services/magic_wan_gre_tunnel/resource.go
+  s_b08c188f1b3435::t_b030cc35b3aa5b 59,73,99,107,121,137,148,157,177,188,213,232,247
+internal/services/zero_trust_gateway_certificate/data_source_model.go
+  s_b08c188f1b3435::t_5a17c8b41e6c2e 22
+.gitignore
+  s_b08c188f1b3435::t_e9bf74a869a858 3
+internal/services/queue/model.go
+  s_b08c188f1b3435::t_de0b95f71ae756 21,39-41
+internal/services/dns_zone_transfers_peer/data_source_schema.go
+  s_b08c188f1b3435::t_25d02acdfd6af8 31
+examples/resources/cloudflare_email_security_trusted_domains/resource.tf
+  s_b08c188f1b3435::t_89e45ad0c6be87 7
+internal/services/r2_bucket_sippy/model.go
+  s_b08c188f1b3435::t_be1c5bdbf66d6e 15-19,32-33,39,41
+internal/services/zero_trust_dns_location/list_data_source_schema.go
+  s_b08c188f1b3435::t_ddf80bc0ab9f93 31
+internal/services/worker/data_source_schema.go
+  s_b08c188f1b3435::t_67ad30576eedc7 42
+internal/services/notification_policy/model.go
+  s_b08c188f1b3435::t_ca0472f091bb28 38-40
+internal/services/zero_trust_dlp_entry/data_source_model.go
+  s_b08c188f1b3435::t_d2ab34e85c09ad 24
+internal/services/spectrum_application/schema.go
+  s_7b495323128f16::t_a7860c3614041d 116-119,121-122,124-127,129,139-153,166
+internal/services/content_scanning_expression/list_data_source_schema.go
+  s_b08c188f1b3435::t_3022049f074a84 31
+internal/services/workers_route/data_source_model.go
+  s_b08c188f1b3435::t_9dc260f8501dcf 21
+internal/services/zero_trust_device_default_profile_local_domain_fallback/data_source_model.go
+  s_b08c188f1b3435::t_9c0a278dac7a4b 21
+internal/services/calls_turn_app/list_data_source_model.go
+  s_b08c188f1b3435::t_1c439c282603cb 21
+internal/services/zone_dnssec/data_source_schema.go
+  s_b08c188f1b3435::t_e34bdfd902620d 33
+internal/services/secrets_store_secret/schema.go
+  s_7b495323128f16::t_5e584f7cc65b59 52,56-57,71-72
+internal/services/stream_key/data_source_schema.go
+  s_b08c188f1b3435::t_cb8451ced6eba4 31
+internal/services/dns_zone_transfers_outgoing/data_source_model.go
+  s_b08c188f1b3435::t_c4654f745e16de 21
+internal/services/zero_trust_gateway_certificate/list_data_source_schema.go
+  s_b08c188f1b3435::t_6976dcf7bd0e04 23
+internal/services/magic_wan_static_route/resource.go
+  s_b08c188f1b3435::t_5c7543d4219f2b 59,73,99,107,121,137,148,157,177,188,213,232,247
+internal/services/sso_connector/list_data_source_model.go
+  s_b08c188f1b3435::t_41955c7ab42978 21
+examples/data-sources/cloudflare_aisearch_instances/data-source.tf
+  s_b08c188f1b3435::t_430753117f2967 1-5
+internal/services/custom_hostname_fallback_origin/data_source_model.go
+  s_b08c188f1b3435::t_cf3a5426a34fb4 22
+internal/services/zero_trust_dlp_custom_entry/data_source_schema.go
+  s_b08c188f1b3435::t_2452e92ac08c9d 36
+internal/services/turnstile_widget/schema.go
+  s_7b495323128f16::t_af8ef463c9dbe2 116-141
+internal/services/firewall_rule/schema.go
+  s_7b495323128f16::t_5b678c7eccb8f4 25
+internal/services/zero_trust_dlp_entry/data_source_schema.go
+  s_b08c188f1b3435::t_7399146183eb77 36
+internal/services/zero_trust_gateway_pacfile/data_source_model.go
+  s_b08c188f1b3435::t_14e89012b374e5 22
+internal/services/workers_kv/model.go
+  s_b08c188f1b3435::t_bd823d47912352 10,31-32,38-39
+.github/workflows/migration-tests.yml
+  s_b08c188f1b3435::t_65c3eb5bca3a18 27-31
+internal/services/zero_trust_dlp_entry/list_data_source_model.go
+  s_b08c188f1b3435::t_379b0fbf7f8b4d 22
+internal/services/queue/data_source_model.go
+  s_b08c188f1b3435::t_ae848f096228f2 23
+internal/services/zone_dns_settings/data_source_model.go
+  s_b08c188f1b3435::t_62db6743a38d17 20
+internal/services/botnet_feed_config_asn/data_source_schema.go
+  s_b08c188f1b3435::t_62356369ed2f1a 26
+internal/services/zone_lockdown/list_data_source_model.go
+  s_b08c188f1b3435::t_c956af75d300bd 21
+internal/services/workflow/list_data_source_schema.go
+  s_b08c188f1b3435::t_d7fa2f3e9b045c 30
+internal/services/account_role/list_data_source_model.go
+  s_b08c188f1b3435::t_d6796e7edc13fc 20
+internal/services/zero_trust_device_posture_rule/model.go
+  s_b08c188f1b3435::t_0f889c03c3e8c3 17,19,24
+internal/services/byo_ip_prefix/data_source_schema.go
+  s_b08c188f1b3435::t_f2c884ebe13de2 39
+internal/services/spectrum_application/data_source_schema.go
+  s_b08c188f1b3435::t_e9d5d2e239fa9a 44,47
+internal/services/worker/resource_test.go
+  s_b08c188f1b3435::t_96b79c7c758420 105,115,120,141,151,156
+internal/services/api_token/list_data_source_schema.go
+  s_b08c188f1b3435::t_c5a1e17dd8d94b 37-41
+internal/services/zone_subscription/schema.go
+  s_7b495323128f16::t_a84c19ef2d42dd 43,61,81,86,91,96,105
+internal/services/dns_zone_transfers_tsig/data_source_schema.go
+  s_b08c188f1b3435::t_687ddce80adb45 31
+internal/services/magic_network_monitoring_rule/data_source_schema.go
+  s_b08c188f1b3435::t_cd9d2cd5819cc4 39
+internal/services/rate_limit/data_source_schema.go
+  s_b08c188f1b3435::t_aca0ef18b53644 41
+internal/services/dns_zone_transfers_outgoing/data_source_schema.go
+  s_b08c188f1b3435::t_23ad0e8d27041e 33
+internal/services/workers_for_platforms_dispatch_namespace/data_source_model.go
+  s_b08c188f1b3435::t_9e7d1fc230a17f 22
+internal/services/zero_trust_dlp_custom_prompt_topic/data_source_schema_test.go
+  s_b08c188f1b3435::t_be5ab74de06102 3,9,13,15-16
+internal/services/firewall_rule/list_data_source_schema.go
+  s_b08c188f1b3435::t_94a7dc8a6b32af 34
+internal/services/zero_trust_dlp_custom_prompt_topic/data_source_schema.go
+  s_b08c188f1b3435::t_11278456e163d6 1-69
+internal/services/dcv_delegation/data_source_schema.go
+  s_b08c188f1b3435::t_47de183c18d8f9 26
+internal/services/dcv_delegation/data_source_model.go
+  s_b08c188f1b3435::t_f67188aafd41a8 19
+internal/services/certificate_authorities_hostname_associations/data_source_model.go
+  s_b08c188f1b3435::t_78fc2ccc161ee4 21
+internal/services/account_member/list_data_source_model.go
+  s_b08c188f1b3435::t_5cc62bcffbf943 20
+internal/services/magic_wan_static_route/model.go
+  s_b08c188f1b3435::t_59b161746e2c04 29,64-66,68,70-71,75-76
+examples/data-sources/cloudflare_api_shield_operation/data-source.tf
+  s_b08c188f1b3435::t_478bcce48f955f 5
+internal/services/token_validation_config/model.go
+  s_b08c188f1b3435::t_cccab5f3d11a83 48
+internal/services/api_shield_schema/list_data_source_schema.go
+  s_b08c188f1b3435::t_8d95f5d62f25df 34
+internal/services/custom_origin_trust_store/data_source_schema.go
+  s_b08c188f1b3435::t_4baada4713135c 39
+internal/services/zone_subscription/data_source_schema.go
+  s_b08c188f1b3435::t_577e47e4822680 35,89
+internal/services/zero_trust_tunnel_warp_connector/list_data_source_model.go
+  s_b08c188f1b3435::t_85470af6f3fd4b 22
+internal/services/web3_hostname/data_source_schema.go
+  s_b08c188f1b3435::t_bc6077ac790b17 37
+internal/services/rate_limit/data_source_model.go
+  s_b08c188f1b3435::t_c955525e33bcbd 22
+internal/services/pages_project/list_data_source_model.go
+  s_b08c188f1b3435::t_a5b50ed64880e2 21,70,333
+internal/services/email_routing_dns/model.go
+  s_b08c188f1b3435::t_3eae5c10f0bcf2 17-31
+internal/services/zero_trust_network_hostname_route/data_source_model.go
+  s_b08c188f1b3435::t_c81dc768c2d7da 22
+internal/services/zero_trust_dex_test/data_source_schema.go
+  s_b08c188f1b3435::t_3dc208a0f1772e 10,42-47,72-76
+internal/services/secrets_store_secret/data_source_model.go
+  s_b08c188f1b3435::t_e6581e9d131ea7 43,48
+internal/services/zero_trust_risk_scoring_integration/list_data_source_schema.go
+  s_b08c188f1b3435::t_8a2184235c9e71 30
+internal/services/zero_trust_device_default_profile/schema.go
+  s_7b495323128f16::t_98e5b047281143 9,104-128,135-142,144-152,263-264,272,278-279
+internal/services/rate_limit/list_data_source_model.go
+  s_b08c188f1b3435::t_bf820096f3e3bf 20
+internal/services/cloudforce_one_request_message/data_source_schema.go
+  s_b08c188f1b3435::t_90070f9a67afeb 36
+internal/services/ai_search_token/list_data_source_model.go
+  s_b08c188f1b3435::t_1321d85b92b643 21,32-35
+examples/resources/cloudflare_worker/resource.tf
+  s_b08c188f1b3435::t_4c2e53159e8b81 20
+internal/services/dns_zone_transfers_acl/data_source_schema.go
+  s_b08c188f1b3435::t_a57cd10b336cd8 31
+examples/resources/cloudflare_snippet/resource.tf
+  s_b08c188f1b3435::t_d7e744599c462b 2
+internal/services/zero_trust_access_ai_controls_mcp_server/list_data_source_schema.go
+  s_b08c188f1b3435::t_94d08e11ac1922 32,86-146,187,210-219
+internal/services/page_shield_policy/list_data_source_schema.go
+  s_b08c188f1b3435::t_da9c571f2301cf 34
+internal/services/workers_custom_domain/testdata/workerdomainattach_zoneid_change.tf
+  s_b08c188f1b3435::t_b1430590986749 1-6
+internal/services/worker_version/list_data_source_model.go
+  s_b08c188f1b3435::t_a0cba6b9dbacea 22,37-59,154-211
+examples/resources/cloudflare_magic_wan_gre_tunnel/resource.tf
+  s_b08c188f1b3435::t_429230063e6e75 10,12
+internal/services/zone_cache_reserve/data_source_model.go
+  s_b08c188f1b3435::t_27db5eb049cdd7 21
+examples/data-sources/cloudflare_email_security_impersonation_registry/data-source.tf
+  s_b08c188f1b3435::t_df6004a890d74f 3
+internal/services/account_subscription/schema.go
+  s_7b495323128f16::t_845f599d0fc45b 41-45,65,67-80,85,90,95,100
+  s_b08c188f1b3435::t_7dd0c64f325167 107-112
+internal/services/zero_trust_device_custom_profile/resource.go
+  s_b08c188f1b3435::t_ebbabd573d51c3 262
+internal/services/magic_wan_gre_tunnel/data_source_model.go
+  s_b08c188f1b3435::t_462097ba668dc0 23,54-58
+internal/services/flagship_app/schema.go
+  s_7b495323128f16::t_f65c466c50a6c0 46
+internal/services/total_tls/data_source_schema.go
+  s_b08c188f1b3435::t_cb56da23328e15 33
+internal/services/waiting_room_event/data_source_model.go
+  s_b08c188f1b3435::t_52898c53c48d45 23
+examples/resources/cloudflare_zero_trust_dlp_custom_profile/resource.tf
+  s_b08c188f1b3435::t_674f1331711872 2-11,13-24
+internal/services/page_shield_cookies/list_data_source_model.go
+  s_b08c188f1b3435::t_1cd4bdaa93a71a 21
+internal/services/web3_hostname/data_source_model.go
+  s_b08c188f1b3435::t_27a0f848d1a148 22
+internal/services/vulnerability_scanner_target_environment/list_data_source_schema.go
+  s_b08c188f1b3435::t_fb3e4c8d6b97e9 23
+internal/services/zero_trust_organization/data_source_schema.go
+  s_b08c188f1b3435::t_72f955903e298a 62,145,166-167,169,183
+internal/services/dns_zone_transfers_incoming/data_source_schema.go
+  s_b08c188f1b3435::t_5305cd35158c91 35
+internal/services/zero_trust_dex_rule/data_source_model.go
+  s_b08c188f1b3435::t_284903b5af86e4 22
+internal/services/workers_script/list_data_source_schema.go
+  s_b08c188f1b3435::t_69251b81a18f65 33,90-152
+internal/services/cloudforce_one_request_message/data_source_model.go
+  s_b08c188f1b3435::t_518b0a0cf90bc3 22
+internal/services/cloud_connector_rules/resource.go
+  s_b08c188f1b3435::t_6b5e6fbb283e75 235-249
+internal/services/account_dns_settings_internal_view/data_source_model.go
+  s_b08c188f1b3435::t_9bdf47fe164993 23
+internal/services/email_routing_settings/data_source_schema.go
+  s_b08c188f1b3435::t_7ccd46ca47edd7 33,70-73
+internal/services/zero_trust_device_custom_profile/custom_test.go
+  s_b08c188f1b3435::t_9891c8bbc51229 1-217
+examples/data-sources/cloudflare_magic_transit_connectors/data-source.tf
+  s_b08c188f1b3435::t_467bb2d4c3050c 3
+internal/services/stream_download/data_source_schema.go
+  s_b08c188f1b3435::t_135a9be72e13d9 7-8,10-11,14,36-93
+docs/guides/version-5-upgrade.md
+  s_b08c188f1b3435::t_acd481930aab39 61,159,265,459-465,1105-1111,1538,1540
+internal/services/page_shield_policy/data_source_model.go
+  s_b08c188f1b3435::t_171be2daea16f3 21
+internal/services/queue/data_source_schema.go
+  s_b08c188f1b3435::t_59ba25a97eef70 40
+internal/services/zero_trust_dex_rule/list_data_source_schema.go
+  s_b08c188f1b3435::t_c8955a258e916c 32
+internal/services/pages_project/data_source_schema.go
+  s_b08c188f1b3435::t_3775accc1fec12 39,438-451,1281-1294
+internal/services/keyless_certificate/list_data_source_model.go
+  s_b08c188f1b3435::t_80d79661ee80e3 21
+internal/services/zero_trust_dlp_predefined_entry/list_data_source_schema.go
+  s_b08c188f1b3435::t_91065009a38340 31
+internal/services/account_api_token_permission_groups/list_data_source_schema.go
+  s_b08c188f1b3435::t_41007382448307 32,59-79
+internal/services/zero_trust_dlp_predefined_profile/data_source_model.go
+  s_b08c188f1b3435::t_d3c52147921075 24
+internal/services/user_group_members/data_source_schema.go
+  s_b08c188f1b3435::t_7fabaab44216dc 51-52,54-59
+docs/resources/ruleset.md
+  s_b08c188f1b3435::t_9c994063f8d239 765-766
+scripts/bootstrap
+  s_b08c188f1b3435::t_a478b91d1c6b2f 7
+examples/resources/cloudflare_moq_relay/resource.tf
+  s_b08c188f1b3435::t_3f13cdcda53cd0 1,3
+internal/services/custom_ssl/data_source_model.go
+  s_b08c188f1b3435::t_f50c386973ec9d 23
+internal/services/tiered_cache/data_source_schema.go
+  s_b08c188f1b3435::t_f6bbcf2d08d61e 35
+internal/services/zone_setting/schema.go
+  s_7b495323128f16::t_d59b6d355548f4 9,13,45-48,54
+examples/data-sources/cloudflare_pipeline_streams/data-source.tf
+  s_b08c188f1b3435::t_c08ef19de0f27b 3
+internal/services/ai_gateway/schema.go
+  s_7b495323128f16::t_f8bd4dab15a791 486
+internal/services/email_routing_address/list_data_source_model.go
+  s_b08c188f1b3435::t_560440fcf24c1d 21
+internal/services/list_item/data_source_schema.go
+  s_b08c188f1b3435::t_419ec927be3552 35-50,59-62
+internal/services/page_shield_connections/list_data_source_schema.go
+  s_b08c188f1b3435::t_71faf30893c817 37
+internal/services/vulnerability_scanner_credential_set/list_data_source_model.go
+  s_b08c188f1b3435::t_3b2faed11776fb 20
+internal/services/pages_project/model.go
+  s_b08c188f1b3435::t_42444c5ddda731 21,45-50,59-71,145,160,233,248
+internal/services/zero_trust_access_ai_controls_mcp_portal/data_source_schema.go
+  s_b08c188f1b3435::t_7b93fdae36727c 38,115-175,219,245-254
+internal/services/workers_cron_trigger/model.go
+  s_b08c188f1b3435::t_02cc4b008bdffc 7,12,16-20,24,28,31,36-41
+internal/services/hyperdrive_config/data_source_model.go
+  s_b08c188f1b3435::t_4ff2c277052c42 23
+internal/services/certificate_pack/list_data_source_model.go
+  s_b08c188f1b3435::t_c84eba99aa84c1 21
+internal/services/sso_connector/data_source_schema.go
+  s_b08c188f1b3435::t_53149dd480b069 37
+internal/services/queue_consumer/resource.go
+  s_b08c188f1b3435::t_666fcb20b29a58 92,183
+internal/services/zero_trust_device_custom_profile/testdata/devicecustomprofilewithexcludedrift.tf
+  s_b08c188f1b3435::t_a5f3d163f07dbd 1,3-7,9-15,17
+internal/services/image/data_source_model.go
+  s_b08c188f1b3435::t_e8d2b792615223 22,26
+internal/services/connectivity_directory_service/list_data_source_schema.go
+  s_b08c188f1b3435::t_7dfae251156f9a 25
+internal/services/list/list_data_source_model.go
+  s_b08c188f1b3435::t_9b51871974262f 20
+internal/services/bot_management/model.go
+  s_b08c188f1b3435::t_c6824bade511c0 6,12,37-38,41-42,46-52
+internal/services/zero_trust_risk_behavior/data_source_schema.go
+  s_b08c188f1b3435::t_1cc99c2c69bf56 28
+internal/services/email_routing_dns/data_source_model.go
+  s_b08c188f1b3435::t_655d33fba3692b 17
+internal/services/ai_search_token/data_source_model.go
+  s_b08c188f1b3435::t_d6c59d9e6abefd 21,46-49
+internal/services/magic_transit_connector/resource.go
+  s_b08c188f1b3435::t_e863258e87622b 59,73,99,107,121,148,157,188,213,232
+internal/services/account_role/list_data_source_schema.go
+  s_b08c188f1b3435::t_4e421728fca5f7 27,31
+internal/provider.go
+  s_b08c188f1b3435::t_2716af821fb644 243,310-314,325-327,329-330,332-333,335-336,338-339,375-376,381-382,387,395,452-453,486,510,635,638,787,844-845,970-971,976-977,1050,1057-1058
+examples/resources/cloudflare_page_rule/resource.tf
+  s_b08c188f1b3435::t_69371bc2604ad9 3
+internal/services/email_routing_dns/schema.go
+  s_7b495323128f16::t_4fe6e50d9f3ea7 82-85
+examples/resources/cloudflare_zero_trust_access_ai_controls_mcp_server/resource.tf
+  s_b08c188f1b3435::t_a8df3e2555c8fe 8
+internal/services/zone_cache_variants/data_source_model.go
+  s_b08c188f1b3435::t_14631ffea1e9da 22
+.release-please-manifest.json
+  s_b08c188f1b3435::t_abcf833af39688 2
+internal/services/api_token_permission_groups/list_data_source_schema.go
+  s_b08c188f1b3435::t_187374b76a5aef 55-75
+internal/services/email_security_impersonation_registry/list_data_source_schema.go
+  s_b08c188f1b3435::t_b63a5a950b784f 31,81
+internal/services/pages_project/data_source_model.go
+  s_b08c188f1b3435::t_e184db8ae774a6 23,75,338
+internal/services/token_validation_config/schema.go
+  s_7b495323128f16::t_bec3713fc70172 53-54,61,73-75,88,91-95,117-120
+internal/services/zero_trust_device_posture_rule/data_source_model.go
+  s_b08c188f1b3435::t_a2f0c6d3b355ac 22,24
+internal/services/account_token/data_source_schema.go
+  s_b08c188f1b3435::t_a50322fe446df5 41,174-178
+internal/services/custom_hostname/list_data_source_schema.go
+  s_b08c188f1b3435::t_20088771cb8b7c 32
+internal/services/email_security_trusted_domains/list_data_source_schema.go
+  s_b08c188f1b3435::t_263908fad07290 31,76
+internal/services/zero_trust_risk_scoring_integration/data_source_schema.go
+  s_b08c188f1b3435::t_2b8a0c9b55908d 34
+internal/services/healthcheck/list_data_source_schema.go
+  s_b08c188f1b3435::t_2e51f511175281 33
+internal/services/magic_wan_static_route/data_source_model.go
+  s_b08c188f1b3435::t_5f7d9f77c43034 23
+internal/services/page_rule/data_source_schema.go
+  s_b08c188f1b3435::t_8beffc10c3427d 71
+CONTRIBUTING.md
+  s_b08c188f1b3435::t_ce7871003a7c40 60-62
+internal/services/access_rule/list_data_source_schema_test.go
+  s_b08c188f1b3435::t_31e0094d091e00 14
+internal/services/d1_database/data_source_model.go
+  s_b08c188f1b3435::t_5edf043c7e6dc0 23
+internal/services/zero_trust_dlp_custom_profile/model.go
+  s_b08c188f1b3435::t_fe14b27e467054 22-23,25,45-46,50,72-73
+internal/services/account_api_token_permission_groups/data_source_schema.go
+  s_b08c188f1b3435::t_6c251cc186a4b9 31,50-70
+internal/services/keyless_certificate/data_source_schema.go
+  s_b08c188f1b3435::t_a1430063e36550 73
+internal/services/zone_cache_variants/data_source_schema.go
+  s_b08c188f1b3435::t_f9737a28a7dfa5 35
+internal/services/snippet/data_source_schema.go
+  s_b08c188f1b3435::t_ea899d3bbed749 35
+internal/services/zero_trust_device_posture_rule/list_data_source_schema.go
+  s_b08c188f1b3435::t_14468e31627b51 24,47-50
+internal/services/argo_tiered_caching/testdata/invalid_value.tf
+  s_b08c188f1b3435::t_e0a9aad99013d7 1-3
+internal/services/schema_validation_operation_settings/list_data_source_schema.go
+  s_b08c188f1b3435::t_0c52d0f08e109b 32
+internal/services/zero_trust_access_custom_page/data_source_model.go
+  s_b08c188f1b3435::t_56aff938cca702 21
+internal/services/magic_wan_static_route/schema.go
+  s_7b495323128f16::t_26adf02b323d6d 214
+internal/services/zero_trust_gateway_app_types/list_data_source_model.go
+  s_b08c188f1b3435::t_c5f1f466e2d79a 21
+internal/services/worker/list_data_source_schema.go
+  s_b08c188f1b3435::t_767532b87a7332 33
+internal/services/zero_trust_device_custom_profile_local_domain_fallback/data_source_model.go
+  s_b08c188f1b3435::t_d993e2e6eceb9c 22
+internal/services/zero_trust_tunnel_cloudflared_route/data_source_model.go
+  s_b08c188f1b3435::t_47ace00afd976c 22
+internal/services/workflow/data_source_schema.go
+  s_b08c188f1b3435::t_e00572a1df5c83 36
+examples/data-sources/cloudflare_moq_relays/data-source.tf
+  s_b08c188f1b3435::t_deae5a736abcc7 1-6
+internal/services/load_balancer_pool/data_source_schema.go
+  s_b08c188f1b3435::t_47ef546db1bfb3 41
+internal/services/argo_smart_routing/data_source_model.go
+  s_b08c188f1b3435::t_ea953310b428fe 21
+internal/services/page_shield_scripts/list_data_source_model.go
+  s_b08c188f1b3435::t_2379020df99169 21
+internal/services/list_item/model.go
+  s_b08c188f1b3435::t_0b5932cc7ba38c 12,17-21,23-28,32,36,39-44,47,56-75
+internal/services/zero_trust_gateway_policy/data_source_model.go
+  s_b08c188f1b3435::t_9e5c88c6cb7249 23,70,87
+internal/services/email_routing_rule/list_data_source_model.go
+  s_b08c188f1b3435::t_9afe72a99c88f4 20-24,28,34-39,50,52,65-69
+internal/services/turnstile_widget/model.go
+  s_b08c188f1b3435::t_b5b97032d81c5f 16-31
+internal/services/zero_trust_access_ai_controls_mcp_server/data_source_model.go
+  s_b08c188f1b3435::t_67fe6c67dde78d 23,40,67-89
+internal/services/snippet/list_data_source.go
+  s_b08c188f1b3435::t_4f4763e7b924a5 27
+docs/data-sources/r2_bucket.md
+  s_b08c188f1b3435::t_e3ca549d46cd79 37
+internal/services/api_shield_operation_schema_validation_settings/data_source_schema.go
+  s_b08c188f1b3435::t_bb8f9d49949557 35
+examples/resources/cloudflare_d1_database/resource.tf
+  s_b08c188f1b3435::t_085a1791dc1dee 6-8
+internal/services/observatory_scheduled_test/model.go
+  s_b08c188f1b3435::t_93492616418365 20-21
+internal/services/magic_wan_static_route/data_source_schema.go
+  s_b08c188f1b3435::t_0582d6fefcc71f 39
+internal/services/regional_tiered_cache/data_source_model.go
+  s_b08c188f1b3435::t_709a0c8398bd99 21
+internal/services/custom_origin_trust_store/data_source_model.go
+  s_b08c188f1b3435::t_b761de1f780a94 22
+examples/resources/cloudflare_r2_bucket_sippy/resource.tf
+  s_b08c188f1b3435::t_624bfdb25f9532 6,12
+internal/services/zero_trust_list/list_data_source_schema.go
+  s_b08c188f1b3435::t_b14b23e669095a 23
+internal/services/waiting_room_event/list_data_source_model.go
+  s_b08c188f1b3435::t_5c25d4a502d29c 22
+internal/services/ai_search_instance/model.go
+  s_b08c188f1b3435::t_5395aa55559271 20-27,35,83-92,106
+.stats.yml
+  s_b08c188f1b3435::t_372e5bc4a4b3c5 1
+examples/resources/cloudflare_workers_script/resource.tf
+  s_b08c188f1b3435::t_43dbdb30015ea1 4-11,18,47-58,65,107
+internal/services/zero_trust_gateway_categories/list_data_source_schema.go
+  s_b08c188f1b3435::t_120cb08493d920 30
+internal/services/email_routing_catch_all/data_source_schema.go
+  s_b08c188f1b3435::t_e15da12e13536b 34
+internal/services/cloudforce_one_request/list_data_source_model.go
+  s_b08c188f1b3435::t_697889fabd1f7c 21
+internal/services/account_permission_group/list_data_source_model.go
+  s_b08c188f1b3435::t_52452405a7630f 20
+internal/services/zero_trust_dlp_dataset/data_source_schema.go
+  s_b08c188f1b3435::t_ca2e000a270a90 30
+internal/services/account_dns_settings/data_source_schema.go
+  s_b08c188f1b3435::t_b2c8b63dd2def0 30,45-47,70,75
+internal/services/spectrum_application/resource.go
+  s_b08c188f1b3435::t_d1bc56b3ab8d05 177
+internal/services/zero_trust_access_service_token/data_source_schema.go
+  s_b08c188f1b3435::t_6f4c99bfa516ca 48
+internal/services/workers_script/resource_schema_test.go
+  s_b08c188f1b3435::t_6b08d54672fd29 6,8-10,14-18
+internal/services/zero_trust_dlp_custom_profile/data_source_model.go
+  s_b08c188f1b3435::t_7c69fba2152dbe 24
+internal/services/address_map/list_data_source_schema.go
+  s_b08c188f1b3435::t_ae5133ba73127e 30
+docs/resources/r2_bucket.md
+  s_b08c188f1b3435::t_9301eabede36cb 37
+internal/services/zero_trust_device_default_profile_certificates/data_source_model.go
+  s_b08c188f1b3435::t_6a88775c6615f2 19
+internal/services/api_shield_schema_validation_settings/data_source_model.go
+  s_b08c188f1b3435::t_25578ab5466cea 16
+internal/services/dns_zone_transfers_tsig/list_data_source_model.go
+  s_b08c188f1b3435::t_a11a03c5ef9ca3 20
+internal/services/zero_trust_tunnel_cloudflared_route/list_data_source_model.go
+  s_b08c188f1b3435::t_120f38c10568db 21
+internal/services/byo_ip_prefix/data_source_model.go
+  s_b08c188f1b3435::t_dbe444df27e141 22
+internal/services/web3_hostname/list_data_source_model.go
+  s_b08c188f1b3435::t_2777e936d5e1f9 21
+internal/services/hostname_tls_setting/data_source_schema.go
+  s_b08c188f1b3435::t_a86b39f1f1e065 51
+internal/services/dls_prefix_binding/list_data_source_schema.go
+  s_b08c188f1b3435::t_4a8655656a1592 9,20-25
+internal/services/moq_relay/data_source.go
+  s_b08c188f1b3435::t_0a869deda1bb79 11-14
+internal/services/zero_trust_dex_rule/list_data_source_model.go
+  s_b08c188f1b3435::t_da6063191a4145 20
+internal/services/zero_trust_access_custom_page/list_data_source_schema.go
+  s_b08c188f1b3435::t_1282493885eac9 30
+internal/services/bot_management/data_source_model.go
+  s_b08c188f1b3435::t_fe4dc3f9812350 21
+internal/services/zero_trust_gateway_proxy_endpoint/data_source_schema.go
+  s_b08c188f1b3435::t_1263552f2484f9 29
+internal/services/dns_zone_transfers_peer/list_data_source_model.go
+  s_b08c188f1b3435::t_6cad301b4581db 20
+internal/services/zone_lockdown/list_data_source_schema.go
+  s_b08c188f1b3435::t_14606ed728cafd 32
+internal/services/notification_policy/list_data_source_schema.go
+  s_b08c188f1b3435::t_febbf9998c5d32 36
+internal/services/worker_version/list_data_source_schema.go
+  s_b08c188f1b3435::t_3c2fb933f36949 34,470-751
+internal/services/client_certificate/list_data_source_model.go
+  s_b08c188f1b3435::t_63e3c7f5992cb3 20
+internal/services/email_security_trusted_domains/data_source_model.go
+  s_b08c188f1b3435::t_220c59ec574bca 22
+internal/services/ai_search_instance/schema.go
+  s_7b495323128f16::t_e92a0c4c98d33c 58,61-62,98-103,105-106,110,124-125,131-132,168-170,254-289,296-298,438-440,464-469,533-535,602,606,615-616,619,627,630-631,634-635,638,641,644
+internal/services/zero_trust_gateway_pacfile/list_data_source_model.go
+  s_b08c188f1b3435::t_4b9eedbfbc298d 21
+internal/services/zero_trust_dlp_predefined_entry/model.go
+  s_b08c188f1b3435::t_7c5c9fd6261318 21
+internal/services/magic_transit_connector/schema.go
+  s_7b495323128f16::t_aa58d26230fd43 15,86-94,143
+internal/services/pages_project/list_data_source_schema.go
+  s_b08c188f1b3435::t_308c97c03bd977 32,373-386,1229-1242
+internal/services/worker_version/schema.go
+  s_b08c188f1b3435::t_af464175420c89 18,79-140,848-1066
+internal/services/account/model.go
+  s_b08c188f1b3435::t_c08788b4ca8a92 20
+internal/services/bot_management/data_source_schema.go
+  s_b08c188f1b3435::t_b6bbddc2ee340e 33
+internal/services/zero_trust_dex_test/list_data_source_model.go
+  s_b08c188f1b3435::t_13374e6987ef7e 11,21,49,51,54
+internal/services/ai_search_instance/data_source_schema.go
+  s_b08c188f1b3435::t_a48eac41683286 31,127,132,366-369,529,532
+internal/services/image/data_source_schema.go
+  s_b08c188f1b3435::t_bfbeee1e6d7d7b 28-30,44-47
+internal/services/argo_tiered_caching/data_source_test.go
+  s_b08c188f1b3435::t_3ad909c6f97f7b 24
+internal/services/spectrum_application/data_source_model.go
+  s_b08c188f1b3435::t_5155e0c8da43ae 23,32,42-43,50-51,53
+internal/services/account_token/list_data_source_schema.go
+  s_b08c188f1b3435::t_6cd5c7f2b35774 32,41-45
+internal/services/magic_transit_site/data_source_schema.go
+  s_b08c188f1b3435::t_7bd5172b002a81 39
+internal/services/load_balancer_pool/testdata/loadbalancerpoolconfigoriginsorder.tf
+  s_b08c188f1b3435::t_51a0581b864482 1-2,4,6-22
+internal/services/token_validation_rules/list_data_source_schema.go
+  s_b08c188f1b3435::t_29797f22150daf 34
+internal/services/queue_consumer/data_source_schema.go
+  s_b08c188f1b3435::t_36b9813fcfb598 36
+internal/services/cloud_connector_rules/model.go
+  s_b08c188f1b3435::t_c9e09dd4ef4139 29,34
+internal/services/list/schema.go
+  s_7b495323128f16::t_e52df1b01d5dfd 86
+internal/services/zero_trust_dlp_entry/list_data_source_schema.go
+  s_b08c188f1b3435::t_4a5e6e802264dc 31
+internal/services/zero_trust_gateway_proxy_endpoint/list_data_source_model.go
+  s_b08c188f1b3435::t_05b465f4405112 21
+internal/services/page_shield_scripts/list_data_source_schema.go
+  s_b08c188f1b3435::t_dfe72650480daf 37
+internal/services/waiting_room_event/data_source_schema.go
+  s_b08c188f1b3435::t_a32528605475c7 39
+internal/services/secrets_store_secret/list_data_source_model.go
+  s_b08c188f1b3435::t_4ed4cbb84cd5a7 32,37
+internal/services/hyperdrive_config/migration/v500/handler.go
+  s_b08c188f1b3435::t_80ed2c387a97be 1-127
+internal/services/address_map/data_source_schema.go
+  s_b08c188f1b3435::t_92c2c3405a5b17 38
+examples/data-sources/cloudflare_load_balancer/data-source.tf
+  s_b08c188f1b3435::t_33b48400e03f0c 3-4
+internal/services/email_security_impersonation_registry/list_data_source_model.go
+  s_b08c188f1b3435::t_c30a8b44d681a4 21
+internal/services/zero_trust_organization/data_source_model.go
+  s_b08c188f1b3435::t_689ab5d0da2b3b 20-37,72
+internal/services/zero_trust_list/list_data_source_model.go
+  s_b08c188f1b3435::t_262d36dff5e90c 21
+internal/services/worker/data_source_model.go
+  s_b08c188f1b3435::t_94584a441e371c 23
+internal/services/address_map/list_data_source_model.go
+  s_b08c188f1b3435::t_51673d97df0549 21
+internal/services/email_routing_address/list_data_source_schema.go
+  s_b08c188f1b3435::t_c285c382d84311 31
+internal/services/rate_limit/schema.go
+  s_7b495323128f16::t_c831a37eb9c5d2 25
+internal/services/managed_transforms/data_source_model.go
+  s_b08c188f1b3435::t_8386fe9f09b938 21
+internal/services/api_shield_operation/data_source_model.go
+  s_b08c188f1b3435::t_bcffa9ef118afb 24
+internal/services/zero_trust_dlp_custom_profile/data_source_schema.go
+  s_b08c188f1b3435::t_f9dedf5a540262 37
+internal/services/zero_trust_access_ai_controls_mcp_server/schema.go
+  s_7b495323128f16::t_0f79837f6b4251 66-70,112-117,125-126,129,132,139-140,143-144,147,167-227
+internal/services/zero_trust_tunnel_cloudflared_token/data_source_model.go
+  s_b08c188f1b3435::t_3ccc66ee5c140c 15
+internal/services/zero_trust_access_ai_controls_mcp_server/data_source_schema.go
+  s_b08c188f1b3435::t_5bb6004f5442a3 38,68,94-103,119-179
+internal/services/api_shield_schema/list_data_source_model.go
+  s_b08c188f1b3435::t_c50a9d17c6e52b 21
+internal/services/stream/schema.go
+  s_7b495323128f16::t_ffceb2f4af2563 210
+internal/services/load_balancer_monitor/list_data_source_schema.go
+  s_b08c188f1b3435::t_d733e132335499 31
+internal/services/calls_sfu_app/list_data_source_schema.go
+  s_b08c188f1b3435::t_62552b0b6b2a75 30
+internal/services/api_token_permission_groups/list_data_source_model.go
+  s_b08c188f1b3435::t_83635e06820b89 40-43
+internal/services/stream_watermark/list_data_source_model.go
+  s_b08c188f1b3435::t_d600e803e35fdc 21
+internal/services/api_token/list_data_source_model.go
+  s_b08c188f1b3435::t_9b55a8441027df 21-24,33-35
+internal/services/email_security_impersonation_registry/data_source_model.go
+  s_b08c188f1b3435::t_dffbe00204f83f 22
+internal/services/list_item/resource.go
+  s_b08c188f1b3435::t_098317f70f65a4 70,77,86,91,93-94,96-101,105,107-109,113-120,123,126-127,131,134-135,140,147,155,159-162,181
+internal/services/zero_trust_dlp_integration_entry/data_source_model.go
+  s_b08c188f1b3435::t_d9c3f51d326b5f 24
+internal/services/dls_prefix_binding/schema.go
+  s_7b495323128f16::t_3304b0630156f6 8,20-26
+internal/services/oauth_client/schema.go
+  s_7b495323128f16::t_df5e37e27c756d 126-127,130-132,135-137,140-141,144-146
+go.sum
+  s_b08c188f1b3435::t_b5c8341f8acddf 17-18,24-59,70-71,74-75,170-173,176-177,222-223,299-302,342-343
+internal/services/zero_trust_dlp_dataset/data_source_model.go
+  s_b08c188f1b3435::t_3c70639a816996 21
+internal/services/custom_ssl/model.go
+  s_b08c188f1b3435::t_09e894d5eb312f 23,26
+internal/services/snippet/list_data_source_model.go
+  s_b08c188f1b3435::t_f5f088fdba3a10 21
+internal/services/certificate_authorities_hostname_associations/data_source_schema.go
+  s_b08c188f1b3435::t_a5e45e30a4fe5d 32
+internal/services/zero_trust_access_policy/list_data_source_schema.go
+  s_b08c188f1b3435::t_cadb648cedb69c 34,102,113
+internal/services/api_shield_schema_validation_settings/data_source_schema.go
+  s_b08c188f1b3435::t_17dc05dfa22e98 34
+internal/services/argo_tiered_caching/data_source_model.go
+  s_b08c188f1b3435::t_5e03a0d04f0eaa 21
+internal/services/email_routing_address/data_source_schema.go
+  s_b08c188f1b3435::t_696c957303848e 39
+internal/services/list_item/list_data_source_model.go
+  s_b08c188f1b3435::t_903c5b37f88f01 20
+examples/resources/cloudflare_zero_trust_access_policy/resource.tf
+  s_b08c188f1b3435::t_b731cf315e3ff4 22-23
+internal/services/zero_trust_risk_scoring_integration/list_data_source_model.go
+  s_b08c188f1b3435::t_4ebd38cfd763a5 21
+internal/services/workers_custom_domain/data_source_schema.go
+  s_b08c188f1b3435::t_e57b6e2905598c 36
+internal/services/account/resource.go
+  s_b08c188f1b3435::t_12209f2c442b85 14,67,73,86,91,113,119,134,139,154,173,178,224,238,243
+internal/services/botnet_feed_config_asn/data_source_model.go
+  s_b08c188f1b3435::t_df18c46ce5a30f 19
+internal/services/certificate_pack/data_source_schema.go
+  s_b08c188f1b3435::t_11ca4a459d8072 42
+internal/services/custom_hostname_fallback_origin/data_source_schema.go
+  s_b08c188f1b3435::t_8f2dad9d3251d6 35
+internal/services/stream_watermark/list_data_source_schema.go
+  s_b08c188f1b3435::t_90bc307c609c41 31
+internal/services/workers_route/data_source_schema.go
+  s_b08c188f1b3435::t_e953ef6430c0be 34
+internal/services/page_rule/data_source_model.go
+  s_b08c188f1b3435::t_4774cd5edb27cd 22
+internal/services/zero_trust_organization/model.go
+  s_b08c188f1b3435::t_2896ac1fd4a5b8 15-32,63
+internal/services/pipeline/data_source_schema.go
+  s_b08c188f1b3435::t_8c3ad0d28cd40a 37
+internal/services/user_agent_blocking_rule/data_source_schema.go
+  s_b08c188f1b3435::t_27861f4eeb181b 39
+internal/services/api_shield_schema/schema.go
+  s_7b495323128f16::t_4cbe111190f071 24
+internal/services/flagship_flag/data_source_schema.go
+  s_b08c188f1b3435::t_78226b098249b2 26,43,58,76,116,146,176,206,236,266,334,341
+internal/services/google_tag_gateway/data_source_schema.go
+  s_b08c188f1b3435::t_c930d739d4c6f4 19-21
+internal/services/schema_validation_schemas/list_data_source_schema.go
+  s_b08c188f1b3435::t_37b21dc1df0445 33
+internal/services/zero_trust_access_ai_controls_mcp_portal/list_data_source_schema.go
+  s_b08c188f1b3435::t_bb2ec8acfaf179 32,105-165,209,235-244
+internal/services/zero_trust_device_posture_integration/data_source_schema.go
+  s_b08c188f1b3435::t_cecb206d2e7fc4 29
+internal/services/pages_project/resource.go
+  s_b08c188f1b3435::t_0712ee96508872 262
+internal/services/worker/data_source_test.go
+  s_b08c188f1b3435::t_ab5cfa62be1c68 36,39-53
+internal/services/zero_trust_access_tag/data_source_schema.go
+  s_b08c188f1b3435::t_3fc9ed46fd4c93 27
+internal/services/filter/data_source_schema.go
+  s_b08c188f1b3435::t_dc7472ddc55172 37
+internal/services/logpull_retention/data_source_schema.go
+  s_b08c188f1b3435::t_6b94f5b5ba2f52 30
+internal/services/snippet_rules/data_source_schema.go
+  s_b08c188f1b3435::t_e96f7336434b5d 3,8-10,13-41
+internal/services/snippet/list_data_source_schema.go
+  s_b08c188f1b3435::t_aec77378c41633 30
+internal/services/workers_script/data_source_model.go
+  s_b08c188f1b3435::t_ed8720ded9b8b0 17
+docs/guides/migrating-renamed-resources.md
+  s_b08c188f1b3435::t_72f412a1824373 10
+internal/services/workers_custom_domain/list_data_source_model.go
+  s_b08c188f1b3435::t_9fb7bd715841ce 20,61
+internal/services/pipeline_sink/data_source_model.go
+  s_b08c188f1b3435::t_16c5fbc61e6ca2 23
+internal/services/moq_relay/resource_schema_test.go
+  s_b08c188f1b3435::t_dd9163ae17a9b0 7-8
+internal/services/moq_relay/model.go
+  s_b08c188f1b3435::t_5b4abed96a9d7c 17-27,40,54-69
+internal/services/filter/list_data_source_schema.go
+  s_b08c188f1b3435::t_3e00f560704948 30
+internal/services/workers_for_platforms_dispatch_namespace/data_source_schema.go
+  s_b08c188f1b3435::t_502fc19165e5ec 36
+examples/resources/cloudflare_magic_wan_ipsec_tunnel/resource.tf
+  s_b08c188f1b3435::t_7281d2adb57480 9,11
+internal/services/zero_trust_access_custom_page/data_source_schema.go
+  s_b08c188f1b3435::t_64f0e08e3e0a99 36
+internal/services/zero_trust_device_managed_networks/data_source_model.go
+  s_b08c188f1b3435::t_05f2de0ea773ac 22
+internal/services/zero_trust_device_subnet/model.go
+  s_b08c188f1b3435::t_e308471a22b07c 7,17-26,36-40
+internal/services/zero_trust_device_custom_profile/data_source_model.go
+  s_b08c188f1b3435::t_f5b432a7ead133 22,47,79-85
+internal/services/zero_trust_access_ai_controls_mcp_portal/data_source_model.go
+  s_b08c188f1b3435::t_4262c86ce70318 23,65,84-106
+internal/services/moq_relay/data_source_schema_test.go
+  s_b08c188f1b3435::t_71d076b3218585 7-8
+internal/services/worker_version/model.go
+  s_b08c188f1b3435::t_b60916baeaa1d0 18-43,58-72,236-278
+examples/data-sources/cloudflare_aisearch_namespace/data-source.tf
+  s_b08c188f1b3435::t_29aff42bcc51aa 1-4
+internal/services/custom_ssl/schema.go
+  s_7b495323128f16::t_d71b1a4c4b2603 57-58,68-72,104-105,110
+templates/guides/version-5-migration.md
+  s_b08c188f1b3435::t_5b31ccea8bdd9e 18-22,1219-1326,1448,1758-1760,1800-1806,1808
+internal/services/image_variant/data_source_schema.go
+  s_b08c188f1b3435::t_8eb9ac83535cb8 36
+internal/services/api_shield_operation_schema_validation_settings/schema.go
+  s_7b495323128f16::t_ddd1dcdfcc3054 21
+internal/services/certificate_pack/resource.go
+  s_b08c188f1b3435::t_49f08b0ad78272 212
+internal/services/api_shield_operation/list_data_source_schema.go
+  s_b08c188f1b3435::t_f4e7a7919181fd 36,323
+internal/services/r2_bucket/data_source_model.go
+  s_b08c188f1b3435::t_e6f91c736e6c9e 21,23
+internal/services/zero_trust_access_ai_controls_mcp_server/model.go
+  s_b08c188f1b3435::t_c8a7b6c67e3aa7 18-41,66-88
+internal/services/zero_trust_device_subnet/data_source_schema.go
+  s_b08c188f1b3435::t_c69e7c12ed32e0 8,38,67,70-89
+examples/data-sources/cloudflare_zero_trust_dlp_custom_prompt_topic/data-source.tf
+  s_b08c188f1b3435::t_f08cbfdb3ae09d 1-4
+internal/services/account_token/schema.go
+  s_7b495323128f16::t_e26bd71a251b9d 71,75-78,95-110,114-115,117
+internal/services/waiting_room_rules/resource.go
+  s_b08c188f1b3435::t_b2ab371b9d6a0d 197,200-201
+examples/data-sources/cloudflare_pipeline_sinks/data-source.tf
+  s_b08c188f1b3435::t_4f414a424ea55a 3
+internal/services/snippet_rules/data_source_schema_test.go
+  s_b08c188f1b3435::t_de3919ebdf5296 13,15-16
+internal/services/certificate_pack/list_data_source_schema.go
+  s_b08c188f1b3435::t_bbdccfc47e83fe 32
+examples/resources/cloudflare_api_token/resource.tf
+  s_b08c188f1b3435::t_60151b3bac04e2 2,6-10,12-16,18-20,24-25,28-30
+internal/services/custom_pages/model.go
+  s_b08c188f1b3435::t_89245d0b069656 22
+internal/services/workflow/data_source_model.go
+  s_b08c188f1b3435::t_6b723e6fbe1a60 23
+internal/services/zero_trust_access_tag/list_data_source_model.go
+  s_b08c188f1b3435::t_0caa7142e4b348 20
+internal/services/zero_trust_device_ip_profile/list_data_source_model.go
+  s_b08c188f1b3435::t_179540aa7a0d24 20
+internal/services/notification_policy_webhooks/data_source_model.go
+  s_b08c188f1b3435::t_0c5611b557faab 22
+internal/services/zero_trust_device_subnet/data_source_model.go
+  s_b08c188f1b3435::t_9b4280d8a275f0 10,21-31,41-45
+internal/services/leaked_credential_check_rule/list_data_source_model.go
+  s_b08c188f1b3435::t_3cb0bba424cad1 20
+examples/resources/cloudflare_zero_trust_dlp_predefined_profile/resource.tf
+  s_b08c188f1b3435::t_1b61c8cdbce70d 1,3-11
+internal/services/dns_firewall/data_source_schema.go
+  s_b08c188f1b3435::t_41549591a777bf 39
+internal/services/hyperdrive_config/list_data_source_model.go
+  s_b08c188f1b3435::t_ebbc30ead93e70 21
+internal/services/magic_transit_connector/data_source_schema.go
+  s_b08c188f1b3435::t_848280934b3a5b 40,69-74
+internal/services/load_balancer_pool/custom_test.go
+  s_b08c188f1b3435::t_4521bfcf695580 1-121
+internal/services/zero_trust_list/data_source_schema.go
+  s_b08c188f1b3435::t_e3715ffac8f47e 32
+internal/services/workers_kv_namespace/data_source_schema.go
+  s_b08c188f1b3435::t_a0e021dffbbdfd 38
+internal/services/regional_hostname/list_data_source_schema.go
+  s_b08c188f1b3435::t_7bc94f582f2b32 30
+internal/services/zero_trust_gateway_proxy_endpoint/model.go
+  s_b08c188f1b3435::t_1e172a097b5fa9 18
+internal/services/workers_script/migration/v500/model.go
+  s_b08c188f1b3435::t_9063f219ec5140 312-315
+internal/services/custom_ssl/list_data_source_schema.go
+  s_b08c188f1b3435::t_d3ea15d629f5fc 34
+internal/services/zone_hold/data_source_schema.go
+  s_b08c188f1b3435::t_c5e99af00c63d7 64
+internal/services/queue/list_data_source_schema.go
+  s_b08c188f1b3435::t_7d1605d248b21f 33
+internal/services/zero_trust_gateway_proxy_endpoint/list_data_source_schema.go
+  s_b08c188f1b3435::t_ed05f878074507 24
+internal/services/page_shield_cookies/list_data_source_schema.go
+  s_b08c188f1b3435::t_88d16c78137e49 37
+internal/services/ai_gateway/list_data_source_model.go
+  s_b08c188f1b3435::t_43de697e98ddcc 21
+internal/services/zero_trust_device_subnet/schema.go
+  s_7b495323128f16::t_8c18e684fe81e7 8,74,77-96
+internal/services/queue_consumer/schema.go
+  s_7b495323128f16::t_c05c0b97be9c49 44-45,58-59,62,91-92,95
+internal/services/page_shield_cookies/data_source_schema.go
+  s_b08c188f1b3435::t_74043535927d56 39
+internal/services/zero_trust_device_custom_profile/list_data_source_schema.go
+  s_b08c188f1b3435::t_2418563a92df55 22,143-171
+internal/services/zero_trust_access_ai_controls_mcp_portal/list_data_source_model.go
+  s_b08c188f1b3435::t_9d2df6c26e93f9 22,62,81-103
+internal/services/zero_trust_tunnel_cloudflared_token/data_source.go
+  s_b08c188f1b3435::t_a08a1eea9c8c39 67,85
+examples/resources/cloudflare_account_token/resource.tf
+  s_b08c188f1b3435::t_404f2accc118ce 2-3,7-11,13-17,19-21,25-26,29-30
+internal/services/user_agent_blocking_rule/data_source_model.go
+  s_b08c188f1b3435::t_f37cca786cf557 22
+internal/services/zero_trust_access_service_token/list_data_source_schema.go
+  s_b08c188f1b3435::t_41076402d9e501 68
+internal/services/organization/list_data_source_schema.go
+  s_b08c188f1b3435::t_1c4a55ead5fc48 84
+internal/services/user_agent_blocking_rule/list_data_source_model.go
+  s_b08c188f1b3435::t_1f90ed155e5f7d 20
+internal/services/list_item/schema.go
+  s_7b495323128f16::t_f88342b8e57389 42-123,126-127,130-131,134-142,146,155,159,162-163,169,173,176,179-180,183-184,187-188,201,204-205
+internal/services/magic_network_monitoring_configuration/data_source_model.go
+  s_b08c188f1b3435::t_752991bb027102 20
+internal/services/page_shield_cookies/data_source_model.go
+  s_b08c188f1b3435::t_d0a44d389a8352 22
+internal/services/workers_for_platforms_dispatch_namespace/list_data_source_schema.go
+  s_b08c188f1b3435::t_2160f04673ad8c 31
+internal/services/load_balancer_pool/list_data_source_model.go
+  s_b08c188f1b3435::t_28da0cda869a89 21
+internal/services/api_shield_operation/data_source_schema.go
+  s_b08c188f1b3435::t_ddb3d208415688 46,284
+internal/services/zero_trust_tunnel_cloudflared/data_source_schema.go
+  s_b08c188f1b3435::t_7f51beafd9ae2f 45
+internal/services/cloud_connector_rules/schema.go
+  s_7b495323128f16::t_e4504f845c9ce9 44,65
+internal/services/cloud_connector_rules/data_source_schema.go
+  s_b08c188f1b3435::t_af757a19e7e892 7-8,33-51,53,55-63
+internal/services/magic_transit_site/data_source_model.go
+  s_b08c188f1b3435::t_cf148e88c11262 22
+internal/services/zero_trust_access_custom_page/list_data_source_model.go
+  s_b08c188f1b3435::t_c184926bc6cc6e 20
+internal/services/zero_trust_device_managed_networks/list_data_source_model.go
+  s_b08c188f1b3435::t_cf1fde64fbd40a 20
+internal/services/moq_relay/list_data_source_schema_test.go
+  s_b08c188f1b3435::t_b35458022638d9 7-8
+internal/services/zero_trust_access_ai_controls_mcp_portal/testdata/servers_set.tf
+  s_b08c188f1b3435::t_597329c35e305a 1-7,10-16,19-28
+internal/services/zone_hold/data_source_model.go
+  s_b08c188f1b3435::t_482259d4223c1a 20
+examples/resources/cloudflare_r2_bucket/import.sh
+  s_b08c188f1b3435::t_af71f83c406c4e 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5e6d0ae01d2f9d576f03a352d468d81e32cc00d5",
+  "prompts": {},
+  "sessions": {
+    "s_7b495323128f16": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_05aeeb215ffeSTfn4o4gtZJ8uH",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    },
+    "s_b08c188f1b3435": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_06961b944ffennjiN5ZwhrBTEU",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": null
+    }
+  }
+}

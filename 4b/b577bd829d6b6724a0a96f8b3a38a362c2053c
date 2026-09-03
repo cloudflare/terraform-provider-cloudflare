@@ -1,0 +1,19 @@
+scripts/generate-zone-setting-ids
+  s_88624d21881aa2::t_e888d66185f877 155-163
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4bb577bd829d6b6724a0a96f8b3a38a362c2053c",
+  "prompts": {},
+  "sessions": {
+    "s_88624d21881aa2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe04ab1a4ffePQHZxLqw5C1U52",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

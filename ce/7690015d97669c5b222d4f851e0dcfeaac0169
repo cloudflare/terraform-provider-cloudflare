@@ -1,0 +1,47 @@
+internal/services/zero_trust_casb_integration/model.go
+  s_36cafd28d1d453::t_a80969a3776f66 11-14
+  s_36cafd28d1d453::t_46dd53daa14782 19
+  s_36cafd28d1d453::t_d99d9cecae6587 8-9,15,18
+examples/resources/cloudflare_zero_trust_casb_integration/resource.tf
+  s_36cafd28d1d453::t_46dd53daa14782 6
+  s_36cafd28d1d453::t_a79988e21b4ea1 7
+  s_36cafd28d1d453::t_d5380f1fcce98d 3-5
+internal/services/zero_trust_casb_integration/resource.go
+  s_36cafd28d1d453::t_11ad270926ae8b 5,7-8,23,31-32,37,41,59,65,67,70-71,73,75,81-87,94,100,106-113,115-127,129-142,144-150,157,163-164,170,172,181,186,210-212,215-217,222,224,226,238-241,245-314,346,348-351
+  s_36cafd28d1d453::t_46dd53daa14782 18-22,192,199,201-203,234,320-321,323-345
+  s_36cafd28d1d453::t_6361e47800ef0f 72,128
+  s_36cafd28d1d453::t_bddbebdb69751c 233,315-319,322
+internal/services/zero_trust_casb_integration/resource_schema_test.go
+  s_36cafd28d1d453::t_46dd53daa14782 10,53-55
+  s_36cafd28d1d453::t_d5380f1fcce98d 5-6,9,11,21-52,56
+  s_36cafd28d1d453::t_be1d3305c5a01b 57
+internal/services/zero_trust_casb_integration/resource_test.go
+  s_36cafd28d1d453::t_a95250fa9c9ce8 9,262-394,487-531
+  s_36cafd28d1d453::t_a80969a3776f66 54-56
+  s_36cafd28d1d453::t_46dd53daa14782 14-16,27,78,83-87,89-135,137-141
+  s_36cafd28d1d453::t_b52ae8e7c15d0f 4,6-7,12-13,17-18,164-261
+  s_36cafd28d1d453::t_d5380f1fcce98d 1-3,5,8,10-11,20-26,28-53,57-77,79-82,142-143,532-533
+  s_36cafd28d1d453::t_bddbebdb69751c 88,136,144-163
+  s_36cafd28d1d453::t_6eceb24a843b7b 395-486
+  s_36cafd28d1d453::t_f9f5a4a64665a5 19
+internal/services/zero_trust_casb_integration/schema.go
+  s_36cafd28d1d453::t_46dd53daa14782 43
+  s_36cafd28d1d453::t_d99d9cecae6587 13,15,23,31-32,35-37,39,41-42,51
+  s_36cafd28d1d453::t_bddbebdb69751c 40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ce7690015d97669c5b222d4f851e0dcfeaac0169",
+  "prompts": {},
+  "sessions": {
+    "s_36cafd28d1d453": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fcb9c8169ffenOV62pwa1FKXSn",
+        "model": "gpt-5.6"
+      },
+      "human_author": "Peter Bandziukas <pbandziukas@cloudflare.com>"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+internal/services/worker_version/model.go
+  s_b08c188f1b3435::t_f40a46c3ddbc99 118-119
+  s_b08c188f1b3435::t_4956923125a8c7 40
+  s_b08c188f1b3435::t_75d04b8c464a55 149-152
+internal/services/moq_relay/model.go
+  s_b08c188f1b3435::t_855e740e8c0801 38
+  s_b08c188f1b3435::t_731012625b261d 37
+  s_b08c188f1b3435::t_ca57347c5c0000 39-41
+go.mod
+  s_b08c188f1b3435::t_b7fd97506846b5 6-9,12,14,22,25-26,29,43-56,95
+go.sum
+  s_b08c188f1b3435::t_e67b7e0fd7755e 24-59,74-75,226-227
+internal/services/snippets/data_source.go
+  s_b08c188f1b3435::t_c1dbd3bcf5b487 1-88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "71b6ede1eaa8b24c5d9eafb13380ef89e2ab1fcf",
+  "prompts": {},
+  "sessions": {
+    "s_b08c188f1b3435": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_06961b944ffennjiN5ZwhrBTEU",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
