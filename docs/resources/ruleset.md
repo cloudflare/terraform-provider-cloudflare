@@ -125,6 +125,7 @@ Available values: "set", "add", "remove".
 - `origin` (Attributes) An origin to route to. (see [below for nested schema](#nestedatt--rules--action_parameters--origin))
 - `origin_cache_control` (Boolean) Whether Cloudflare will aim to strictly adhere to RFC 7234.
 - `origin_error_page_passthru` (Boolean) Whether to generate Cloudflare error pages for issues from the origin server.
+- `origin_range_requests` (Attributes) Controls whether Cloudflare fetches a large asset from the origin as a series of range requests instead of one whole-body request. (see [below for nested schema](#nestedatt--rules--action_parameters--origin_range_requests))
 - `overrides` (Attributes) A set of overrides to apply to the target ruleset. (see [below for nested schema](#nestedatt--rules--action_parameters--overrides))
 - `phases` (List of String) A list of phases to skip the execution of. This option is incompatible with the rulesets option.
 Available values: "ddos_l4", "ddos_l7", "http_config_settings", "http_custom_errors", "http_log_custom_fields", "http_ratelimit", "http_request_cache_settings", "http_request_dynamic_redirect", "http_request_firewall_custom", "http_request_firewall_managed", "http_request_late_transform", "http_request_origin", "http_request_redirect", "http_request_sanitize", "http_request_sbfm", "http_request_transform", "http_response_cache_settings", "http_response_compression", "http_response_firewall_managed", "http_response_headers_transform", "magic_transit", "magic_transit_ids_managed", "magic_transit_managed", "magic_transit_ratelimit".
@@ -500,6 +501,15 @@ Optional:
 
 - `host` (String) A resolved host to route to.
 - `port` (Number) A destination port to route to.
+
+
+<a id="nestedatt--rules--action_parameters--origin_range_requests"></a>
+### Nested Schema for `rules.action_parameters.origin_range_requests`
+
+Required:
+
+- `mode` (String) Whether to use range requests. `default` is the behaviour the zone gets without this rule.
+Available values: "on", "off", "default".
 
 
 <a id="nestedatt--rules--action_parameters--overrides"></a>

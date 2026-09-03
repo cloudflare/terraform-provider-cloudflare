@@ -1544,14 +1544,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"vary": schema.SingleNestedAttribute{
 									Description: "Controls how cached responses vary based on request headers. `default` is required and applies to any Vary response header that does not have a per-header override.",
-									Optional:    true,
-									Validators: []validator.Object{
-										customvalidator.RequiresOtherStringAttributeToBe(
-											path.MatchRelative().AtParent().AtParent().AtName("action"),
-											"set_cache_settings",
-										),
-									},
-									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersVaryModel](ctx),
+									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersVaryModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"default": schema.SingleNestedAttribute{
 											Description: "Controls how response Vary headers without a per-header override contribute to the cache key.",
@@ -1623,6 +1616,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 														},
 													},
 												},
+											},
+										},
+									},
+								},
+								"origin_range_requests": schema.SingleNestedAttribute{
+									Description: "Controls whether Cloudflare fetches a large asset from the origin as a series of range requests instead of one whole-body request.",
+									Optional:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersOriginRangeRequestsModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"mode": schema.StringAttribute{
+											Description: "Whether to use range requests. `default` is the behaviour the zone gets without this rule.\nAvailable values: \"on\", \"off\", \"default\".",
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOf("on", "off", "default"),
 											},
 										},
 									},

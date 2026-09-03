@@ -5709,6 +5709,9 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 												}),
 											}),
 										}),
+										"origin_range_requests": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"mode": knownvalue.StringExact("on"),
+										}),
 									}),
 								}),
 							}),
@@ -5812,6 +5815,9 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 											}),
 										}),
 									}),
+									"origin_range_requests": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"mode": knownvalue.StringExact("on"),
+									}),
 								}),
 							}),
 						}),
@@ -5911,6 +5917,9 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 												"action": knownvalue.StringExact("passthrough"),
 											}),
 										}),
+									}),
+									"origin_range_requests": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"mode": knownvalue.StringExact("on"),
 									}),
 								}),
 							}),
@@ -5975,7 +5984,8 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 										"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 											"disable_stale_while_updating": knownvalue.Bool(true),
 										}),
-										"vary": knownvalue.Null(),
+										"vary":                  knownvalue.Null(),
+										"origin_range_requests": knownvalue.Null(),
 									}),
 								}),
 							}),
@@ -6031,7 +6041,8 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 									"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 										"disable_stale_while_updating": knownvalue.Bool(true),
 									}),
-									"vary": knownvalue.Null(),
+									"vary":                  knownvalue.Null(),
+									"origin_range_requests": knownvalue.Null(),
 								}),
 							}),
 						}),
@@ -6084,7 +6095,8 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 									"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 										"disable_stale_while_updating": knownvalue.Bool(true),
 									}),
-									"vary": knownvalue.Null(),
+									"vary":                  knownvalue.Null(),
+									"origin_range_requests": knownvalue.Null(),
 								}),
 							}),
 						}),
@@ -6167,161 +6179,7 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 								}),
 							}),
 						),
-						plancheck.ExpectKnownValue(
-							"cloudflare_ruleset.my_ruleset",
-							tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("vary"),
-							knownvalue.ObjectPartial(map[string]knownvalue.Check{
-								"default": knownvalue.ObjectExact(map[string]knownvalue.Check{
-									"action": knownvalue.StringExact("bypass"),
-								}),
-								"headers": knownvalue.MapExact(map[string]knownvalue.Check{
-									"accept": knownvalue.ObjectPartial(map[string]knownvalue.Check{
-										"action": knownvalue.StringExact("normalize"),
-										"media_types": knownvalue.ListExact([]knownvalue.Check{
-											knownvalue.StringExact("image/webp"),
-										}),
-									}),
-								}),
-							}),
-						),
-					},
-				},
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(
-						"cloudflare_ruleset.my_ruleset",
-						tfjsonpath.New("rules"),
-						knownvalue.ListExact([]knownvalue.Check{
-							knownvalue.ObjectPartial(map[string]knownvalue.Check{
-								"action": knownvalue.StringExact("set_cache_settings"),
-								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
-									"additional_cacheable_ports": knownvalue.Null(),
-									"browser_ttl":                knownvalue.Null(),
-									"cache":                      knownvalue.Null(),
-									"cache_key": knownvalue.ObjectExact(map[string]knownvalue.Check{
-										"cache_by_device_type":  knownvalue.Null(),
-										"cache_deception_armor": knownvalue.Null(),
-										"custom_key": knownvalue.ObjectExact(map[string]knownvalue.Check{
-											"cookie": knownvalue.ObjectExact(map[string]knownvalue.Check{
-												"check_presence": knownvalue.ListExact([]knownvalue.Check{
-													knownvalue.StringExact("myCookie1"),
-												}),
-												"include": knownvalue.ListExact([]knownvalue.Check{
-													knownvalue.StringExact("myCookie2"),
-												}),
-											}),
-											"header": knownvalue.ObjectExact(map[string]knownvalue.Check{
-												"check_presence": knownvalue.ListExact([]knownvalue.Check{
-													knownvalue.StringExact("my-header-1"),
-												}),
-												"contains": knownvalue.MapExact(map[string]knownvalue.Check{
-													"my-header": knownvalue.ListExact([]knownvalue.Check{
-														knownvalue.StringExact("my-header-value"),
-													}),
-												}),
-												"exclude_origin": knownvalue.Bool(false),
-												"include": knownvalue.ListExact([]knownvalue.Check{
-													knownvalue.StringExact("my-header-2"),
-												}),
-											}),
-											"host": knownvalue.ObjectExact(map[string]knownvalue.Check{
-												"resolved": knownvalue.Bool(false),
-											}),
-											"query_string": knownvalue.ObjectExact(map[string]knownvalue.Check{
-												"include": knownvalue.ObjectExact(map[string]knownvalue.Check{
-													"list": knownvalue.ListExact([]knownvalue.Check{
-														knownvalue.StringExact("foo"),
-													}),
-													"all": knownvalue.Null(),
-												}),
-												"exclude": knownvalue.Null(),
-											}),
-											"user": knownvalue.ObjectExact(map[string]knownvalue.Check{
-												"device_type": knownvalue.Bool(false),
-												"geo":         knownvalue.Bool(false),
-												"lang":        knownvalue.Bool(false),
-											}),
-										}),
-										"ignore_query_strings_order": knownvalue.Null(),
-									}),
-									"cache_reserve":              knownvalue.Null(),
-									"edge_ttl":                   knownvalue.Null(),
-									"origin_cache_control":       knownvalue.Null(),
-									"origin_error_page_passthru": knownvalue.Null(),
-									"read_timeout":               knownvalue.Null(),
-									"respect_strong_etags":       knownvalue.Null(),
-									"serve_stale":                knownvalue.Null(),
-								}),
-							}),
-						}),
-					),
-					statecheck.ExpectKnownValue(
-						"data.cloudflare_ruleset.my_ruleset",
-						tfjsonpath.New("rules"),
-						knownvalue.ListExact([]knownvalue.Check{
-							knownvalue.ObjectPartial(map[string]knownvalue.Check{
-								"action": knownvalue.StringExact("set_cache_settings"),
-								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
-									"additional_cacheable_ports": knownvalue.Null(),
-									"browser_ttl":                knownvalue.Null(),
-									"cache":                      knownvalue.Null(),
-									"cache_key": knownvalue.ObjectExact(map[string]knownvalue.Check{
-										"cache_by_device_type":  knownvalue.Null(),
-										"cache_deception_armor": knownvalue.Null(),
-										"custom_key": knownvalue.ObjectExact(map[string]knownvalue.Check{
-											"cookie": knownvalue.ObjectExact(map[string]knownvalue.Check{
-												"check_presence": knownvalue.ListExact([]knownvalue.Check{
-													knownvalue.StringExact("myCookie1"),
-												}),
-												"include": knownvalue.ListExact([]knownvalue.Check{
-													knownvalue.StringExact("myCookie2"),
-												}),
-											}),
-											"header": knownvalue.ObjectExact(map[string]knownvalue.Check{
-												"check_presence": knownvalue.ListExact([]knownvalue.Check{
-													knownvalue.StringExact("my-header-1"),
-												}),
-												"contains": knownvalue.MapExact(map[string]knownvalue.Check{
-													"my-header": knownvalue.ListExact([]knownvalue.Check{
-														knownvalue.StringExact("my-header-value"),
-													}),
-												}),
-												"exclude_origin": knownvalue.Bool(false),
-												"include": knownvalue.ListExact([]knownvalue.Check{
-													knownvalue.StringExact("my-header-2"),
-												}),
-											}),
-											"host": knownvalue.ObjectExact(map[string]knownvalue.Check{
-												"resolved": knownvalue.Bool(false),
-											}),
-											"query_string": knownvalue.ObjectExact(map[string]knownvalue.Check{
-												"include": knownvalue.ObjectExact(map[string]knownvalue.Check{
-													"list": knownvalue.ListExact([]knownvalue.Check{
-														knownvalue.StringExact("foo"),
-													}),
-													"all": knownvalue.Null(),
-												}),
-												"exclude": knownvalue.Null(),
-											}),
-											"user": knownvalue.ObjectExact(map[string]knownvalue.Check{
-												"device_type": knownvalue.Bool(false),
-												"geo":         knownvalue.Bool(false),
-												"lang":        knownvalue.Bool(false),
-											}),
-										}),
-										"ignore_query_strings_order": knownvalue.Null(),
-									}),
-									"cache_reserve":              knownvalue.Null(),
-									"edge_ttl":                   knownvalue.Null(),
-									"origin_cache_control":       knownvalue.Null(),
-									"origin_error_page_passthru": knownvalue.Null(),
-									"read_timeout":               knownvalue.Null(),
-									"respect_strong_etags":       knownvalue.Null(),
-									"serve_stale":                knownvalue.Null(),
-								}),
-							}),
-						}),
-					),
-					statecheck.ExpectKnownValue(
+					plancheck.ExpectKnownValue(
 						"cloudflare_ruleset.my_ruleset",
 						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("vary"),
 						knownvalue.ObjectPartial(map[string]knownvalue.Check{
@@ -6338,8 +6196,176 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 							}),
 						}),
 					),
+					plancheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("origin_range_requests"),
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"mode": knownvalue.StringExact("default"),
+						}),
+					),
+				},
+			},
+			ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("set_cache_settings"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"additional_cacheable_ports": knownvalue.Null(),
+									"browser_ttl":                knownvalue.Null(),
+									"cache":                      knownvalue.Null(),
+									"cache_key": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"cache_by_device_type":  knownvalue.Null(),
+										"cache_deception_armor": knownvalue.Null(),
+										"custom_key": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"cookie": knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"check_presence": knownvalue.ListExact([]knownvalue.Check{
+													knownvalue.StringExact("myCookie1"),
+												}),
+												"include": knownvalue.ListExact([]knownvalue.Check{
+													knownvalue.StringExact("myCookie2"),
+												}),
+											}),
+											"header": knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"check_presence": knownvalue.ListExact([]knownvalue.Check{
+													knownvalue.StringExact("my-header-1"),
+												}),
+												"contains": knownvalue.MapExact(map[string]knownvalue.Check{
+													"my-header": knownvalue.ListExact([]knownvalue.Check{
+														knownvalue.StringExact("my-header-value"),
+													}),
+												}),
+												"exclude_origin": knownvalue.Bool(false),
+												"include": knownvalue.ListExact([]knownvalue.Check{
+													knownvalue.StringExact("my-header-2"),
+												}),
+											}),
+											"host": knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"resolved": knownvalue.Bool(false),
+											}),
+											"query_string": knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"include": knownvalue.ObjectExact(map[string]knownvalue.Check{
+													"list": knownvalue.ListExact([]knownvalue.Check{
+														knownvalue.StringExact("foo"),
+													}),
+													"all": knownvalue.Null(),
+												}),
+												"exclude": knownvalue.Null(),
+											}),
+											"user": knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"device_type": knownvalue.Bool(false),
+												"geo":         knownvalue.Bool(false),
+												"lang":        knownvalue.Bool(false),
+											}),
+										}),
+										"ignore_query_strings_order": knownvalue.Null(),
+									}),
+									"cache_reserve":              knownvalue.Null(),
+									"edge_ttl":                   knownvalue.Null(),
+									"origin_cache_control":       knownvalue.Null(),
+									"origin_error_page_passthru": knownvalue.Null(),
+									"read_timeout":               knownvalue.Null(),
+									"respect_strong_etags":       knownvalue.Null(),
+									"serve_stale":                knownvalue.Null(),
+								}),
+							}),
+						}),
+					),
 					statecheck.ExpectKnownValue(
 						"data.cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("set_cache_settings"),
+								"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+									"additional_cacheable_ports": knownvalue.Null(),
+									"browser_ttl":                knownvalue.Null(),
+									"cache":                      knownvalue.Null(),
+									"cache_key": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"cache_by_device_type":  knownvalue.Null(),
+										"cache_deception_armor": knownvalue.Null(),
+										"custom_key": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"cookie": knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"check_presence": knownvalue.ListExact([]knownvalue.Check{
+													knownvalue.StringExact("myCookie1"),
+												}),
+												"include": knownvalue.ListExact([]knownvalue.Check{
+													knownvalue.StringExact("myCookie2"),
+												}),
+											}),
+											"header": knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"check_presence": knownvalue.ListExact([]knownvalue.Check{
+													knownvalue.StringExact("my-header-1"),
+												}),
+												"contains": knownvalue.MapExact(map[string]knownvalue.Check{
+													"my-header": knownvalue.ListExact([]knownvalue.Check{
+														knownvalue.StringExact("my-header-value"),
+													}),
+												}),
+												"exclude_origin": knownvalue.Bool(false),
+												"include": knownvalue.ListExact([]knownvalue.Check{
+													knownvalue.StringExact("my-header-2"),
+												}),
+											}),
+											"host": knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"resolved": knownvalue.Bool(false),
+											}),
+											"query_string": knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"include": knownvalue.ObjectExact(map[string]knownvalue.Check{
+													"list": knownvalue.ListExact([]knownvalue.Check{
+														knownvalue.StringExact("foo"),
+													}),
+													"all": knownvalue.Null(),
+												}),
+												"exclude": knownvalue.Null(),
+											}),
+											"user": knownvalue.ObjectExact(map[string]knownvalue.Check{
+												"device_type": knownvalue.Bool(false),
+												"geo":         knownvalue.Bool(false),
+												"lang":        knownvalue.Bool(false),
+											}),
+										}),
+										"ignore_query_strings_order": knownvalue.Null(),
+									}),
+									"cache_reserve":              knownvalue.Null(),
+									"edge_ttl":                   knownvalue.Null(),
+									"origin_cache_control":       knownvalue.Null(),
+									"origin_error_page_passthru": knownvalue.Null(),
+									"read_timeout":               knownvalue.Null(),
+									"respect_strong_etags":       knownvalue.Null(),
+									"serve_stale":                knownvalue.Null(),
+								}),
+							}),
+						}),
+					),
+				statecheck.ExpectKnownValue(
+					"cloudflare_ruleset.my_ruleset",
+					tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("vary"),
+					knownvalue.ObjectPartial(map[string]knownvalue.Check{
+						"default": knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"action": knownvalue.StringExact("bypass"),
+						}),
+						"headers": knownvalue.MapExact(map[string]knownvalue.Check{
+							"accept": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+								"action": knownvalue.StringExact("normalize"),
+								"media_types": knownvalue.ListExact([]knownvalue.Check{
+									knownvalue.StringExact("image/webp"),
+								}),
+							}),
+						}),
+					}),
+				),
+				statecheck.ExpectKnownValue(
+					"cloudflare_ruleset.my_ruleset",
+					tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("origin_range_requests"),
+					knownvalue.ObjectExact(map[string]knownvalue.Check{
+						"mode": knownvalue.StringExact("default"),
+					}),
+				),
+				statecheck.ExpectKnownValue(
+					"data.cloudflare_ruleset.my_ruleset",
 						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("vary"),
 						knownvalue.ObjectPartial(map[string]knownvalue.Check{
 							"default": knownvalue.ObjectExact(map[string]knownvalue.Check{

@@ -104,6 +104,7 @@ type RulesetRulesActionParametersModel struct {
 	RespectStrongEtags       types.Bool                                                                              `tfsdk:"respect_strong_etags" json:"respect_strong_etags,optional"`
 	ServeStale               customfield.NestedObject[RulesetRulesActionParametersServeStaleModel]                   `tfsdk:"serve_stale" json:"serve_stale,optional"`
 	Vary                     customfield.NestedObject[RulesetRulesActionParametersVaryModel]                         `tfsdk:"vary" json:"vary,optional"`
+	OriginRangeRequests      customfield.NestedObject[RulesetRulesActionParametersOriginRangeRequestsModel]          `tfsdk:"origin_range_requests" json:"origin_range_requests,optional"`
 	StripETags               types.Bool                                                                              `tfsdk:"strip_etags" json:"strip_etags,optional"`
 	StripLastModified        types.Bool                                                                              `tfsdk:"strip_last_modified" json:"strip_last_modified,optional"`
 	StripSetCookie           types.Bool                                                                              `tfsdk:"strip_set_cookie" json:"strip_set_cookie,optional"`
@@ -300,6 +301,10 @@ type RulesetRulesActionParametersEdgeTTLStatusCodeTTLStatusCodeRangeModel struct
 
 type RulesetRulesActionParametersServeStaleModel struct {
 	DisableStaleWhileUpdating types.Bool `tfsdk:"disable_stale_while_updating" json:"disable_stale_while_updating,optional"`
+}
+
+type RulesetRulesActionParametersOriginRangeRequestsModel struct {
+	Mode types.String `tfsdk:"mode" json:"mode,required"`
 }
 
 type RulesetRulesActionParametersCookieFieldsModel struct {
