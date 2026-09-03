@@ -1,0 +1,23 @@
+internal/services/ruleset/data_source_schema.go
+  s_62701f94ed4a2e::t_530f5380f4b94e 1619-1628
+internal/services/ruleset/ruleset_test.go
+  s_62701f94ed4a2e::t_c331d3c334835f 6182-6194,6198-6206,6208,6343-6355,6359-6380,6383-6391
+internal/services/ruleset/schema.go
+  s_62701f94ed4a2e::t_c331d3c334835f 1545-1554
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "806b4e65c140f639a396a6e21c4d554a4a577ad8",
+  "prompts": {},
+  "sessions": {
+    "s_62701f94ed4a2e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f98508ec3ffee9EG4vgoLpgzRO",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
