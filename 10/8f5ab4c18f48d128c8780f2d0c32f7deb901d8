@@ -1,0 +1,19 @@
+docs/resources/account_subscription.md
+  s_9cb006b030f5fd::t_b98e7ba4cec112 20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "108f5ab4c18f48d128c8780f2d0c32f7deb901d8",
+  "prompts": {},
+  "sessions": {
+    "s_9cb006b030f5fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04ff8d518ffe893PX6qqInJ9Ve",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

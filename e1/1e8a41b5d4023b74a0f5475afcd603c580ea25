@@ -1,0 +1,19 @@
+docs/guides/version-5-migration.md
+  s_4b40d25d179671::t_29c71354393c3b 24-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e11e8a41b5d4023b74a0f5475afcd603c580ea25",
+  "prompts": {},
+  "sessions": {
+    "s_4b40d25d179671": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_074913646ffeWtxuYjOceShk5r",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Sarah Sicard <ssicard@cloudflare.com>"
+    }
+  }
+}

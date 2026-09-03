@@ -1,0 +1,439 @@
+internal/services/zero_trust_dex_test/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,10,13-19,21,23-51,53-71
+internal/services/healthcheck/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 7,13-23,25-44
+internal/services/image_variant/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 13-15,17-26
+internal/services/stream_webhook/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/pipeline_sink/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/connectivity_directory_service/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/total_tls/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/argo_tiered_caching/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 7,9-10,12-16,20,22-29,31-156
+internal/services/user_group_members/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_device_custom_profile_local_domain_fallback/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,13,15-36,38-56
+internal/services/zero_trust_device_default_profile_local_domain_fallback/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,13,15-36,38-56
+internal/services/zero_trust_gateway_certificate/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 9-10,15-19,21-42
+internal/services/organization/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_gateway_settings/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,10,13-19,21,23-53,55-76
+internal/services/zero_trust_tunnel_cloudflared_config/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 9-10,13,16-39,41-84
+internal/services/notification_policy_webhooks/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 9-10,15-19,21-37
+internal/services/zero_trust_tunnel_cloudflared_route/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6,10,13-33,35-52
+internal/services/magic_transit_site_lan/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/token_validation_config/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/stream_caption_language/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/vulnerability_scanner_credential/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/cloud_connector_rules/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/email_routing_address/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/zero_trust_risk_scoring_integration/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/managed_transforms/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6-7,11-28,30-38,40-57
+internal/services/observatory_scheduled_test/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,14-21,23-39
+internal/services/zero_trust_device_posture_rule/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 7-9,12-18,20-26,28-50,52-71
+internal/services/zero_trust_access_custom_page/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/email_routing_settings/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/magic_wan_static_route/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/email_security_trusted_domains/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6,13-19
+internal/services/address_map/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/magic_wan_gre_tunnel/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/regional_tiered_cache/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,14-21,23-40
+internal/services/snippet/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6-7,12-22,24-45
+internal/services/dns_record/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6-7,10,13-31,33-48
+internal/services/ai_gateway/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/certificate_pack/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,14-24,26-38
+internal/services/zero_trust_access_ai_controls_mcp_server/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_device_ip_profile/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/stream_live_input/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/magic_network_monitoring_rule/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/regional_hostname/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 7-8,13-21,23-39
+internal/services/web_analytics_rule/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/byo_ip_prefix/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 7-8,13-26,28-39
+internal/services/custom_hostname/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,10,16-36
+internal/services/zone_cache_reserve/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/r2_bucket_lock/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/magic_transit_site_wan/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/custom_origin_trust_store/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_dlp_custom_entry/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 12-29
+internal/services/token_validation_rules/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/ai_search_instance/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/logpush_ownership_challenge/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 9-10,15-25,27-43
+internal/services/page_shield_policy/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/api_shield_schema/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/client_certificate/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/pages_project/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,10,13-19,22-35,37-56
+internal/services/stream_watermark/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_dns_location/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/account/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,14-24,26-42
+internal/services/zero_trust_dlp_entry/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_access_identity_provider/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6,8,11-18,21-51,53-72
+internal/services/dns_zone_transfers_incoming/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/waiting_room_event/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/ai_search_token/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_dlp_predefined_profile/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6,8,11-17,19-25,27-48,50-71
+internal/services/r2_custom_domain/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/vulnerability_scanner_target_environment/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/snippet_rules/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6-7,12-22,24-44
+internal/services/zero_trust_gateway_logging/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/authenticated_origin_pulls_settings/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 7,11,13-26,28,30-43
+internal/services/workers_deployment/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/custom_hostname_fallback_origin/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,14-20,22-38
+internal/services/r2_bucket_lifecycle/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/workers_kv/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,14-22,24-37
+internal/services/cloudforce_one_request_asset/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_dlp_integration_entry/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 12-29
+internal/services/zero_trust_gateway_proxy_endpoint/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/pipeline/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/logpull_retention/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8-9,14-21,23-45
+internal/services/zero_trust_network_hostname_route/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/pages_domain/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 9-10,15-17,19-33
+internal/services/load_balancer_monitor/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 7,13-25,27-45
+internal/services/zone_setting/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/zero_trust_access_mtls_hostname_settings/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6-7,12,14-31
+internal/services/zero_trust_access_mtls_certificate/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6-7,11-25,27-31,33-51
+internal/services/zero_trust_device_default_profile_certificates/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/email_security_block_sender/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6,13-19
+internal/services/r2_managed_domain/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/email_routing_catch_all/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/cloudforce_one_request_priority/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/notification_policy/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,14-26,28-45
+internal/services/hostname_tls_setting/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/magic_network_monitoring_configuration/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/r2_bucket_cors/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/dns_zone_transfers_outgoing/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/queue/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6,12-25,27-44
+internal/services/email_routing_dns/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/list/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8-9,15-33
+internal/services/api_shield_schema_validation_settings/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/universal_ssl_setting/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_access_tag/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/workers_route/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6-7,11,13-36,38-59
+internal/services/dns_zone_transfers_peer/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_device_default_profile/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,13,15-37,39-57
+internal/services/workers_script_subdomain/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_device_posture_integration/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,10,13-20,22,24-54,56-75
+internal/services/zero_trust_dlp_dataset/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_gateway_policy/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,10,13-19,21,23-49,51-72
+internal/services/magic_transit_connector/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/ai_gateway_dynamic_routing/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/cloudforce_one_request_message/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/api_token/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 7-8,10-12,14-17,22-38,40-331
+internal/services/registrar_domain/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/spectrum_application/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6-7,12-28,30-45
+internal/services/zero_trust_dlp_predefined_entry/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 12-29
+internal/services/stream_key/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_access_infrastructure_target/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zone_subscription/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 7,13-22,24-45
+internal/services/zero_trust_device_custom_profile/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,13,15-36,38-56
+internal/services/api_shield_operation_schema_validation_settings/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_tunnel_cloudflared_virtual_network/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6,10,13-33,35-52
+internal/services/r2_bucket_sippy/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/cloudforce_one_request/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/custom_pages/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8-9,14-16,18-31
+internal/services/schema_validation_operation_settings/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/schema_validation_settings/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/vulnerability_scanner_credential_set/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/sso_connector/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/origin_ca_certificate/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 13-24,26-44
+internal/services/stream_audio_track/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_access_key_configuration/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/zone_dnssec/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 7,14-31
+internal/services/zone_lockdown/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/calls_turn_app/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/certificate_authorities_hostname_associations/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_device_managed_networks/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 9-10,13,16-34,36-55
+internal/services/magic_transit_site_acl/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_dex_rule/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/email_security_impersonation_registry/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6,13-19
+internal/services/account_dns_settings_internal_view/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/list_item/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,14-30,32-51
+internal/services/dns_zone_transfers_tsig/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/magic_transit_site/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/workers_for_platforms_dispatch_namespace/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 9-10,13,16-36,38-53
+internal/services/zone_cache_variants/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/schema_validation_schemas/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/r2_data_catalog/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/workflow/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/account_dns_settings/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/calls_sfu_app/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/worker/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/api_shield/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,14-24,26-43
+internal/services/argo_smart_routing/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 7,12-25,27-34,36-53
+internal/services/zero_trust_device_settings/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/stream/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_organization/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,12,15-49,51-74
+internal/services/stream_download/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/waiting_room/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/turnstile_widget/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,14-24,26-42
+internal/services/zone/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8-9,14-18,20-40
+internal/services/account_member/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,14-26,28-44
+internal/services/keyless_certificate/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/queue_consumer/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 9-10,15-23,25-39
+internal/services/logpush_job/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,10,13-19,22-35,37-58
+internal/services/tiered_cache/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6-7,12-19,21-40
+internal/services/user/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_dlp_settings/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_dlp_custom_profile/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 7-9,12-18,20-26,28-49,51-70
+internal/services/dns_firewall/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_gateway_pacfile/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/web3_hostname/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/page_rule/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,10,13-19,22-35,37-58
+internal/services/zero_trust_tunnel_cloudflared/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6,10,13-33,35-52
+internal/services/zone_hold/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_access_group/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 9-10,13,16-37,39-89
+internal/services/filter/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/leaked_credential_check_rule/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,15-27
+internal/services/bot_management/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 5,11-20,22-38
+internal/services/custom_ssl/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 9-10,15-29,31-61
+internal/services/access_rule/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,10,13-19,22-35,37-56
+internal/services/content_scanning/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/leaked_credential_check/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,15-27
+internal/services/zero_trust_risk_behavior/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/zero_trust_tunnel_warp_connector/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/r2_bucket/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 9-10,16-34
+internal/services/zone_dns_settings/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/waiting_room_settings/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/rate_limit/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/user_group/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/user_agent_blocking_rule/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/r2_bucket_event_notification/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/content_scanning_expression/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/custom_page_asset/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/dns_zone_transfers_acl/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/email_routing_rule/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/firewall_rule/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/account_token/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8-9,15-32,34-61
+internal/services/url_normalization_settings/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 6-7,12-19,21-39
+internal/services/waiting_room_rules/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/account_subscription/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/magic_wan_ipsec_tunnel/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/web_analytics_site/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/organization_profile/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/pipeline_stream/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+internal/services/api_shield_operation/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,14-21,23-39
+internal/services/workers_cron_trigger/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-28
+internal/services/workers_kv_namespace/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 8,15-26
+internal/services/zero_trust_access_service_token/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 7,12-25,27-34,36-53
+internal/services/zero_trust_device_subnet/migrations.go
+  s_b08c188f1b3435::t_7bec0ebe7b8e96 14-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3c673193ffd6f7edcc90decd87c347496b5290a6",
+  "prompts": {},
+  "sessions": {
+    "s_b08c188f1b3435": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_06961b944ffennjiN5ZwhrBTEU",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

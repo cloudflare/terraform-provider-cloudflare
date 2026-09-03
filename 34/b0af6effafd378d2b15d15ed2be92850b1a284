@@ -1,0 +1,23 @@
+README.md
+  s_ff4d11aad08749::t_6c9de5e8979bf0 92-96
+.github/pull_request_template.md
+  s_ff4d11aad08749::t_7597e7356e13c3 2-3
+CONTRIBUTING.md
+  s_ff4d11aad08749::t_b73e806f8ac227 14-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "34b0af6effafd378d2b15d15ed2be92850b1a284",
+  "prompts": {},
+  "sessions": {
+    "s_ff4d11aad08749": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb615cf25ffesvhDxliGmtb6Ew",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}

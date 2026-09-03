@@ -1,0 +1,35 @@
+internal/services/zero_trust_access_application/data_source_model.go
+  s_97b45c2b656bd6::t_8a0e5630eeeb99 126
+internal/services/zero_trust_access_application/data_source_schema.go
+  s_97b45c2b656bd6::t_14da7e4b2ff34b 253,256,290-293
+internal/services/zero_trust_access_application/list_data_source_model.go
+  s_97b45c2b656bd6::t_5a3e00a3003e92 122
+internal/services/zero_trust_access_application/list_data_source_schema.go
+  s_97b45c2b656bd6::t_89b6ac67cbd587 210,213,247-250
+internal/services/zero_trust_access_application/model.go
+  s_97b45c2b656bd6::t_8130a986b4bb36 219
+internal/services/zero_trust_access_application/resource_test.go
+  s_97b45c2b656bd6::t_a5a4dd10ba85bf 1610-1627,1664-1701,1784-1787,1792-1795
+internal/services/zero_trust_access_application/schema.go
+  s_97b45c2b656bd6::t_57aff101c34f0a 553,558,613-620
+internal/services/zero_trust_access_application/testdata/accessapplicationconfiginvalidworkerdestination.tf
+  s_97b45c2b656bd6::t_05316e8960e91d 1-13
+internal/services/zero_trust_access_application/testdata/accessapplicationconfigwithworkerdestinations.tf
+  s_97b45c2b656bd6::t_cf5b72d5df0abe 1-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3edcf596293b909615eeb6bcce898964b73bec9d",
+  "prompts": {},
+  "sessions": {
+    "s_97b45c2b656bd6": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fef18081fffeV7JV1omez6A3p3",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Jesse Li <jesseli@cloudflare.com>"
+    }
+  }
+}

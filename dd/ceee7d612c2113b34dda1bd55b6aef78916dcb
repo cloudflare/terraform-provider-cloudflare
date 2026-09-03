@@ -1,0 +1,80 @@
+internal/services/logpush_job/model.go
+  s_0eb764e4c2d4f5::t_7bc6ff885c107a 6,21-26,38,42,48
+internal/services/notification_policy_webhooks/model.go
+  s_0eb764e4c2d4f5::t_d7d977953ee18e 20
+internal/services/zero_trust_device_custom_profile/migration/v500/model.go
+  s_0eb764e4c2d4f5::t_9df2b3d93a90a3 75-82
+internal/services/zero_trust_tunnel_cloudflared_config/schema.go
+  s_0eb764e4c2d4f5::t_0b76cf807402d5 246
+internal/services/access_rule/resource.go
+  s_0eb764e4c2d4f5::t_0389256fbb3d61 8,203-206
+  s_0eb764e4c2d4f5::t_b4feacf6e862d6 207
+internal/services/turnstile_widget/model.go
+  s_0eb764e4c2d4f5::t_194df5950bf5ba 22-25
+internal/services/zero_trust_dex_test/schema.go
+  s_0eb764e4c2d4f5::t_3ebbd54de3da56 9
+  s_0eb764e4c2d4f5::t_406866e62b3753 44-53
+internal/services/zero_trust_device_default_profile/migration/v500/model.go
+  s_0eb764e4c2d4f5::t_690d5398040568 70-77
+internal/services/account_token/migration/v500/transform.go
+  s_0eb764e4c2d4f5::t_78ad19e2e8c3a5 5,8,25-42,45-47,53,55
+internal/services/custom_pages/schema.go
+  s_0eb764e4c2d4f5::t_990ba4ec1262c2 92-93
+internal/services/zero_trust_device_default_profile/schema.go
+  s_0eb764e4c2d4f5::t_6e7148413f2410 111-135
+internal/services/zero_trust_tunnel_cloudflared_token/data_source_model.go
+  s_0eb764e4c2d4f5::t_ea17d11125c6a9 15
+internal/services/zero_trust_tunnel_cloudflared_token/data_source.go
+  s_0eb764e4c2d4f5::t_b846e2056841ba 67
+  s_0eb764e4c2d4f5::t_b9e4ac7f009475 85
+internal/services/zero_trust_device_custom_profile/schema.go
+  s_0eb764e4c2d4f5::t_a093dc1503293c 135-159
+internal/services/zero_trust_tunnel_cloudflared/resource.go
+  s_0eb764e4c2d4f5::t_d20d9790b3e1db 146-147
+  s_0eb764e4c2d4f5::t_d9266d33a96ddc 115-117
+  s_0eb764e4c2d4f5::t_9fbd346a32340b 161-163
+  s_0eb764e4c2d4f5::t_ce2beeffed8bf9 191-192
+internal/services/logpush_job/schema.go
+  s_0eb764e4c2d4f5::t_f8bfdcf33d98e1 16,107,109,113,115,120,122-128,132,134-140,144,146-152,156,158,179,181
+internal/services/zero_trust_tunnel_cloudflared_config/model.go
+  s_0eb764e4c2d4f5::t_12f9cb73e2e767 21
+internal/services/zero_trust_dex_test/migration/v500/model.go
+  s_0eb764e4c2d4f5::t_0f617fe6a7b07a 54-55
+  s_0eb764e4c2d4f5::t_844d5c3e1e96b9 5
+internal/services/custom_pages/model.go
+  s_0eb764e4c2d4f5::t_3a03e98c00949e 22
+internal/services/custom_hostname/schema.go
+  s_0eb764e4c2d4f5::t_2d7216591ea434 83
+internal/services/account_token/schema.go
+  s_0eb764e4c2d4f5::t_3c2e2db737aecf 71
+  s_0eb764e4c2d4f5::t_6dbc809df7707c 94-95,97-99
+internal/services/custom_hostname/model.go
+  s_0eb764e4c2d4f5::t_82911d6d0cb610 48
+  s_0eb764e4c2d4f5::t_891e94ffead7d6 36-42
+internal/services/queue_consumer/resource.go
+  s_0eb764e4c2d4f5::t_de8f4c98c67c99 92,143,184
+internal/services/turnstile_widget/schema.go
+  s_0eb764e4c2d4f5::t_39fd4219a8bf71 76
+  s_0eb764e4c2d4f5::t_9670b1df2e515c 89,94
+  s_0eb764e4c2d4f5::t_0c0f88d96636e4 71
+internal/services/access_rule/schema.go
+  s_0eb764e4c2d4f5::t_0389256fbb3d61 82-85
+internal/services/account_token/migration/v500/model.go
+  s_0eb764e4c2d4f5::t_3c58c15913201c 70,72,76-79,83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ddceee7d612c2113b34dda1bd55b6aef78916dcb",
+  "prompts": {},
+  "sessions": {
+    "s_0eb764e4c2d4f5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_055f0e367ffeqQk5Hrpf02YxXB",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

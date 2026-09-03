@@ -1,0 +1,24 @@
+internal/services/zero_trust_device_custom_profile/model.go
+  s_7581b46036d4fe::t_d0d7bdfffee677 21
+internal/services/zero_trust_device_custom_profile/schema.go
+  s_7581b46036d4fe::t_83dce022ad632e 17
+  s_7581b46036d4fe::t_b1aeef166f0a11 58-61
+internal/services/zero_trust_device_posture_rule/migration/v500/model.go
+  s_7581b46036d4fe::t_40b34cbbcdc14a 103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "dfe7e6fb33f90ee0e9952ac22a204549bcd7f5a2",
+  "prompts": {},
+  "sessions": {
+    "s_7581b46036d4fe": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_055d2ef97ffewvHn27NcA44LAi",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

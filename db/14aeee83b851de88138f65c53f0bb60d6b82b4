@@ -1,0 +1,95 @@
+internal/services/origin_tls_compliance_modes/data_source_test.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-38
+internal/services/zero_trust_dlp_sensitivity_level/data_source_test.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-48
+internal/services/worker/testdata/observability_logs.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-13
+internal/services/zero_trust_dlp_sensitivity_level/resource_test.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-114
+internal/services/zero_trust_dlp_sensitivity_level_order/testdata/reordered.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-39
+internal/services/zero_trust_dlp_sensitivity_level_order/data_source_test.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-44
+examples/data-sources/cloudflare_account_subscription/data-source.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-3
+internal/services/zero_trust_dlp_data_class/data_source_test.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-52
+internal/services/zero_trust_dlp_sensitivity_group/testdata/updated.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-5
+internal/services/zero_trust_dlp_sensitivity_group/data_source_test.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-48
+scripts/check-schema-versions
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-32
+internal/services/snippets/resource_schema_test.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-19
+internal/utils/go_get_module_version.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-33
+internal/services/zero_trust_dlp_sensitivity_group/testdata/datasource_basic.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-10
+internal/services/origin_tls_compliance_modes/testdata/fips_only.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-4
+internal/services/worker/testdata/observability_traces_disabled.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-12
+internal/services/zero_trust_dlp_sensitivity_level_order/testdata/without_order.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-33
+internal/services/zero_trust_dlp_data_tag/testdata/updated.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-12
+internal/services/zero_trust_dlp_data_tag_category/testdata/datasource_basic.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-10
+internal/services/zero_trust_dlp_data_tag_category/testdata/updated.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-5
+internal/services/zero_trust_dlp_data_class/resource_test.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-107
+internal/services/zero_trust_dlp_sensitivity_group/resource_test.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-95
+internal/services/zero_trust_dlp_data_tag/resource_test.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-114
+internal/services/zero_trust_dlp_sensitivity_level/testdata/datasource_basic.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-18
+internal/services/zero_trust_dlp_sensitivity_level_order/testdata/datasource_basic.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-34
+internal/services/zero_trust_dlp_data_tag/data_source_test.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-48
+internal/services/zero_trust_dlp_sensitivity_level_order/resource_test.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-170
+internal/services/zero_trust_dlp_data_class/testdata/updated.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-43
+internal/services/origin_tls_compliance_modes/testdata/fips_and_pqh.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-4
+internal/services/zero_trust_device_posture_rule/migration/v500/model.go
+  s_0eb764e4c2d4f5::t_1c85cf6411d38a 103
+examples/resources/cloudflare_account_subscription/import.sh
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1
+internal/services/zero_trust_device_custom_profile/model.go
+  s_0eb764e4c2d4f5::t_b436efcae64c61 21
+internal/services/snippets/list_data_source_schema_test.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-19
+internal/services/zero_trust_dlp_data_class/testdata/datasource_basic.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-47
+internal/services/zero_trust_dlp_data_tag_category/data_source_test.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-48
+internal/services/zero_trust_dlp_data_tag/testdata/datasource_basic.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-18
+internal/services/zero_trust_dlp_sensitivity_level/testdata/updated.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-12
+internal/services/origin_tls_compliance_modes/testdata/datasource_basic.tf
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-3
+internal/services/zero_trust_dlp_data_tag_category/resource_test.go
+  s_0eb764e4c2d4f5::t_8397dcc8254e59 1-94
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "db14aeee83b851de88138f65c53f0bb60d6b82b4",
+  "prompts": {},
+  "sessions": {
+    "s_0eb764e4c2d4f5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_055f0e367ffeqQk5Hrpf02YxXB",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

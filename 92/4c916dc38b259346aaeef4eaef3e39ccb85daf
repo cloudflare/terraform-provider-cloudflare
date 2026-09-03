@@ -1,0 +1,30 @@
+internal/services/spectrum_application/model.go
+  s_0eb764e4c2d4f5::t_602d8893906a15 57
+internal/services/r2_bucket/model.go
+  s_0eb764e4c2d4f5::t_ae0847311711b5 21-24,29,31,34
+  s_0eb764e4c2d4f5::t_9f4961b18c4b17 18-19
+  s_0eb764e4c2d4f5::t_6bee89318568b2 15-17
+  s_0eb764e4c2d4f5::t_3b7e0304c175cc 20
+internal/services/spectrum_application/resource.go
+  s_0eb764e4c2d4f5::t_67017d6bba8581 177
+internal/provider.go
+  s_0eb764e4c2d4f5::t_185816c3caee89 1049
+internal/services/r2_bucket/resource.go
+  s_0eb764e4c2d4f5::t_cf126fa71a029e 68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "924c916dc38b259346aaeef4eaef3e39ccb85daf",
+  "prompts": {},
+  "sessions": {
+    "s_0eb764e4c2d4f5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_055f0e367ffeqQk5Hrpf02YxXB",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
