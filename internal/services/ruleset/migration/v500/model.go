@@ -334,11 +334,10 @@ type TargetV5ActionParametersModel struct {
 	Overrides           *TargetV5OverridesModel           `tfsdk:"overrides"`
 	Origin              *TargetV5OriginModel              `tfsdk:"origin"`
 	OriginRangeRequests *TargetV5OriginRangeRequestsModel `tfsdk:"origin_range_requests"`
-
-	SNI        *TargetV5SNIModel        `tfsdk:"sni"`
-	ServeStale *TargetV5ServeStaleModel `tfsdk:"serve_stale"`
-	URI        *TargetV5URIModel        `tfsdk:"uri"`
-	Vary       *TargetV5VaryModel       `tfsdk:"vary"`
+	SNI                 *TargetV5SNIModel                 `tfsdk:"sni"`
+	ServeStale          *TargetV5ServeStaleModel          `tfsdk:"serve_stale"`
+	URI                 *TargetV5URIModel                 `tfsdk:"uri"`
+	Vary                *TargetV5VaryModel                `tfsdk:"vary"`
 
 	// Nested object lists
 	Algorithms               []*TargetV5AlgorithmModel        `tfsdk:"algorithms"`

@@ -1542,9 +1542,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
-								"vary": schema.SingleNestedAttribute{
-									Description: "Controls how cached responses vary based on request headers. `default` is required and applies to any Vary response header that does not have a per-header override.",
-									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersVaryModel](ctx),
+							"vary": schema.SingleNestedAttribute{
+								Description: "Controls how cached responses vary based on request headers. `default` is required and applies to any Vary response header that does not have a per-header override.",
+								Optional:    true,
+								Validators: []validator.Object{
+									customvalidator.RequiresOtherStringAttributeToBe(
+										path.MatchRelative().AtParent().AtParent().AtName("action"),
+										"set_cache_settings",
+									),
+								},
+								CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersVaryModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"default": schema.SingleNestedAttribute{
 											Description: "Controls how response Vary headers without a per-header override contribute to the cache key.",

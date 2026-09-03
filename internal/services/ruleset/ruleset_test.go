@@ -6364,24 +6364,31 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 						"mode": knownvalue.StringExact("default"),
 					}),
 				),
-				statecheck.ExpectKnownValue(
-					"data.cloudflare_ruleset.my_ruleset",
-						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("vary"),
-						knownvalue.ObjectPartial(map[string]knownvalue.Check{
-							"default": knownvalue.ObjectExact(map[string]knownvalue.Check{
-								"action": knownvalue.StringExact("bypass"),
-							}),
-							"headers": knownvalue.MapExact(map[string]knownvalue.Check{
-								"accept": knownvalue.ObjectPartial(map[string]knownvalue.Check{
-									"action": knownvalue.StringExact("normalize"),
-									"media_types": knownvalue.ListExact([]knownvalue.Check{
-										knownvalue.StringExact("image/webp"),
-									}),
-								}),
+			statecheck.ExpectKnownValue(
+				"data.cloudflare_ruleset.my_ruleset",
+				tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("vary"),
+				knownvalue.ObjectPartial(map[string]knownvalue.Check{
+					"default": knownvalue.ObjectExact(map[string]knownvalue.Check{
+						"action": knownvalue.StringExact("bypass"),
+					}),
+					"headers": knownvalue.MapExact(map[string]knownvalue.Check{
+						"accept": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"action": knownvalue.StringExact("normalize"),
+							"media_types": knownvalue.ListExact([]knownvalue.Check{
+								knownvalue.StringExact("image/webp"),
 							}),
 						}),
-					),
-				},
+					}),
+				}),
+			),
+			statecheck.ExpectKnownValue(
+				"data.cloudflare_ruleset.my_ruleset",
+				tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("origin_range_requests"),
+				knownvalue.ObjectExact(map[string]knownvalue.Check{
+					"mode": knownvalue.StringExact("default"),
+				}),
+			),
+		},
 			},
 			{
 				ConfigFile:      config.TestNameFile("6.tf"),
