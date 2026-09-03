@@ -117,6 +117,7 @@ type TargetWorkersScriptModel struct {
 	ContentFile      types.String                                           `tfsdk:"content_file"`
 	ContentSHA256    types.String                                           `tfsdk:"content_sha256"`
 	ContentType      types.String                                           `tfsdk:"content_type"`
+	Files            *map[string]TargetFileModel                            `tfsdk:"files"`
 	CreatedOn        timetypes.RFC3339                                      `tfsdk:"created_on"`
 	Etag             types.String                                           `tfsdk:"etag"`
 	HasAssets        types.Bool                                             `tfsdk:"has_assets"`
@@ -150,6 +151,13 @@ type TargetWorkersScriptModel struct {
 	Placement           customfield.NestedObject[TargetPlacementModel]        `tfsdk:"placement"`
 	TailConsumers       customfield.NestedObjectSet[TargetTailConsumersModel] `tfsdk:"tail_consumers"`
 	UsageModel          types.String                                          `tfsdk:"usage_model"`
+}
+
+type TargetFileModel struct {
+	ContentBase64 types.String `tfsdk:"content_base64"`
+	ContentFile   types.String `tfsdk:"content_file"`
+	ContentSHA256 types.String `tfsdk:"content_sha256"`
+	ContentType   types.String `tfsdk:"content_type"`
 }
 
 // TargetBindingsModel mirrors WorkersScriptMetadataBindingsModel.
