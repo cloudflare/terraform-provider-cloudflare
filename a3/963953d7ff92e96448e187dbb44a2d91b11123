@@ -1,0 +1,23 @@
+internal/services/worker_version/custom.go
+  s_3fd00256188c8e::t_d3299776921d62 24-25,28-105,318,322,330,337,341,358-359,370-371,373,375
+internal/services/worker_version/binding_test.go
+  s_3fd00256188c8e::t_d3299776921d62 291-370
+internal/services/worker_version/resource.go
+  s_3fd00256188c8e::t_d3299776921d62 120-121,151
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a3963953d7ff92e96448e187dbb44a2d91b11123",
+  "prompts": {},
+  "sessions": {
+    "s_3fd00256188c8e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f9d44888fffewlhtpkK7KtdEkY",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Patrick O'Donnell <podonnell@cloudflare.com>"
+    }
+  }
+}

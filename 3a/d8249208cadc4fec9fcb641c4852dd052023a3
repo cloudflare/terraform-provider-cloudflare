@@ -1,0 +1,30 @@
+internal/services/worker_version/custom.go
+  s_2714a3b65e5ea6::t_77661e6aed185a 72,79-84,86,92,94
+  s_2714a3b65e5ea6::t_7396b2c3d5e37f 73
+  s_2714a3b65e5ea6::t_9b32f8b676f663 85,93,96,103
+  s_2714a3b65e5ea6::t_1d09b52cf6befe 62-65,67,106
+  s_2714a3b65e5ea6::t_950db2501bad79 95
+internal/services/worker_version/resource.go
+  s_2714a3b65e5ea6::t_9b32f8b676f663 153
+  s_2714a3b65e5ea6::t_1d09b52cf6befe 151-152,154-155
+internal/services/worker_version/binding_test.go
+  s_2714a3b65e5ea6::t_9b32f8b676f663 386
+  s_2714a3b65e5ea6::t_7396b2c3d5e37f 387
+  s_2714a3b65e5ea6::t_1d09b52cf6befe 334-338,374-385,388
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3ad8249208cadc4fec9fcb641c4852dd052023a3",
+  "prompts": {},
+  "sessions": {
+    "s_2714a3b65e5ea6": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f9cdfb20dffelFA5ML6cTvVkBn",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Patrick O'Donnell <podonnell@cloudflare.com>"
+    }
+  }
+}

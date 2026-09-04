@@ -1,0 +1,50 @@
+internal/services/ruleset/migration/v500/model.go
+  s_62701f94ed4a2e::t_32c5deafc17c0a 325-341,609-610
+  s_62701f94ed4a2e::t_836337548bba2b 611-612
+docs/data-sources/ruleset.md
+  s_62701f94ed4a2e::t_32c5deafc17c0a 110,449-455
+  s_62701f94ed4a2e::t_97bf6c7140293d 456-457
+internal/services/ruleset/schema.go
+  s_62701f94ed4a2e::t_32c5deafc17c0a 1632-1638
+  s_62701f94ed4a2e::t_e2b7acd489ee5b 1629-1631
+  s_62701f94ed4a2e::t_d1dcf802fcb2b2 1639-1641
+internal/services/ruleset/model.go
+  s_62701f94ed4a2e::t_32c5deafc17c0a 107,306-307
+  s_62701f94ed4a2e::t_8e86b0bf721a81 308-309
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_SetCacheSettingsRules/5.tf
+  s_62701f94ed4a2e::t_32c5deafc17c0a 53-54
+  s_62701f94ed4a2e::t_395f60058e4f20 55
+internal/services/ruleset/data_source_schema.go
+  s_62701f94ed4a2e::t_32c5deafc17c0a 1621-1627
+  s_62701f94ed4a2e::t_fa90ec2062ddad 1619-1620
+  s_62701f94ed4a2e::t_598a2356b9ce02 1628-1630
+internal/services/ruleset/data_source_model.go
+  s_62701f94ed4a2e::t_32c5deafc17c0a 116,317-318
+  s_62701f94ed4a2e::t_14c94944b14dbc 319-320
+docs/resources/ruleset.md
+  s_62701f94ed4a2e::t_32c5deafc17c0a 128,506-512
+  s_62701f94ed4a2e::t_c255669ddc2ad3 513-514
+internal/services/ruleset/ruleset_test.go
+  s_62701f94ed4a2e::t_00bc83a3e1666d 6182-6193,6197-6205,6207-6208
+  s_62701f94ed4a2e::t_b5177c67a189f7 6343-6354,6358-6368
+  s_62701f94ed4a2e::t_32c5deafc17c0a 5712-5714,5818-5820,5921-5923,5987-5988,6044-6045,6098-6099
+internal/services/ruleset/testdata/TestAccCloudflareRuleset_SetCacheSettingsRules/3.tf
+  s_62701f94ed4a2e::t_32c5deafc17c0a 80-81
+  s_62701f94ed4a2e::t_d92588bcea4dde 82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "86fc55e0ff1f76f759c42ffa04d0c343878dc6ae",
+  "prompts": {},
+  "sessions": {
+    "s_62701f94ed4a2e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f98508ec3ffee9EG4vgoLpgzRO",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
