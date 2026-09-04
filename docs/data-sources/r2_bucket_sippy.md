@@ -26,6 +26,11 @@ data "cloudflare_r2_bucket_sippy" "example_r2_bucket_sippy" {
 - `account_id` (String) Account ID.
 - `bucket_name` (String) Name of the bucket.
 
+### Optional
+
+- `jurisdiction` (String) Jurisdiction of the bucket.
+Available values: "default", "eu", "fedramp", "us".
+
 ### Read-Only
 
 - `destination` (Attributes) Details about the configured destination bucket. (see [below for nested schema](#nestedatt--destination))

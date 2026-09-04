@@ -18,14 +18,18 @@ type R2BucketLifecycleResultDataSourceEnvelope struct {
 }
 
 type R2BucketLifecycleDataSourceModel struct {
-	AccountID  types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
-	BucketName types.String                                                        `tfsdk:"bucket_name" path:"bucket_name,required"`
-	Rules      customfield.NestedObjectList[R2BucketLifecycleRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
+	AccountID    types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
+	BucketName   types.String                                                        `tfsdk:"bucket_name" path:"bucket_name,required"`
+	Jurisdiction types.String                                                        `tfsdk:"jurisdiction" json:"-,optional,no_refresh"`
+	Rules        customfield.NestedObjectList[R2BucketLifecycleRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
 }
 
 func (m *R2BucketLifecycleDataSourceModel) toReadParams(_ context.Context) (params r2.BucketLifecycleGetParams, diags diag.Diagnostics) {
 	params = r2.BucketLifecycleGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+	if !m.Jurisdiction.IsNull() {
+		params.Jurisdiction = cloudflare.F(r2.BucketLifecycleGetParamsCfR2Jurisdiction(m.Jurisdiction.ValueString()))
 	}
 
 	return

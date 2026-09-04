@@ -33,6 +33,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Name of the bucket.",
 				Required:    true,
 			},
+			"jurisdiction": schema.StringAttribute{
+				Description: "Jurisdiction of the bucket.\nAvailable values: \"default\", \"eu\", \"fedramp\", \"us\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"default",
+						"eu",
+						"fedramp",
+						"us",
+					),
+				},
+			},
 			"domain": schema.StringAttribute{
 				Description: "Name of the custom domain.",
 				Required:    true,

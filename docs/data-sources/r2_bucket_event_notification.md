@@ -32,6 +32,11 @@ data "cloudflare_r2_bucket_event_notification" "example_r2_bucket_event_notifica
 - `bucket_name` (String) Name of the bucket.
 - `queue_id` (String) Queue ID.
 
+### Optional
+
+- `jurisdiction` (String) Jurisdiction of the bucket.
+Available values: "default", "eu", "fedramp", "us".
+
 ### Read-Only
 
 - `queue_name` (String) Name of the queue.

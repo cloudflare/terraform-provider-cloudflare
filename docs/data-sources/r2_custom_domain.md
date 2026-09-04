@@ -32,6 +32,11 @@ data "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
 - `bucket_name` (String) Name of the bucket.
 - `domain` (String) Name of the custom domain.
 
+### Optional
+
+- `jurisdiction` (String) Jurisdiction of the bucket.
+Available values: "default", "eu", "fedramp", "us".
+
 ### Read-Only
 
 - `ciphers` (List of String) An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.

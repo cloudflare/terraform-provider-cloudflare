@@ -40,6 +40,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"default",
 						"eu",
 						"fedramp",
+						"us",
 					),
 				},
 			},

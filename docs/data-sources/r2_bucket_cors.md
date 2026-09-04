@@ -26,6 +26,11 @@ data "cloudflare_r2_bucket_cors" "example_r2_bucket_cors" {
 - `account_id` (String) Account ID.
 - `bucket_name` (String) Name of the bucket.
 
+### Optional
+
+- `jurisdiction` (String) Jurisdiction of the bucket.
+Available values: "default", "eu", "fedramp", "us".
+
 ### Read-Only
 
 - `rules` (Attributes List) (see [below for nested schema](#nestedatt--rules))

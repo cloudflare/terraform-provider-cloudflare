@@ -17,16 +17,20 @@ type R2BucketEventNotificationResultDataSourceEnvelope struct {
 }
 
 type R2BucketEventNotificationDataSourceModel struct {
-	AccountID  types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
-	BucketName types.String                                                                `tfsdk:"bucket_name" path:"bucket_name,required"`
-	QueueID    types.String                                                                `tfsdk:"queue_id" path:"queue_id,required"`
-	QueueName  types.String                                                                `tfsdk:"queue_name" json:"queueName,computed"`
-	Rules      customfield.NestedObjectList[R2BucketEventNotificationRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
+	AccountID    types.String                                                                `tfsdk:"account_id" path:"account_id,required"`
+	BucketName   types.String                                                                `tfsdk:"bucket_name" path:"bucket_name,required"`
+	Jurisdiction types.String                                                                `tfsdk:"jurisdiction" json:"-,optional,no_refresh"`
+	QueueID      types.String                                                                `tfsdk:"queue_id" path:"queue_id,required"`
+	QueueName    types.String                                                                `tfsdk:"queue_name" json:"queueName,computed"`
+	Rules        customfield.NestedObjectList[R2BucketEventNotificationRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
 }
 
 func (m *R2BucketEventNotificationDataSourceModel) toReadParams(_ context.Context) (params r2.BucketEventNotificationGetParams, diags diag.Diagnostics) {
 	params = r2.BucketEventNotificationGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+	if !m.Jurisdiction.IsNull() {
+		params.Jurisdiction = cloudflare.F(r2.BucketEventNotificationGetParamsCfR2Jurisdiction(m.Jurisdiction.ValueString()))
 	}
 
 	return

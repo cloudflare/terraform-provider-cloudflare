@@ -17,20 +17,24 @@ type R2CustomDomainResultDataSourceEnvelope struct {
 }
 
 type R2CustomDomainDataSourceModel struct {
-	AccountID  types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
-	BucketName types.String                                                  `tfsdk:"bucket_name" path:"bucket_name,required"`
-	Domain     types.String                                                  `tfsdk:"domain" path:"domain,required"`
-	Enabled    types.Bool                                                    `tfsdk:"enabled" json:"enabled,computed"`
-	MinTLS     types.String                                                  `tfsdk:"min_tls" json:"minTLS,computed"`
-	ZoneID     types.String                                                  `tfsdk:"zone_id" json:"zoneId,computed"`
-	ZoneName   types.String                                                  `tfsdk:"zone_name" json:"zoneName,computed"`
-	Ciphers    customfield.List[types.String]                                `tfsdk:"ciphers" json:"ciphers,computed"`
-	Status     customfield.NestedObject[R2CustomDomainStatusDataSourceModel] `tfsdk:"status" json:"status,computed"`
+	AccountID    types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
+	BucketName   types.String                                                  `tfsdk:"bucket_name" path:"bucket_name,required"`
+	Jurisdiction types.String                                                  `tfsdk:"jurisdiction" json:"-,optional,no_refresh"`
+	Domain       types.String                                                  `tfsdk:"domain" path:"domain,required"`
+	Enabled      types.Bool                                                    `tfsdk:"enabled" json:"enabled,computed"`
+	MinTLS       types.String                                                  `tfsdk:"min_tls" json:"minTLS,computed"`
+	ZoneID       types.String                                                  `tfsdk:"zone_id" json:"zoneId,computed"`
+	ZoneName     types.String                                                  `tfsdk:"zone_name" json:"zoneName,computed"`
+	Ciphers      customfield.List[types.String]                                `tfsdk:"ciphers" json:"ciphers,computed"`
+	Status       customfield.NestedObject[R2CustomDomainStatusDataSourceModel] `tfsdk:"status" json:"status,computed"`
 }
 
 func (m *R2CustomDomainDataSourceModel) toReadParams(_ context.Context) (params r2.BucketDomainCustomGetParams, diags diag.Diagnostics) {
 	params = r2.BucketDomainCustomGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+	if !m.Jurisdiction.IsNull() {
+		params.Jurisdiction = cloudflare.F(r2.BucketDomainCustomGetParamsCfR2Jurisdiction(m.Jurisdiction.ValueString()))
 	}
 
 	return
