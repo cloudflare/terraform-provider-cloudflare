@@ -1,0 +1,22 @@
+internal/services/email_routing_dns/resource_test.go
+  s_eb975af9a8a216::t_5442670b8b9ed8 30,34,36,40-41,44,50-60,63,66,69-72,76,78-79,82-87,91-93
+  s_eb975af9a8a216::t_f885e72833862c 94
+internal/services/email_routing_dns/testdata/emailroutingdnsbasic.tf
+  s_eb975af9a8a216::t_dc1ed585df9d93 1-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "50feab3065dec624588b005c803abea35f1bb4ef",
+  "prompts": {},
+  "sessions": {
+    "s_eb975af9a8a216": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f91bc0eabffe7Csy90MezloDwR",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
