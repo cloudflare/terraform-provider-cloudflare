@@ -33,6 +33,7 @@ func (m *ZeroTrustAccessPoliciesDataSourceModel) toListParams(_ context.Context)
 
 type ZeroTrustAccessPoliciesResultDataSourceModel struct {
 	ID                           types.String                                                                      `tfsdk:"id" json:"id,computed"`
+	AccountID                    types.String                                                                      `tfsdk:"account_id" json:"account_id,computed"`
 	AppCount                     types.Int64                                                                       `tfsdk:"app_count" json:"app_count,computed"`
 	ApprovalGroups               customfield.NestedObjectSet[ZeroTrustAccessPoliciesApprovalGroupsDataSourceModel] `tfsdk:"approval_groups" json:"approval_groups,computed"`
 	ApprovalRequired             types.Bool                                                                        `tfsdk:"approval_required" json:"approval_required,computed"`
@@ -131,6 +132,7 @@ type ZeroTrustAccessPoliciesExcludeGeoDataSourceModel struct {
 
 type ZeroTrustAccessPoliciesExcludeDevicePostureDataSourceModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed"`
+	AccountID      types.String `tfsdk:"account_id" json:"account_id,computed"`
 }
 
 type ZeroTrustAccessPoliciesExcludeEmailDomainDataSourceModel struct {
@@ -273,6 +275,7 @@ type ZeroTrustAccessPoliciesIncludeGeoDataSourceModel struct {
 
 type ZeroTrustAccessPoliciesIncludeDevicePostureDataSourceModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed"`
+	AccountID      types.String `tfsdk:"account_id" json:"account_id,computed"`
 }
 
 type ZeroTrustAccessPoliciesIncludeEmailDomainDataSourceModel struct {
@@ -421,6 +424,7 @@ type ZeroTrustAccessPoliciesRequireGeoDataSourceModel struct {
 
 type ZeroTrustAccessPoliciesRequireDevicePostureDataSourceModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed"`
+	AccountID      types.String `tfsdk:"account_id" json:"account_id,computed"`
 }
 
 type ZeroTrustAccessPoliciesRequireEmailDomainDataSourceModel struct {

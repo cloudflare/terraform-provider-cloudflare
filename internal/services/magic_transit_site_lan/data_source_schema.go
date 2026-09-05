@@ -173,8 +173,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"dns_server": schema.StringAttribute{
-								Description: "A valid IPv4 address.",
-								Computed:    true,
+								Description:        "A valid IPv4 address.",
+								Computed:           true,
+								DeprecationMessage: "This attribute is deprecated.",
 							},
 							"dns_servers": schema.ListAttribute{
 								Computed:    true,

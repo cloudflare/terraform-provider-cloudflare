@@ -54,6 +54,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"thresholds",
 							"parameter_schemas",
 							"schema_info",
+							"confidence_intervals",
 						),
 					),
 				},
@@ -270,20 +271,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										Computed:   true,
 										CustomType: timetypes.RFC3339Type{},
 									},
-									"is_learned": schema.BoolAttribute{
-										Description:        "Deprecated. Always false.",
-										Computed:           true,
-										DeprecationMessage: "This attribute is deprecated.",
-									},
 									"name": schema.StringAttribute{
 										Description: "Schema file name.",
 										Computed:    true,
 									},
 								},
-							},
-							"learned_available": schema.BoolAttribute{
-								Description: "Deprecated. Always false.",
-								Computed:    true,
 							},
 							"mitigation_action": schema.StringAttribute{
 								Description: "Action taken on requests failing validation.\nAvailable values: \"none\", \"log\", \"block\".",
@@ -372,6 +364,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									"thresholds",
 									"parameter_schemas",
 									"schema_info",
+									"confidence_intervals",
 								),
 							),
 						},

@@ -257,20 +257,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										CustomType:    timetypes.RFC3339Type{},
 										PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 									},
-									"is_learned": schema.BoolAttribute{
-										Description:        "Deprecated. Always false.",
-										Computed:           true,
-										DeprecationMessage: "This attribute is deprecated.",
-									},
 									"name": schema.StringAttribute{
 										Description: "Schema file name.",
 										Computed:    true,
 									},
 								},
-							},
-							"learned_available": schema.BoolAttribute{
-								Description: "Deprecated. Always false.",
-								Computed:    true,
 							},
 							"mitigation_action": schema.StringAttribute{
 								Description: "Action taken on requests failing validation.\nAvailable values: \"none\", \"log\", \"block\".",

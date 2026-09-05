@@ -85,6 +85,7 @@ type ZeroTrustAccessIdentityProviderConfigDataSourceModel struct {
 	Attributes               customfield.List[types.String]                                                                     `tfsdk:"attributes" json:"attributes,computed"`
 	EmailAttributeName       types.String                                                                                       `tfsdk:"email_attribute_name" json:"email_attribute_name,computed"`
 	EnableEncryption         types.Bool                                                                                         `tfsdk:"enable_encryption" json:"enable_encryption,computed"`
+	ForceAuthn               types.Bool                                                                                         `tfsdk:"force_authn" json:"force_authn,computed"`
 	HeaderAttributes         customfield.NestedObjectList[ZeroTrustAccessIdentityProviderConfigHeaderAttributesDataSourceModel] `tfsdk:"header_attributes" json:"header_attributes,computed"`
 	IdPPublicCERTs           customfield.List[types.String]                                                                     `tfsdk:"idp_public_certs" json:"idp_public_certs,computed"`
 	IssuerURL                types.String                                                                                       `tfsdk:"issuer_url" json:"issuer_url,computed"`

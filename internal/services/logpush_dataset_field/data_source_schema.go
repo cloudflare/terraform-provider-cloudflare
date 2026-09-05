@@ -5,6 +5,7 @@ package logpush_dataset_field
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -12,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*LogpushDatasetFieldDataSource)(nil)
@@ -77,6 +79,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"zero_trust_network_sessions",
 					),
 				},
+			},
+			"fields": schema.MapAttribute{
+				Computed:    true,
+				CustomType:  customfield.NewMapType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 		},
 	}

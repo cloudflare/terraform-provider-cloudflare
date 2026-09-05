@@ -77,7 +77,6 @@ type PipelineStreamHTTPCORSDataSourceModel struct {
 
 type PipelineStreamSchemaDataSourceModel struct {
 	Fields   customfield.NestedObjectList[PipelineStreamSchemaFieldsDataSourceModel] `tfsdk:"fields" json:"fields,computed"`
-	Format   customfield.NestedObject[PipelineStreamSchemaFormatDataSourceModel]     `tfsdk:"format" json:"format,computed"`
 	Inferred types.Bool                                                              `tfsdk:"inferred" json:"inferred,computed"`
 }
 
@@ -88,15 +87,6 @@ type PipelineStreamSchemaFieldsDataSourceModel struct {
 	Required    types.Bool   `tfsdk:"required" json:"required,computed"`
 	SqlName     types.String `tfsdk:"sql_name" json:"sql_name,computed"`
 	Unit        types.String `tfsdk:"unit" json:"unit,computed"`
-}
-
-type PipelineStreamSchemaFormatDataSourceModel struct {
-	Type            types.String `tfsdk:"type" json:"type,computed"`
-	DecimalEncoding types.String `tfsdk:"decimal_encoding" json:"decimal_encoding,computed"`
-	TimestampFormat types.String `tfsdk:"timestamp_format" json:"timestamp_format,computed"`
-	Unstructured    types.Bool   `tfsdk:"unstructured" json:"unstructured,computed"`
-	Compression     types.String `tfsdk:"compression" json:"compression,computed"`
-	RowGroupBytes   types.Int64  `tfsdk:"row_group_bytes" json:"row_group_bytes,computed"`
 }
 
 type PipelineStreamWorkerBindingDataSourceModel struct {

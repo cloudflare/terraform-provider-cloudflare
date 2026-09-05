@@ -27,7 +27,7 @@ type WorkflowDataSourceModel struct {
 	Name         types.String                                                   `tfsdk:"name" json:"name,computed"`
 	ScriptName   types.String                                                   `tfsdk:"script_name" json:"script_name,computed"`
 	TriggeredOn  timetypes.RFC3339                                              `tfsdk:"triggered_on" json:"triggered_on,computed" format:"date-time"`
-	Instances    customfield.NestedObject[WorkflowInstancesDataSourceModel]     `tfsdk:"instances" json:"instances,computed"`
+	Instances    customfield.Map[types.Float64]                                 `tfsdk:"instances" json:"instances,computed"`
 	Schedules    customfield.NestedObjectList[WorkflowSchedulesDataSourceModel] `tfsdk:"schedules" json:"schedules,computed"`
 	Filter       *WorkflowFindOneByDataSourceModel                              `tfsdk:"filter"`
 }
@@ -50,18 +50,6 @@ func (m *WorkflowDataSourceModel) toListParams(_ context.Context) (params workfl
 	}
 
 	return
-}
-
-type WorkflowInstancesDataSourceModel struct {
-	Complete        types.Float64 `tfsdk:"complete" json:"complete,computed"`
-	Errored         types.Float64 `tfsdk:"errored" json:"errored,computed"`
-	Paused          types.Float64 `tfsdk:"paused" json:"paused,computed"`
-	Queued          types.Float64 `tfsdk:"queued" json:"queued,computed"`
-	RollingBack     types.Float64 `tfsdk:"rolling_back" json:"rollingBack,computed"`
-	Running         types.Float64 `tfsdk:"running" json:"running,computed"`
-	Terminated      types.Float64 `tfsdk:"terminated" json:"terminated,computed"`
-	Waiting         types.Float64 `tfsdk:"waiting" json:"waiting,computed"`
-	WaitingForPause types.Float64 `tfsdk:"waiting_for_pause" json:"waitingForPause,computed"`
 }
 
 type WorkflowSchedulesDataSourceModel struct {

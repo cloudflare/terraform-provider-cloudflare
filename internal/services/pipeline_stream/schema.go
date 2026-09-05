@@ -47,7 +47,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"format": schema.SingleNestedAttribute{
-				Optional: true,
+				Description: "Defines the data format of the events.",
+				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
 						Description: `Available values: "json", "parquet".`,
@@ -100,7 +101,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"schema": schema.SingleNestedAttribute{
-				Optional: true,
+				Description: "Defines the schema of the events in the data stream.",
+				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"fields": schema.ListNestedAttribute{
 						Optional: true,
@@ -146,58 +148,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											"nanosecond",
 										),
 									},
-								},
-							},
-						},
-					},
-					"format": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"type": schema.StringAttribute{
-								Description: `Available values: "json", "parquet".`,
-								Required:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("json", "parquet"),
-								},
-							},
-							"decimal_encoding": schema.StringAttribute{
-								Description: `Available values: "number", "string", "bytes".`,
-								Optional:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"number",
-										"string",
-										"bytes",
-									),
-								},
-							},
-							"timestamp_format": schema.StringAttribute{
-								Description: `Available values: "rfc3339", "unix_millis".`,
-								Optional:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("rfc3339", "unix_millis"),
-								},
-							},
-							"unstructured": schema.BoolAttribute{
-								Optional: true,
-							},
-							"compression": schema.StringAttribute{
-								Description: `Available values: "uncompressed", "snappy", "gzip", "zstd", "lz4".`,
-								Optional:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"uncompressed",
-										"snappy",
-										"gzip",
-										"zstd",
-										"lz4",
-									),
-								},
-							},
-							"row_group_bytes": schema.Int64Attribute{
-								Optional: true,
-								Validators: []validator.Int64{
-									int64validator.AtLeast(0),
 								},
 							},
 						},

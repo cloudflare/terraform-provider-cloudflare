@@ -34,9 +34,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"default_mode": schema.StringAttribute{
-				Description: "The zone-level Precursor enforcement mode applied to requests that do\nnot match a more specific enforcement rule.\nAvailable values: \"off\", \"min-friction\", \"max-security\".",
-				Computed:    true,
-				Optional:    true,
+				Description:        "The zone-level Precursor enforcement mode applied to requests that do\nnot match a more specific enforcement rule.\nAvailable values: \"off\", \"min-friction\", \"max-security\".",
+				Computed:           true,
+				Optional:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"off",
@@ -47,10 +48,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default: stringdefault.StaticString("off"),
 			},
 			"enforcement_rules": schema.ListNestedAttribute{
-				Description: "The ordered list of enforcement rules for the zone.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[PrecursorEnforcementRulesModel](ctx),
+				Description:        "The ordered list of enforcement rules for the zone.",
+				Computed:           true,
+				Optional:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				CustomType:         customfield.NewNestedObjectListType[PrecursorEnforcementRulesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"expression": schema.StringAttribute{

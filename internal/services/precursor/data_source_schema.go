@@ -26,8 +26,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"default_mode": schema.StringAttribute{
-				Description: "The zone-level Precursor enforcement mode applied to requests that do\nnot match a more specific enforcement rule.\nAvailable values: \"off\", \"min-friction\", \"max-security\".",
-				Computed:    true,
+				Description:        "The zone-level Precursor enforcement mode applied to requests that do\nnot match a more specific enforcement rule.\nAvailable values: \"off\", \"min-friction\", \"max-security\".",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"off",
@@ -37,9 +38,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"enforcement_rules": schema.ListNestedAttribute{
-				Description: "The ordered list of enforcement rules for the zone.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[PrecursorEnforcementRulesDataSourceModel](ctx),
+				Description:        "The ordered list of enforcement rules for the zone.",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				CustomType:         customfield.NewNestedObjectListType[PrecursorEnforcementRulesDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"expression": schema.StringAttribute{

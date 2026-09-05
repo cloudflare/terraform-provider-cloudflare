@@ -239,6 +239,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:      true,
 						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 					},
+					"force_authn": schema.BoolAttribute{
+						Description: "Asks the IdP to reauthenticate the user for each SAML authentication request.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(false),
+					},
+					"force_authn": schema.BoolAttribute{
+						Description: "Asks the IdP to reauthenticate the user for each SAML authentication request.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(false),
+					},
 					"header_attributes": schema.ListNestedAttribute{
 						Description: "Add a list of attribute names that will be returned in the response header from the Access callback.",
 						Optional:    true,

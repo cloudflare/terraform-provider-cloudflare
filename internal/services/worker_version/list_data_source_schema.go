@@ -327,13 +327,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Computed:    true,
 									},
 									"jurisdiction": schema.StringAttribute{
-										Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\", \"fedramp-high\".",
+										Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\", \"fedramp-high\", \"us\".",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
 												"eu",
 												"fedramp",
 												"fedramp-high",
+												"us",
 											),
 										},
 									},

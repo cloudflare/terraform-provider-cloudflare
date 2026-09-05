@@ -12,15 +12,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+type EmailRoutingDNSResultDataSourceEnvelope struct {
+	Result EmailRoutingDNSDataSourceModel `json:"result,computed"`
+}
+
 type EmailRoutingDNSDataSourceModel struct {
-	ID         types.String                                                         `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID     types.String                                                         `tfsdk:"zone_id" path:"zone_id,optional"`
-	Subdomain  types.String                                                         `tfsdk:"subdomain" query:"subdomain,optional"`
-	Success    types.Bool                                                           `tfsdk:"success" json:"success,computed"`
-	Errors     customfield.NestedObjectList[EmailRoutingDNSErrorsDataSourceModel]   `tfsdk:"errors" json:"errors,computed"`
-	Messages   customfield.NestedObjectList[EmailRoutingDNSMessagesDataSourceModel] `tfsdk:"messages" json:"messages,computed"`
-	Result     customfield.NestedObject[EmailRoutingDNSResultDataSourceModel]       `tfsdk:"result" json:"result,computed"`
-	ResultInfo customfield.NestedObject[EmailRoutingDNSResultInfoDataSourceModel]   `tfsdk:"result_info" json:"result_info,computed"`
+	ID        types.String                                                    `tfsdk:"id" path:"zone_id,computed"`
+	ZoneID    types.String                                                    `tfsdk:"zone_id" path:"zone_id,required"`
+	Subdomain types.String                                                    `tfsdk:"subdomain" query:"subdomain,optional"`
+	DNS       customfield.NestedObjectList[EmailRoutingDNSDNSDataSourceModel] `tfsdk:"dns" json:"dns,computed"`
 }
 
 func (m *EmailRoutingDNSDataSourceModel) toReadParams(_ context.Context) (params email_routing.DNSGetParams, diags diag.Diagnostics) {
@@ -35,63 +35,10 @@ func (m *EmailRoutingDNSDataSourceModel) toReadParams(_ context.Context) (params
 	return
 }
 
-type EmailRoutingDNSErrorsDataSourceModel struct {
-	Code             types.Int64                                                          `tfsdk:"code" json:"code,computed"`
-	Message          types.String                                                         `tfsdk:"message" json:"message,computed"`
-	DocumentationURL types.String                                                         `tfsdk:"documentation_url" json:"documentation_url,computed"`
-	Source           customfield.NestedObject[EmailRoutingDNSErrorsSourceDataSourceModel] `tfsdk:"source" json:"source,computed"`
-}
-
-type EmailRoutingDNSErrorsSourceDataSourceModel struct {
-	Pointer types.String `tfsdk:"pointer" json:"pointer,computed"`
-}
-
-type EmailRoutingDNSMessagesDataSourceModel struct {
-	Code             types.Int64                                                            `tfsdk:"code" json:"code,computed"`
-	Message          types.String                                                           `tfsdk:"message" json:"message,computed"`
-	DocumentationURL types.String                                                           `tfsdk:"documentation_url" json:"documentation_url,computed"`
-	Source           customfield.NestedObject[EmailRoutingDNSMessagesSourceDataSourceModel] `tfsdk:"source" json:"source,computed"`
-}
-
-type EmailRoutingDNSMessagesSourceDataSourceModel struct {
-	Pointer types.String `tfsdk:"pointer" json:"pointer,computed"`
-}
-
-type EmailRoutingDNSResultDataSourceModel struct {
-	Errors   customfield.NestedObjectList[EmailRoutingDNSResultErrorsDataSourceModel] `tfsdk:"errors" json:"errors,computed"`
-	Record   customfield.NestedObjectList[EmailRoutingDNSResultRecordDataSourceModel] `tfsdk:"record" json:"record,computed"`
-	Content  types.String                                                             `tfsdk:"content" json:"content,computed"`
-	Name     types.String                                                             `tfsdk:"name" json:"name,computed"`
-	Priority types.Float64                                                            `tfsdk:"priority" json:"priority,computed"`
-	TTL      types.Float64                                                            `tfsdk:"ttl" json:"ttl,computed"`
-	Type     types.String                                                             `tfsdk:"type" json:"type,computed"`
-}
-
-type EmailRoutingDNSResultErrorsDataSourceModel struct {
-	Code    types.String                                                                `tfsdk:"code" json:"code,computed"`
-	Missing customfield.NestedObject[EmailRoutingDNSResultErrorsMissingDataSourceModel] `tfsdk:"missing" json:"missing,computed"`
-}
-
-type EmailRoutingDNSResultErrorsMissingDataSourceModel struct {
+type EmailRoutingDNSDNSDataSourceModel struct {
 	Content  types.String  `tfsdk:"content" json:"content,computed"`
 	Name     types.String  `tfsdk:"name" json:"name,computed"`
 	Priority types.Float64 `tfsdk:"priority" json:"priority,computed"`
 	TTL      types.Float64 `tfsdk:"ttl" json:"ttl,computed"`
 	Type     types.String  `tfsdk:"type" json:"type,computed"`
-}
-
-type EmailRoutingDNSResultRecordDataSourceModel struct {
-	Content  types.String  `tfsdk:"content" json:"content,computed"`
-	Name     types.String  `tfsdk:"name" json:"name,computed"`
-	Priority types.Float64 `tfsdk:"priority" json:"priority,computed"`
-	TTL      types.Float64 `tfsdk:"ttl" json:"ttl,computed"`
-	Type     types.String  `tfsdk:"type" json:"type,computed"`
-}
-
-type EmailRoutingDNSResultInfoDataSourceModel struct {
-	EmailRoutingDNSCount types.Float64 `tfsdk:"email_routing_dns_count" json:"count,computed"`
-	Page                 types.Float64 `tfsdk:"page" json:"page,computed"`
-	PerPage              types.Float64 `tfsdk:"per_page" json:"per_page,computed"`
-	TotalCount           types.Float64 `tfsdk:"total_count" json:"total_count,computed"`
-	TotalPages           types.Float64 `tfsdk:"total_pages" json:"total_pages,computed"`
 }

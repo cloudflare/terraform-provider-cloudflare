@@ -34,7 +34,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"aisearch_model": schema.StringAttribute{
-				Computed: true,
+				Description: "A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.",
+				Computed:    true,
 			},
 			"cache": schema.BoolAttribute{
 				Computed: true,
@@ -142,7 +143,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"rewrite_model": schema.StringAttribute{
-				Computed: true,
+				Description: "A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.",
+				Computed:    true,
 			},
 			"rewrite_query": schema.BoolAttribute{
 				Computed: true,

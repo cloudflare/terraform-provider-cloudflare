@@ -22,8 +22,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
-				Computed: true,
-				Optional: true,
+				Description: "Returns the application ID.",
+				Computed:    true,
+				Optional:    true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 4294967295),
 				},

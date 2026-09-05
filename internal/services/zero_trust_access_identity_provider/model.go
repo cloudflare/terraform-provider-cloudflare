@@ -59,6 +59,7 @@ type ZeroTrustAccessIdentityProviderConfigModel struct {
 	Attributes               *[]types.String                                                `tfsdk:"attributes" json:"attributes,optional"`
 	EmailAttributeName       types.String                                                   `tfsdk:"email_attribute_name" json:"email_attribute_name,optional"`
 	EnableEncryption         types.Bool                                                     `tfsdk:"enable_encryption" json:"enable_encryption,computed_optional"`
+	ForceAuthn               types.Bool                                                     `tfsdk:"force_authn" json:"force_authn,computed_optional"`
 	HeaderAttributes         *[]*ZeroTrustAccessIdentityProviderConfigHeaderAttributesModel `tfsdk:"header_attributes" json:"header_attributes,optional"`
 	IdPPublicCERTs           *[]types.String                                                `tfsdk:"idp_public_certs" json:"idp_public_certs,optional"`
 	IssuerURL                types.String                                                   `tfsdk:"issuer_url" json:"issuer_url,optional"`
