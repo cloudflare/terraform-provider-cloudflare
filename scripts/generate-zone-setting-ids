@@ -4,9 +4,9 @@ Extracts valid zone setting IDs from the Cloudflare OpenAPI spec and injects
 a markdown table into Terraform documentation templates.
 
 Usage:
-    ./scripts/generate-zone-setting-ids [OPENAPI_SPEC_URL]
+    ./scripts/generate-zone-setting-ids <PATH_OR_URL>
 
-If no URL is provided, reads it from .stats.yml in the project root.
+The argument may be a local file path or an https:// URL.
 
 The script looks for template files containing the markers:
     <!-- BEGIN_ZONE_SETTING_IDS -->
@@ -37,22 +37,18 @@ BEGIN_MARKER = "<!-- BEGIN_ZONE_SETTING_IDS -->"
 END_MARKER = "<!-- END_ZONE_SETTING_IDS -->"
 
 
-def get_spec_url():
-    """Read the OpenAPI spec URL from .stats.yml."""
-    stats_path = os.path.join(PROJECT_ROOT, ".stats.yml")
-    with open(stats_path) as f:
-        for line in f:
-            if "openapi_spec_url" in line:
-                return line.split(":", 1)[1].strip()
-    raise RuntimeError("openapi_spec_url not found in .stats.yml")
-
-
-def fetch_spec(url):
-    """Download and parse the OpenAPI spec."""
-    print(f"  Fetching OpenAPI spec from {url[:80]}...")
-    req = urllib.request.Request(url)
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        return json.loads(resp.read())
+def load_spec(path_or_url):
+    """Load and parse the OpenAPI spec from a local file path or https:// URL."""
+    if path_or_url.startswith("http://") or path_or_url.startswith("https://"):
+        print(f"  Fetching OpenAPI spec from {path_or_url[:80]}...")
+        req = urllib.request.Request(path_or_url)
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            return json.loads(resp.read())
+    else:
+        abs_path = os.path.abspath(path_or_url)
+        print(f"  Loading OpenAPI spec from {abs_path}...")
+        with open(abs_path) as f:
+            return json.load(f)
 
 
 def resolve_ref(spec, ref_str):
@@ -255,11 +251,24 @@ def inject_into_template(template_path, table_content):
 
 def main():
     if len(sys.argv) > 1:
-        url = sys.argv[1]
+        spec_arg = sys.argv[1]
     else:
-        url = get_spec_url()
+        print(
+            "Error: OpenAPI spec path or URL required.\n"
+            "\n"
+            "Usage:\n"
+            "  ./scripts/generate-zone-setting-ids <PATH_OR_URL>\n"
+            "\n"
+            "Examples:\n"
+            "  ./scripts/generate-zone-setting-ids ../contrib/schemas/openapi.json\n"
+            "  ./scripts/generate-zone-setting-ids https://example.com/openapi.json\n"
+            "\n"
+            "Tip: run generate-docs with --openapi-spec-path instead of calling this script directly.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
-    spec = fetch_spec(url)
+    spec = load_spec(spec_arg)
     settings = extract_settings(spec)
     table = generate_markdown_table(settings)
 
