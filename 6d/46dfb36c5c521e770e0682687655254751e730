@@ -1,0 +1,19 @@
+scripts/run-ci-tests
+  s_67d57475267cf8::t_e2f40a103b8864 54,202,204
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6d46dfb36c5c521e770e0682687655254751e730",
+  "prompts": {},
+  "sessions": {
+    "s_67d57475267cf8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_032cdaee3ffeeMonyh0jg57vLZ",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Greg Thompson Jr. <gregt@cloudflare.com>"
+    }
+  }
+}
