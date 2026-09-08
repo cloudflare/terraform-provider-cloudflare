@@ -1,0 +1,43 @@
+internal/services/zero_trust_access_application/resource_test.go
+  s_b15b721d29b585::t_a16a49c3dcd0f0 1622
+internal/services/zero_trust_access_custom_page/model.go
+  s_b15b721d29b585::t_f96b71936c25b4 22
+internal/services/zero_trust_access_custom_page/schema.go
+  s_b15b721d29b585::t_4806d40c2e22a4 68
+internal/services/zero_trust_access_service_token/migration/v500/model.go
+  s_b15b721d29b585::t_a33bc238db1667 46
+internal/services/zero_trust_access_service_token/migration/v500/schema.go
+  s_b15b721d29b585::t_5f90da532f7a5d 30-33
+internal/services/zero_trust_access_service_token/model.go
+  s_b15b721d29b585::t_19a38c9fd0f777 20
+internal/services/zero_trust_access_service_token/schema.go
+  s_b15b721d29b585::t_c5c5aafeb67e11 56
+internal/services/zero_trust_organization/model.go
+  s_b15b721d29b585::t_5cd77020913ebb 31,34
+internal/services/zero_trust_tunnel_cloudflared/migration/v500/handler.go
+  s_b15b721d29b585::t_7c912f15354c4b 6-7,30-33,35-89
+internal/services/zero_trust_tunnel_cloudflared/migration/v500/model.go
+  s_b15b721d29b585::t_963dbc516a10b2 43-45,56-87
+internal/services/zero_trust_tunnel_cloudflared/migration/v500/schema.go
+  s_b15b721d29b585::t_96b6d7f664efb3 3-10,28-72
+internal/services/zero_trust_tunnel_cloudflared/migration/v500/transform.go
+  s_b15b721d29b585::t_eeac7d2cc97626 13,25,28,53
+internal/services/zero_trust_tunnel_cloudflared/migrations.go
+  s_b15b721d29b585::t_c707415a9168d6 36,46-49,51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "53461b809b42bb552ea626b11b35bd928e4c7d26",
+  "prompts": {},
+  "sessions": {
+    "s_b15b721d29b585": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdb5562a8ffe2msnnRE0sgpvPE",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
