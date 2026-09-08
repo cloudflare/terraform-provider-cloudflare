@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v7"
@@ -667,6 +668,30 @@ func TestAccCloudflareRuleset_Description(t *testing.T) {
 						"data.cloudflare_ruleset.my_ruleset",
 						tfjsonpath.New("description"),
 						knownvalue.StringExact("My ruleset description"),
+					),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_WarningOnUpdate(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("description"),
+						knownvalue.StringExact(strings.Repeat("0123456789", 410)),
 					),
 				},
 			},
