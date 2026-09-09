@@ -1,0 +1,24 @@
+internal/provider.go
+  s_c79743bbe8d7e5::t_ca56f95b9e342d 1048
+  s_c79743bbe8d7e5::t_829ffc62a04547 637
+  s_c79743bbe8d7e5::t_6c7bf407c71ea7 1053
+  s_c79743bbe8d7e5::t_00db945026db4d 89
+  s_c79743bbe8d7e5::t_f8d2668e9fffae 633
+  s_c79743bbe8d7e5::t_ce92bc3cdaff34 143
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "12748b6bffec1b575a4aa606152cfccda0fab871",
+  "prompts": {},
+  "sessions": {
+    "s_c79743bbe8d7e5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_012e7c2dfffej38Bmvgs15gMTN",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+internal/services/load_balancer_pool/resource.go
+  s_f08da50fab2ecc::t_e1457cc414235b 176
+  s_f08da50fab2ecc::t_e0851bc79032af 136
+  s_f08da50fab2ecc::t_9e55c2a3d778e7 87
+  s_f08da50fab2ecc::t_23fddc36163c3d 246
+internal/services/load_balancer_pool/testdata/loadbalancerpoolconfigoriginsorder.tf
+  s_f08da50fab2ecc::t_3cb777217abfab 1-23
+internal/services/load_balancer_pool/custom_test.go
+  s_f08da50fab2ecc::t_0068178c7bc370 1-121
+internal/services/load_balancer_pool/custom.go
+  s_f08da50fab2ecc::t_e257ec1a2f36b5 1-157
+internal/services/load_balancer_pool/resource_test.go
+  s_f08da50fab2ecc::t_1acfc6afa7774a 213-254
+  s_f08da50fab2ecc::t_09c9785dfb1dac 636-639
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e8e2545e778c4f32a13d3cdce84d9ea63ddcfbe9",
+  "prompts": {},
+  "sessions": {
+    "s_f08da50fab2ecc": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_075a92b88ffej0ZAoanICa4at9",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": null
+    }
+  }
+}

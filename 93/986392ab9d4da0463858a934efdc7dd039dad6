@@ -1,0 +1,19 @@
+scripts/run-ci-tests
+  s_e5c8c79128b9f2::t_18ac563e3ec43e 820-823
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "93986392ab9d4da0463858a934efdc7dd039dad6",
+  "prompts": {},
+  "sessions": {
+    "s_e5c8c79128b9f2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_030b13321ffeybYTfNCimd37G9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

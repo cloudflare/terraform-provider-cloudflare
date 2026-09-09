@@ -1,0 +1,24 @@
+internal/services/zero_trust_casb_policy/validators_test.go
+  s_403e4c66b85118::t_14b7b68372b7cf 46-51
+  s_403e4c66b85118::t_21c0aff412a2c9 1-45,52-71
+internal/services/zero_trust_casb_policy/validators.go
+  s_403e4c66b85118::t_560b45d14ee43a 1-48
+internal/services/zero_trust_casb_policy/schema.go
+  s_403e4c66b85118::t_33f3dffa29cb26 7,126-128
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8d431ffc6d42e4a87383a4626254c4b79c922b9d",
+  "prompts": {},
+  "sessions": {
+    "s_403e4c66b85118": {
+      "agent_id": {
+        "tool": "windsurf",
+        "id": "acidic-hydrogen",
+        "model": "unknown"
+      },
+      "human_author": "Reid Klarsfeld <rklarsfeld@cloudflare.com>"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+internal/services/zero_trust_access_application/schema.go
+  s_9cb006b030f5fd::t_a7767c903bbf2e 1016,1026
+CHANGELOG.md
+  s_9cb006b030f5fd::t_bfef0ff7c9fe88 26-28,39,41-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3dd3b01cc9c73919ecf6fc32b03fe0b84ecc311e",
+  "prompts": {},
+  "sessions": {
+    "s_9cb006b030f5fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04ff8d518ffe893PX6qqInJ9Ve",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

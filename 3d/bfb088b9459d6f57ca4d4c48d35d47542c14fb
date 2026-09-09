@@ -1,0 +1,22 @@
+internal/services/zero_trust_device_custom_profile/schema.go
+  s_0eb764e4c2d4f5::t_7ac64db002f9fc 15
+  s_0eb764e4c2d4f5::t_92ce9f22ac59df 292-294
+internal/services/load_balancer_monitor/model.go
+  s_0eb764e4c2d4f5::t_05da31106c5bf2 17-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3dbfb088b9459d6f57ca4d4c48d35d47542c14fb",
+  "prompts": {},
+  "sessions": {
+    "s_0eb764e4c2d4f5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_055f0e367ffeqQk5Hrpf02YxXB",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

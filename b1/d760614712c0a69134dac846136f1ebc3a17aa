@@ -1,0 +1,28 @@
+docs/guides/version-5-upgrade.md
+  s_acf607039007cb::t_b91c1717cb66d7 459-465,1105-1111
+templates/guides/version-5-migration.md
+  s_acf607039007cb::t_53e950890be64a 1800-1806,1808
+  s_acf607039007cb::t_25fa78e1f1cc7d 1219-1226,1233-1326
+  s_acf607039007cb::t_57e2768ec9ea5b 1227-1232
+templates/guides/version-5-upgrade.md
+  s_acf607039007cb::t_ce07443cc6635e 1105-1111
+  s_acf607039007cb::t_127ad29fcfd6cb 459-465
+docs/guides/version-5-migration.md
+  s_acf607039007cb::t_b91c1717cb66d7 1219-1326,1800-1806,1808
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b1d760614712c0a69134dac846136f1ebc3a17aa",
+  "prompts": {},
+  "sessions": {
+    "s_acf607039007cb": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0984396deffeMMt4J7hk8e7LHH",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Sarah Sicard <ssicard@cloudflare.com>"
+    }
+  }
+}

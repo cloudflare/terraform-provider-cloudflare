@@ -1,0 +1,19 @@
+internal/services/mtls_certificate/resource.go
+  s_b08c188f1b3435::t_bc8417367152e8 1-238
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "7c07ff7b61286bea4b04263bba82e0c4a2d5b9c4",
+  "prompts": {},
+  "sessions": {
+    "s_b08c188f1b3435": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_06961b944ffennjiN5ZwhrBTEU",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

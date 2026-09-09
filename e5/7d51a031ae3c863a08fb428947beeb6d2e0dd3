@@ -1,0 +1,35 @@
+internal/services/zero_trust_access_policy/schema.go
+  s_2b2484d7f0649b::t_58b4ed1553e4f2 28
+  s_2b2484d7f0649b::t_02a9ad6184fb34 10,115,125
+internal/provider.go
+  s_2b2484d7f0649b::t_bec1de113fa804 395
+  s_2b2484d7f0649b::t_a0783cb74dd4df 215,290,387-394,396-404,978-979
+internal/services/api_shield/schema.go
+  s_2b2484d7f0649b::t_aacf0938d369b8 21
+internal/services/zero_trust_access_ai_controls_mcp_server/schema.go
+  s_2b2484d7f0649b::t_8663ddd1e32bc1 144-145
+internal/services/zero_trust_device_custom_profile/schema.go
+  s_2b2484d7f0649b::t_51b64abcdb3b47 10-11,16-17,21,67-124,150-176
+internal/services/zero_trust_device_default_profile/schema.go
+  s_2b2484d7f0649b::t_876a01e9aee340 10-11,16-17,21,51-102,128-154
+internal/services/zero_trust_dex_test/schema.go
+  s_2b2484d7f0649b::t_acc9f7b504e73a 12-14,23,66,69-70,73,77,83-86,91,100-102,105-107
+internal/services/zero_trust_dlp_entry/schema.go
+  s_2b2484d7f0649b::t_6e3e2ac80bdeb8 24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e57d51a031ae3c863a08fb428947beeb6d2e0dd3",
+  "prompts": {},
+  "sessions": {
+    "s_2b2484d7f0649b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_098f55189ffeA9XYaFfBNc1j26",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": null
+    }
+  }
+}

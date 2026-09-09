@@ -1,0 +1,37 @@
+internal/services/zero_trust_dlp_data_class/testdata/basic.tf
+  s_0eb764e4c2d4f5::t_886bc8b3eadd0d 1-42
+internal/services/workers_script/testdata/module_with_observability_traces.tf
+  s_0eb764e4c2d4f5::t_886bc8b3eadd0d 1-15
+internal/services/zero_trust_dlp_sensitivity_level/testdata/basic.tf
+  s_0eb764e4c2d4f5::t_886bc8b3eadd0d 1-12
+internal/services/zero_trust_dlp_data_tag_category/testdata/basic.tf
+  s_0eb764e4c2d4f5::t_886bc8b3eadd0d 1-5
+internal/services/origin_tls_compliance_modes/resource_test.go
+  s_0eb764e4c2d4f5::t_886bc8b3eadd0d 1-108
+internal/services/worker/testdata/observability_disabled_with_logs.tf
+  s_0eb764e4c2d4f5::t_886bc8b3eadd0d 1-13
+.github/ISSUE_TEMPLATE/feature_request.yml
+  s_0eb764e4c2d4f5::t_886bc8b3eadd0d 1-47
+internal/services/zero_trust_dlp_data_tag/testdata/basic.tf
+  s_0eb764e4c2d4f5::t_886bc8b3eadd0d 1-12
+internal/services/zero_trust_dlp_sensitivity_level_order/testdata/basic.tf
+  s_0eb764e4c2d4f5::t_886bc8b3eadd0d 1-38
+internal/services/zero_trust_dlp_sensitivity_group/testdata/basic.tf
+  s_0eb764e4c2d4f5::t_886bc8b3eadd0d 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "dd2e685121d64fc0ddaf8c3363476b0ccec69817",
+  "prompts": {},
+  "sessions": {
+    "s_0eb764e4c2d4f5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_055f0e367ffeqQk5Hrpf02YxXB",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

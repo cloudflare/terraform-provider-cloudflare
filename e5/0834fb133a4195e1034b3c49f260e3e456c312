@@ -1,0 +1,20 @@
+internal/services/email_routing_dns/resource_test.go
+  s_eb975af9a8a216::t_a0ab1e7e2195d1 173-174
+  s_eb975af9a8a216::t_2470a35c598e3e 4,6,8-9,22-44,54,58,62-77,79-168,172,175-311,314
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e50834fb133a4195e1034b3c49f260e3e456c312",
+  "prompts": {},
+  "sessions": {
+    "s_eb975af9a8a216": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f91bc0eabffe7Csy90MezloDwR",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}

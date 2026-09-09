@@ -1,0 +1,38 @@
+internal/services/zero_trust_access_ai_controls_mcp_portal/model.go
+  h_5f12c8df3da73f 7,42-43
+internal/services/turnstile_widget/model.go
+  h_5f12c8df3da73f 22-25,28-29
+internal/services/moq_relay/schema.go
+  h_5f12c8df3da73f 15,125,132
+internal/services/cloud_connector_rules/schema.go
+  h_5f12c8df3da73f 74
+internal/services/worker/schema.go
+  h_5f12c8df3da73f 185-186
+internal/services/oauth_client/schema.go
+  h_5f12c8df3da73f 15-16,27,116,136,142,153,159,170-172
+internal/services/workers_kv_namespace/data_source_model.go
+  h_5f12c8df3da73f 21
+internal/services/list_item/schema.go
+  h_5f12c8df3da73f 64
+internal/services/ai_search_instance/schema.go
+  h_5f12c8df3da73f 184-219
+internal/services/worker_version/schema.go
+  h_5f12c8df3da73f 386,472,802,819
+internal/services/turnstile_widget/schema.go
+  h_5f12c8df3da73f 111
+internal/services/turnstile_widget/data_source_model.go
+  h_5f12c8df3da73f 23,27,29
+internal/services/dls_prefix_binding/schema.go
+  h_5f12c8df3da73f 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e0562994bce8579a67ced3490986d529923c54cc",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
