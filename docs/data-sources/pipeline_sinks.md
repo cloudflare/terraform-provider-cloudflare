@@ -43,11 +43,11 @@ Read-Only:
 
 - `config` (Attributes) Defines the configuration of the R2 Sink. (see [below for nested schema](#nestedatt--result--config))
 - `created_at` (String)
-- `format` (Attributes) (see [below for nested schema](#nestedatt--result--format))
+- `format` (Attributes) Defines the output data format of a sink. (see [below for nested schema](#nestedatt--result--format))
 - `id` (String) Indicates a unique identifier for this sink.
 - `modified_at` (String)
 - `name` (String) Defines the name of the Sink.
-- `schema` (Attributes) (see [below for nested schema](#nestedatt--result--schema))
+- `schema` (Attributes) Defines the schema of the events in the data stream. (see [below for nested schema](#nestedatt--result--schema))
 - `type` (String) Specifies the type of sink.
 Available values: "r2", "r2_data_catalog".
 
@@ -101,7 +101,8 @@ Read-Only:
 
 Read-Only:
 
-- `compression` (String) Available values: "uncompressed", "snappy", "gzip", "zstd", "lz4".
+- `compression` (String) Specifies the compression applied to JSON sink output.
+Available values: "uncompressed", "gzip", "snappy", "zstd", "lz4".
 - `decimal_encoding` (String) Available values: "number", "string", "bytes".
 - `row_group_bytes` (Number)
 - `timestamp_format` (String) Available values: "rfc3339", "unix_millis".
@@ -115,7 +116,6 @@ Read-Only:
 Read-Only:
 
 - `fields` (Attributes List) (see [below for nested schema](#nestedatt--result--schema--fields))
-- `format` (Attributes) (see [below for nested schema](#nestedatt--result--schema--format))
 - `inferred` (Boolean)
 
 <a id="nestedatt--result--schema--fields"></a>
@@ -129,18 +129,5 @@ Read-Only:
 - `sql_name` (String)
 - `type` (String) Available values: "int32", "int64", "float32", "float64", "bool", "string", "binary", "timestamp", "json".
 - `unit` (String) Available values: "second", "millisecond", "microsecond", "nanosecond".
-
-
-<a id="nestedatt--result--schema--format"></a>
-### Nested Schema for `result.schema.format`
-
-Read-Only:
-
-- `compression` (String) Available values: "uncompressed", "snappy", "gzip", "zstd", "lz4".
-- `decimal_encoding` (String) Available values: "number", "string", "bytes".
-- `row_group_bytes` (Number)
-- `timestamp_format` (String) Available values: "rfc3339", "unix_millis".
-- `type` (String) Available values: "json", "parquet".
-- `unstructured` (Boolean)
 
 

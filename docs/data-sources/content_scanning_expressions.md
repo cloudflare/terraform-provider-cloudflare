@@ -40,7 +40,7 @@ data "cloudflare_content_scanning_expressions" "example_content_scanning_express
 
 Read-Only:
 
-- `id` (String) defines the unique ID for this custom scan expression.
-- `payload` (String) Defines the ruleset expression to use in matching content objects.
+- `id` (String) Defines the unique ID for this Content Scanning custom expression.
+- `payload` (String) Defines the custom content extraction expression used to reach content objects in the request.
 
 

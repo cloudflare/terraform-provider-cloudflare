@@ -19,6 +19,7 @@ Accepted Permissions
 resource "cloudflare_workers_kv_namespace" "example_workers_kv_namespace" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   title = "My Own Namespace"
+  jurisdiction = "eu"
 }
 ```
 
@@ -29,6 +30,11 @@ resource "cloudflare_workers_kv_namespace" "example_workers_kv_namespace" {
 
 - `account_id` (String) Identifier.
 - `title` (String) A human-readable string name for a Namespace.
+
+### Optional
+
+- `jurisdiction` (String) Specify the jurisdiction to restrict the KV namespace to durably store data within. Can only be set at namespace creation time.
+Available values: "eu", "fedramp", "us".
 
 ### Read-Only
 

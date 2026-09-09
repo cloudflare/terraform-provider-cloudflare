@@ -2,6 +2,30 @@
 
 set -e
 
+OPENAPI_SPEC_PATH=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --openapi-spec-path) OPENAPI_SPEC_PATH="$2"; shift 2 ;;
+    *) echo "Usage: $0 --openapi-spec-path <path|url>" >&2; exit 1 ;;
+  esac
+done
+
+if [ -z "$OPENAPI_SPEC_PATH" ]; then
+  echo "Error: --openapi-spec-path is required." >&2
+  echo "" >&2
+  echo "Usage: $0 --openapi-spec-path <path|url>" >&2
+  echo "" >&2
+  echo "Examples:" >&2
+  echo "  $0 --openapi-spec-path ../contrib/schemas/openapi.json" >&2
+  echo "  $0 --openapi-spec-path https://example.com/openapi.json" >&2
+  exit 1
+fi
+
+# Resolve relative file paths to absolute before cd changes the working directory.
+if [[ "$OPENAPI_SPEC_PATH" != http://* && "$OPENAPI_SPEC_PATH" != https://* ]]; then
+  OPENAPI_SPEC_PATH="$(realpath -- "$OPENAPI_SPEC_PATH")"
+fi
+
 cd -- "$(dirname -- "$0")/.."
 
 # update list item docs to account for custom code
@@ -9,20 +33,8 @@ cat << EOT > examples/resources/cloudflare_list_item/import.sh
 $ terraform import cloudflare_list_item.example '<account_id>/<list_id>/<item_id>'
 EOT
 
-OPENAPI_SPEC_URL=""
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    --openapi-spec) OPENAPI_SPEC_URL="$2"; shift 2 ;;
-    *) echo "Usage: $0 [--openapi-spec <url>]" >&2; exit 1 ;;
-  esac
-done
-
 echo "==> Generating zone setting IDs from OpenAPI spec"
-if [ -n "$OPENAPI_SPEC_URL" ]; then
-  python3 "$(dirname "$0")/generate-zone-setting-ids" "$OPENAPI_SPEC_URL"
-else
-  python3 "$(dirname "$0")/generate-zone-setting-ids"
-fi
+python3 "$(dirname "$0")/generate-zone-setting-ids" "$OPENAPI_SPEC_PATH"
 # Mark the necessary Go modules as private to avoid Go's proxy
 export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/cloudflare/cloudflare-go,github.com/gitlab.cfdata.org/cloudflare/sdks/cloudflare-go"
 
