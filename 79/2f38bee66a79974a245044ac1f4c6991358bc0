@@ -1,0 +1,41 @@
+internal/services/magic_wan_ipsec_tunnel/custom_schema.go
+  s_f2bfc49fb94775::t_fd638397bcf942 87-94
+internal/services/magic_wan_gre_tunnel/custom_schema.go
+  s_f2bfc49fb94775::t_fd638397bcf942 60-67
+internal/services/magic_wan_gre_tunnel/model.go
+  s_f2bfc49fb94775::t_a7e583075c5bbe 48,50,51
+  s_f2bfc49fb94775::t_ae772e7f860a58 148,150,151
+  s_f2bfc49fb94775::t_0870ef344f8936 98,100,101
+internal/services/magic_wan_ipsec_tunnel/data_source_model.go
+  s_f2bfc49fb94775::t_813c2d921a3384 56,58,59
+internal/services/magic_wan_ipsec_tunnel/data_source_schema.go
+  s_f2bfc49fb94775::t_65d5cff6d9ba4c 101-108
+internal/services/magic_wan_gre_tunnel/data_source_model.go
+  s_f2bfc49fb94775::t_050ee0ba2ec9ab 54,56,57
+internal/services/magic_wan_gre_tunnel/schema.go
+  s_f2bfc49fb94775::t_fd638397bcf942 75-82,307-314,505-512
+internal/services/magic_wan_gre_tunnel/data_source_schema.go
+  s_f2bfc49fb94775::t_65d5cff6d9ba4c 101-108
+internal/services/magic_wan_ipsec_tunnel/schema.go
+  s_f2bfc49fb94775::t_fd638397bcf942 103-110,317-324,536-543
+internal/services/magic_wan_ipsec_tunnel/model.go
+  s_f2bfc49fb94775::t_976906be2e86c3 51,53,54
+  s_f2bfc49fb94775::t_3b3e775303619d 107,109,110
+  s_f2bfc49fb94775::t_91d78823a3bb3d 167,169,170
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "792f38bee66a79974a245044ac1f4c6991358bc0",
+  "prompts": {},
+  "sessions": {
+    "s_f2bfc49fb94775": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f7a977ce4ffeTzyipthrB16PoY",
+        "model": "@cf/moonshotai/kimi-k2.7-code"
+      },
+      "human_author": "Ryan Standt <rstandt@cloudflare.com>"
+    }
+  }
+}
