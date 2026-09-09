@@ -1,0 +1,83 @@
+docs/data-sources/r2_bucket.md
+  s_43f9ac7963ea59::t_7f949c0da08850 31-32
+docs/data-sources/r2_bucket_cors.md
+  s_43f9ac7963ea59::t_57b1708134bd2d 29-33
+docs/data-sources/r2_bucket_event_notification.md
+  s_43f9ac7963ea59::t_7a4ac953a9e1df 35-39
+docs/data-sources/r2_bucket_lifecycle.md
+  s_43f9ac7963ea59::t_808a3497e66c58 29-33
+docs/data-sources/r2_bucket_lock.md
+  s_43f9ac7963ea59::t_6242c231e98a27 29-33
+docs/data-sources/r2_bucket_sippy.md
+  s_43f9ac7963ea59::t_d1520ab19305a8 29-33
+docs/data-sources/r2_custom_domain.md
+  s_43f9ac7963ea59::t_52a4c52f9966df 35-39
+docs/data-sources/worker_version.md
+  s_43f9ac7963ea59::t_983b74432119f4 143
+docs/data-sources/worker_versions.md
+  s_43f9ac7963ea59::t_f72b84a4eb48a9 146
+docs/resources/worker_version.md
+  s_43f9ac7963ea59::t_1a34b7026c35df 236
+docs/resources/workers_script.md
+  s_43f9ac7963ea59::t_0dd9b96147c07f 269
+internal/services/r2_bucket/data_source_model.go
+  s_a072aef1bddd7d::t_461febba0d8c07 23,33-35
+internal/services/r2_bucket/data_source_schema.go
+  s_a072aef1bddd7d::t_4129e1132587e0 37
+internal/services/r2_bucket_cors/data_source_schema.go
+  s_a072aef1bddd7d::t_79afec3e2f3260 30-41
+internal/services/r2_bucket_cors/schema.go
+  s_a072aef1bddd7d::t_8cfa7850126333 45
+internal/services/r2_bucket_event_notification/data_source_schema.go
+  s_a072aef1bddd7d::t_add21f918b4fb7 37-48
+internal/services/r2_bucket_event_notification/schema.go
+  s_a072aef1bddd7d::t_01fff2cbaa965e 52
+internal/services/r2_bucket_lifecycle/data_source_schema.go
+  s_a072aef1bddd7d::t_c890481317da71 29-40
+internal/services/r2_bucket_lifecycle/schema.go
+  s_a072aef1bddd7d::t_01c730867defe5 44
+internal/services/r2_bucket_lock/data_source_schema.go
+  s_a072aef1bddd7d::t_7e6e9237cf4c0f 29-40
+internal/services/r2_bucket_lock/schema.go
+  s_a072aef1bddd7d::t_f4f2addf49b53f 44
+internal/services/r2_bucket_sippy/data_source_schema.go
+  s_a072aef1bddd7d::t_2e2bf70e62a1f6 28-39
+internal/services/r2_bucket_sippy/schema.go
+  s_a072aef1bddd7d::t_23a9e35e8e503e 49
+internal/services/r2_custom_domain/data_source_schema.go
+  s_a072aef1bddd7d::t_2846e74497d0d0 36-47
+internal/services/r2_custom_domain/schema.go
+  s_a072aef1bddd7d::t_88ad56433c3342 52
+internal/services/r2_managed_domain/schema.go
+  s_a072aef1bddd7d::t_3a23a2545e9966 43
+internal/services/worker_version/data_source_schema.go
+  s_a072aef1bddd7d::t_a111e574551afa 369,376
+internal/services/worker_version/schema.go
+  s_a072aef1bddd7d::t_e071fa91404fc0 674,681
+internal/services/workers_script/schema.go
+  s_a072aef1bddd7d::t_2715d97d72f1fd 423,430
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8f14e0891b4314956201a52b1a889f24aefd477f",
+  "prompts": {},
+  "sessions": {
+    "s_43f9ac7963ea59": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa2863026ffecVDMlkAqe5u5a2",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Riccardo Di Maio <rdm@cloudflare.com>"
+    },
+    "s_a072aef1bddd7d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa287b03bffepBW0taY9Lo2rm4",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Riccardo Di Maio <rdm@cloudflare.com>"
+    }
+  }
+}
