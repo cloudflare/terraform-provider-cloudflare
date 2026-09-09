@@ -1,0 +1,27 @@
+internal/services/magic_wan_gre_tunnel/schema.go
+  s_f2bfc49fb94775::t_e2b25cb416906e 18
+  s_f2bfc49fb94775::t_f45f59f88404db 13,67,69
+internal/services/magic_wan_gre_tunnel/model.go
+  s_f2bfc49fb94775::t_fbd8c72a2ffec2 50
+internal/services/magic_wan_ipsec_tunnel/model.go
+  s_f2bfc49fb94775::t_870d4e9a41ca16 53
+internal/services/magic_wan_ipsec_tunnel/schema.go
+  s_f2bfc49fb94775::t_e1c36cca584f20 17
+  s_f2bfc49fb94775::t_f45f59f88404db 13,95,97
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9cb4416b385f8f36905c655761ee7d53efd64d16",
+  "prompts": {},
+  "sessions": {
+    "s_f2bfc49fb94775": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f7a977ce4ffeTzyipthrB16PoY",
+        "model": "@cf/moonshotai/kimi-k2.7-code"
+      },
+      "human_author": null
+    }
+  }
+}
