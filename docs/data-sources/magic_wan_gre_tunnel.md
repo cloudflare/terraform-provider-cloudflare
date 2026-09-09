@@ -67,7 +67,9 @@ Read-Only:
 Read-Only:
 
 - `customer_asn` (Number) ASN used on the customer end of the BGP session
+- `export_filter_id` (String) UUID of the BGP filter profile to apply to routes advertised by Cloudflare.
 - `extra_prefixes` (List of String) Prefixes in this list will be advertised to the customer device, in addition to the routes in the Magic routing table.
+- `import_filter_id` (String) UUID of the BGP filter profile to apply to routes advertised to Cloudflare.
 - `md5_key` (String) MD5 key to use for session authentication.
 
 Note that *this is not a security measure*. MD5 is not a valid security mechanism, and the

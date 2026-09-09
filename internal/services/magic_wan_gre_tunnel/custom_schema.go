@@ -57,6 +57,14 @@ func customResourceSchema(ctx context.Context) schema.Schema {
 						Description: "MD5 key to use for session authentication.\n\nNote that *this is not a security measure*. MD5 is not a valid security mechanism, and the\nkey is not treated as a secret value. This is *only* supported for preventing\nmisconfiguration, not for defending against malicious attacks.\n\nThe MD5 key, if set, must be of non-zero length and consist only of the following types of\ncharacter:\n\n* ASCII alphanumerics: `[a-zA-Z0-9]`\n* Special characters in the set `'!@#$%^&*()+[]{}<>/.,;:_-~`= \\|`\n\nIn other words, MD5 keys may contain any printable ASCII character aside from newline (0x0A),\nquotation mark (`\"`), vertical tab (0x0B), carriage return (0x0D), tab (0x09), form feed\n(0x0C), and the question mark (`?`). Requests specifying an MD5 key with one or more of\nthese disallowed characters will be rejected.",
 						Optional:    true,
 					},
+					"import_filter_id": schema.StringAttribute{
+						Description: "UUID of the BGP filter profile to apply to routes advertised to Cloudflare.",
+						Optional:    true,
+					},
+					"export_filter_id": schema.StringAttribute{
+						Description: "UUID of the BGP filter profile to apply to routes advertised by Cloudflare.",
+						Optional:    true,
+					},
 				},
 			},
 			"cloudflare_gre_endpoint": schema.StringAttribute{
