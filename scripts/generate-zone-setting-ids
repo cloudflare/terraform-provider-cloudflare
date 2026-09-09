@@ -6,7 +6,7 @@ a markdown table into Terraform documentation templates.
 Usage:
     ./scripts/generate-zone-setting-ids <PATH_OR_URL>
 
-The argument may be a local file path or an https:// URL.
+The argument may be a local file path or an http(s):// URL.
 
 The script looks for template files containing the markers:
     <!-- BEGIN_ZONE_SETTING_IDS -->
