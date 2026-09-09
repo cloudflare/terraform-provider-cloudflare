@@ -35,12 +35,12 @@ data "cloudflare_pipeline_stream" "example_pipeline_stream" {
 
 - `created_at` (String)
 - `endpoint` (String) Indicates the endpoint URL of this stream.
-- `format` (Attributes) (see [below for nested schema](#nestedatt--format))
+- `format` (Attributes) Defines the data format of the events. (see [below for nested schema](#nestedatt--format))
 - `http` (Attributes) (see [below for nested schema](#nestedatt--http))
 - `id` (String) Specifies the public ID of the stream.
 - `modified_at` (String)
 - `name` (String) Indicates the name of the Stream.
-- `schema` (Attributes) (see [below for nested schema](#nestedatt--schema))
+- `schema` (Attributes) Defines the schema of the events in the data stream. (see [below for nested schema](#nestedatt--schema))
 - `version` (Number) Indicates the current version of this stream.
 - `worker_binding` (Attributes) (see [below for nested schema](#nestedatt--worker_binding))
 
@@ -90,7 +90,6 @@ Read-Only:
 Read-Only:
 
 - `fields` (Attributes List) (see [below for nested schema](#nestedatt--schema--fields))
-- `format` (Attributes) (see [below for nested schema](#nestedatt--schema--format))
 - `inferred` (Boolean)
 
 <a id="nestedatt--schema--fields"></a>
@@ -104,19 +103,6 @@ Read-Only:
 - `sql_name` (String)
 - `type` (String) Available values: "int32", "int64", "float32", "float64", "bool", "string", "binary", "timestamp", "json".
 - `unit` (String) Available values: "second", "millisecond", "microsecond", "nanosecond".
-
-
-<a id="nestedatt--schema--format"></a>
-### Nested Schema for `schema.format`
-
-Read-Only:
-
-- `compression` (String) Available values: "uncompressed", "snappy", "gzip", "zstd", "lz4".
-- `decimal_encoding` (String) Available values: "number", "string", "bytes".
-- `row_group_bytes` (Number)
-- `timestamp_format` (String) Available values: "rfc3339", "unix_millis".
-- `type` (String) Available values: "json", "parquet".
-- `unstructured` (Boolean)
 
 
 

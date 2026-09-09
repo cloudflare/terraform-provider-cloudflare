@@ -32,7 +32,7 @@ data "cloudflare_share_resources" "example_share_resources" {
 
 - `max_items` (Number) Max items to fetch, default: 1000
 - `resource_type` (String) Filter share resources by resource_type.
-Available values: "custom-ruleset", "gateway-policy", "gateway-destination-ip", "gateway-block-page-settings", "gateway-extended-email-matching", "idp-federation-grant".
+Available values: "custom-ruleset", "gateway-policy", "gateway-destination-ip", "gateway-block-page-settings", "gateway-extended-email-matching", "idp-federation-grant", "trust-grant".
 - `status` (String) Filter share resources by status.
 Available values: "active", "deleting", "deleted".
 
@@ -52,7 +52,7 @@ Read-Only:
 - `resource_account_id` (String) Account identifier.
 - `resource_id` (String) Share Resource identifier.
 - `resource_type` (String) Resource Type.
-Available values: "custom-ruleset", "gateway-policy", "gateway-destination-ip", "gateway-block-page-settings", "gateway-extended-email-matching", "idp-federation-grant".
+Available values: "custom-ruleset", "gateway-policy", "gateway-destination-ip", "gateway-block-page-settings", "gateway-extended-email-matching", "idp-federation-grant", "trust-grant".
 - `resource_version` (Number) Resource Version.
 - `status` (String) Resource Status.
 Available values: "active", "deleting", "deleted".

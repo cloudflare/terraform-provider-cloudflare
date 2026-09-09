@@ -51,12 +51,12 @@ resource "cloudflare_cloud_connector_rules" "example_cloud_connector_rules" {
 
 Optional:
 
+- `cloud_connector_rules_provider` (String) Cloud Provider type
+Available values: "aws_s3", "cloudflare_r2", "gcp_storage", "azure_storage", "oci_storage".
 - `description` (String)
 - `enabled` (Boolean)
 - `expression` (String)
 - `parameters` (Attributes) Parameters of Cloud Connector Rule (see [below for nested schema](#nestedatt--rules--parameters))
-- `provider` (String) Cloud Provider type
-Available values: "aws_s3", "cloudflare_r2", "gcp_storage", "azure_storage", "oci_storage".
 
 Read-Only:
 

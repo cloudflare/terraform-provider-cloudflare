@@ -13,19 +13,31 @@ Accepted Permissions
 - `Images Read`
 - `Images Write`
 
+~> Set either `file` (base64-encoded image data, e.g. from
+  [`filebase64`](https://developer.hashicorp.com/terraform/language/functions/filebase64))
+  or `url` (fetched server-side), not both.
+
+~> `require_signed_urls = true` is rejected for images with a custom `id` (API
+  error 5410). Since `id` is required here, leave it unset or `false`.
+
 ## Example Usage
 
 ```terraform
+# Upload from a local file.
 resource "cloudflare_image" "example_image" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  id = "id"
-  creator = "creator"
-  file = "Example data"
-  metadata = {
+  id         = "my-image"
+  file       = filebase64("${path.module}/logo.png")
+  metadata = jsonencode({
+    source = "terraform"
+  })
+}
 
-  }
-  require_signed_urls = true
-  url = "https://example.com/path/to/logo.png"
+# Alternatively, fetch from a URL server-side.
+resource "cloudflare_image" "example_image_from_url" {
+  account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  id         = "my-image-from-url"
+  url        = "https://example.com/path/to/logo.png"
 }
 ```
 

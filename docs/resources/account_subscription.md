@@ -17,7 +17,7 @@ Accepted Permissions
 
 ```terraform
 resource "cloudflare_account_subscription" "example_account_subscription" {
-  zone_id = "zone_id"
+  account_id = "account_id"
   frequency = "monthly"
   rate_plan = {
     id = "free"

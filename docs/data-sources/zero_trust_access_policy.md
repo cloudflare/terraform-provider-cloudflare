@@ -170,6 +170,7 @@ Read-Only:
 
 Read-Only:
 
+- `account_id` (String) The ID of the account that owns the device posture integration.
 - `integration_uid` (String) The ID of a device posture integration.
 
 
@@ -411,6 +412,7 @@ Read-Only:
 
 Read-Only:
 
+- `account_id` (String) The ID of the account that owns the device posture integration.
 - `integration_uid` (String) The ID of a device posture integration.
 
 
@@ -662,6 +664,7 @@ Read-Only:
 
 Read-Only:
 
+- `account_id` (String) The ID of the account that owns the device posture integration.
 - `integration_uid` (String) The ID of a device posture integration.
 
 

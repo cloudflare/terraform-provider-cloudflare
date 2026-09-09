@@ -136,11 +136,13 @@ Read-Only:
 - `format` (String) Data format of the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#format).
 Available values: "raw", "pkcs8", "spki", "jwk".
 - `id` (String) Identifier of the D1 database to bind to.
+- `identity` (String) Enables Gateway identity for the binding. Requires network_id to be "cf1:network" and cannot be combined with tunnel_id.
+Available values: "runtime-email-alpha".
 - `index_name` (String) Name of the Vectorize index to bind to.
 - `instance_name` (String) The user-chosen instance name. Must exist at deploy time. The worker can search, chat, update, and manage items/jobs on this instance.
 - `json` (String) JSON data to use.
 - `jurisdiction` (String) The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.
-Available values: "eu", "fedramp", "fedramp-high".
+Available values: "eu", "fedramp", "fedramp-high", "us".
 - `key_base64` (String, Sensitive) Base64-encoded key data. Required if `format` is "raw", "pkcs8", or "spki".
 - `key_jwk` (String, Sensitive) Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is "jwk".
 - `name` (String) A JavaScript variable name for the binding.

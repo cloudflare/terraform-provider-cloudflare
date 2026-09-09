@@ -119,6 +119,7 @@ in the hierarchy.
 Read-Only:
 
 - `account_creation` (String)
+- `account_creation_applies_tenant_defaults` (String)
 - `account_deletion` (String)
 - `account_migration` (String)
 - `account_mobility` (String)

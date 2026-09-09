@@ -43,12 +43,12 @@ Read-Only:
 
 - `created_at` (String)
 - `endpoint` (String) Indicates the endpoint URL of this stream.
-- `format` (Attributes) (see [below for nested schema](#nestedatt--result--format))
+- `format` (Attributes) Defines the data format of the events. (see [below for nested schema](#nestedatt--result--format))
 - `http` (Attributes) (see [below for nested schema](#nestedatt--result--http))
 - `id` (String) Indicates a unique identifier for this stream.
 - `modified_at` (String)
 - `name` (String) Indicates the name of the Stream.
-- `schema` (Attributes) (see [below for nested schema](#nestedatt--result--schema))
+- `schema` (Attributes) Defines the schema of the events in the data stream. (see [below for nested schema](#nestedatt--result--schema))
 - `version` (Number) Indicates the current version of this stream.
 - `worker_binding` (Attributes) (see [below for nested schema](#nestedatt--result--worker_binding))
 
@@ -89,7 +89,6 @@ Read-Only:
 Read-Only:
 
 - `fields` (Attributes List) (see [below for nested schema](#nestedatt--result--schema--fields))
-- `format` (Attributes) (see [below for nested schema](#nestedatt--result--schema--format))
 - `inferred` (Boolean)
 
 <a id="nestedatt--result--schema--fields"></a>
@@ -103,19 +102,6 @@ Read-Only:
 - `sql_name` (String)
 - `type` (String) Available values: "int32", "int64", "float32", "float64", "bool", "string", "binary", "timestamp", "json".
 - `unit` (String) Available values: "second", "millisecond", "microsecond", "nanosecond".
-
-
-<a id="nestedatt--result--schema--format"></a>
-### Nested Schema for `result.schema.format`
-
-Read-Only:
-
-- `compression` (String) Available values: "uncompressed", "snappy", "gzip", "zstd", "lz4".
-- `decimal_encoding` (String) Available values: "number", "string", "bytes".
-- `row_group_bytes` (Number)
-- `timestamp_format` (String) Available values: "rfc3339", "unix_millis".
-- `type` (String) Available values: "json", "parquet".
-- `unstructured` (Boolean)
 
 
 

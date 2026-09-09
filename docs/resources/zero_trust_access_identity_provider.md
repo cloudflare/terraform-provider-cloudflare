@@ -93,9 +93,14 @@ To enable encryption:
 3. Configure the public certificate in your external Identity Provider
 
 Note: Requires `saml_certificate_set_id` to be set when `true`.
+- `force_authn` (Boolean) Asks the IdP to reauthenticate the user for each SAML authentication request.
 - `header_attributes` (Attributes List) Add a list of attribute names that will be returned in the response header from the Access callback. (see [below for nested schema](#nestedatt--config--header_attributes))
 - `idp_public_certs` (List of String) X509 certificate to verify the signature in the SAML authentication response
 - `issuer_url` (String) IdP Entity ID or Issuer URL
+- `max_sso_url_length` (Number) The maximum URL length the IdP accepts for the SSO redirect URL.
+When the constructed SSO URL would exceed this length, the RelayState
+is stored server-side and a short nonce is passed to the IdP instead.
+Set this if your IdP enforces a URL length limit.
 - `okta_account` (String) Your okta account url
 - `onelogin_account` (String) Your OneLogin account url
 - `ping_env_id` (String) Your PingOne environment identifier

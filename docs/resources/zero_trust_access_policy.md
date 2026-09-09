@@ -215,6 +215,10 @@ Required:
 
 - `integration_uid` (String) The ID of a device posture integration.
 
+Optional:
+
+- `account_id` (String) The ID of the account that owns the device posture integration.
+
 
 <a id="nestedatt--exclude--email"></a>
 ### Nested Schema for `exclude.email`
@@ -458,6 +462,10 @@ Required:
 Required:
 
 - `integration_uid` (String) The ID of a device posture integration.
+
+Optional:
+
+- `account_id` (String) The ID of the account that owns the device posture integration.
 
 
 <a id="nestedatt--include--email"></a>
@@ -712,6 +720,10 @@ Required:
 Required:
 
 - `integration_uid` (String) The ID of a device posture integration.
+
+Optional:
+
+- `account_id` (String) The ID of the account that owns the device posture integration.
 
 
 <a id="nestedatt--require--email"></a>

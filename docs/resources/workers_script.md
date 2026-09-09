@@ -53,7 +53,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
       enabled = true
       cross_version_cache = true
     }
-    compatibility_date = "2021-01-01"
+    compatibility_date = "2021-01-01T00:00:00Z"
     compatibility_flags = ["nodejs_compat"]
     exports = {
       Admin = {
@@ -113,6 +113,7 @@ resource "cloudflare_workers_script" "example_workers_script" {
         head_sampling_rate = 0.1
         persist = true
       }
+      redact_query_string = false
       traces = {
         destinations = ["cloudflare"]
         enabled = true
