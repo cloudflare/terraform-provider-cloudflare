@@ -21,6 +21,7 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustResourceLibraryApplicat
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Description: "Returns the application ID.",
