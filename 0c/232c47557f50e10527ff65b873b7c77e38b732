@@ -1,0 +1,39 @@
+internal/services/magic_wan_gre_tunnel/model.go
+  s_f2bfc49fb94775::t_fbd8c72a2ffec2 50
+internal/services/magic_wan_gre_tunnel/schema.go
+  s_f2bfc49fb94775::t_f45f59f88404db 13,67,69
+  s_f2bfc49fb94775::t_e2b25cb416906e 18
+internal/services/magic_wan_gre_tunnel/resource.go
+  s_f2bfc49fb94775::t_651c4c0d33e153 122-124
+  s_f2bfc49fb94775::t_f5e1d086323dce 165-175,178
+  s_f2bfc49fb94775::t_1afa9d24062959 147-150
+  s_f2bfc49fb94775::t_92026edb3a9055 280-285
+  s_f2bfc49fb94775::t_db4c0ff3ae1ed3 202-209
+internal/services/magic_wan_ipsec_tunnel/model.go
+  s_f2bfc49fb94775::t_870d4e9a41ca16 53
+internal/services/magic_wan_ipsec_tunnel/schema.go
+  s_f2bfc49fb94775::t_e1c36cca584f20 17
+  s_f2bfc49fb94775::t_f45f59f88404db 13,95,97
+internal/services/magic_wan_ipsec_tunnel/resource.go
+  s_f2bfc49fb94775::t_ae010857e05be3 165-175,178
+  s_f2bfc49fb94775::t_bfae54656eb2eb 202-209
+  s_f2bfc49fb94775::t_027b1e19315561 280-285
+  s_f2bfc49fb94775::t_45fc06808fc130 122-124
+  s_f2bfc49fb94775::t_e3afff7d2dcb17 147-150
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0c232c47557f50e10527ff65b873b7c77e38b732",
+  "prompts": {},
+  "sessions": {
+    "s_f2bfc49fb94775": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f7a977ce4ffeTzyipthrB16PoY",
+        "model": "@cf/moonshotai/kimi-k2.7-code"
+      },
+      "human_author": null
+    }
+  }
+}
