@@ -29,8 +29,13 @@ func normalizeDynamicRoutingResponse(raw []byte) ([]byte, error) {
 			hasElements = false
 		} else {
 			var elements []json.RawMessage
-			if err := json.Unmarshal(elementsRaw, &elements); err == nil && elements != nil && len(elements) == 0 {
+			if err := json.Unmarshal(elementsRaw, &elements); err != nil || elements == nil {
+				return raw, nil
+			}
+			if len(elements) == 0 {
 				hasElements = false
+			} else if !isDynamicRoutingGraph(elements) {
+				return raw, nil
 			}
 		}
 	}

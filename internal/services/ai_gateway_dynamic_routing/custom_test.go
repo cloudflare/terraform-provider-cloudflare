@@ -243,6 +243,8 @@ func TestNormalizeDynamicRoutingResponse_PreservesUnsupportedPayloads(t *testing
 		`{"result":{"version":{"data":[1]}},"success":true}`,
 		`{"result":{"version":{"data":[{}]}},"success":true}`,
 		`{"result":{"elements":[],"version":{"data":[{}]}},"success":true}`,
+		`{"result":{"elements":{},"version":{"data":[{"id":"start","outputs":{},"type":"end"}]}},"success":true}`,
+		`{"result":{"elements":[null],"version":{"data":[{"id":"start","outputs":{},"type":"end"}]}},"success":true}`,
 		`{"result":`,
 	}
 
