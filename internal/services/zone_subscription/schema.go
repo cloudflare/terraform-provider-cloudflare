@@ -11,8 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -81,34 +79,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"currency": schema.StringAttribute{
-						Description:   "The currency applied to the rate plan subscription.",
-						Computed:      true,
-						Optional:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+						Description: "The currency applied to the rate plan subscription.",
+						Computed:    true,
 					},
 					"externally_managed": schema.BoolAttribute{
-						Description:   "Whether this rate plan is managed externally from Cloudflare.",
-						Computed:      true,
-						Optional:      true,
-						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
+						Description: "Whether this rate plan is managed externally from Cloudflare.",
+						Computed:    true,
 					},
 					"is_contract": schema.BoolAttribute{
-						Description:   "Whether a rate plan is enterprise-based (or newly adopted term contract).",
-						Computed:      true,
-						Optional:      true,
-						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
+						Description: "Whether a rate plan is enterprise-based (or newly adopted term contract).",
+						Computed:    true,
 					},
 					"public_name": schema.StringAttribute{
-						Description:   "The full name of the rate plan.",
-						Computed:      true,
-						Optional:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+						Description: "The full name of the rate plan.",
+						Computed:    true,
 					},
 					"scope": schema.StringAttribute{
-						Description:   "The scope that this rate plan applies to.",
-						Computed:      true,
-						Optional:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+						Description: "The scope that this rate plan applies to.",
+						Computed:    true,
+						Optional:    true,
 					},
 					"sets": schema.ListAttribute{
 						Description: "The list of sets this rate plan applies to. Returns array of strings.",
@@ -117,7 +106,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						ElementType: types.StringType,
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"currency": schema.StringAttribute{
 				Description: "The monetary unit in which pricing information is displayed.",
