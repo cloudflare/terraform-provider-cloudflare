@@ -66,9 +66,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"bot_preference_sync_enabled": schema.BoolAttribute{
 				Description: "Enable Bot Preference Sync for this zone. When enabled, Cloudflare can serve robots.txt content derived from the zone's AI Search, AI User, and AI Training preferences.",
-				Computed:    true,
 				Optional:    true,
-				Default:     booldefault.StaticBool(false),
 			},
 			"cf_robots_variant": schema.StringAttribute{
 				Description: "Specifies the Robots Access Control License variant to use.\nAvailable values: \"off\", \"policy_only\".",
