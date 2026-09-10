@@ -14,10 +14,10 @@ const (
 	staleFieldName = "mfa_ssh_piv_key_requirements"
 )
 
-func pivRequirements() *zero_trust_organization.ZeroTrustOrganizationMfaPivKeyRequirementsModel {
+func pivRequirements() *zero_trust_organization.ZeroTrustOrganizationMfaSSHPivKeyRequirementsModel {
 	keyTypes := []types.String{types.StringValue("ecdsa")}
 	keySizes := []types.Int64{types.Int64Value(256)}
-	return &zero_trust_organization.ZeroTrustOrganizationMfaPivKeyRequirementsModel{
+	return &zero_trust_organization.ZeroTrustOrganizationMfaSSHPivKeyRequirementsModel{
 		PinPolicy:         types.StringValue("once"),
 		RequireFipsDevice: types.BoolValue(true),
 		SSHKeySize:        &keySizes,
@@ -47,7 +47,7 @@ func TestMarshalJSONSendsPivKeyRequirements(t *testing.T) {
 	model := zero_trust_organization.ZeroTrustOrganizationModel{
 		Name:                  types.StringValue("Example"),
 		AuthDomain:            types.StringValue("example.cloudflareaccess.com"),
-		MfaPivKeyRequirements: pivRequirements(),
+		MfaSSHPivKeyRequirements: pivRequirements(),
 	}
 
 	raw, err := model.MarshalJSON()
@@ -64,7 +64,7 @@ func TestMarshalJSONForUpdateSendsPivKeyRequirements(t *testing.T) {
 	state := zero_trust_organization.ZeroTrustOrganizationModel{
 		Name:                  types.StringValue("Example"),
 		AuthDomain:            types.StringValue("example.cloudflareaccess.com"),
-		MfaPivKeyRequirements: pivRequirements(),
+		MfaSSHPivKeyRequirements: pivRequirements(),
 	}
 	plan := state
 	plan.Name = types.StringValue("Example Renamed")
@@ -99,7 +99,7 @@ func TestUnmarshalPopulatesPivKeyRequirements(t *testing.T) {
 		t.Fatalf("Unmarshal: %v", err)
 	}
 
-	got := env.Result.MfaPivKeyRequirements
+	got := env.Result.MfaSSHPivKeyRequirements
 	if got == nil {
 		t.Fatalf("%s was not decoded from the API response", apiFieldName)
 	}

@@ -34,7 +34,7 @@ type ZeroTrustOrganizationDataSourceModel struct {
 	CustomPages                            customfield.NestedObject[ZeroTrustOrganizationCustomPagesDataSourceModel]              `tfsdk:"custom_pages" json:"custom_pages,computed"`
 	LoginDesign                            customfield.NestedObject[ZeroTrustOrganizationLoginDesignDataSourceModel]              `tfsdk:"login_design" json:"login_design,computed"`
 	MfaConfig                              customfield.NestedObject[ZeroTrustOrganizationMfaConfigDataSourceModel]                `tfsdk:"mfa_config" json:"mfa_config,computed"`
-	MfaSSHPivKeyRequirements               customfield.NestedObject[ZeroTrustOrganizationMfaSSHPivKeyRequirementsDataSourceModel] `tfsdk:"mfa_ssh_piv_key_requirements" json:"mfa_ssh_piv_key_requirements,computed"`
+	MfaSSHPivKeyRequirements               customfield.NestedObject[ZeroTrustOrganizationMfaSSHPivKeyRequirementsDataSourceModel] `tfsdk:"mfa_ssh_piv_key_requirements" json:"mfa_piv_key_requirements,computed"`
 	WarpAuthNonBrowser401                  types.Bool                                                                             `tfsdk:"warp_auth_non_browser_401" json:"warp_auth_non_browser_401,computed"`
 }
 
