@@ -1,0 +1,22 @@
+internal/services/zone_subscription/resource_test.go
+  s_eb975af9a8a216::t_892205fc1b8bad 238
+  s_eb975af9a8a216::t_1e0e531f00e647 190
+  s_eb975af9a8a216::t_88ae32f3246376 40
+  s_eb975af9a8a216::t_ae35738c6fc172 89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b1ea124132924d9d588e1d98b04de5f357ad5938",
+  "prompts": {},
+  "sessions": {
+    "s_eb975af9a8a216": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f91bc0eabffe7Csy90MezloDwR",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
