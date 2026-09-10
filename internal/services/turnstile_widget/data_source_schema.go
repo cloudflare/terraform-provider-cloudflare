@@ -64,9 +64,35 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"deployed_via": schema.StringAttribute{
+				Description: "Origin that created this widget, recorded at creation time and\nimmutable afterward. Server-derived from the create request; not\nclient-settable. Omitted from the response for widgets created\nbefore this field existed.\nAvailable values: \"wrangler\", \"dashboard\", \"spin\", \"api\", \"unknown\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"wrangler",
+						"dashboard",
+						"spin",
+						"api",
+						"unknown",
+					),
+				},
+			},
 			"ephemeral_id": schema.BoolAttribute{
 				Description: "Return the Ephemeral ID in /siteverify (ENT only).",
 				Computed:    true,
+			},
+			"last_modified_via": schema.StringAttribute{
+				Description: "Origin of the most recent mutation (create, update, delete, or\nsecret rotation). Server-derived; not client-settable. Omitted for\nwidgets last mutated before this field existed.\nAvailable values: \"wrangler\", \"dashboard\", \"spin\", \"api\", \"unknown\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"wrangler",
+						"dashboard",
+						"spin",
+						"api",
+						"unknown",
+					),
+				},
 			},
 			"mode": schema.StringAttribute{
 				Description: "Widget Mode\nAvailable values: \"non-interactive\", \"invisible\", \"managed\".",
