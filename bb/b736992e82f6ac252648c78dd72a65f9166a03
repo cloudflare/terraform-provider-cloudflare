@@ -1,0 +1,23 @@
+internal/services/worker/model.go
+  s_eb975af9a8a216::t_bcaa384c1ff201 60
+internal/services/zero_trust_access_ai_controls_mcp_portal/schema.go
+  s_eb975af9a8a216::t_fdbd73e07db742 74,76
+  s_eb975af9a8a216::t_e33f87d5327814 85,87,91,93
+  s_eb975af9a8a216::t_7764db24de1c18 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "bbb736992e82f6ac252648c78dd72a65f9166a03",
+  "prompts": {},
+  "sessions": {
+    "s_eb975af9a8a216": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f91bc0eabffe7Csy90MezloDwR",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": null
+    }
+  }
+}
