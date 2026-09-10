@@ -1,0 +1,21 @@
+internal/services/email_security_block_sender/data_source_model.go
+  s_eb975af9a8a216::t_8c1947c9df9e7e 22
+internal/services/email_security_block_sender/list_data_source_model.go
+  s_eb975af9a8a216::t_8c1947c9df9e7e 21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "67aa3af3b34bcd467e23b11f2fa83ab89b55efa7",
+  "prompts": {},
+  "sessions": {
+    "s_eb975af9a8a216": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f91bc0eabffe7Csy90MezloDwR",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
