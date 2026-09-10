@@ -56,26 +56,32 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:            booldefault.StaticBool(false),
 			},
 			"ai_gateway_id": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"aisearch_model": schema.StringAttribute{
 				Description: "A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"chunk_size": schema.Int64Attribute{
+				Computed: true,
 				Optional: true,
 				Validators: []validator.Int64{
 					int64validator.AtLeast(64),
 				},
 			},
 			"embedding_model": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"reranking_model": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"rewrite_model": schema.StringAttribute{
 				Description: "A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"source": schema.StringAttribute{
