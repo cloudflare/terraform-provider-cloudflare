@@ -203,6 +203,7 @@ type TargetV5GeoModel struct {
 
 type TargetV5DevicePostureModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid"`
+	AccountID      types.String `tfsdk:"account_id"`
 }
 
 type TargetV5EmailDomainModel struct {
