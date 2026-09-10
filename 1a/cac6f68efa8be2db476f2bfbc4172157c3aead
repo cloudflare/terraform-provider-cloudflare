@@ -1,0 +1,46 @@
+internal/services/magic_wan_gre_tunnel/schema.go
+  s_f2bfc49fb94775::t_f45f59f88404db 13,67,69
+  s_f2bfc49fb94775::t_e2b25cb416906e 18
+internal/services/magic_wan_gre_tunnel/resource.go
+  s_f2bfc49fb94775::t_db4c0ff3ae1ed3 204-211
+  s_f2bfc49fb94775::t_92026edb3a9055 388-392
+  s_f2bfc49fb94775::t_b8a807c2ab8783 9
+  s_f2bfc49fb94775::t_d27f84c54bc6b0 394-398
+  s_f2bfc49fb94775::t_651c4c0d33e153 124-126
+  s_f2bfc49fb94775::t_f5e1d086323dce 167-177,180
+  s_f2bfc49fb94775::t_1afa9d24062959 149-152
+  s_f2bfc49fb94775::t_b1c728f5ca3e13 244-258,261,264,267,270,273,276,279,282,285,288,291,294,313,341-345
+  s_f2bfc49fb94775::t_1da9207380991b 212-215
+  s_f2bfc49fb94775::t_80cb13d43f3be9 18
+  s_f2bfc49fb94775::t_c9e2d479ee0a8d 259-260,262-263,265-266,268-269,271-272,274-275,277-278,280-281,283-284,286-287,289-290,292-293,295-312,314-340
+  s_f2bfc49fb94775::t_5b8cec9364c21f 393
+internal/services/magic_wan_gre_tunnel/model.go
+  s_f2bfc49fb94775::t_fbd8c72a2ffec2 50
+internal/services/magic_wan_ipsec_tunnel/model.go
+  s_f2bfc49fb94775::t_870d4e9a41ca16 53
+internal/services/magic_wan_ipsec_tunnel/resource.go
+  s_f2bfc49fb94775::t_e3afff7d2dcb17 147-150
+  s_f2bfc49fb94775::t_45fc06808fc130 122-124
+  s_f2bfc49fb94775::t_027b1e19315561 280-285
+  s_f2bfc49fb94775::t_ae010857e05be3 165-175,178
+  s_f2bfc49fb94775::t_bfae54656eb2eb 202-209
+internal/services/magic_wan_ipsec_tunnel/schema.go
+  s_f2bfc49fb94775::t_e1c36cca584f20 17
+  s_f2bfc49fb94775::t_f45f59f88404db 13,95,97
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1acac6f68efa8be2db476f2bfbc4172157c3aead",
+  "prompts": {},
+  "sessions": {
+    "s_f2bfc49fb94775": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f7a977ce4ffeTzyipthrB16PoY",
+        "model": "@cf/moonshotai/kimi-k2.7-code"
+      },
+      "human_author": null
+    }
+  }
+}
