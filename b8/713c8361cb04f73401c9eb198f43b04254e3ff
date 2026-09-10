@@ -1,0 +1,19 @@
+internal/services/r2_bucket/jurisdiction_test.go
+  s_43f9ac7963ea59::t_af7f5b54433936 40-44,63-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b8713c8361cb04f73401c9eb198f43b04254e3ff",
+  "prompts": {},
+  "sessions": {
+    "s_43f9ac7963ea59": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa2863026ffecVDMlkAqe5u5a2",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Riccardo Di Maio <rdm@cloudflare.com>"
+    }
+  }
+}
