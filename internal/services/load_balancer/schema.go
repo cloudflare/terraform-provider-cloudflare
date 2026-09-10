@@ -15,8 +15,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -166,7 +164,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     booldefault.StaticBool(false),
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"location_strategy": schema.SingleNestedAttribute{
 				Description: "Controls location-based steering for non-proxied requests. See `steering_policy` to learn how steering is affected.",
@@ -198,7 +195,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("proximity"),
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"random_steering": schema.SingleNestedAttribute{
 				Description: "Configures pool weights.\n- `steering_policy=\"random\"`: A random pool is selected with probability proportional to pool weights.\n- `steering_policy=\"least_outstanding_requests\"`: Use pool weights to scale each pool's outstanding requests.\n- `steering_policy=\"least_connections\"`: Use pool weights to scale each pool's open connections.",
@@ -221,7 +217,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						ElementType: types.Float64Type,
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"rules": schema.ListNestedAttribute{
 				Description: "BETA Field Not General Access: A list of rules for this load balancer to execute.",
@@ -483,7 +478,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 							},
-							PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 						},
 						"priority": schema.Int64Attribute{
 							Description: "The order in which rules should be executed in relation to each other. Lower values are executed first. Values do not need to be sequential. If no value is provided for any rule the array order of the rules field will be used to assign a priority.",
@@ -500,7 +494,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-				PlanModifiers: []planmodifier.List{listplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"session_affinity_attributes": schema.SingleNestedAttribute{
 				Description: "Configures attributes for session affinity.",
@@ -565,11 +558,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						// Default: stringdefault.StaticString("none"), // TODO: clean up schemas to remove this...or fix the service response
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"created_on": schema.StringAttribute{
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+				Computed: true,
 			},
 			"modified_on": schema.StringAttribute{
 				Computed: true,
