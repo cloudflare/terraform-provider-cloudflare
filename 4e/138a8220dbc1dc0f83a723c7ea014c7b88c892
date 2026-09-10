@@ -1,0 +1,20 @@
+CHANGELOG.md
+  s_eb975af9a8a216::t_431b9b2cf5024d 11-15,19-22,26-38
+  s_eb975af9a8a216::t_25e5c5179104fa 3-10,16-18,23-25,39-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4e138a8220dbc1dc0f83a723c7ea014c7b88c892",
+  "prompts": {},
+  "sessions": {
+    "s_eb975af9a8a216": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f91bc0eabffe7Csy90MezloDwR",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": null
+    }
+  }
+}
