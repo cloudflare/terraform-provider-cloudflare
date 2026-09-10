@@ -25,8 +25,13 @@ func normalizeDynamicRoutingResponse(raw []byte) ([]byte, error) {
 	elementsRaw, hasElements := result["elements"]
 	if hasElements {
 		elementsRaw = bytes.TrimSpace(elementsRaw)
-		if bytes.Equal(elementsRaw, []byte("null")) || bytes.Equal(elementsRaw, []byte("[]")) {
+		if bytes.Equal(elementsRaw, []byte("null")) {
 			hasElements = false
+		} else {
+			var elements []json.RawMessage
+			if err := json.Unmarshal(elementsRaw, &elements); err == nil && elements != nil && len(elements) == 0 {
+				hasElements = false
+			}
 		}
 	}
 

@@ -193,6 +193,12 @@ func TestNormalizeDynamicRoutingResponse(t *testing.T) {
 			wantElementID:    "start",
 			wantVersionData:  graph,
 		},
+		"whitespace empty elements with array version data": {
+			input:            fmt.Sprintf(`{"result":{"elements":[  ],"version":{"data":%s}},"success":true}`, graph),
+			wantElementCount: 1,
+			wantElementID:    "start",
+			wantVersionData:  graph,
+		},
 	}
 
 	for name, tt := range tests {
