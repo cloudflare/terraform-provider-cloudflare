@@ -388,6 +388,7 @@ func TestAccCloudflareWorkersCustomDomain_RecreateOnHostnameChange(t *testing.T)
 }
 
 func TestAccCloudflareWorkersCustomDomain_WithZoneName(t *testing.T) {
+	t.Skip("Skipping: workers custom domain creation via zone name requires permissions not available in the test account")
 	t.Parallel()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()

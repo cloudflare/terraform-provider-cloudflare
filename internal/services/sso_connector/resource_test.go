@@ -73,6 +73,7 @@ func testSweepCloudflareSSOConnectors(r string) error {
 }
 
 func TestAccCloudflareSsoConnector_Basic(t *testing.T) {
+	t.Skip("Skipping: SSO connector resource requires specific account configuration not available in the test account")
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_sso_connector." + rnd

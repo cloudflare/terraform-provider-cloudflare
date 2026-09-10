@@ -662,6 +662,7 @@ func TestAccCloudflarePageRule_CreateAfterManualDestroy(t *testing.T) {
 }
 
 func TestAccCloudflarePageRule_UpdatingZoneForcesNewResource(t *testing.T) {
+	t.Skip("Skipping: automatic_https_rewrites page rule action no longer accepted by the API")
 	var before, after cloudflare.PageRule
 	oldZoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	newZoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
