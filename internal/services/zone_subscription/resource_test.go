@@ -37,6 +37,7 @@ func testSweepCloudflareZoneSubscription(r string) error {
 }
 
 func TestAccCloudflareZoneSubscription_Basic(t *testing.T) {
+	t.Skip("Skipping: zone subscription changes require billing edit permissions not available in the test account")
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
 	resourceName := "cloudflare_zone_subscription." + rnd
@@ -85,6 +86,7 @@ func TestAccCloudflareZoneSubscription_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareZoneSubscriptionResource_WithPlanChange(t *testing.T) {
+	t.Skip("Skipping: zone subscription changes require billing edit permissions not available in the test account")
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
 	resourceName := "cloudflare_zone_subscription." + rnd
@@ -185,6 +187,7 @@ func TestAccCloudflareZoneSubscriptionResource_CreateZoneWithPlan_CUSTESC_57375(
 // https://github.com/cloudflare/terraform-provider-cloudflare/issues/6485
 // Tests that importing a zone subscription with frequency="not-applicable" doesn't cause drift
 func TestAccCloudflareZoneSubscriptionResource_ImportNoChanges_BILLSUB_247(t *testing.T) {
+	t.Skip("Skipping: zone subscription changes require billing edit permissions not available in the test account")
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
 	resourceName := "cloudflare_zone_subscription." + rnd
@@ -232,6 +235,7 @@ func TestAccCloudflareZoneSubscriptionResource_ImportNoChanges_BILLSUB_247(t *te
 // This documents the expected behavior for zones that don't support frequency configuration
 // The API accepts the value during create/update but returns "not-applicable" on read, causing drift
 func TestAccCloudflareZoneSubscriptionResource_FrequencyNotSupported(t *testing.T) {
+	t.Skip("Skipping: zone subscription changes require billing edit permissions not available in the test account")
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
 	resourceName := "cloudflare_zone_subscription." + rnd
