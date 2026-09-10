@@ -57,7 +57,7 @@ type WorkerObservabilityTracesModel struct {
 	Enabled           types.Bool                     `tfsdk:"enabled" json:"enabled,computed_optional"`
 	HeadSamplingRate  types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed_optional"`
 	Persist           types.Bool                     `tfsdk:"persist" json:"persist,computed_optional"`
-	PropagationPolicy types.String                   `tfsdk:"propagation_policy" json:"propagation_policy,optional"`
+	PropagationPolicy types.String                   `tfsdk:"propagation_policy" json:"propagation_policy,computed_optional"`
 }
 
 type WorkerSubdomainModel struct {
