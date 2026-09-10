@@ -1,5 +1,43 @@
 # Changelog
 
+## 5.25.0 (2026-09-10)
+
+Full Changelog: [v5.24.0...v5.25.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.24.0...v5.25.0)
+
+### Features
+
+#### New Resources and Data Sources
+
+* **cloudflare_email_security_allow_policy:** add resource and data sources for Cloud Email Security allow policies
+* **cloudflare_email_security_domain:** add resource and data sources for Cloud Email Security domains
+* **cloudflare_email_sending_subdomain:** add resource and data sources for email sending subdomains
+* **cloudflare_nel_setting:** add resource and data source for Network Error Logging zone settings
+* **cloudflare_spectrum_protocols:** add list data source for Spectrum protocols
+
+#### New Attributes
+
+* **ruleset:** add `origin_range_requests` to `set_cache_settings` action
+* **ruleset:** add dry-run validation during plan to surface configuration errors before apply
+* **ruleset:** emit warnings instead of errors for recoverable create failures
+* **workers_script:** add multipart file upload support
+
+### Bug Fixes
+
+* **ai_search_instance:** restore `Computed` on schema fields incorrectly marked optional-only after codegen update
+* **bot_management:** mark `bot_preference_sync_enabled` as optional-only; API does not return this field and `Computed` caused "unknown after apply" errors
+* **cloud_connector_rules:** correct `provider` attribute naming conflict; flatten data source model to single-rule structure
+* **email_security_block_sender:** mark `account_id` as required in data sources
+* **image:** fix create/update marshaling errors
+* **magic_transit_connector:** add missing `primary` and `site_id` fields; mark `account_id` as required in data sources
+* **registrar_domain:** mark `account_id` as required in list data source
+* **turnstile_widget:** preserve `domains` list order to prevent perpetual plan diff
+* **worker_version:** correct response binding order to prevent plan drift
+* **workers_script:** preserve service worker state across updates
+* **workers_script:** fix migration schema parity
+* **zero_trust_organization:** map `mfa_piv_key_requirements` to the correct API field
+* set schema `Version: 500` on new resources to enable correct state upgrade path
+
+
 ## 5.24.0 (2026-08-20)
 
 Full Changelog: [v5.23.0...v5.24.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.23.0...v5.24.0)
