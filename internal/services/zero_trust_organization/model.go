@@ -24,7 +24,7 @@ type ZeroTrustOrganizationModel struct {
 	CustomPages                            *ZeroTrustOrganizationCustomPagesModel              `tfsdk:"custom_pages" json:"custom_pages,optional"`
 	LoginDesign                            *ZeroTrustOrganizationLoginDesignModel              `tfsdk:"login_design" json:"login_design,optional"`
 	MfaConfig                              *ZeroTrustOrganizationMfaConfigModel                `tfsdk:"mfa_config" json:"mfa_config,optional"`
-	MfaSSHPivKeyRequirements               *ZeroTrustOrganizationMfaSSHPivKeyRequirementsModel `tfsdk:"mfa_ssh_piv_key_requirements" json:"mfa_piv_key_requirements,optional"`
+	MfaSSHPivKeyRequirements               *ZeroTrustOrganizationMfaSSHPivKeyRequirementsModel `tfsdk:"mfa_ssh_piv_key_requirements" json:"mfa_ssh_piv_key_requirements,optional"`
 	AllowAuthenticateViaWARP               types.Bool                                          `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp,computed_optional"`
 	AutoRedirectToIdentity                 types.Bool                                          `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed_optional"`
 	IsUIReadOnly                           types.Bool                                          `tfsdk:"is_ui_read_only" json:"is_ui_read_only,computed_optional"`

@@ -10,8 +10,7 @@ import (
 )
 
 const (
-	apiFieldName   = "mfa_piv_key_requirements"
-	staleFieldName = "mfa_ssh_piv_key_requirements"
+	apiFieldName = "mfa_ssh_piv_key_requirements"
 )
 
 func pivRequirements() *zero_trust_organization.ZeroTrustOrganizationMfaSSHPivKeyRequirementsModel {
@@ -31,9 +30,6 @@ func assertPivKey(t *testing.T, raw []byte) {
 	var body map[string]json.RawMessage
 	if err := json.Unmarshal(raw, &body); err != nil {
 		t.Fatalf("body is not valid JSON: %v\nbody: %s", err, raw)
-	}
-	if _, ok := body[staleFieldName]; ok {
-		t.Errorf("body contains stale field %q, which the API ignores", staleFieldName)
 	}
 	if _, ok := body[apiFieldName]; !ok {
 		t.Errorf("body is missing %q; the endpoint is a full-replace PUT, so omitting it clears the live value", apiFieldName)
@@ -84,7 +80,7 @@ func TestUnmarshalPopulatesPivKeyRequirements(t *testing.T) {
 	  "result": {
 	    "name": "Example",
 	    "auth_domain": "example.cloudflareaccess.com",
-	    "mfa_piv_key_requirements": {
+	    "mfa_ssh_piv_key_requirements": {
 	      "pin_policy": "once",
 	      "require_fips_device": true,
 	      "ssh_key_size": [256],

@@ -142,8 +142,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"mfa_piv_key_requirements": schema.SingleNestedAttribute{
-				Description: "Configures PIV key requirements for MFA using hardware security keys.",
+			"mfa_ssh_piv_key_requirements": schema.SingleNestedAttribute{
+				Description: "Configures SSH PIV key requirements for MFA using hardware security keys.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"pin_policy": schema.StringAttribute{
@@ -158,7 +158,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"require_fips_device": schema.BoolAttribute{
-						Description: "Requires the PIV key to be stored on a FIPS 140-2 Level 1 or higher validated device.",
+						Description: "Requires the SSH PIV key to be stored on a FIPS 140-2 Level 1 or higher validated device.",
 						Optional:    true,
 					},
 					"ssh_key_size": schema.ListAttribute{
