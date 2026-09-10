@@ -418,9 +418,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(true),
 			},
 			"created": schema.StringAttribute{
-				Computed:      true,
-				CustomType:    timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"modified": schema.StringAttribute{
 				Computed:   true,
