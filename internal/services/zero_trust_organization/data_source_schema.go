@@ -171,7 +171,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"mfa_piv_key_requirements": schema.SingleNestedAttribute{
 				Description: "Configures PIV key requirements for MFA using hardware security keys.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustOrganizationMfaPivKeyRequirementsDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustOrganizationMfaSSHPivKeyRequirementsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"pin_policy": schema.StringAttribute{
 						Description: "Defines when a PIN is required to use the SSH key. Valid values: `never` (no PIN required), `once` (PIN required once per session), `always` (PIN required for each use).\nAvailable values: \"never\", \"once\", \"always\".",
