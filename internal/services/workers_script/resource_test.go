@@ -1374,6 +1374,48 @@ func testAccCheckCloudflareWorkerScriptWithRatelimitBinding(rnd, accountID strin
 	return acctest.LoadTestCase("module_with_ratelimit.tf", rnd, accountID)
 }
 
+// TestAccCloudflareWorkerScript_WorkerLoaderBinding verifies that a worker_loader binding type
+// is accepted and applied correctly on cloudflare_workers_script.
+// This is a regression test for the missing "worker_loader" type in the schema validator.
+func TestAccCloudflareWorkerScript_WorkerLoaderBinding(t *testing.T) {
+	t.Parallel()
+
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := resourcePrefix + rnd
+	name := "cloudflare_workers_script." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareWorkerScriptWithWorkerLoaderBinding(resourceName, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("script_name"), knownvalue.StringExact(resourceName)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("name"), knownvalue.StringExact("LOADER")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("bindings").AtSliceIndex(0).AtMapKey("type"), knownvalue.StringExact("worker_loader")),
+				},
+			},
+			{
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"main_module", "startup_time_ms"},
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareWorkerScriptWithWorkerLoaderBinding(rnd, accountID string) string {
+	return acctest.LoadTestCase("module_with_worker_loader.tf", rnd, accountID)
+}
+
 // TestAccCloudflareWorkerScript_ObservabilityTraces is a regression test for
 // https://github.com/cloudflare/terraform-provider-cloudflare/issues/7177.
 // It verifies that the observability.traces block (including propagation_policy)
