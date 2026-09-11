@@ -144,16 +144,17 @@ jobs:
           URL=$(echo "$RELEASE" | jq -r '.html_url')
           AUTHOR=$(echo "$RELEASE" | jq -r '.author.login')
           BODY=$(echo "$RELEASE" | jq -r '.body' \
-            | sed 's/\r//' \
+            | tr -d '\r' \
             | sed 's/^## \(.*\)$/\*\1\*/' \
             | sed 's/^### \(.*\)$/\*\1\*/' \
+            | sed 's/\*\*\([^*]*\)\*\*/\*\1\*/' \
             | sed 's/^\* /• /' \
             | sed 's/^- /• /')
-          TEXT="🚀 *A new release was published:*
-          *${{ github.repository }}* ${TAG} — ${URL}
-          ${BODY}
-          Released by @${AUTHOR}"
-          jq -n --arg text "$TEXT" '{"text": $text}' \
+          printf '%s' "🚀 *A new release was published:*
+*${{ github.repository }}* ${TAG} — ${URL}
+${BODY}
+Released by @${AUTHOR}" \
+            | jq -Rs '{"text": .}' \
             | curl -s -X POST "$GCHAT_WEBHOOK" \
               -H 'Content-Type: application/json' \
               -d @-
