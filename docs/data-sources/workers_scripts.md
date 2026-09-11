@@ -152,6 +152,7 @@ Read-Only:
 - `enabled` (Boolean) Whether observability is enabled for the Worker.
 - `head_sampling_rate` (Number) The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.
 - `logs` (Attributes) Log settings for the Worker. (see [below for nested schema](#nestedatt--result--observability--logs))
+- `redact_query_string` (Boolean) Whether query strings are removed from request URLs in logs and traces.
 - `traces` (Attributes) Trace settings for the Worker. (see [below for nested schema](#nestedatt--result--observability--traces))
 
 <a id="nestedatt--result--observability--logs"></a>
@@ -175,7 +176,7 @@ Read-Only:
 - `enabled` (Boolean) Whether traces are enabled for the Worker.
 - `head_sampling_rate` (Number) The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.
 - `persist` (Boolean) Whether trace persistence is enabled for the Worker.
-- `propagation_policy` (String) Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. "authenticated" (default) honors inbound trace context only when accompanied by a valid trace auth token. "accept" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled.
+- `propagation_policy` (String) Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. "authenticated" honors inbound trace context only when accompanied by a valid trace auth token. "accept" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled. Returns null when the trace propagation feature is not enabled for the account.
 Available values: "authenticated", "accept".
 
 

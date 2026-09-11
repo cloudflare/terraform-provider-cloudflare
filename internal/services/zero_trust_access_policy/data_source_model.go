@@ -127,6 +127,7 @@ type ZeroTrustAccessPolicyExcludeGeoDataSourceModel struct {
 
 type ZeroTrustAccessPolicyExcludeDevicePostureDataSourceModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed"`
+	AccountID      types.String `tfsdk:"account_id" json:"account_id,computed"`
 }
 
 type ZeroTrustAccessPolicyExcludeEmailDomainDataSourceModel struct {
@@ -269,6 +270,7 @@ type ZeroTrustAccessPolicyIncludeGeoDataSourceModel struct {
 
 type ZeroTrustAccessPolicyIncludeDevicePostureDataSourceModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed"`
+	AccountID      types.String `tfsdk:"account_id" json:"account_id,computed"`
 }
 
 type ZeroTrustAccessPolicyIncludeEmailDomainDataSourceModel struct {
@@ -417,6 +419,7 @@ type ZeroTrustAccessPolicyRequireGeoDataSourceModel struct {
 
 type ZeroTrustAccessPolicyRequireDevicePostureDataSourceModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed"`
+	AccountID      types.String `tfsdk:"account_id" json:"account_id,computed"`
 }
 
 type ZeroTrustAccessPolicyRequireEmailDomainDataSourceModel struct {

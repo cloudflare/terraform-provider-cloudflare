@@ -63,9 +63,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(false),
 			},
 			"created_on": schema.StringAttribute{
-				Description: "Timestamp for the creation of the SSO connector",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "Timestamp for the creation of the SSO connector",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"updated_on": schema.StringAttribute{
 				Description: "Timestamp for the last update of the SSO connector",

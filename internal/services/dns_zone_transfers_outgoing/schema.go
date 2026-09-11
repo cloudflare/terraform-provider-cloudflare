@@ -50,8 +50,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"created_time": schema.StringAttribute{
-				Description: "The time for a specific event.",
-				Computed:    true,
+				Description:   "The time for a specific event.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"last_transferred_time": schema.StringAttribute{
 				Description: "The time for a specific event.",

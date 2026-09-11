@@ -138,9 +138,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_on": schema.StringAttribute{
-				Description: "Defines the creation time of the Hyperdrive configuration.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "Defines the creation time of the Hyperdrive configuration.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "Defines the last modified time of the Hyperdrive configuration.",

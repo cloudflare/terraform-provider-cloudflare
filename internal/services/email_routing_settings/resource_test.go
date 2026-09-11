@@ -49,8 +49,8 @@ func init() {
 			})
 			if err != nil {
 				tflog.Info(ctx, fmt.Sprintf("Note: DNS delete returned error (might be expected): %v", err))
-			} else if deletedRecords != nil && deletedRecords.Result != nil {
-				tflog.Info(ctx, fmt.Sprintf("Deleted %d email routing DNS records", len(deletedRecords.Result)))
+			} else if deletedRecords != nil {
+				tflog.Info(ctx, fmt.Sprintf("Deleted email routing DNS records for zone: %s", deletedRecords.Name))
 			}
 
 			// Also disable email routing if it's still enabled

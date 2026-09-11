@@ -281,12 +281,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"description": schema.StringAttribute{
-							Description: "A description of the DNS search suffix.",
-							Computed:    true,
-							Optional:    true,
+							Description:   "A description of the DNS search suffix.",
+							Computed:      true,
+							Optional:      true,
+							PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 						},
 					},
 				},
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"default": schema.BoolAttribute{
 				Description:   "Whether the policy is the default policy for an account.",

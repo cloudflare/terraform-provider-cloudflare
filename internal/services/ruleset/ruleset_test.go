@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v7"
@@ -340,6 +342,184 @@ func TestAccCloudflareRuleset_Name(t *testing.T) {
 	})
 }
 
+var dryRunErrorPattern = regexp.MustCompile(`failed to make http request for the dry run`)
+
+var httpRequestErrorPattern = regexp.MustCompile(`failed to make http request\n`)
+
+var refusedDeleteErrorPattern = regexp.MustCompile(
+	`(?s)DELETE\s.*/rulesets/[0-9a-f]{32}.*400 Bad Request`,
+)
+
+func TestAccCloudflareRuleset_DryRunInvalidOnCreate(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:         config.TestNameFile("1.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ExpectError:     httpRequestErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunInvalidOnUpdate(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				PlanOnly:        true,
+				ExpectError:     dryRunErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunSkippedWhenDependencyIsUnknown(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:         config.TestNameFile("1.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ExpectError:     httpRequestErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunSkippedWhenRefIsUnknown(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:         config.TestNameFile("1.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+				ExpectError:     httpRequestErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunDependencyOnCreateThenInvalidUpdate(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				PlanOnly:        true,
+				ExpectError:     dryRunErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunSkippedOnReferencedReplacement(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:         config.TestNameFile("2.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ExpectError:     refusedDeleteErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunSkippedOnInvalidEntryPointReplacement(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:         config.TestNameFile("2.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ExpectError:     httpRequestErrorPattern,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DryRunInvalidUpdateWithNewDependency(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:         config.TestNameFile("2.tf"),
+				ConfigVariables:    configVariables,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ExpectError:     dryRunErrorPattern,
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_Phase(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -488,6 +668,30 @@ func TestAccCloudflareRuleset_Description(t *testing.T) {
 						"data.cloudflare_ruleset.my_ruleset",
 						tfjsonpath.New("description"),
 						knownvalue.StringExact("My ruleset description"),
+					),
+				},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_WarningOnUpdate(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				ConfigFile:      config.TestNameFile("1.tf"),
+				ConfigVariables: configVariables,
+			},
+			{
+				ConfigFile:      config.TestNameFile("2.tf"),
+				ConfigVariables: configVariables,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("description"),
+						knownvalue.StringExact(strings.Repeat("0123456789", 410)),
 					),
 				},
 			},
@@ -5530,6 +5734,9 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 												}),
 											}),
 										}),
+										"origin_range_requests": knownvalue.ObjectExact(map[string]knownvalue.Check{
+											"mode": knownvalue.StringExact("on"),
+										}),
 									}),
 								}),
 							}),
@@ -5633,6 +5840,9 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 											}),
 										}),
 									}),
+									"origin_range_requests": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"mode": knownvalue.StringExact("on"),
+									}),
 								}),
 							}),
 						}),
@@ -5732,6 +5942,9 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 												"action": knownvalue.StringExact("passthrough"),
 											}),
 										}),
+									}),
+									"origin_range_requests": knownvalue.ObjectExact(map[string]knownvalue.Check{
+										"mode": knownvalue.StringExact("on"),
 									}),
 								}),
 							}),
@@ -5796,7 +6009,8 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 										"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 											"disable_stale_while_updating": knownvalue.Bool(true),
 										}),
-										"vary": knownvalue.Null(),
+										"vary":                  knownvalue.Null(),
+										"origin_range_requests": knownvalue.Null(),
 									}),
 								}),
 							}),
@@ -5852,7 +6066,8 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 									"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 										"disable_stale_while_updating": knownvalue.Bool(true),
 									}),
-									"vary": knownvalue.Null(),
+									"vary":                  knownvalue.Null(),
+									"origin_range_requests": knownvalue.Null(),
 								}),
 							}),
 						}),
@@ -5905,7 +6120,8 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 									"serve_stale": knownvalue.ObjectExact(map[string]knownvalue.Check{
 										"disable_stale_while_updating": knownvalue.Bool(true),
 									}),
-									"vary": knownvalue.Null(),
+									"vary":                  knownvalue.Null(),
+									"origin_range_requests": knownvalue.Null(),
 								}),
 							}),
 						}),
@@ -6005,6 +6221,13 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 								}),
 							}),
 						),
+						plancheck.ExpectKnownValue(
+							"cloudflare_ruleset.my_ruleset",
+							tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("origin_range_requests"),
+							knownvalue.ObjectExact(map[string]knownvalue.Check{
+								"mode": knownvalue.StringExact("default"),
+							}),
+						),
 					},
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
@@ -6160,6 +6383,13 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 						}),
 					),
 					statecheck.ExpectKnownValue(
+						"cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("origin_range_requests"),
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"mode": knownvalue.StringExact("default"),
+						}),
+					),
+					statecheck.ExpectKnownValue(
 						"data.cloudflare_ruleset.my_ruleset",
 						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("vary"),
 						knownvalue.ObjectPartial(map[string]knownvalue.Check{
@@ -6174,6 +6404,13 @@ func TestAccCloudflareRuleset_SetCacheSettingsRules(t *testing.T) {
 									}),
 								}),
 							}),
+						}),
+					),
+					statecheck.ExpectKnownValue(
+						"data.cloudflare_ruleset.my_ruleset",
+						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("origin_range_requests"),
+						knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"mode": knownvalue.StringExact("default"),
 						}),
 					),
 				},

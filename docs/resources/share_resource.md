@@ -34,7 +34,7 @@ resource "cloudflare_share_resource" "example_share_resource" {
 - `resource_account_id` (String) Account identifier.
 - `resource_id` (String) Share Resource identifier.
 - `resource_type` (String) Resource Type.
-Available values: "custom-ruleset", "gateway-policy", "gateway-destination-ip", "gateway-block-page-settings", "gateway-extended-email-matching", "idp-federation-grant".
+Available values: "custom-ruleset", "gateway-policy", "gateway-destination-ip", "gateway-block-page-settings", "gateway-extended-email-matching", "idp-federation-grant", "trust-grant".
 - `share_id` (String) Share identifier tag.
 
 ### Read-Only

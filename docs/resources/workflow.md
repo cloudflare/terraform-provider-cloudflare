@@ -22,6 +22,9 @@ resource "cloudflare_workflow" "example_workflow" {
   workflow_name = "x"
   class_name = "x"
   script_name = "x"
+  concurrency = {
+    limit = 1
+  }
   default_retention = {
     error_retention = "5 minutes"
     success_retention = "5 minutes"
@@ -47,6 +50,7 @@ resource "cloudflare_workflow" "example_workflow" {
 
 ### Optional
 
+- `concurrency` (Attributes) (see [below for nested schema](#nestedatt--concurrency))
 - `default_retention` (Attributes) Default retention applied to instances of this version when they do not set their own retention. (see [below for nested schema](#nestedatt--default_retention))
 - `limits` (Attributes) (see [below for nested schema](#nestedatt--limits))
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
@@ -55,13 +59,21 @@ resource "cloudflare_workflow" "example_workflow" {
 
 - `created_on` (String)
 - `id` (String) The ID of this resource.
-- `instances` (Attributes) (see [below for nested schema](#nestedatt--instances))
+- `instances` (Map of Number)
 - `is_deleted` (Number)
 - `modified_on` (String)
 - `name` (String)
 - `terminator_running` (Number)
 - `triggered_on` (String)
 - `version_id` (String)
+
+<a id="nestedatt--concurrency"></a>
+### Nested Schema for `concurrency`
+
+Optional:
+
+- `limit` (Number) Maximum number of instances of this workflow that can run concurrently. Additional instances are queued and started as running instances complete. Must not exceed the account concurrency limit.
+
 
 <a id="nestedatt--default_retention"></a>
 ### Nested Schema for `default_retention`
@@ -86,22 +98,6 @@ Optional:
 Required:
 
 - `cron` (String)
-
-
-<a id="nestedatt--instances"></a>
-### Nested Schema for `instances`
-
-Read-Only:
-
-- `complete` (Number)
-- `errored` (Number)
-- `paused` (Number)
-- `queued` (Number)
-- `rolling_back` (Number)
-- `running` (Number)
-- `terminated` (Number)
-- `waiting` (Number)
-- `waiting_for_pause` (Number)
 
 ## Import
 

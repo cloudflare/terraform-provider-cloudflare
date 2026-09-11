@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
@@ -53,6 +54,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"script_name": schema.StringAttribute{
 				Required: true,
 			},
+			"concurrency": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"limit": schema.Int64Attribute{
+						Description: "Maximum number of instances of this workflow that can run concurrently. Additional instances are queued and started as running instances complete. Must not exceed the account concurrency limit.",
+						Optional:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(1, 9007199254740991),
+						},
+					},
+				},
+			},
 			"default_retention": schema.SingleNestedAttribute{
 				Description: "Default retention applied to instances of this version when they do not set their own retention.",
 				Optional:    true,
@@ -83,7 +96,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"steps": schema.Int64Attribute{
 						Optional: true,
 						Validators: []validator.Int64{
-							int64validator.AtLeast(1),
+							int64validator.Between(1, 9007199254740991),
 						},
 					},
 				},
@@ -99,8 +112,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_on": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"is_deleted": schema.Float64Attribute{
 				Computed: true,
@@ -119,38 +133,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"version_id": schema.StringAttribute{
 				Computed: true,
 			},
-			"instances": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[WorkflowInstancesModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"complete": schema.Float64Attribute{
-						Computed: true,
-					},
-					"errored": schema.Float64Attribute{
-						Computed: true,
-					},
-					"paused": schema.Float64Attribute{
-						Computed: true,
-					},
-					"queued": schema.Float64Attribute{
-						Computed: true,
-					},
-					"rolling_back": schema.Float64Attribute{
-						Computed: true,
-					},
-					"running": schema.Float64Attribute{
-						Computed: true,
-					},
-					"terminated": schema.Float64Attribute{
-						Computed: true,
-					},
-					"waiting": schema.Float64Attribute{
-						Computed: true,
-					},
-					"waiting_for_pause": schema.Float64Attribute{
-						Computed: true,
-					},
-				},
+			"instances": schema.MapAttribute{
+				Computed:    true,
+				CustomType:  customfield.NewMapType[types.Float64](ctx),
+				ElementType: types.Float64Type,
 			},
 		},
 	}

@@ -20,7 +20,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"id": schema.Int64Attribute{
-				Required: true,
+				Description: "Returns the category ID.",
+				Required:    true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 4294967295),
 				},

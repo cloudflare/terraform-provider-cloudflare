@@ -28,6 +28,7 @@ type StreamLiveInputModel struct {
 	Modified                 timetypes.RFC3339                                            `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Status                   types.String                                                 `tfsdk:"status" json:"status,computed"`
 	UID                      types.String                                                 `tfsdk:"uid" json:"uid,computed"`
+	Playback                 customfield.NestedObject[StreamLiveInputPlaybackModel]       `tfsdk:"playback" json:"playback,computed"`
 	Rtmps                    customfield.NestedObject[StreamLiveInputRtmpsModel]          `tfsdk:"rtmps" json:"rtmps,computed"`
 	RtmpsPlayback            customfield.NestedObject[StreamLiveInputRtmpsPlaybackModel]  `tfsdk:"rtmps_playback" json:"rtmpsPlayback,computed"`
 	Srt                      customfield.NestedObject[StreamLiveInputSrtModel]            `tfsdk:"srt" json:"srt,computed"`
@@ -50,6 +51,11 @@ type StreamLiveInputRecordingModel struct {
 	Mode                types.String    `tfsdk:"mode" json:"mode,computed_optional"`
 	RequireSignedURLs   types.Bool      `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed_optional"`
 	TimeoutSeconds      types.Int64     `tfsdk:"timeout_seconds" json:"timeoutSeconds,computed_optional"`
+}
+
+type StreamLiveInputPlaybackModel struct {
+	Dash types.String `tfsdk:"dash" json:"dash,computed"`
+	Hls  types.String `tfsdk:"hls" json:"hls,computed"`
 }
 
 type StreamLiveInputRtmpsModel struct {

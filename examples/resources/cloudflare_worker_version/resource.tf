@@ -22,7 +22,7 @@ resource "cloudflare_worker_version" "example_worker_version" {
     enabled = true
     cross_version_cache = true
   }
-  compatibility_date = "2021-01-01"
+  compatibility_date = "2021-01-01T00:00:00Z"
   compatibility_flags = ["nodejs_compat"]
   containers = [{
     class_name = "MyDurableObject"

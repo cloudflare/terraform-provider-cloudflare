@@ -67,8 +67,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"source": schema.StringAttribute{
 				Description: "Source of the schema",
@@ -79,8 +80,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[APIShieldSchemaSchemaModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"created_at": schema.StringAttribute{
-						Computed:   true,
-						CustomType: timetypes.RFC3339Type{},
+						Computed:      true,
+						CustomType:    timetypes.RFC3339Type{},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"kind": schema.StringAttribute{
 						Description: "Kind of schema\nAvailable values: \"openapi_v3\".",

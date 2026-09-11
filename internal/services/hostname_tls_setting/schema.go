@@ -73,9 +73,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_at": schema.StringAttribute{
-				Description: "This is the time the tls setting was originally created for this hostname.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "This is the time the tls setting was originally created for this hostname.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"status": schema.StringAttribute{
 				Description: "Deployment status for the given tls setting.",

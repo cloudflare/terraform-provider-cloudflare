@@ -15,6 +15,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -78,7 +80,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     stringdefault.StaticString(""),
 			},
 			"default_template_language": schema.StringAttribute{
-				Description: "The language of the default page template. If no default_template_language is provided, then `en-US` (English) will be used.\nAvailable values: \"en-US\", \"es-ES\", \"de-DE\", \"fr-FR\", \"it-IT\", \"ja-JP\", \"ko-KR\", \"pt-BR\", \"zh-CN\", \"zh-TW\", \"nl-NL\", \"pl-PL\", \"id-ID\", \"tr-TR\", \"ar-EG\", \"ru-RU\", \"fa-IR\", \"bg-BG\", \"hr-HR\", \"cs-CZ\", \"da-DK\", \"fi-FI\", \"lt-LT\", \"lv-LV\", \"ms-MY\", \"nb-NO\", \"ro-RO\", \"el-GR\", \"he-IL\", \"hi-IN\", \"hu-HU\", \"sr-BA\", \"sk-SK\", \"sl-SI\", \"sv-SE\", \"tl-PH\", \"th-TH\", \"uk-UA\", \"vi-VN\".",
+				Description: "The language of the default page template. If no default_template_language is provided, then `en-US` (English) will be used.\nAvailable values: \"en-US\", \"es-ES\", \"de-DE\", \"fr-FR\", \"it-IT\", \"ja-JP\", \"ko-KR\", \"pt-BR\", \"zh-CN\", \"zh-TW\", \"nl-NL\", \"pl-PL\", \"id-ID\", \"tr-TR\", \"ar-EG\", \"ru-RU\", \"fa-IR\", \"bg-BG\", \"hr-HR\", \"cs-CZ\", \"da-DK\", \"fi-FI\", \"lt-LT\", \"ms-MY\", \"nb-NO\", \"ro-RO\", \"el-GR\", \"he-IL\", \"hi-IN\", \"hu-HU\", \"sr-BA\", \"sk-SK\", \"sl-SI\", \"sv-SE\", \"tl-PH\", \"th-TH\", \"uk-UA\", \"vi-VN\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -106,7 +108,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"da-DK",
 						"fi-FI",
 						"lt-LT",
-						"lv-LV",
 						"ms-MY",
 						"nb-NO",
 						"ro-RO",
@@ -230,8 +231,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						stringvalidator.OneOfCaseInsensitive("revoke"),
 					),
 				},
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
+				CustomType:    customfield.NewListType[types.String](ctx),
+				ElementType:   types.StringType,
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"additional_routes": schema.ListNestedAttribute{
 				Description: "Only available for the Waiting Room Advanced subscription. Additional hostname and path combinations to which this waiting room will be applied. There is an implied wildcard at the end of the path. The hostname and path combination must be unique to this and all other waiting rooms.",
@@ -252,6 +254,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"cookie_attributes": schema.SingleNestedAttribute{
 				Description: "Configures cookie attributes for the waiting room cookie. This encrypted cookie stores a user's status in the waiting room, such as queue position.",
@@ -287,10 +290,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("auto"),
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"created_on": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified_on": schema.StringAttribute{
 				Computed:   true,

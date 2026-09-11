@@ -50,6 +50,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The UUID of the policy",
 							Computed:    true,
 						},
+						"account_id": schema.StringAttribute{
+							Description: "Identifier.",
+							Computed:    true,
+						},
 						"app_count": schema.Int64Attribute{
 							Description: "Number of access applications currently using this policy.",
 							Computed:    true,
@@ -231,6 +235,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Attributes: map[string]schema.Attribute{
 											"integration_uid": schema.StringAttribute{
 												Description: "The ID of a device posture integration.",
+												Computed:    true,
+											},
+											"account_id": schema.StringAttribute{
+												Description: "The ID of the account that owns the device posture integration.",
 												Computed:    true,
 											},
 										},
@@ -547,6 +555,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Attributes: map[string]schema.Attribute{
 											"integration_uid": schema.StringAttribute{
 												Description: "The ID of a device posture integration.",
+												Computed:    true,
+											},
+											"account_id": schema.StringAttribute{
+												Description: "The ID of the account that owns the device posture integration.",
 												Computed:    true,
 											},
 										},
@@ -909,6 +921,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Attributes: map[string]schema.Attribute{
 											"integration_uid": schema.StringAttribute{
 												Description: "The ID of a device posture integration.",
+												Computed:    true,
+											},
+											"account_id": schema.StringAttribute{
+												Description: "The ID of the account that owns the device posture integration.",
 												Computed:    true,
 											},
 										},

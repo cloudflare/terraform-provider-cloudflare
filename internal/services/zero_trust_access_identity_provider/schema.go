@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -238,6 +239,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:      true,
 						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 					},
+				"force_authn": schema.BoolAttribute{
+					Description: "Asks the IdP to reauthenticate the user for each SAML authentication request.",
+					Optional:    true,
+				},
 					"header_attributes": schema.ListNestedAttribute{
 						Description: "Add a list of attribute names that will be returned in the response header from the Access callback.",
 						Optional:    true,
@@ -270,6 +275,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Validators: []validator.String{
 							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "saml"),
+						},
+					},
+					"max_sso_url_length": schema.Int64Attribute{
+						Description: "The maximum URL length the IdP accepts for the SSO redirect URL.\nWhen the constructed SSO URL would exceed this length, the RelayState\nis stored server-side and a short nonce is passed to the IdP instead.\nSet this if your IdP enforces a URL length limit.",
+						Optional:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(512, 100000),
 						},
 					},
 					"sign_request": schema.BoolAttribute{
@@ -377,9 +389,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
 				Attributes: map[string]schema.Attribute{
 					"created_at": schema.StringAttribute{
-						Description: "Timestamp when the certificate set was created",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
+						Description:   "Timestamp when the certificate set was created",
+						Computed:      true,
+						CustomType:    timetypes.RFC3339Type{},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"uid": schema.StringAttribute{
 						Description: "Unique identifier for the certificate set",

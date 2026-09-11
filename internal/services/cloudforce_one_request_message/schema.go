@@ -49,9 +49,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"created": schema.StringAttribute{
-				Description: "Defines the message creation time.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "Defines the message creation time.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"is_follow_on_request": schema.BoolAttribute{
 				Description: "Whether the message is a follow-on request.",

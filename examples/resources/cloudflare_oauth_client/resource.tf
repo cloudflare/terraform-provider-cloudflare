@@ -9,6 +9,7 @@ resource "cloudflare_oauth_client" "example_oauth_client" {
   allowed_cors_origins = ["https://example.com"]
   client_uri = "https://example.com"
   logo_uri = "https://example.com/logo.png"
+  optional_scopes = ["account.write"]
   policy_uri = "https://example.com/privacy"
   post_logout_redirect_uris = ["https://example.com/logout"]
   tos_uri = "https://example.com/tos"

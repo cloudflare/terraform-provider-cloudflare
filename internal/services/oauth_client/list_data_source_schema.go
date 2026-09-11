@@ -116,6 +116,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "URL of the client's logo.",
 							Computed:    true,
 						},
+						"optional_scopes": schema.ListAttribute{
+							Description: "Scopes that the authorizing user may decline during consent. Each value must also appear in `scopes`. The scopes `openid`, `offline`, and `offline_access` cannot be optional.",
+							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
 						"policy_uri": schema.StringAttribute{
 							Description: "URL that points to a privacy policy document.",
 							Computed:    true,

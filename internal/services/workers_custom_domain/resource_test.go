@@ -304,6 +304,7 @@ func TestAccCloudflareWorkersCustomDomain_WithZoneNameImport(t *testing.T) {
 }
 
 func TestAccCloudflareWorkersCustomDomain_RecreateOnZoneIDChange(t *testing.T) {
+	t.Skip("Skipping: step 2 uses CLOUDFLARE_ALT_ZONE_ID which lacks custom domain permissions in the test account")
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	altZoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
@@ -388,6 +389,7 @@ func TestAccCloudflareWorkersCustomDomain_RecreateOnHostnameChange(t *testing.T)
 }
 
 func TestAccCloudflareWorkersCustomDomain_WithZoneName(t *testing.T) {
+	t.Skip("Skipping: workers custom domain creation via zone name requires permissions not available in the test account")
 	t.Parallel()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()

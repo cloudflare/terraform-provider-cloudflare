@@ -69,16 +69,15 @@ type PipelineSinkConfigRollingPolicyModel struct {
 
 type PipelineSinkFormatModel struct {
 	Type            types.String `tfsdk:"type" json:"type,required"`
+	Compression     types.String `tfsdk:"compression" json:"compression,optional"`
 	DecimalEncoding types.String `tfsdk:"decimal_encoding" json:"decimal_encoding,optional"`
 	TimestampFormat types.String `tfsdk:"timestamp_format" json:"timestamp_format,optional"`
 	Unstructured    types.Bool   `tfsdk:"unstructured" json:"unstructured,optional"`
-	Compression     types.String `tfsdk:"compression" json:"compression,optional"`
 	RowGroupBytes   types.Int64  `tfsdk:"row_group_bytes" json:"row_group_bytes,optional"`
 }
 
 type PipelineSinkSchemaModel struct {
 	Fields   *[]*PipelineSinkSchemaFieldsModel `tfsdk:"fields" json:"fields,optional"`
-	Format   *PipelineSinkSchemaFormatModel    `tfsdk:"format" json:"format,optional"`
 	Inferred types.Bool                        `tfsdk:"inferred" json:"inferred,optional"`
 }
 
@@ -89,13 +88,4 @@ type PipelineSinkSchemaFieldsModel struct {
 	Required    types.Bool   `tfsdk:"required" json:"required,optional"`
 	SqlName     types.String `tfsdk:"sql_name" json:"sql_name,optional"`
 	Unit        types.String `tfsdk:"unit" json:"unit,optional"`
-}
-
-type PipelineSinkSchemaFormatModel struct {
-	Type            types.String `tfsdk:"type" json:"type,required"`
-	DecimalEncoding types.String `tfsdk:"decimal_encoding" json:"decimal_encoding,optional"`
-	TimestampFormat types.String `tfsdk:"timestamp_format" json:"timestamp_format,optional"`
-	Unstructured    types.Bool   `tfsdk:"unstructured" json:"unstructured,optional"`
-	Compression     types.String `tfsdk:"compression" json:"compression,optional"`
-	RowGroupBytes   types.Int64  `tfsdk:"row_group_bytes" json:"row_group_bytes,optional"`
 }

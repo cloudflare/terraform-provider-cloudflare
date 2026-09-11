@@ -92,6 +92,42 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"files": schema.MapNestedAttribute{
+				Description: "Additional modules and data files to include in the multipart Worker upload. Map keys are multipart part names referenced by binding `part` values and module imports.",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"content_base64": schema.StringAttribute{
+							Description: "Base64-encoded file content.",
+							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("content_file")),
+								stringvalidator.AtLeastOneOf(path.MatchRelative().AtParent().AtName("content_file")),
+							},
+						},
+						"content_file": schema.StringAttribute{
+							Description: "Path to the file content.",
+							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("content_base64")),
+								stringvalidator.AtLeastOneOf(path.MatchRelative().AtParent().AtName("content_base64")),
+							},
+						},
+						"content_type": schema.StringAttribute{
+							Description: "Content type of the file, such as `application/wasm`, `text/plain`, or `application/octet-stream`.",
+							Required:    true,
+						},
+						"content_sha256": schema.StringAttribute{
+							Description: "SHA-256 hash of the file content, used to detect changes and remote drift.",
+							Computed:    true,
+							PlanModifiers: []planmodifier.String{
+								ComputeSHA256HashOfFileContent(),
+							},
+						},
+					},
+				},
+			},
+
 			"assets": schema.SingleNestedAttribute{
 				Description: "Configuration for assets within a Worker.",
 				Optional:    true,
@@ -468,6 +504,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"body_part": schema.StringAttribute{
 				Description: "Name of the uploaded file that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
 				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"compatibility_date": schema.StringAttribute{
 				Description: "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",

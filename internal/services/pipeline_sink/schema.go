@@ -166,13 +166,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"format": schema.SingleNestedAttribute{
-				Optional: true,
+				Description: "Defines the output data format of a sink.",
+				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
 						Description: `Available values: "json", "parquet".`,
 						Required:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("json", "parquet"),
+						},
+					},
+					"compression": schema.StringAttribute{
+						Description: "Specifies the compression applied to JSON sink output.\nAvailable values: \"uncompressed\", \"gzip\", \"snappy\", \"zstd\", \"lz4\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"uncompressed",
+								"gzip",
+								"snappy",
+								"zstd",
+								"lz4",
+							),
 						},
 					},
 					"decimal_encoding": schema.StringAttribute{
@@ -196,19 +210,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"unstructured": schema.BoolAttribute{
 						Optional: true,
 					},
-					"compression": schema.StringAttribute{
-						Description: `Available values: "uncompressed", "snappy", "gzip", "zstd", "lz4".`,
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive(
-								"uncompressed",
-								"snappy",
-								"gzip",
-								"zstd",
-								"lz4",
-							),
-						},
-					},
 					"row_group_bytes": schema.Int64Attribute{
 						Optional: true,
 						Validators: []validator.Int64{
@@ -219,7 +220,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"schema": schema.SingleNestedAttribute{
-				Optional: true,
+				Description: "Defines the schema of the events in the data stream.",
+				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"fields": schema.ListNestedAttribute{
 						Optional: true,
@@ -269,58 +271,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"format": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"type": schema.StringAttribute{
-								Description: `Available values: "json", "parquet".`,
-								Required:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("json", "parquet"),
-								},
-							},
-							"decimal_encoding": schema.StringAttribute{
-								Description: `Available values: "number", "string", "bytes".`,
-								Optional:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"number",
-										"string",
-										"bytes",
-									),
-								},
-							},
-							"timestamp_format": schema.StringAttribute{
-								Description: `Available values: "rfc3339", "unix_millis".`,
-								Optional:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("rfc3339", "unix_millis"),
-								},
-							},
-							"unstructured": schema.BoolAttribute{
-								Optional: true,
-							},
-							"compression": schema.StringAttribute{
-								Description: `Available values: "uncompressed", "snappy", "gzip", "zstd", "lz4".`,
-								Optional:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"uncompressed",
-										"snappy",
-										"gzip",
-										"zstd",
-										"lz4",
-									),
-								},
-							},
-							"row_group_bytes": schema.Int64Attribute{
-								Optional: true,
-								Validators: []validator.Int64{
-									int64validator.AtLeast(0),
-								},
-							},
-						},
-					},
 					"inferred": schema.BoolAttribute{
 						Optional: true,
 					},
@@ -328,8 +278,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified_at": schema.StringAttribute{
 				Computed:   true,

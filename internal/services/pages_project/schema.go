@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -271,12 +272,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"compatibility_date": schema.StringAttribute{
-								Description: "Compatibility date used for Pages Functions.",
-								Computed:    true,
-								Optional:    true,
-								PlanModifiers: []planmodifier.String{
-									stringplanmodifier.UseStateForUnknown(),
-								},
+								Description:   "Compatibility date used for Pages Functions.",
+								Computed:      true,
+								Optional:      true,
+								PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 							},
 							"compatibility_flags": schema.ListAttribute{
 								Description: "Compatibility flags used for Pages Functions.",
@@ -471,6 +470,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"production": schema.SingleNestedAttribute{
 						Description: "Configs for production deploys.",
@@ -527,12 +527,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"compatibility_date": schema.StringAttribute{
-								Description: "Compatibility date used for Pages Functions.",
-								Computed:    true,
-								Optional:    true,
-								PlanModifiers: []planmodifier.String{
-									stringplanmodifier.UseStateForUnknown(),
-								},
+								Description:   "Compatibility date used for Pages Functions.",
+								Computed:      true,
+								Optional:      true,
+								PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 							},
 							"compatibility_flags": schema.ListAttribute{
 								Description: "Compatibility flags used for Pages Functions.",
@@ -727,16 +725,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"created_on": schema.StringAttribute{
-				Description: "When the project was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
+				Description:   "When the project was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"framework": schema.StringAttribute{
 				Description: "Framework the project is using.",
@@ -837,9 +835,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"created_on": schema.StringAttribute{
-						Description: "When the deployment was created.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
+						Description:   "When the deployment was created.",
+						Computed:      true,
+						CustomType:    timetypes.RFC3339Type{},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"deployment_trigger": schema.SingleNestedAttribute{
 						Description: "Info about what caused the deployment.",
@@ -1165,9 +1164,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"created_on": schema.StringAttribute{
-						Description: "When the deployment was created.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
+						Description:   "When the deployment was created.",
+						Computed:      true,
+						CustomType:    timetypes.RFC3339Type{},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"deployment_trigger": schema.SingleNestedAttribute{
 						Description: "Info about what caused the deployment.",

@@ -168,9 +168,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"created_on": schema.StringAttribute{
-						Description: "When the Keyless SSL was created.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
+						Description:   "When the Keyless SSL was created.",
+						Computed:      true,
+						CustomType:    timetypes.RFC3339Type{},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"enabled": schema.BoolAttribute{
 						Description: "Whether or not the Keyless SSL is on or off.",

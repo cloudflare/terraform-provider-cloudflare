@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -51,9 +52,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Required: true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Indicate whether the DOH endpoint is enabled for this location.",
-								Computed:    true,
-								Optional:    true,
+								Description:   "Indicate whether the DOH endpoint is enabled for this location.",
+								Computed:      true,
+								Optional:      true,
+								PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 							},
 							"networks": schema.ListNestedAttribute{
 								Description: "Specify the list of allowed source IP network ranges for this endpoint. When the list is empty, the endpoint allows all source IPs. The list takes effect only if the endpoint is enabled for this location.",
@@ -70,9 +72,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"require_token": schema.BoolAttribute{
-								Description: "Specify whether the DOH endpoint requires user identity authentication.",
-								Computed:    true,
-								Optional:    true,
+								Description:   "Specify whether the DOH endpoint requires user identity authentication.",
+								Computed:      true,
+								Optional:      true,
+								PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 							},
 						},
 					},
@@ -80,9 +83,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Required: true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Indicate whether the DOT endpoint is enabled for this location.",
-								Computed:    true,
-								Optional:    true,
+								Description:   "Indicate whether the DOT endpoint is enabled for this location.",
+								Computed:      true,
+								Optional:      true,
+								PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 							},
 							"networks": schema.ListNestedAttribute{
 								Description: "Specify the list of allowed source IP network ranges for this endpoint. When the list is empty, the endpoint allows all source IPs. The list takes effect only if the endpoint is enabled for this location.",
@@ -104,9 +108,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Required: true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Indicate whether the IPv4 endpoint is enabled for this location.",
-								Computed:    true,
-								Optional:    true,
+								Description:   "Indicate whether the IPv4 endpoint is enabled for this location.",
+								Computed:      true,
+								Optional:      true,
+								PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 							},
 						},
 					},
@@ -114,9 +119,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Required: true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Indicate whether the IPV6 endpoint is enabled for this location.",
-								Computed:    true,
-								Optional:    true,
+								Description:   "Indicate whether the IPV6 endpoint is enabled for this location.",
+								Computed:      true,
+								Optional:      true,
+								PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 							},
 							"networks": schema.ListNestedAttribute{
 								Description: "Specify the list of allowed source IPv6 network ranges for this endpoint. When the list is empty, the endpoint allows all source IPs. The list takes effect only if the endpoint is enabled for this location.",
@@ -194,8 +200,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"dns_destination_ipv6_block_id": schema.StringAttribute{
 				Description: "Specify the UUID of the IPv6 block brought to the gateway so that this location's IPv6 address is allocated from the Bring Your Own IPv6 (BYOIPv6) block rather than the standard Cloudflare IPv6 block.",

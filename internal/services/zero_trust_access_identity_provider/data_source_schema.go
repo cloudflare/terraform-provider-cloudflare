@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -191,6 +192,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "Enable SAML assertion encryption. When enabled, the Identity Provider will encrypt \nSAML assertions using the certificate from the assigned certificate set.\n\nTo enable encryption:\n1. Create a certificate set via POST to `/identity_providers/{id}/saml_certificate`\n2. Set this field to `true` and include `saml_certificate_set_id` in the PUT request\n3. Configure the public certificate in your external Identity Provider\n\nNote: Requires `saml_certificate_set_id` to be set when `true`.",
 						Computed:    true,
 					},
+					"force_authn": schema.BoolAttribute{
+						Description: "Asks the IdP to reauthenticate the user for each SAML authentication request.",
+						Computed:    true,
+					},
 					"header_attributes": schema.ListNestedAttribute{
 						Description: "Add a list of attribute names that will be returned in the response header from the Access callback.",
 						Computed:    true,
@@ -217,6 +222,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"issuer_url": schema.StringAttribute{
 						Description: "IdP Entity ID or Issuer URL",
 						Computed:    true,
+					},
+					"max_sso_url_length": schema.Int64Attribute{
+						Description: "The maximum URL length the IdP accepts for the SSO redirect URL.\nWhen the constructed SSO URL would exceed this length, the RelayState\nis stored server-side and a short nonce is passed to the IdP instead.\nSet this if your IdP enforces a URL length limit.",
+						Computed:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(512, 100000),
+						},
 					},
 					"sign_request": schema.BoolAttribute{
 						Description: "Sign the SAML authentication request with Access credentials. To verify the signature, use the public key from the Access certs endpoints.",

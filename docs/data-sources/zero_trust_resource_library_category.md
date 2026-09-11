@@ -24,12 +24,12 @@ data "cloudflare_zero_trust_resource_library_category" "example_zero_trust_resou
 ### Required
 
 - `account_id` (String)
+- `id` (Number) Returns the category ID.
 
 ### Read-Only
 
 - `created_at` (String) Returns the category creation time.
 - `description` (String) Returns the category description.
-- `id` (Number) The ID of this resource.
 - `name` (String) Returns the category name.
 
 

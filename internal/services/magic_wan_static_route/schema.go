@@ -76,9 +76,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_on": schema.StringAttribute{
-				Description: "When the route was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "When the route was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified": schema.BoolAttribute{
 				Computed: true,
@@ -109,9 +110,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"created_on": schema.StringAttribute{
-						Description: "When the route was created.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
+						Description:   "When the route was created.",
+						Computed:      true,
+						CustomType:    timetypes.RFC3339Type{},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"description": schema.StringAttribute{
 						Description: "An optional human provided description of the static route.",
@@ -172,9 +174,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"created_on": schema.StringAttribute{
-						Description: "When the route was created.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
+						Description:   "When the route was created.",
+						Computed:      true,
+						CustomType:    timetypes.RFC3339Type{},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"description": schema.StringAttribute{
 						Description: "An optional human provided description of the static route.",

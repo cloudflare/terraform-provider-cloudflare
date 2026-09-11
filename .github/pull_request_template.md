@@ -1,7 +1,8 @@
-<!-- Thank you for contributing to this project! -->
-<!-- Please note that most the code in this repository is auto-generated. -->
+> [!IMPORTANT]
+> This repository is auto-generated and maintained internally at Cloudflare, so we are **no longer accepting pull requests**.
+> Please open an [issue](https://github.com/cloudflare/terraform-provider-cloudflare/issues) instead. This pull request will not be merged directly, though a known-good fix can still be a helpful reference implementation for the team.
 
-- [ ] I understand that this repository is auto-generated and my pull request may not be merged
+- [ ] I understand that this repository is auto-generated and this pull request will not be merged
 
 ## Changes being requested
 

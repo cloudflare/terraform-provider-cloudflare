@@ -61,8 +61,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(true),
 			},
 			"created_at": schema.StringAttribute{
-				Description: "The RFC3339Nano timestamp when the Device IP profile was created.",
-				Computed:    true,
+				Description:   "The RFC3339Nano timestamp when the Device IP profile was created.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"updated_at": schema.StringAttribute{
 				Description: "The RFC3339Nano timestamp when the Device IP profile was last updated.",

@@ -106,9 +106,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"created_at": schema.StringAttribute{
-				Description: "When the CSR was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "When the CSR was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"csr": schema.StringAttribute{
 				Description: "The PEM-encoded Certificate Signing Request.",

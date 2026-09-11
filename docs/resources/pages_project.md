@@ -52,7 +52,7 @@ resource "cloudflare_pages_project" "example_pages_project" {
         }
       }
       build_image_major_version = 3
-      compatibility_date = "2025-01-01"
+      compatibility_date = "2025-01-01T00:00:00Z"
       compatibility_flags = ["url_standard"]
       d1_databases = {
         D1_BINDING = {
@@ -136,7 +136,7 @@ resource "cloudflare_pages_project" "example_pages_project" {
         }
       }
       build_image_major_version = 3
-      compatibility_date = "2025-01-01"
+      compatibility_date = "2025-01-01T00:00:00Z"
       compatibility_flags = ["url_standard"]
       d1_databases = {
         D1_BINDING = {

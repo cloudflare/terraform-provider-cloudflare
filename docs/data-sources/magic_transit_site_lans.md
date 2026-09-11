@@ -111,7 +111,7 @@ Read-Only:
 - `dhcp_options` (Attributes List) Optional list of custom DHCP options to include in DHCP responses. Only valid when DHCP server is enabled. (see [below for nested schema](#nestedatt--result--static_addressing--dhcp_server--dhcp_options))
 - `dhcp_pool_end` (String) A valid IPv4 address.
 - `dhcp_pool_start` (String) A valid IPv4 address.
-- `dns_server` (String) A valid IPv4 address.
+- `dns_server` (String, Deprecated) A valid IPv4 address.
 - `dns_servers` (List of String)
 - `reservations` (Map of String) Mapping of MAC addresses to IP addresses
 
