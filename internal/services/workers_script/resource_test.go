@@ -9,6 +9,7 @@ import (
 	"path"
 	"regexp"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go/v7"
@@ -69,22 +70,43 @@ func testSweepCloudflareWorkerScripts(r string) error {
 		return nil
 	}
 
+	// Collect scripts to delete.
+	var toDelete []string
 	for _, script := range list.Result {
-		// Use standard filtering helper to only delete test worker scripts
-		if !utils.ShouldSweepResource(script.ID) {
-			continue
+		if utils.ShouldSweepResource(script.ID) {
+			toDelete = append(toDelete, script.ID)
 		}
-
-		tflog.Info(ctx, fmt.Sprintf("Deleting worker script: %s (account: %s)", script.ID, accountID))
-		_, err := client.Workers.Scripts.Delete(ctx, script.ID, workers.ScriptDeleteParams{
-			AccountID: cloudflare.F(accountID),
-		})
-		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete worker script %s: %s", script.ID, err))
-			continue
-		}
-		tflog.Info(ctx, fmt.Sprintf("Deleted worker script: %s", script.ID))
 	}
+
+	if len(toDelete) == 0 {
+		tflog.Info(ctx, "No test worker scripts to sweep")
+		return nil
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Sweeping %d worker scripts (account: %s)", len(toDelete), accountID))
+
+	// Delete in parallel to avoid sequential-deletion timeouts when many
+	// scripts have accumulated across CI runs.
+	const maxConcurrent = 20
+	sem := make(chan struct{}, maxConcurrent)
+	var wg sync.WaitGroup
+	for _, id := range toDelete {
+		id := id
+		wg.Add(1)
+		sem <- struct{}{}
+		go func() {
+			defer wg.Done()
+			defer func() { <-sem }()
+			tflog.Info(ctx, fmt.Sprintf("Deleting worker script: %s", id))
+			_, err := client.Workers.Scripts.Delete(ctx, id, workers.ScriptDeleteParams{
+				AccountID: cloudflare.F(accountID),
+			})
+			if err != nil {
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete worker script %s: %s", id, err))
+			}
+		}()
+	}
+	wg.Wait()
 
 	return nil
 }
