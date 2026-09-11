@@ -1,0 +1,31 @@
+internal/services/workers_script/resource_test.go
+  s_eb975af9a8a216::t_36885b902017e1 93
+internal/services/workers_script/model.go
+  s_eb975af9a8a216::t_d8a5b5b84d71a1 135
+  s_eb975af9a8a216::t_54fa70c96346a0 47
+internal/services/workers_script/schema.go
+  s_eb975af9a8a216::t_062c4c048a6192 507-510
+  s_eb975af9a8a216::t_b438103a0a6c38 95-129
+internal/services/workers_script/resource.go
+  s_eb975af9a8a216::t_d64acb95e299fd 152-154,156-158
+  s_eb975af9a8a216::t_bc0ea0546ac2dc 260
+  s_eb975af9a8a216::t_6a51cf17286b07 155
+  s_eb975af9a8a216::t_e803b9be08953d 259,261-263
+  s_eb975af9a8a216::t_5ce153a60e8892 473-475
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "42a6306789c40bc3ce39e88ae9106307afcb2a77",
+  "prompts": {},
+  "sessions": {
+    "s_eb975af9a8a216": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f91bc0eabffe7Csy90MezloDwR",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
