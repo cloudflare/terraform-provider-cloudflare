@@ -241,7 +241,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				"force_authn": schema.BoolAttribute{
 					Description: "Asks the IdP to reauthenticate the user for each SAML authentication request.",
-					Computed:    true,
 					Optional:    true,
 				},
 					"header_attributes": schema.ListNestedAttribute{
