@@ -10,9 +10,6 @@ include:
     inputs:
       runOnMR: true
 
-default:
-  image: $IMAGE_GO_TRIXIE
-
 # Only run pipelines for:
 #   - merge requests
 #   - commits to the default branch (main)
@@ -37,6 +34,7 @@ workflow:
 # Mirrors the GitHub "check-schema-versions" job, which only runs on PRs to main.
 check-schema-versions:
   stage: lint
+  image: $IMAGE_GO_TRIXIE
   timeout: 30 minutes
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
@@ -46,6 +44,7 @@ check-schema-versions:
 # Mirrors the GitHub "lint" job.
 lint:
   stage: lint
+  image: $IMAGE_GO_TRIXIE
   timeout: 30 minutes
   rules: *ci-rules
   script:
@@ -55,6 +54,7 @@ lint:
 # Mirrors the GitHub "test" job, sharded 16 ways via GitLab's parallel matrix.
 test:
   stage: test
+  image: $IMAGE_GO_TRIXIE
   timeout: 30 minutes
   parallel: 16
   rules: *ci-rules
