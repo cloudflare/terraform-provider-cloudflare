@@ -112,6 +112,7 @@ func upgradeStateFromV0(ctx context.Context, req resource.UpgradeStateRequest, r
 		ContentFile:      priorStateData.ContentFile,
 		ContentSHA256:    priorStateData.ContentSHA256,
 		ContentType:      priorStateData.ContentType,
+		Files:            priorStateData.Files,
 		CreatedOn:        priorStateData.CreatedOn,
 		Etag:             priorStateData.Etag,
 		HasAssets:        priorStateData.HasAssets,
@@ -175,6 +176,7 @@ type resourceModelV0 struct {
 	ContentFile      types.String                                                  `tfsdk:"content_file" json:"-"`
 	ContentSHA256    types.String                                                  `tfsdk:"content_sha256" json:"-"`
 	ContentType      types.String                                                  `tfsdk:"content_type" json:"-"`
+	Files            *map[string]WorkersScriptFileModel                            `tfsdk:"files" json:"-"`
 	CreatedOn        timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Etag             types.String                                                  `tfsdk:"etag" json:"etag,computed"`
 	HasAssets        types.Bool                                                    `tfsdk:"has_assets" json:"has_assets,computed"`
