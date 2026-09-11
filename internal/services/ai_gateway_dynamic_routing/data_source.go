@@ -78,6 +78,11 @@ func (d *AIGatewayDynamicRoutingDataSource) Read(ctx context.Context, req dataso
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	bytes, err = normalizeDynamicRoutingResponse(bytes)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to normalize http response", err.Error())
+		return
+	}
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
