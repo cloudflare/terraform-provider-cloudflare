@@ -44,7 +44,7 @@ type WorkersScriptModel struct {
 	ContentFile      types.String                                                  `tfsdk:"content_file" json:"-"`
 	ContentSHA256    types.String                                                  `tfsdk:"content_sha256" json:"-"`
 	ContentType      types.String                                                  `tfsdk:"content_type" json:"-"`
-	Files            *map[string]WorkersScriptFileModel                            `tfsdk:"-" json:"-"`
+	Files            *map[string]WorkersScriptFileModel                            `tfsdk:"files" json:"-"`
 	CreatedOn        timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Etag             types.String                                                  `tfsdk:"etag" json:"etag,computed"`
 	HasAssets        types.Bool                                                    `tfsdk:"has_assets" json:"has_assets,computed"`
@@ -132,7 +132,7 @@ type WorkersScriptMetadataModel struct {
 	Annotations         customfield.NestedObject[WorkersScriptMetadataAnnotationsModel           ] `tfsdk:"annotations" json:"annotations,computed_optional"`
 	Assets              *WorkersScriptMetadataAssetsModel                 `tfsdk:"assets" json:"assets,optional"`
 	Bindings            customfield.NestedObjectList[WorkersScriptMetadataBindingsModel           ] `tfsdk:"bindings" json:"bindings,computed_optional"`
-	BodyPart            types.String                                      `tfsdk:"body_part" json:"body_part,optional"`
+	BodyPart            types.String                                      `tfsdk:"body_part" json:"body_part,computed_optional"`
 	CacheOptions        *WorkersScriptMetadataCacheOptionsModel           `tfsdk:"cache_options" json:"cache_options,optional"`
 	CompatibilityDate   types.String                                      `tfsdk:"compatibility_date" json:"compatibility_date,computed_optional"`
 	CompatibilityFlags  customfield.Set[types.String]                     `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
