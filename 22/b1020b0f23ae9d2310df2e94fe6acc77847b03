@@ -1,0 +1,143 @@
+.release-please-manifest.json
+  s_eb975af9a8a216::t_baed108a3de762 2
+CHANGELOG.md
+  s_eb975af9a8a216::t_25e8b3de8e52ea 3-86
+README.md
+  s_eb975af9a8a216::t_3b447bcbbe2807 23
+internal/services/ai_search_instance/schema.go
+  s_eb975af9a8a216::t_7c89ddb436e9ef 31,59,64,68,75,79,84
+internal/services/bot_management/migration/v500/model.go
+  s_eb975af9a8a216::t_9b5cce1cd27f09 54
+internal/services/bot_management/model.go
+  s_eb975af9a8a216::t_a535bc154305f6 54
+internal/services/bot_management/resource_test.go
+  s_eb975af9a8a216::t_32097b693a5562 727-729,781-783
+internal/services/cloud_connector_rules/data_source_model.go
+  s_eb975af9a8a216::t_c562de575a8ec0 19-25
+internal/services/cloud_connector_rules/model.go
+  s_eb975af9a8a216::t_b6b3939a3515b7 34
+internal/services/custom_pages/schema.go
+  s_eb975af9a8a216::t_f5b9d7fb938e7e 96-97
+internal/services/dns_record/resource_test.go
+  s_eb975af9a8a216::t_733e4f3d446e0f 534
+internal/services/email_routing_dns/schema.go
+  s_eb975af9a8a216::t_7b9fb29888501d 22
+internal/services/email_routing_settings/resource_test.go
+  s_eb975af9a8a216::t_0263688e4c7bb7 52-53
+internal/services/email_security_allow_policy/schema.go
+  s_eb975af9a8a216::t_2cf8ffbc98fe3e 22
+internal/services/email_security_block_sender/data_source_model.go
+  s_eb975af9a8a216::t_cfa36b0ddef6e0 22
+internal/services/email_security_block_sender/list_data_source_model.go
+  s_eb975af9a8a216::t_d7891bf41e69d9 21
+internal/services/email_security_block_sender/schema.go
+  s_eb975af9a8a216::t_dc33871b502b8d 22
+internal/services/email_security_domain/schema.go
+  s_eb975af9a8a216::t_79edd93465e387 27
+internal/services/email_sending_subdomain/schema.go
+  s_eb975af9a8a216::t_2b812c029f8241 20
+internal/services/load_balancer/schema.go
+  s_eb975af9a8a216::t_e2030de09d4dd9 563
+internal/services/load_balancer_monitor/schema.go
+  s_eb975af9a8a216::t_e0eee1a56ccd4e 98-100,103-105,142
+internal/services/magic_transit_connector/data_source_model.go
+  s_eb975af9a8a216::t_718b8956a23da1 22,31-32
+internal/services/magic_transit_connector/list_data_source_model.go
+  s_eb975af9a8a216::t_790a67c9b05ab5 20,47-48
+internal/services/magic_transit_connector/model.go
+  s_eb975af9a8a216::t_1916e22dd84083 24-25
+internal/services/nel_setting/schema.go
+  s_eb975af9a8a216::t_8603ee6d245288 22
+internal/services/notification_policy/schema.go
+  s_eb975af9a8a216::t_5a6b2fab6f558e 421-422
+internal/services/notification_policy_webhooks/schema.go
+  s_eb975af9a8a216::t_9d5cb337259fb1 57-59
+internal/services/page_rule/resource_test.go
+  s_eb975af9a8a216::t_17632c66fb1a90 665
+internal/services/queue_consumer/schema.go
+  s_eb975af9a8a216::t_163b4fb4c5e33c 106
+internal/services/regional_hostname/schema.go
+  s_eb975af9a8a216::t_3b8f522ede66e8 56-58
+internal/services/registrar_domain/list_data_source_model.go
+  s_eb975af9a8a216::t_bbf7dc74283470 21
+internal/services/sso_connector/data_source_test.go
+  s_eb975af9a8a216::t_4233410ac5502e 17
+internal/services/sso_connector/resource_test.go
+  s_eb975af9a8a216::t_7e3c9985253334 76
+internal/services/turnstile_widget/data_source_schema.go
+  s_eb975af9a8a216::t_33e38d52a84acc 67-79,84-96
+internal/services/worker/data_source_schema.go
+  s_eb975af9a8a216::t_6e5e7087c3ebad 115-117
+internal/services/worker/model.go
+  s_eb975af9a8a216::t_f809f7bf157d47 43,60
+internal/services/worker/schema.go
+  s_eb975af9a8a216::t_02d33f3f5670fe 140
+internal/services/workers_custom_domain/resource_test.go
+  s_eb975af9a8a216::t_241434ac4b7586 307,392
+internal/services/workers_kv_namespace/migration/v500/model.go
+  s_eb975af9a8a216::t_ad0b654951397e 22
+internal/services/workers_script/migrations.go
+  s_eb975af9a8a216::t_05b6894efbaa87 115,179
+internal/services/workers_script/model.go
+  s_eb975af9a8a216::t_8f95c94b849118 135
+internal/services/workers_script/resource.go
+  s_eb975af9a8a216::t_31d81ba7468245 152-158,259-263,473-475
+internal/services/workers_script/resource_test.go
+  s_eb975af9a8a216::t_3057a042822ff5 12,73-74,76-77,79,81-107,109,115
+internal/services/workers_script/schema.go
+  s_eb975af9a8a216::t_34b56201930f2f 130,507-510
+internal/services/zero_trust_access_ai_controls_mcp_portal/schema.go
+  s_eb975af9a8a216::t_a3954d11e8560e 8,74,76,85,87,91,93
+internal/services/zero_trust_access_group/migration/v500/model.go
+  s_eb975af9a8a216::t_a953e02888d413 206
+internal/services/zero_trust_access_identity_provider/model.go
+  s_eb975af9a8a216::t_d34ff5ab081e5d 62
+internal/services/zero_trust_access_identity_provider/schema.go
+  s_eb975af9a8a216::t_86085b8b3df20e 242-245
+internal/services/zero_trust_access_policy/migration/v500/model.go
+  s_eb975af9a8a216::t_89ce913deec069 251
+internal/services/zero_trust_gateway_policy/schema.go
+  s_eb975af9a8a216::t_2595313fe9e93b 107-109,594-595
+internal/services/zero_trust_organization/data_source_model.go
+  s_eb975af9a8a216::t_0916c071c284f9 20-38,73
+internal/services/zero_trust_organization/data_source_schema.go
+  s_eb975af9a8a216::t_c4550e85a14c3a 171-172,174,188
+internal/services/zero_trust_organization/migration/v500/model.go
+  s_eb975af9a8a216::t_d359335919a226 54-73,102-103
+internal/services/zero_trust_organization/model.go
+  s_eb975af9a8a216::t_24be6121359916 15-34,65
+internal/services/zero_trust_organization/model_test.go
+  s_eb975af9a8a216::t_c7a684ae60ae12 13,16,19,46,63,83,98
+internal/services/zero_trust_organization/normalizations.go
+  s_eb975af9a8a216::t_5dfad8071e2291 76-78
+internal/services/zero_trust_organization/schema.go
+  s_eb975af9a8a216::t_bd379eff37f867 145-146,161
+internal/services/zero_trust_resource_library_application/schema.go
+  s_eb975af9a8a216::t_626e92b0e0aaf5 24
+internal/services/zero_trust_tunnel_cloudflared/schema.go
+  s_eb975af9a8a216::t_e60cc57ced440b 81-83
+internal/services/zero_trust_tunnel_cloudflared_config/schema.go
+  s_eb975af9a8a216::t_71b73a9b913bb4 240-241
+internal/services/zone_subscription/resource_test.go
+  s_eb975af9a8a216::t_523d711c80fa69 40,89,190,238
+internal/services/zone_subscription/schema.go
+  s_eb975af9a8a216::t_dcf34fb1b3aca4 82-83,86-87,90-91,94-95,98-100
+internal/version.go
+  s_eb975af9a8a216::t_327f00fcb39da2 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "22b1020b0f23ae9d2310df2e94fe6acc77847b03",
+  "prompts": {},
+  "sessions": {
+    "s_eb975af9a8a216": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f91bc0eabffe7Csy90MezloDwR",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
