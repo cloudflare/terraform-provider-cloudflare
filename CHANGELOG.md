@@ -27,112 +27,60 @@ Full Changelog: [v5.24.0...v5.25.0](https://github.com/cloudflare/terraform-prov
 
 #### New Attributes
 
-##### cloudflare_ai_search_instance
-
-- **aisearch_model**: Workers AI model for AI search queries
-- **embedding_model**: Model used to generate text embeddings
-- **reranking_model**: Model used to rerank search results
-- **rewrite_model**: Workers AI model for query rewriting
-- **summarization_model**: Model used to summarize search results
-
-##### cloudflare_bot_management
-
-- **bot_preference_sync_enabled**: Sync bot preferences from AI Search, AI User, and AI Training zone settings
-
-##### cloudflare_content_scanning_expression
-
-- **payload**: Custom content extraction expression to locate content objects in requests
-
-##### cloudflare_email_routing_dns
-
-- **support_subaddress**: Whether plus-addressing is honored when matching routing rules
-
-##### cloudflare_magic_transit_connector
-
-- **primary**: Whether this connector is the primary connector for the site
-- **site_id**: Identifier of the Magic Transit site this connector belongs to
-
-##### cloudflare_oauth_client
-
-- **optional_scopes**: Scopes a user may decline during OAuth consent
-
-##### cloudflare_organization
-
-- **account_creation_applies_tenant_defaults**: Whether tenant defaults apply to newly created accounts
-
-##### cloudflare_pipeline_sink
-
-- **format**: Output data format configuration for the sink
-- **schema**: Schema definition for events in the data stream
-
-##### cloudflare_pipeline_stream
-
-- **format**: Data format configuration for stream events
-- **schema**: Schema definition for events in the data stream
-
-##### cloudflare_ruleset
-
-- **origin_range_requests**: Fetch large origin assets as a series of range requests
-- **vary**: Cache variation key configuration for set_cache_settings action
-
-##### cloudflare_stream_live_input
-
-- **playback**: HLS and DASH manifest URLs for live stream playback
-
-##### cloudflare_worker_version
-
-- **identity**: Enables Gateway identity for network bindings
-
-##### cloudflare_workers_kv_namespace
-
-- **jurisdiction**: Restrict KV data storage to a specific jurisdiction at creation time
-
-##### cloudflare_workers_script
-
-- **files**: Multipart WASM modules and binary files included in the Worker upload
-
-##### cloudflare_workflow
-
-- **concurrency**: Concurrency limit and active instance count for the workflow
-
-##### cloudflare_zero_trust_access_group
-
-- **account_id**: Account that owns the device posture integration (in posture sub-rules)
-
-##### cloudflare_zero_trust_access_identity_provider
-
-- **force_authn**: Asks the IdP to reauthenticate on each SAML request
-- **max_sso_url_length**: Maximum URL length accepted for SSO redirect
+- cloudflare_ai_search_instance
+  - **aisearch_model**: Workers AI model for AI search queries
+  - **embedding_model**: Model used to generate text embeddings
+  - **reranking_model**: Model used to rerank search results
+  - **rewrite_model**: Workers AI model for query rewriting
+  - **summarization_model**: Model used to summarize search results
+- cloudflare_bot_management
+  - **bot_preference_sync_enabled**: Sync bot preferences from AI Search, AI User, and AI Training zone settings
+- cloudflare_content_scanning_expression
+  - **payload**: Custom content extraction expression to locate content objects in requests
+- cloudflare_email_routing_dns
+  - **support_subaddress**: Whether plus-addressing is honored when matching routing rules
+- cloudflare_magic_transit_connector
+  - **primary**: Whether this connector is the primary connector for the site
+  - **site_id**: Identifier of the Magic Transit site this connector belongs to
+- cloudflare_oauth_client
+  - **optional_scopes**: Scopes a user may decline during OAuth consent
+- cloudflare_organization
+  - **account_creation_applies_tenant_defaults**: Whether tenant defaults apply to newly created accounts
+- cloudflare_pipeline_sink
+  - **format**: Output data format configuration for the sink
+  - **schema**: Schema definition for events in the data stream
+- cloudflare_pipeline_stream
+  - **format**: Data format configuration for stream events
+  - **schema**: Schema definition for events in the data stream
+- cloudflare_ruleset
+  - **origin_range_requests**: Fetch large origin assets as a series of range requests
+  - **vary**: Cache variation key configuration for set_cache_settings action
+- cloudflare_stream_live_input
+  - **playback**: HLS and DASH manifest URLs for live stream playback
+- cloudflare_worker_version
+  - **identity**: Enables Gateway identity for network bindings
+- cloudflare_workers_kv_namespace
+  - **jurisdiction**: Restrict KV data storage to a specific jurisdiction at creation time
+- cloudflare_workers_script
+  - **files**: Multipart WASM modules and binary files included in the Worker upload
+- cloudflare_workflow
+  - **concurrency**: Concurrency limit and active instance count for the workflow
+- cloudflare_zero_trust_access_group
+  - **account_id**: Account that owns the device posture integration (in posture sub-rules)
+- cloudflare_zero_trust_access_identity_provider
+  - **force_authn**: Asks the IdP to reauthenticate on each SAML request
+  - **max_sso_url_length**: Maximum URL length accepted for SSO redirect
 
 ### Bug Fixes
 
-- **ai_search_instance**: restore `Computed` on schema fields stripped by codegen update
 - **bot_management**: mark `bot_preference_sync_enabled` optional-only; `Computed` caused "unknown after apply" errors
-- **cloud_connector_rules**: correct `provider` tfsdk tag conflict; flatten data source to single-rule struct
-- **custom_pages**: remove incorrect `UseNonNullStateForUnknown` from `created_on`; API returns zero value on update causing inconsistent result
+- **custom_pages**: Update causing inconsistent apply results
+- **email_routing_dns**: data source not returning any data ([#7130](https://github.com/cloudflare/terraform-provider-cloudflare/issues/7130))
 - **email_security_block_sender**: mark `account_id` as required in data sources
 - **image**: fix create/update marshaling errors
-- **load_balancer**: remove incorrect `UseNonNullStateForUnknown` from nested attributes and `created_on`
-- **load_balancer_monitor**: remove incorrect `UseNonNullStateForUnknown` from `method`, `path`, and `created_on`
 - **magic_transit_connector**: add missing `primary` and `site_id` fields; mark `account_id` as required in data sources
-- **notification_policy**: remove incorrect `UseNonNullStateForUnknown` from `created`
-- **notification_policy_webhooks**: remove incorrect `UseNonNullStateForUnknown` from `created_at`
-- **queue_consumer**: change `UseNonNullStateForUnknown` to `UseStateForUnknown` on `created_on`
-- **regional_hostname**: remove incorrect `UseNonNullStateForUnknown` from `created_on`
 - **registrar_domain**: mark `account_id` as required in list data source
-- **turnstile_widget**: add `deployed_via` and `last_modified_via` to data source schema; preserve `domains` list order
-- **worker**: remove `observability.redact_query_string`; API does not return it consistently causing post-apply inconsistency
-- **worker_version**: correct response binding order to prevent plan drift
-- **workers_script**: fix `Identity` field in binding model causing attribute count mismatch; add `files` to `resourceModelV0` for migration compatibility
-- **workers_script**: fix `body_part` not persisted to state due to value-receiver bug in `MarshalMultipart`
-- **workers_script**: parallelize sweeper to prevent timeout when many test scripts accumulate
-- **zero_trust_access_group**: add `account_id` to device posture sub-rule model and migration model
-- **zero_trust_access_identity_provider**: make `force_authn` optional-only; `Computed` caused perpetual plan drift for non-SAML providers
-- **zero_trust_gateway_policy**: remove incorrect `UseNonNullStateForUnknown` from multiple computed fields
-- **zero_trust_organization**: correct `mfa_piv_key_requirements` to `mfa_ssh_piv_key_requirements` throughout schema and model
-- **zero_trust_tunnel_cloudflared**: remove incorrect `UseNonNullStateForUnknown` from `created_at`
-- **zero_trust_tunnel_cloudflared_config**: remove incorrect `UseNonNullStateForUnknown` from `created_at`
-- **zone_subscription**: revert incorrect `Optional` and `UseNonNullStateForUnknown` on `rate_plan` fields
+- **worker_version**: correct response binding order to prevent plan drift ([#7115](https://github.com/cloudflare/terraform-provider-cloudflare/issues/7115))
 - set schema `Version: 500` on new resources to enable correct state upgrade path
 
 
