@@ -3175,14 +3175,14 @@ func TestAccCloudflarePageRule_EdgeCacheTTLNotClobbered(t *testing.T) {
 				Config: testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtl(zoneID, target, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &before),
-					resource.TestCheckResourceAttr(resourceName, "actions.edge_cache_ttl", "10"),
+					resource.TestCheckResourceAttr(resourceName, "actions.edge_cache_ttl", "31536000"),
 				),
 			},
 			{
 				Config: testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtl(zoneID, target, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &before),
-					resource.TestCheckResourceAttr(resourceName, "actions.edge_cache_ttl", "10"),
+					resource.TestCheckResourceAttr(resourceName, "actions.edge_cache_ttl", "31536000"),
 				),
 				PlanOnly: true,
 			},
@@ -3202,14 +3202,14 @@ func TestAccCloudflarePageRule_EdgeCacheTTLNotClobbered(t *testing.T) {
 				Config: testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtlAndAlwaysOnline(zoneID, target, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &after),
-					resource.TestCheckResourceAttr(resourceName, "actions.edge_cache_ttl", "10"),
+					resource.TestCheckResourceAttr(resourceName, "actions.edge_cache_ttl", "31536000"),
 				),
 			},
 			{
 				Config: testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtlAndAlwaysOnline(zoneID, target, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &after),
-					resource.TestCheckResourceAttr(resourceName, "actions.edge_cache_ttl", "10"),
+					resource.TestCheckResourceAttr(resourceName, "actions.edge_cache_ttl", "31536000"),
 				),
 				PlanOnly: true,
 			},
