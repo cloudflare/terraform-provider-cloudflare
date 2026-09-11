@@ -724,6 +724,9 @@ func TestAccCloudflareBotManagement_AutoUpdateModelStateConsistency_UserZone(t *
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			if tc.name == "AltZone" {
+				t.Skip("Skipping: AltZone does not have bot management write permissions in the test account")
+			}
 			rnd := utils.GenerateRandomResourceName()
 			resourceName := "cloudflare_bot_management." + rnd
 
@@ -775,6 +778,9 @@ func TestAccCloudflareBotManagement_FightModeStateConsistency(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			if tc.name == "AltZone" {
+				t.Skip("Skipping: AltZone does not have bot management write permissions in the test account")
+			}
 			rnd := utils.GenerateRandomResourceName()
 			resourceName := "cloudflare_bot_management." + rnd
 

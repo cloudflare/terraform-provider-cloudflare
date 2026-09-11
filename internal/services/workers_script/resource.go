@@ -149,6 +149,13 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 	data.Migrations = planMigrations
 	data.Files = planFiles
 
+	// MarshalMultipart uses a value receiver so its assignment to r.BodyPart has no
+	// effect on the caller. Explicitly set body_part here for service workers so it
+	// is persisted in state and survives subsequent refreshes.
+	if data.MainModule.IsNull() && (!data.Content.IsNull() || !data.ContentFile.IsNull()) {
+		data.BodyPart = types.StringValue("script")
+	}
+
 	// avoid storing `content` in state if `content_file` is configured
 	if !data.ContentFile.IsNull() {
 		data.Content = types.StringNull()
@@ -248,6 +255,11 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 	data.Assets = assets
 	data.Migrations = planMigrations
 	data.Files = planFiles
+
+	// Same fix as Create: explicitly set body_part for service workers.
+	if data.MainModule.IsNull() && (!data.Content.IsNull() || !data.ContentFile.IsNull()) {
+		data.BodyPart = types.StringValue("script")
+	}
 
 	// avoid storing `content` in state if `content_file` is configured
 	if !data.ContentFile.IsNull() {
@@ -458,6 +470,9 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 			}
 			if isMainModule {
 				data.MainModule = types.StringValue(mainPart)
+			} else if mainPart != "" {
+				// Persist body_part so it survives refreshes for service workers.
+				data.BodyPart = types.StringValue(mainPart)
 			}
 			content = string(mainFile.content)
 

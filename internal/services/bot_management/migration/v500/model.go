@@ -51,6 +51,7 @@ type TargetBotManagementModel struct {
 	SBFMLikelyAutomated          types.String                                                       `tfsdk:"sbfm_likely_automated"`
 	SBFMStaticResourceProtection types.Bool                                                         `tfsdk:"sbfm_static_resource_protection"`
 	SBFMVerifiedBots             types.String                                                       `tfsdk:"sbfm_verified_bots"`
+	BotPreferenceSyncEnabled     types.Bool                                                         `tfsdk:"bot_preference_sync_enabled"`
 	SuppressSessionScore         types.Bool                                                         `tfsdk:"suppress_session_score"`
 	ContentBotsProtection        types.String                                                       `tfsdk:"content_bots_protection"`
 	UsingLatestModel             types.Bool                                                         `tfsdk:"using_latest_model"`

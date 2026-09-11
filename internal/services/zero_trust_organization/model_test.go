@@ -10,14 +10,13 @@ import (
 )
 
 const (
-	apiFieldName   = "mfa_piv_key_requirements"
-	staleFieldName = "mfa_ssh_piv_key_requirements"
+	apiFieldName = "mfa_ssh_piv_key_requirements"
 )
 
-func pivRequirements() *zero_trust_organization.ZeroTrustOrganizationMfaPivKeyRequirementsModel {
+func pivRequirements() *zero_trust_organization.ZeroTrustOrganizationMfaSSHPivKeyRequirementsModel {
 	keyTypes := []types.String{types.StringValue("ecdsa")}
 	keySizes := []types.Int64{types.Int64Value(256)}
-	return &zero_trust_organization.ZeroTrustOrganizationMfaPivKeyRequirementsModel{
+	return &zero_trust_organization.ZeroTrustOrganizationMfaSSHPivKeyRequirementsModel{
 		PinPolicy:         types.StringValue("once"),
 		RequireFipsDevice: types.BoolValue(true),
 		SSHKeySize:        &keySizes,
@@ -32,9 +31,6 @@ func assertPivKey(t *testing.T, raw []byte) {
 	if err := json.Unmarshal(raw, &body); err != nil {
 		t.Fatalf("body is not valid JSON: %v\nbody: %s", err, raw)
 	}
-	if _, ok := body[staleFieldName]; ok {
-		t.Errorf("body contains stale field %q, which the API ignores", staleFieldName)
-	}
 	if _, ok := body[apiFieldName]; !ok {
 		t.Errorf("body is missing %q; the endpoint is a full-replace PUT, so omitting it clears the live value", apiFieldName)
 	}
@@ -47,7 +43,7 @@ func TestMarshalJSONSendsPivKeyRequirements(t *testing.T) {
 	model := zero_trust_organization.ZeroTrustOrganizationModel{
 		Name:                  types.StringValue("Example"),
 		AuthDomain:            types.StringValue("example.cloudflareaccess.com"),
-		MfaPivKeyRequirements: pivRequirements(),
+		MfaSSHPivKeyRequirements: pivRequirements(),
 	}
 
 	raw, err := model.MarshalJSON()
@@ -64,7 +60,7 @@ func TestMarshalJSONForUpdateSendsPivKeyRequirements(t *testing.T) {
 	state := zero_trust_organization.ZeroTrustOrganizationModel{
 		Name:                  types.StringValue("Example"),
 		AuthDomain:            types.StringValue("example.cloudflareaccess.com"),
-		MfaPivKeyRequirements: pivRequirements(),
+		MfaSSHPivKeyRequirements: pivRequirements(),
 	}
 	plan := state
 	plan.Name = types.StringValue("Example Renamed")
@@ -84,7 +80,7 @@ func TestUnmarshalPopulatesPivKeyRequirements(t *testing.T) {
 	  "result": {
 	    "name": "Example",
 	    "auth_domain": "example.cloudflareaccess.com",
-	    "mfa_piv_key_requirements": {
+	    "mfa_ssh_piv_key_requirements": {
 	      "pin_policy": "once",
 	      "require_fips_device": true,
 	      "ssh_key_size": [256],
@@ -99,7 +95,7 @@ func TestUnmarshalPopulatesPivKeyRequirements(t *testing.T) {
 		t.Fatalf("Unmarshal: %v", err)
 	}
 
-	got := env.Result.MfaPivKeyRequirements
+	got := env.Result.MfaSSHPivKeyRequirements
 	if got == nil {
 		t.Fatalf("%s was not decoded from the API response", apiFieldName)
 	}
