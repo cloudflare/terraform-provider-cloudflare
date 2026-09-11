@@ -1,0 +1,24 @@
+scripts/generate-zone-setting-ids
+  s_eb975af9a8a216::t_6e674e8374156e 254,256-269,271
+  s_eb975af9a8a216::t_dc7d38ce553d9a 40-50
+  s_eb975af9a8a216::t_32b5e36c252c67 7,9
+  s_eb975af9a8a216::t_a7183f96daeb3e 51
+scripts/generate-docs
+  s_eb975af9a8a216::t_3e7e8d4b7eaf15 12,15-16,20-28,30-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b43d6087ade22c3461091adb7bd8ae34ac64d536",
+  "prompts": {},
+  "sessions": {
+    "s_eb975af9a8a216": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f91bc0eabffe7Csy90MezloDwR",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
