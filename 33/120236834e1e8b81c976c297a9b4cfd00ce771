@@ -1,0 +1,100 @@
+internal/services/r2_bucket_event_notification/schema.go
+  s_43f9ac7963ea59::t_823203335ee0db 52
+internal/services/r2_bucket_sippy/data_source_model.go
+  s_43f9ac7963ea59::t_823203335ee0db 20-25,32-33
+  s_43f9ac7963ea59::t_f9d10f2c52fe03 34
+internal/services/r2_bucket_lock/schema.go
+  s_43f9ac7963ea59::t_823203335ee0db 44
+internal/services/r2_bucket_lifecycle/data_source_model.go
+  s_43f9ac7963ea59::t_823203335ee0db 21-24,31-32
+  s_43f9ac7963ea59::t_11447acad8e19c 33
+internal/services/r2_bucket_sippy/schema.go
+  s_43f9ac7963ea59::t_823203335ee0db 49
+internal/services/r2_bucket_cors/data_source_model_test.go
+  s_43f9ac7963ea59::t_823203335ee0db 1-28
+docs/data-sources/r2_bucket_cors.md
+  s_43f9ac7963ea59::t_823203335ee0db 29-33
+internal/services/r2_custom_domain/data_source_model.go
+  s_43f9ac7963ea59::t_823203335ee0db 20-29,36-37
+  s_43f9ac7963ea59::t_1df39e7b915064 38
+docs/data-sources/r2_bucket_lifecycle.md
+  s_43f9ac7963ea59::t_823203335ee0db 29-33
+internal/services/r2_bucket_cors/data_source_model.go
+  s_43f9ac7963ea59::t_823203335ee0db 20-23,30-31
+  s_43f9ac7963ea59::t_9ef185533d0d39 32
+internal/services/r2_bucket_event_notification/data_source_model_test.go
+  s_43f9ac7963ea59::t_823203335ee0db 1-28
+docs/resources/workers_script.md
+  s_43f9ac7963ea59::t_823203335ee0db 275
+internal/services/r2_bucket_event_notification/data_source_model.go
+  s_43f9ac7963ea59::t_823203335ee0db 20-25,32-33
+  s_43f9ac7963ea59::t_eeb4e62e3a7da8 34
+internal/services/r2_custom_domain/data_source_model_test.go
+  s_43f9ac7963ea59::t_823203335ee0db 1-28
+internal/services/r2_bucket_event_notification/data_source_schema.go
+  s_43f9ac7963ea59::t_823203335ee0db 37-48
+internal/services/r2_custom_domain/schema.go
+  s_43f9ac7963ea59::t_823203335ee0db 52
+docs/data-sources/r2_bucket_event_notification.md
+  s_43f9ac7963ea59::t_823203335ee0db 35-39
+internal/services/r2_bucket_lock/data_source_model.go
+  s_43f9ac7963ea59::t_823203335ee0db 21-24,31-32
+  s_43f9ac7963ea59::t_4e6a7cd1d8287d 33
+internal/services/r2_custom_domain/data_source_schema.go
+  s_43f9ac7963ea59::t_823203335ee0db 36-47
+internal/services/r2_bucket_lifecycle/data_source_model_test.go
+  s_43f9ac7963ea59::t_823203335ee0db 1-28
+internal/services/r2_bucket/data_source_model.go
+  s_43f9ac7963ea59::t_823203335ee0db 23,33-34
+  s_43f9ac7963ea59::t_ca1d9a55b1dc31 35
+internal/services/r2_bucket_sippy/data_source_model_test.go
+  s_43f9ac7963ea59::t_823203335ee0db 1-28
+docs/data-sources/r2_custom_domain.md
+  s_43f9ac7963ea59::t_823203335ee0db 35-39
+internal/services/r2_bucket/jurisdiction_test.go
+  s_43f9ac7963ea59::t_823203335ee0db 1-90
+internal/services/r2_bucket_cors/schema.go
+  s_43f9ac7963ea59::t_823203335ee0db 45
+internal/services/r2_bucket_lock/data_source_schema.go
+  s_43f9ac7963ea59::t_823203335ee0db 29-40
+docs/data-sources/r2_bucket.md
+  s_43f9ac7963ea59::t_823203335ee0db 31-32
+docs/data-sources/r2_bucket_lock.md
+  s_43f9ac7963ea59::t_823203335ee0db 29-33
+internal/services/r2_bucket_cors/data_source_schema.go
+  s_43f9ac7963ea59::t_823203335ee0db 30-41
+docs/data-sources/r2_bucket_sippy.md
+  s_43f9ac7963ea59::t_823203335ee0db 29-33
+internal/services/r2_bucket/data_source_schema.go
+  s_43f9ac7963ea59::t_823203335ee0db 37
+internal/services/r2_bucket_lifecycle/data_source_schema.go
+  s_43f9ac7963ea59::t_823203335ee0db 29-40
+internal/services/r2_bucket_lifecycle/schema.go
+  s_43f9ac7963ea59::t_823203335ee0db 44
+internal/services/r2_bucket_lock/data_source_model_test.go
+  s_43f9ac7963ea59::t_823203335ee0db 1-28
+internal/services/r2_managed_domain/schema.go
+  s_43f9ac7963ea59::t_823203335ee0db 43
+internal/services/r2_bucket/data_source_model_test.go
+  s_43f9ac7963ea59::t_823203335ee0db 1-28
+internal/services/r2_bucket_sippy/data_source_schema.go
+  s_43f9ac7963ea59::t_823203335ee0db 28-39
+internal/services/workers_script/schema.go
+  s_43f9ac7963ea59::t_823203335ee0db 459,466
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "33120236834e1e8b81c976c297a9b4cfd00ce771",
+  "prompts": {},
+  "sessions": {
+    "s_43f9ac7963ea59": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa2863026ffecVDMlkAqe5u5a2",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Riccardo Di Maio <rdm@cloudflare.com>"
+    }
+  }
+}

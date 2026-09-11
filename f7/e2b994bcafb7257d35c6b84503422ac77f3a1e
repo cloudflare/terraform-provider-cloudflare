@@ -1,0 +1,21 @@
+internal/services/magic_wan_gre_tunnel/resource_filter_id_test.go
+  s_f2bfc49fb94775::t_45b3a268e0b15a 1-149
+internal/services/magic_wan_ipsec_tunnel/resource_filter_id_test.go
+  s_f2bfc49fb94775::t_b363ba43ea5496 1-149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f7e2b994bcafb7257d35c6b84503422ac77f3a1e",
+  "prompts": {},
+  "sessions": {
+    "s_f2bfc49fb94775": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f7a977ce4ffeTzyipthrB16PoY",
+        "model": "@cf/moonshotai/kimi-k2.7-code"
+      },
+      "human_author": "Ryan Standt <rstandt@cloudflare.com>"
+    }
+  }
+}

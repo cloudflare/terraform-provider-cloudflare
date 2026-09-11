@@ -1,0 +1,20 @@
+go.mod
+  s_f2bfc49fb94775::t_05d4ed34dc1d61 82-83
+  s_f2bfc49fb94775::t_062aca0e19ed7a 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "781e657aa5e2f1cce1309cf4d031217d34f396fd",
+  "prompts": {},
+  "sessions": {
+    "s_f2bfc49fb94775": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f7a977ce4ffeTzyipthrB16PoY",
+        "model": "@cf/moonshotai/kimi-k2.7-code"
+      },
+      "human_author": "Ryan Standt <rstandt@cloudflare.com>"
+    }
+  }
+}
