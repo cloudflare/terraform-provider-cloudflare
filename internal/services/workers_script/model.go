@@ -132,7 +132,7 @@ type WorkersScriptMetadataModel struct {
 	Annotations         customfield.NestedObject[WorkersScriptMetadataAnnotationsModel           ] `tfsdk:"annotations" json:"annotations,computed_optional"`
 	Assets              *WorkersScriptMetadataAssetsModel                 `tfsdk:"assets" json:"assets,optional"`
 	Bindings            customfield.NestedObjectList[WorkersScriptMetadataBindingsModel           ] `tfsdk:"bindings" json:"bindings,computed_optional"`
-	BodyPart            types.String                                      `tfsdk:"body_part" json:"body_part,optional"`
+	BodyPart            types.String                                      `tfsdk:"body_part" json:"body_part,computed_optional"`
 	CacheOptions        *WorkersScriptMetadataCacheOptionsModel           `tfsdk:"cache_options" json:"cache_options,optional"`
 	CompatibilityDate   types.String                                      `tfsdk:"compatibility_date" json:"compatibility_date,computed_optional"`
 	CompatibilityFlags  customfield.Set[types.String]                     `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
@@ -214,7 +214,6 @@ type WorkersScriptMetadataBindingsModel struct {
 	DispatchNamespace           types.String                                `tfsdk:"dispatch_namespace" json:"dispatch_namespace,optional"`
 	Entrypoint                  types.String                                `tfsdk:"entrypoint" json:"entrypoint,optional"`
 	ServiceID                   types.String                                `tfsdk:"service_id" json:"service_id,optional"`
-	Identity                    types.String                                `tfsdk:"identity" json:"identity,optional"`
 	NetworkID                   types.String                                `tfsdk:"network_id" json:"network_id,optional"`
 	TunnelID                    types.String                                `tfsdk:"tunnel_id" json:"tunnel_id,optional"`
 }
@@ -299,7 +298,6 @@ type WorkersScriptMetadataObservabilityModel struct {
 	Enabled           types.Bool                                     `tfsdk:"enabled" json:"enabled,required"`
 	HeadSamplingRate  types.Float64                                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
 	Logs              *WorkersScriptMetadataObservabilityLogsModel   `tfsdk:"logs" json:"logs,optional"`
-	RedactQueryString types.Bool                                     `tfsdk:"redact_query_string" json:"redact_query_string,computed_optional"`
 	Traces            *WorkersScriptMetadataObservabilityTracesModel `tfsdk:"traces" json:"traces,optional"`
 }
 
@@ -356,7 +354,6 @@ type WorkersScriptObservabilityModel struct {
 	Enabled           types.Bool                                                      `tfsdk:"enabled" json:"enabled,computed"`
 	HeadSamplingRate  types.Float64                                                   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
 	Logs              customfield.NestedObject[WorkersScriptObservabilityLogsModel]   `tfsdk:"logs" json:"logs,computed"`
-	RedactQueryString types.Bool                                                      `tfsdk:"redact_query_string" json:"redact_query_string,computed"`
 	Traces            customfield.NestedObject[WorkersScriptObservabilityTracesModel] `tfsdk:"traces" json:"traces,computed"`
 }
 

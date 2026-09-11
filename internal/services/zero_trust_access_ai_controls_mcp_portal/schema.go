@@ -5,6 +5,7 @@ package zero_trust_access_ai_controls_mcp_portal
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -70,7 +71,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"servers": schema.SetNestedAttribute{
 				Description: "MCP servers attached to the portal and their portal-specific settings.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessAIControlsMcpPortalServersModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"server_id": schema.StringAttribute{
@@ -79,11 +82,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"default_disabled": schema.BoolAttribute{
 							Description: "Disable this server by default for clients connecting through the portal.",
+							Computed:    true,
 							Optional:    true,
+							Default:     booldefault.StaticBool(false),
 						},
 						"on_behalf": schema.BoolAttribute{
 							Description: "Use end-user OAuth credentials when connecting this server to the portal.",
+							Computed:    true,
 							Optional:    true,
+							Default:     booldefault.StaticBool(true),
 						},
 						"updated_prompts": schema.ListNestedAttribute{
 							Description: "Portal-specific prompt overrides.",

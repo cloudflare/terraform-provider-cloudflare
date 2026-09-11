@@ -95,7 +95,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"files": schema.MapNestedAttribute{
 				Description: "Additional modules and data files to include in the multipart Worker upload. Map keys are multipart part names referenced by binding `part` values and module imports.",
 				Optional:    true,
-				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"content_base64": schema.StringAttribute{
@@ -128,6 +127,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+
 			"assets": schema.SingleNestedAttribute{
 				Description: "Configuration for assets within a Worker.",
 				Optional:    true,
@@ -504,6 +504,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"body_part": schema.StringAttribute{
 				Description: "Name of the uploaded file that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
 				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"compatibility_date": schema.StringAttribute{
 				Description: "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
