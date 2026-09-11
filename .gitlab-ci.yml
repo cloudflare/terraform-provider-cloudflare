@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json
 stages:
+  - lint
+  - test
   - mr
   - review
 
@@ -7,3 +9,60 @@ include:
   - component: $CI_SERVER_FQDN/cloudflare/ci/ai/opencode@~latest
     inputs:
       runOnMR: true
+
+default:
+  image: $IMAGE_GO_TRIXIE
+
+# Only run pipelines for:
+#   - merge requests
+#   - commits to the default branch (main)
+#   - release branches (release/* or release-*)
+# The $CI_OPEN_MERGE_REQUESTS guard prevents duplicate branch + MR pipelines.
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH =~ /^release[\/-]/
+
+# Shared rules for jobs that should run on main, MRs, and release branches.
+# Explicit rules are required so jobs are added to merge request pipelines
+# (jobs without rules default to branch/tag pipelines only).
+.ci-rules: &ci-rules
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_COMMIT_BRANCH == "main"
+  - if: $CI_COMMIT_BRANCH =~ /^release[\/-]/
+
+# Mirrors the GitHub "check-schema-versions" job, which only runs on PRs to main.
+check-schema-versions:
+  stage: lint
+  timeout: 30 minutes
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+  script:
+    - ./scripts/check-schema-versions
+
+# Mirrors the GitHub "lint" job.
+lint:
+  stage: lint
+  timeout: 30 minutes
+  rules: *ci-rules
+  script:
+    - ./scripts/bootstrap
+    - ./scripts/lint
+
+# Mirrors the GitHub "test" job, sharded 16 ways via GitLab's parallel matrix.
+test:
+  stage: test
+  timeout: 30 minutes
+  parallel: 16
+  rules: *ci-rules
+  script:
+    - ./scripts/bootstrap
+    - |
+      # Select this shard's packages (1-indexed), matching the GitHub sharding logic.
+      packages=$(go list ./... | awk "NR % $CI_NODE_TOTAL == ($CI_NODE_INDEX - 1)")
+      if [ -n "$packages" ]; then
+        echo "$packages" | xargs go test -v -timeout 25m
+      fi
