@@ -89,6 +89,20 @@ type splitTunnelEntry interface {
 	ZeroTrustDeviceCustomProfileExcludeModel | ZeroTrustDeviceCustomProfileIncludeModel
 }
 
+// mutuallyExclusiveKey maps a split tunnel entry attribute to the attribute it
+// cannot be combined with. An entry addresses either an IP range or a hostname,
+// never both.
+var mutuallyExclusiveKey = map[string]string{
+	"address": "host",
+	"host":    "address",
+}
+
+// isSet reports whether an attribute holds a usable value, as opposed to being
+// absent or not yet resolved.
+func isSet(val attr.Value) bool {
+	return val != nil && !val.IsNull() && !val.IsUnknown()
+}
+
 // normalizeSplitTunnelList resolves unknown nested attributes in exclude/include
 // list elements. For each element, if address/host/description is unknown, it is
 // resolved to the corresponding state value (for existing entries at the same
@@ -99,6 +113,12 @@ type splitTunnelEntry interface {
 // may be applied for one plan-apply cycle; the next read corrects them. This is
 // acceptable because the API does not compute these fields — the worst case is
 // a single extra apply with null values that get overwritten by the API response.
+//
+// The exception is address/host, which are mutually exclusive: the API rejects
+// the whole request with "cannot update split tunnels: host and Address both
+// cannot be present" if it receives both. Inheriting one from a state entry of
+// the other kind therefore fails the apply instead of costing an extra cycle,
+// so mutuallyExclusiveKey is consulted before falling back to state.
 func normalizeSplitTunnelList[T splitTunnelEntry](
 	ctx context.Context,
 	planList customfield.NestedObjectList[T],
@@ -148,7 +168,14 @@ func normalizeSplitTunnelList[T splitTunnelEntry](
 				// Try to use state value; fall back to null.
 				// NOTE: all nested attributes in exclude/include models are strings;
 				// update this fallback if non-string Optional+Computed fields are added.
-				if stateAttrs != nil {
+				//
+				// An unknown attribute whose mutually exclusive counterpart is set
+				// in the plan resolves to null, never to a state value: the state
+				// entry at this index may be of the other kind, and sending both
+				// address and host makes the API reject the request.
+				if other, ok := mutuallyExclusiveKey[key]; ok && isSet(attrs[other]) {
+					newAttrs[key] = basetypes.NewStringNull()
+				} else if stateAttrs != nil {
 					if sv, exists := stateAttrs[key]; exists {
 						newAttrs[key] = sv
 					} else {
