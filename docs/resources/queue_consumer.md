@@ -69,5 +69,8 @@ Optional:
 
 ## Import
 
+Import is supported using the following syntax:
 
-~> This resource does not currently support `terraform import`.
+```shell
+$ terraform import cloudflare_queue_consumer.example '<account_id>/<queue_id>/<consumer_id>'
+```
