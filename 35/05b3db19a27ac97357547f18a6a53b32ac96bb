@@ -1,0 +1,19 @@
+internal/services/email_routing_settings/schema.go
+  s_953374e911ae81::t_07d19d4291cf1e 63-66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3505b3db19a27ac97357547f18a6a53b32ac96bb",
+  "prompts": {},
+  "sessions": {
+    "s_953374e911ae81": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f5f272df0ffe60cLaJM9azAn5r",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
