@@ -1,0 +1,20 @@
+internal/services/workers_script/resource_test.go
+  s_eb975af9a8a216::t_076a45b6ef4b38 12
+  s_eb975af9a8a216::t_aa43aea0da5fda 73-74,76-77,79,81-107,109
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9edbc39154a8e40180654f7e3a1b531c67f9899a",
+  "prompts": {},
+  "sessions": {
+    "s_eb975af9a8a216": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f91bc0eabffe7Csy90MezloDwR",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
