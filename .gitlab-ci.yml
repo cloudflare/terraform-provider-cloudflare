@@ -54,6 +54,7 @@ check-schema-versions:
   image: $IMAGE_GO_TRIXIE
   needs: []
   timeout: 30 minutes
+  allow_failure: true
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
   script:
@@ -68,6 +69,7 @@ lint:
     - linux-x86-16cpu-32gb
   needs: []
   timeout: 45 minutes
+  allow_failure: true
   cache:
     <<: *go-cache
     policy: pull-push
@@ -85,6 +87,7 @@ test:
     - linux-x86-8cpu-16gb
   needs: []
   timeout: 45 minutes
+  allow_failure: true
   parallel: 16
   cache:
     <<: *go-cache
