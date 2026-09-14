@@ -60,6 +60,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Flag to check if the user skipped the configuration wizard.",
 				Computed:    true,
 			},
+			"support_subaddress": schema.BoolAttribute{
+				Description: "Whether subaddressing (plus-addressing) is honored when matching incoming mail against routing rules.",
+				Optional:    true,
+			},
 			"status": schema.StringAttribute{
 				Description: "Show the state of your account, and the type or configuration error.\nAvailable values: \"ready\", \"unconfigured\", \"misconfigured\", \"misconfigured/locked\", \"unlocked\".",
 				Computed:    true,
