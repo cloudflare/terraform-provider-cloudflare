@@ -1,0 +1,34 @@
+internal/services/zero_trust_access_identity_provider/migration/v500/model.go
+  s_0c96780f9f7484::t_d7dbd6d363e1e8 125
+internal/services/workers_script/schema.go
+  s_0c96780f9f7484::t_14da745f201701 453-456
+internal/services/zero_trust_tunnel_cloudflared/migration/v500/model.go
+  s_0c96780f9f7484::t_905d56f8df702c 57-58,60-67
+internal/services/workers_kv_namespace/migration/v500/model.go
+  s_0c96780f9f7484::t_6c1b8e31f12214 22
+internal/services/bot_management/migration/v500/model.go
+  s_0c96780f9f7484::t_92154cd193d7bc 58
+internal/services/workers_script/migration/v500/model.go
+  s_0c96780f9f7484::t_bcfac5870fa3e5 200
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "fa5d6e0b278d9bf5b25ca66f16c23568b39570a4",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_0c96780f9f7484": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa6ecabc9ffeL0V5myTwWzD0G2",
+        "model": "gpt-5.3-chat-latest"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
