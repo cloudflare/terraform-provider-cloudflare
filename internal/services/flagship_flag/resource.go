@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7/flagship"
 	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*FlagshipFlagResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*FlagshipFlagResource)(nil)
+var _ resource.ResourceWithImportState = (*FlagshipFlagResource)(nil)
 
 func NewResource() resource.Resource {
 	return &FlagshipFlagResource{}
@@ -89,6 +92,7 @@ func (r *FlagshipFlagResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.Key
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -120,7 +124,7 @@ func (r *FlagshipFlagResource) Update(ctx context.Context, req resource.UpdateRe
 	_, err = r.client.Flagship.Apps.Flags.Update(
 		ctx,
 		data.AppID.ValueString(),
-		data.FlagKey.ValueString(),
+		data.Key.ValueString(),
 		flagship.AppFlagUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -139,6 +143,7 @@ func (r *FlagshipFlagResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.Key
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -157,7 +162,7 @@ func (r *FlagshipFlagResource) Read(ctx context.Context, req resource.ReadReques
 	_, err := r.client.Flagship.Apps.Flags.Get(
 		ctx,
 		data.AppID.ValueString(),
-		data.FlagKey.ValueString(),
+		data.Key.ValueString(),
 		flagship.AppFlagGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -180,6 +185,7 @@ func (r *FlagshipFlagResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 	data = &env.Result
+	data.ID = data.Key
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -196,7 +202,7 @@ func (r *FlagshipFlagResource) Delete(ctx context.Context, req resource.DeleteRe
 	_, err := r.client.Flagship.Apps.Flags.Delete(
 		ctx,
 		data.AppID.ValueString(),
-		data.FlagKey.ValueString(),
+		data.Key.ValueString(),
 		flagship.AppFlagDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -206,6 +212,57 @@ func (r *FlagshipFlagResource) Delete(ctx context.Context, req resource.DeleteRe
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.Key
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *FlagshipFlagResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data = new(FlagshipFlagModel)
+
+	path_account_id := ""
+	path_app_id := ""
+	path_flag_key := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<app_id>/<flag_key>",
+		&path_account_id,
+		&path_app_id,
+		&path_flag_key,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.AppID = types.StringValue(path_app_id)
+	data.Key = types.StringValue(path_flag_key)
+
+	res := new(http.Response)
+	env := FlagshipFlagResultEnvelope{*data}
+	_, err := r.client.Flagship.Apps.Flags.Get(
+		ctx,
+		path_app_id,
+		path_flag_key,
+		flagship.AppFlagGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.Key
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

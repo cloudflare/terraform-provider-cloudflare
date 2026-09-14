@@ -4,6 +4,7 @@ package zero_trust_access_infrastructure_target
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -17,6 +18,7 @@ type ZeroTrustAccessInfrastructureTargetModel struct {
 	AccountID  types.String                                `tfsdk:"account_id" path:"account_id,required"`
 	Hostname   types.String                                `tfsdk:"hostname" json:"hostname,required"`
 	IP         *ZeroTrustAccessInfrastructureTargetIPModel `tfsdk:"ip" json:"ip,required"`
+	Tags       customfield.Map[types.String]               `tfsdk:"tags" json:"tags,computed_optional"`
 	CreatedAt  timetypes.RFC3339                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ModifiedAt timetypes.RFC3339                           `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 }

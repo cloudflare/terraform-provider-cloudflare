@@ -88,6 +88,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"authentication": schema.BoolAttribute{
 							Computed: true,
 						},
+						"byok_only": schema.BoolAttribute{
+							Description: "Requires customer-provided provider credentials and prevents fallback to Unified Billing.",
+							Computed:    true,
+						},
 						"dlp": schema.SingleNestedAttribute{
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[AIGatewaysDLPDataSourceModel](ctx),
@@ -429,10 +433,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"retry_delay": schema.Int64Attribute{
-							Description: "Delay between retry attempts in milliseconds (0-5000)",
+							Description: "Delay between retry attempts in milliseconds (0-60000)",
 							Computed:    true,
 							Validators: []validator.Int64{
-								int64validator.Between(0, 5000),
+								int64validator.Between(0, 60000),
 							},
 						},
 						"retry_max_attempts": schema.Int64Attribute{

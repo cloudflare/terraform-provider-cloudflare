@@ -21,6 +21,7 @@ type AIGatewayDataSourceModel struct {
 	ID                      types.String                                                  `tfsdk:"id" path:"id,computed_optional"`
 	AccountID               types.String                                                  `tfsdk:"account_id" path:"account_id,optional"`
 	Authentication          types.Bool                                                    `tfsdk:"authentication" json:"authentication,computed"`
+	ByokOnly                types.Bool                                                    `tfsdk:"byok_only" json:"byok_only,computed"`
 	CacheInvalidateOnUpdate types.Bool                                                    `tfsdk:"cache_invalidate_on_update" json:"cache_invalidate_on_update,computed"`
 	CacheTTL                types.Int64                                                   `tfsdk:"cache_ttl" json:"cache_ttl,computed"`
 	CollectLogs             types.Bool                                                    `tfsdk:"collect_logs" json:"collect_logs,computed"`

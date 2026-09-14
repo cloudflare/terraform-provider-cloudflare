@@ -30,6 +30,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "Unique identifier for the flag within an app. Used in all evaluation and SDK calls.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
+			"key": schema.StringAttribute{
+				Description:   "Unique identifier for the flag within an app. Used in all evaluation and SDK calls.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
 			"account_id": schema.StringAttribute{
 				Description:   "Cloudflare account ID.",
 				Required:      true,
@@ -40,21 +50,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"flag_key": schema.StringAttribute{
-				Description:   "Flag key (slug).",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"default_variation": schema.StringAttribute{
 				Description: "Variation served when no rule matches or the flag is disabled. Must be a key in `variations`.",
 				Required:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "When false, the flag bypasses all rules and always serves `default_variation`.",
-				Required:    true,
-			},
-			"key": schema.StringAttribute{
-				Description: "Unique identifier for the flag within an app. Used in all evaluation and SDK calls.",
 				Required:    true,
 			},
 			"variations": schema.MapAttribute{
@@ -352,8 +353,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 			},
 			"type": schema.StringAttribute{
-				Description: "Value type of the flag's variations. Inferred from the variation values on write, so it may be omitted in requests.\nAvailable values: \"boolean\", \"string\", \"number\", \"json\".",
-				Optional:    true,
+				Description:        "Deprecated compatibility field. Omit it; the API ignores this value and infers the type from the flag's variations.\nAvailable values: \"boolean\", \"string\", \"number\", \"json\".",
+				Computed:           true,
+				Optional:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"boolean",
@@ -362,6 +365,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"json",
 					),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"updated_at": schema.StringAttribute{
 				Computed: true,

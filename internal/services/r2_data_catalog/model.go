@@ -33,6 +33,7 @@ func (m R2DataCatalogModel) MarshalJSONForUpdate(state R2DataCatalogModel) (data
 
 type R2DataCatalogMaintenanceConfigModel struct {
 	Compaction         customfield.NestedObject[R2DataCatalogMaintenanceConfigCompactionModel]         `tfsdk:"compaction" json:"compaction,computed"`
+	Interval           types.String                                                                    `tfsdk:"interval" json:"interval,computed"`
 	SnapshotExpiration customfield.NestedObject[R2DataCatalogMaintenanceConfigSnapshotExpirationModel] `tfsdk:"snapshot_expiration" json:"snapshot_expiration,computed"`
 }
 

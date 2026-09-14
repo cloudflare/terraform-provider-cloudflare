@@ -37,6 +37,7 @@ func (m *R2DataCatalogDataSourceModel) toReadParams(_ context.Context) (params r
 
 type R2DataCatalogMaintenanceConfigDataSourceModel struct {
 	Compaction         customfield.NestedObject[R2DataCatalogMaintenanceConfigCompactionDataSourceModel]         `tfsdk:"compaction" json:"compaction,computed"`
+	Interval           types.String                                                                              `tfsdk:"interval" json:"interval,computed"`
 	SnapshotExpiration customfield.NestedObject[R2DataCatalogMaintenanceConfigSnapshotExpirationDataSourceModel] `tfsdk:"snapshot_expiration" json:"snapshot_expiration,computed"`
 }
 

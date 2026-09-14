@@ -103,6 +103,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				ElementType: types.StringType,
 			},
+			"tag": schema.ListAttribute{
+				Description: "Filter by tag key:value pairs. Multiple `tag` params are AND'd.\nFormat: `tag=key:value` (e.g., `tag=environment:production`).\nKey and value must both be non-empty; `tag=:value` and `tag=key:` return 400.",
+				Optional:    true,
+				ElementType: types.StringType,
+			},
 			"target_ids": schema.ListAttribute{
 				Description: "Filters for targets that have any of the following UUIDs. Specify\n`target_ids` multiple times in query parameter to build list of\ncandidates.",
 				Optional:    true,
@@ -175,6 +180,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Date and time at which the target was modified",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
+						},
+						"tags": schema.MapAttribute{
+							Description: "Tags assigned to the target. Empty when no tags are assigned.",
+							Computed:    true,
+							CustomType:  customfield.NewMapType[types.String](ctx),
+							ElementType: types.StringType,
 						},
 					},
 				},

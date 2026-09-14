@@ -108,6 +108,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Determines which tunnel protocol to use.",
 				Computed:    true,
 			},
+			"uninstall_protection": schema.BoolAttribute{
+				Description: "Determines whether uninstalling the WARP client requires an override code. (Windows only).",
+				Computed:    true,
+			},
 			"dns_search_suffixes": schema.ListNestedAttribute{
 				Description: "List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear.",
 				Computed:    true,

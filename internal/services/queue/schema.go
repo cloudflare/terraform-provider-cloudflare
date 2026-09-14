@@ -46,6 +46,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"queue_name": schema.StringAttribute{
 				Required: true,
 			},
+			"jurisdiction": schema.StringAttribute{
+				Description: `Available values: "eu", "us", "fedramp".`,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"eu",
+						"us",
+						"fedramp",
+					),
+				},
+			},
 			"settings": schema.SingleNestedAttribute{
 				Optional:   true,
 				Computed:   true,

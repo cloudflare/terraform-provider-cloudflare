@@ -234,6 +234,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Determines which tunnel protocol to use.",
 							Computed:    true,
 						},
+						"uninstall_protection": schema.BoolAttribute{
+							Description: "Determines whether uninstalling the WARP client requires an override code. (Windows only).",
+							Computed:    true,
+						},
 						"virtual_networks": schema.SingleNestedAttribute{
 							Description: "Virtual network access settings for the device.",
 							Computed:    true,

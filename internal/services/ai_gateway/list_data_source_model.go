@@ -46,6 +46,7 @@ type AIGatewaysResultDataSourceModel struct {
 	RateLimitingInterval    types.Int64                                                    `tfsdk:"rate_limiting_interval" json:"rate_limiting_interval,computed"`
 	RateLimitingLimit       types.Int64                                                    `tfsdk:"rate_limiting_limit" json:"rate_limiting_limit,computed"`
 	Authentication          types.Bool                                                     `tfsdk:"authentication" json:"authentication,computed"`
+	ByokOnly                types.Bool                                                     `tfsdk:"byok_only" json:"byok_only,computed"`
 	DLP                     customfield.NestedObject[AIGatewaysDLPDataSourceModel]         `tfsdk:"dlp" json:"dlp,computed"`
 	Guardrails              customfield.NestedObject[AIGatewaysGuardrailsDataSourceModel]  `tfsdk:"guardrails" json:"guardrails,computed"`
 	IsDefault               types.Bool                                                     `tfsdk:"is_default" json:"is_default,computed"`

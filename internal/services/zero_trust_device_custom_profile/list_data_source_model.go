@@ -60,6 +60,7 @@ type ZeroTrustDeviceCustomProfilesResultDataSourceModel struct {
 	SwitchLocked               types.Bool                                                                                  `tfsdk:"switch_locked" json:"switch_locked,computed"`
 	TargetTests                customfield.NestedObjectList[ZeroTrustDeviceCustomProfilesTargetTestsDataSourceModel]       `tfsdk:"target_tests" json:"target_tests,computed"`
 	TunnelProtocol             types.String                                                                                `tfsdk:"tunnel_protocol" json:"tunnel_protocol,computed"`
+	UninstallProtection        types.Bool                                                                                  `tfsdk:"uninstall_protection" json:"uninstall_protection,computed"`
 	VirtualNetworks            customfield.NestedObject[ZeroTrustDeviceCustomProfilesVirtualNetworksDataSourceModel]       `tfsdk:"virtual_networks" json:"virtual_networks,computed"`
 }
 

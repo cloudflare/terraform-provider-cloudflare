@@ -54,9 +54,9 @@ func (m *WorkersCustomDomainsDataSourceModel) toListParams(_ context.Context) (p
 type WorkersCustomDomainsResultDataSourceModel struct {
 	ID          types.String `tfsdk:"id" json:"id,computed"`
 	CERTID      types.String `tfsdk:"cert_id" json:"cert_id,computed"`
+	Environment types.String `tfsdk:"environment" json:"environment,computed"`
 	Hostname    types.String `tfsdk:"hostname" json:"hostname,computed"`
 	Service     types.String `tfsdk:"service" json:"service,computed"`
 	ZoneID      types.String `tfsdk:"zone_id" json:"zone_id,computed"`
 	ZoneName    types.String `tfsdk:"zone_name" json:"zone_name,computed"`
-	Environment types.String `tfsdk:"environment" json:"environment,computed"`
 }

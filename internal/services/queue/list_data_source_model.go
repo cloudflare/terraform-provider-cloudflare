@@ -36,6 +36,7 @@ type QueuesResultDataSourceModel struct {
 	Consumers           customfield.NestedObjectList[QueuesConsumersDataSourceModel] `tfsdk:"consumers" json:"consumers,computed"`
 	ConsumersTotalCount types.Float64                                                `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
 	CreatedOn           types.String                                                 `tfsdk:"created_on" json:"created_on,computed"`
+	Jurisdiction        types.String                                                 `tfsdk:"jurisdiction" json:"jurisdiction,computed"`
 	ModifiedOn          types.String                                                 `tfsdk:"modified_on" json:"modified_on,computed"`
 	Producers           customfield.NestedObjectList[QueuesProducersDataSourceModel] `tfsdk:"producers" json:"producers,computed"`
 	ProducersTotalCount types.Float64                                                `tfsdk:"producers_total_count" json:"producers_total_count,computed"`

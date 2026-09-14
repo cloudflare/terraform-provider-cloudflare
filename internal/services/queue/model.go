@@ -18,7 +18,8 @@ type QueueModel struct {
 	QueueID             types.String                                      `tfsdk:"queue_id" json:"queue_id,computed"`
 	AccountID           types.String                                      `tfsdk:"account_id" path:"account_id,required"`
 	QueueName           types.String                                      `tfsdk:"queue_name" json:"queue_name,required"`
-	Settings            customfield.NestedObject[QueueSettingsModel]      `tfsdk:"settings" json:"settings,computed_optional"`
+	Jurisdiction        types.String                                      `tfsdk:"jurisdiction" json:"jurisdiction,optional"`
+	Settings            *QueueSettingsModel                               `tfsdk:"settings" json:"settings,optional"`
 	ConsumersTotalCount types.Float64                                     `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
 	CreatedOn           types.String                                      `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn          types.String                                      `tfsdk:"modified_on" json:"modified_on,computed"`

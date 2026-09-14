@@ -48,7 +48,11 @@ type BotManagementStaleZoneConfigurationAPIModel struct {
 type BotManagementModel struct {
 	ID                           types.String                                                       `tfsdk:"id" json:"-,computed"`
 	ZoneID                       types.String                                                       `tfsdk:"zone_id" path:"zone_id,required"`
+	AIBotsMigrationOptOut        types.Bool                                                         `tfsdk:"ai_bots_migration_opt_out" json:"ai_bots_migration_opt_out,computed_optional"`
 	AIBotsProtection             types.String                                                       `tfsdk:"ai_bots_protection" json:"ai_bots_protection,computed_optional"`
+	AITraining                   types.String                                                       `tfsdk:"ai_training" json:"ai_training,computed_optional"`
+	AIUser                       types.String                                                       `tfsdk:"ai_user" json:"ai_user,computed_optional"`
+	AISearch                     types.String                                                       `tfsdk:"aisearch" json:"ai_search,computed_optional"`
 	AutoUpdateModel              types.Bool                                                         `tfsdk:"auto_update_model" json:"auto_update_model,computed_optional"`
 	BmCookieEnabled              types.Bool                                                         `tfsdk:"bm_cookie_enabled" json:"bm_cookie_enabled,computed_optional"`
 	BotPreferenceSyncEnabled     types.Bool                                                         `tfsdk:"bot_preference_sync_enabled" json:"bot_preference_sync_enabled,optional"`

@@ -819,6 +819,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplaceIfConfigured()},
 			},
+			"author_email": schema.StringAttribute{
+				Description: "Email of the user who created the version.",
+				Computed:    true,
+			},
+			"author_id": schema.StringAttribute{
+				Description: "Identifier of the user who created the version.",
+				Computed:    true,
+			},
+			"author_email": schema.StringAttribute{
+				Description: "Email of the user who created the version.",
+				Computed:    true,
+			},
+			"author_id": schema.StringAttribute{
+				Description: "Identifier of the user who created the version.",
+				Computed:    true,
+			},
 			"created_on": schema.StringAttribute{
 				Description:   "When the version was created.",
 				Computed:      true,

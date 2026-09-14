@@ -16,6 +16,7 @@ data "cloudflare_zero_trust_access_infrastructure_targets" "example_zero_trust_a
   modified_after = "2019-12-27T18:11:19.117Z"
   modified_before = "2019-12-27T18:11:19.117Z"
   order = "hostname"
+  tag = ["string"]
   target_ids = ["182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"]
   virtual_network_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
 }

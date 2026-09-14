@@ -30,6 +30,7 @@ type ZeroTrustDeviceDefaultProfileModel struct {
 	SupportURL                 types.String                                                                      `tfsdk:"support_url" json:"support_url,computed_optional"`
 	SwitchLocked               types.Bool                                                                        `tfsdk:"switch_locked" json:"switch_locked,computed_optional"`
 	TunnelProtocol             types.String                                                                      `tfsdk:"tunnel_protocol" json:"tunnel_protocol,computed_optional"`
+	UninstallProtection        types.Bool                                                                        `tfsdk:"uninstall_protection" json:"uninstall_protection,computed_optional"`
 	DNSSearchSuffixes          customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileDNSSearchSuffixesModel] `tfsdk:"dns_search_suffixes" json:"dns_search_suffixes,computed_optional"`
 	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileExcludeModel]           `tfsdk:"exclude" json:"exclude,computed_optional"`
 	GlobalAcceleration         *ZeroTrustDeviceDefaultProfileGlobalAccelerationModel                             `tfsdk:"global_acceleration" json:"global_acceleration,optional"`

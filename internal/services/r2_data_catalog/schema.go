@@ -96,6 +96,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
+					"interval": schema.StringAttribute{
+						Description: "Scheduling interval between normal table maintenance runs.",
+						Computed:    true,
+					},
 					"snapshot_expiration": schema.SingleNestedAttribute{
 						Description: "Configures snapshot expiration settings.",
 						Computed:    true,

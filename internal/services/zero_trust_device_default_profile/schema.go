@@ -230,6 +230,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     stringdefault.StaticString(""),
 			},
+			"uninstall_protection": schema.BoolAttribute{
+				Description: "Determines whether uninstalling the WARP client requires an override code. (Windows only).",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
 			"dns_search_suffixes": schema.ListNestedAttribute{
 				Description: "List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear.",
 				Computed:    true,

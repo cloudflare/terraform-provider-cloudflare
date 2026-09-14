@@ -38,13 +38,14 @@ func (m *FlagshipFlagsDataSourceModel) toListParams(_ context.Context) (params f
 }
 
 type FlagshipFlagsResultDataSourceModel struct {
+	ID               types.String                                                    `tfsdk:"id" json:"key,computed"`
 	DefaultVariation types.String                                                    `tfsdk:"default_variation" json:"default_variation,computed"`
 	Enabled          types.Bool                                                      `tfsdk:"enabled" json:"enabled,computed"`
 	Key              types.String                                                    `tfsdk:"key" json:"key,computed"`
 	Rules            customfield.NestedObjectList[FlagshipFlagsRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
+	Type             types.String                                                    `tfsdk:"type" json:"type,computed"`
 	Variations       customfield.Map[types.String]                                   `tfsdk:"variations" json:"variations,computed"`
 	Description      types.String                                                    `tfsdk:"description" json:"description,computed"`
-	Type             types.String                                                    `tfsdk:"type" json:"type,computed"`
 	UpdatedAt        types.String                                                    `tfsdk:"updated_at" json:"updated_at,computed"`
 	UpdatedBy        types.String                                                    `tfsdk:"updated_by" json:"updated_by,computed"`
 }

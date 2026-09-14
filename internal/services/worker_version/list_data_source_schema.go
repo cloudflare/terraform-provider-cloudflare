@@ -136,6 +136,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"author_email": schema.StringAttribute{
+							Description: "Email of the user who created the version.",
+							Computed:    true,
+						},
+						"author_id": schema.StringAttribute{
+							Description: "Identifier of the user who created the version.",
+							Computed:    true,
+						},
 						"bindings": schema.ListNestedAttribute{
 							Description: "List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings.",
 							Computed:    true,

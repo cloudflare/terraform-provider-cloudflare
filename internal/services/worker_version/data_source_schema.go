@@ -51,6 +51,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("modules"),
 				},
 			},
+			"author_email": schema.StringAttribute{
+				Description: "Email of the user who created the version.",
+				Computed:    true,
+			},
+			"author_id": schema.StringAttribute{
+				Description: "Identifier of the user who created the version.",
+				Computed:    true,
+			},
 			"compatibility_date": schema.StringAttribute{
 				Description: "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
 				Computed:    true,

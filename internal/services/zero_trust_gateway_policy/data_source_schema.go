@@ -6,12 +6,15 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -27,7 +30,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"rule_id": schema.StringAttribute{
 				Description: "Identify the API resource with a UUID.",
-				Required:    true,
+				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
 				Optional: true,
@@ -625,6 +628,39 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"filter": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"direction": schema.StringAttribute{
+						Description: "Sort direction. When `order_by` is omitted, this controls the direction\nof the existing precedence ordering. Shared rules remain first in either\ndirection. Accepted values are `asc` and `desc`.\nAvailable values: \"asc\", \"desc\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+						},
+					},
+					"filter": schema.ListAttribute{
+						Description: "Filter the returned rules by one or more `field:value` pairs. Repeat the\nparameter to combine filters with logical AND.\n\nSupported fields are `name`, `id`, `action`, `enabled`, `source_account`,\n`is_shared`, `filters`, and `expression` (max 1024 bytes). The `source_account`\nvalue is matched as a normalized UUID substring. The `filters` value must\nbe one of the rule filter names and matches a member of the rule's `filters`\narray. The `expression` filter performs a case-insensitive literal\nsubstring match across traffic, identity, and device posture expressions.",
+						Optional:    true,
+						ElementType: jsontypes.NormalizedType{},
+					},
+					"order_by": schema.StringAttribute{
+						Description: "Field to sort the returned rules by. Supported values are `name`,\n`created_at`, `updated_at`, and `precedence`.\nAvailable values: \"name\", \"created_at\", \"updated_at\", \"precedence\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"name",
+								"created_at",
+								"updated_at",
+								"precedence",
+							),
+						},
+					},
+					"search": schema.StringAttribute{
+						Description: "Case-insensitive substring search across rule name and description.",
+						Optional:    true,
+					},
+				},
+			},
 		},
 	}
 }
@@ -634,5 +670,7 @@ func (d *ZeroTrustGatewayPolicyDataSource) Schema(ctx context.Context, req datas
 }
 
 func (d *ZeroTrustGatewayPolicyDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("rule_id"), path.MatchRoot("filter")),
+	}
 }

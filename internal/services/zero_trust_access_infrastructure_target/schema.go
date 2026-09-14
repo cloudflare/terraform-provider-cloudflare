@@ -5,11 +5,14 @@ package zero_trust_access_infrastructure_target
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/mapplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessInfrastructureTargetResource)(nil)
@@ -69,6 +72,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+			},
+			"tags": schema.MapAttribute{
+				Description:   "Optional tags to associate with the target. Keys and values are\nuser-defined strings.",
+				Computed:      true,
+				Optional:      true,
+				CustomType:    customfield.NewMapType[types.String](ctx),
+				ElementType:   types.StringType,
+				PlanModifiers: []planmodifier.Map{mapplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"created_at": schema.StringAttribute{
 				Description:   "Date and time at which the target was created",

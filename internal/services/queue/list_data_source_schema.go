@@ -118,6 +118,17 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"created_on": schema.StringAttribute{
 							Computed: true,
 						},
+						"jurisdiction": schema.StringAttribute{
+							Description: `Available values: "eu", "us", "fedramp".`,
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"eu",
+									"us",
+									"fedramp",
+								),
+							},
+						},
 						"modified_on": schema.StringAttribute{
 							Computed: true,
 						},

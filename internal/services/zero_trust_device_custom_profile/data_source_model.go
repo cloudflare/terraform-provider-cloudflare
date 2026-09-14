@@ -41,6 +41,7 @@ type ZeroTrustDeviceCustomProfileDataSourceModel struct {
 	SupportURL                 types.String                                                                               `tfsdk:"support_url" json:"support_url,computed"`
 	SwitchLocked               types.Bool                                                                                 `tfsdk:"switch_locked" json:"switch_locked,computed"`
 	TunnelProtocol             types.String                                                                               `tfsdk:"tunnel_protocol" json:"tunnel_protocol,computed"`
+	UninstallProtection        types.Bool                                                                                 `tfsdk:"uninstall_protection" json:"uninstall_protection,computed"`
 	DNSSearchSuffixes          customfield.NestedObjectList[ZeroTrustDeviceCustomProfileDNSSearchSuffixesDataSourceModel] `tfsdk:"dns_search_suffixes" json:"dns_search_suffixes,computed"`
 	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceCustomProfileExcludeDataSourceModel]           `tfsdk:"exclude" json:"exclude,computed"`
 	FallbackDomains            customfield.NestedObjectList[ZeroTrustDeviceCustomProfileFallbackDomainsDataSourceModel]   `tfsdk:"fallback_domains" json:"fallback_domains,computed"`

@@ -18,8 +18,12 @@ type BotManagementResultDataSourceEnvelope struct {
 
 type BotManagementDataSourceModel struct {
 	ID                           types.String                                                                 `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID                       types.String                                                                 `tfsdk:"zone_id" path:"zone_id,optional"`
+	ZoneID                       types.String                                                                 `tfsdk:"zone_id" path:"zone_id,required"`
+	AIBotsMigrationOptOut        types.Bool                                                                   `tfsdk:"ai_bots_migration_opt_out" json:"ai_bots_migration_opt_out,computed"`
 	AIBotsProtection             types.String                                                                 `tfsdk:"ai_bots_protection" json:"ai_bots_protection,computed"`
+	AITraining                   types.String                                                                 `tfsdk:"ai_training" json:"ai_training,computed"`
+	AIUser                       types.String                                                                 `tfsdk:"ai_user" json:"ai_user,computed"`
+	AISearch                     types.String                                                                 `tfsdk:"aisearch" json:"ai_search,computed"`
 	AutoUpdateModel              types.Bool                                                                   `tfsdk:"auto_update_model" json:"auto_update_model,computed"`
 	BmCookieEnabled              types.Bool                                                                   `tfsdk:"bm_cookie_enabled" json:"bm_cookie_enabled,computed"`
 	BotPreferenceSyncEnabled     types.Bool                                                                   `tfsdk:"bot_preference_sync_enabled" json:"bot_preference_sync_enabled,computed"`

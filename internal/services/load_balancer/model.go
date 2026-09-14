@@ -109,19 +109,19 @@ type LoadBalancerRulesOverridesRandomSteeringModel struct {
 }
 
 type LoadBalancerRulesOverridesSessionAffinityAttributesModel struct {
-	DrainDuration        types.Float64   `tfsdk:"drain_duration" json:"drain_duration,computed_optional"`
-	Headers              *[]types.String `tfsdk:"headers" json:"headers,optional"`
-	RequireAllHeaders    types.Bool      `tfsdk:"require_all_headers" json:"require_all_headers,computed_optional"`
-	Samesite             types.String    `tfsdk:"samesite" json:"samesite,computed_optional"`
-	Secure               types.String    `tfsdk:"secure" json:"secure,computed_optional"`
-	ZeroDowntimeFailover types.String    `tfsdk:"zero_downtime_failover" json:"zero_downtime_failover,computed_optional"`
+	DrainDuration        types.Float64                  `tfsdk:"drain_duration" json:"drain_duration,optional"`
+	Headers              customfield.List[types.String] `tfsdk:"headers" json:"headers,computed_optional"`
+	RequireAllHeaders    types.Bool                     `tfsdk:"require_all_headers" json:"require_all_headers,computed_optional"`
+	Samesite             types.String                   `tfsdk:"samesite" json:"samesite,computed_optional"`
+	Secure               types.String                   `tfsdk:"secure" json:"secure,computed_optional"`
+	ZeroDowntimeFailover types.String                   `tfsdk:"zero_downtime_failover" json:"zero_downtime_failover,computed_optional"`
 }
 
 type LoadBalancerSessionAffinityAttributesModel struct {
-	DrainDuration        types.Float64   `tfsdk:"drain_duration" json:"drain_duration,computed_optional"`
-	Headers              *[]types.String `tfsdk:"headers" json:"headers,optional"`
-	RequireAllHeaders    types.Bool      `tfsdk:"require_all_headers" json:"require_all_headers,computed_optional"`
-	Samesite             types.String    `tfsdk:"samesite" json:"samesite,computed_optional"`
-	Secure               types.String    `tfsdk:"secure" json:"secure,computed_optional"`
-	ZeroDowntimeFailover types.String    `tfsdk:"zero_downtime_failover" json:"zero_downtime_failover,computed_optional"`
+	DrainDuration        types.Float64                  `tfsdk:"drain_duration" json:"drain_duration,optional"`
+	Headers              customfield.List[types.String] `tfsdk:"headers" json:"headers,computed_optional"`
+	RequireAllHeaders    types.Bool                     `tfsdk:"require_all_headers" json:"require_all_headers,computed_optional"`
+	Samesite             types.String                   `tfsdk:"samesite" json:"samesite,computed_optional"`
+	Secure               types.String                   `tfsdk:"secure" json:"secure,computed_optional"`
+	ZeroDowntimeFailover types.String                   `tfsdk:"zero_downtime_failover" json:"zero_downtime_failover,computed_optional"`
 }

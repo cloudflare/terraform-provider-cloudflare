@@ -317,6 +317,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						Default: stringdefault.StaticString("porter"),
 					},
+					"use_ocr": schema.BoolAttribute{
+						Description: "Enables OCR ingestion for PDFs and images. Changing this triggers a full re-index. Defaults to false.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(false),
+					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},

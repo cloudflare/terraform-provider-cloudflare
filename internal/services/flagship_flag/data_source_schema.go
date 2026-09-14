@@ -8,11 +8,13 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -27,16 +29,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Flag key (slug).",
+				Computed:    true,
+			},
+			"flag_key": schema.StringAttribute{
+				Description: "Flag key (slug).",
+				Optional:    true,
+			},
 			"account_id": schema.StringAttribute{
 				Description: "Cloudflare account ID.",
 				Required:    true,
 			},
 			"app_id": schema.StringAttribute{
 				Description: "App identifier.",
-				Required:    true,
-			},
-			"flag_key": schema.StringAttribute{
-				Description: "Flag key (slug).",
 				Required:    true,
 			},
 			"default_variation": schema.StringAttribute{
@@ -373,6 +379,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"filter": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"limit": schema.StringAttribute{
+						Description: "Max items to return (1–200).",
+						Optional:    true,
+					},
+				},
+			},
 		},
 	}
 }
@@ -382,5 +397,7 @@ func (d *FlagshipFlagDataSource) Schema(ctx context.Context, req datasource.Sche
 }
 
 func (d *FlagshipFlagDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("flag_key"), path.MatchRoot("filter")),
+	}
 }
