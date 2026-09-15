@@ -73,6 +73,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"support_subaddress": schema.BoolAttribute{
+				Description: "Whether plus-addressing is honored when matching routing rules.",
+				Optional:    true,
+			},
 			"tag": schema.StringAttribute{
 				Description:        "Email Routing settings tag. (Deprecated, replaced by Email Routing settings identifier)",
 				Computed:           true,
