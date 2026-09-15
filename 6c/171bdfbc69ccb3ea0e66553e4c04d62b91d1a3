@@ -1,0 +1,44 @@
+internal/services/r2_data_catalog/custom.go
+  s_05298b329e70f9::t_ee08ed438ab8ec 1-13,15-76
+  s_93fe27a62f1e11::t_a4a96087e2e5af 14
+internal/services/r2_data_catalog/model.go
+  s_93fe27a62f1e11::t_ab519801a110bc 21
+  s_05298b329e70f9::t_250c7559031359 24,36-37,41-42,46-48
+docs/resources/r2_data_catalog.md
+  s_93fe27a62f1e11::t_338f367301cfc8 20-34,46-50,64,72,83
+internal/services/r2_data_catalog/resource_test.go
+  s_93fe27a62f1e11::t_bab2ac3296f8a3 60,62
+internal/services/r2_data_catalog/schema.go
+  s_05298b329e70f9::t_ee08ed438ab8ec 7,58-65,79,85,91,99,114,120,122-124,128,136
+  s_93fe27a62f1e11::t_a4a96087e2e5af 94,102,139
+internal/services/r2_data_catalog/resource.go
+  s_93fe27a62f1e11::t_bfa1300928c1c4 17,83,94,101,277,279-292
+  s_05298b329e70f9::t_d64f42930240be 68,80-82,84-93,95-99,105,109-144,156,213-244,246,249-250,255,257-258,260,262-265,267-276,278
+internal/services/r2_data_catalog/custom_test.go
+  s_93fe27a62f1e11::t_338f367301cfc8 1-49
+  s_93fe27a62f1e11::t_bab2ac3296f8a3 50-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6c171bdfbc69ccb3ea0e66553e4c04d62b91d1a3",
+  "prompts": {},
+  "sessions": {
+    "s_05298b329e70f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f72bd30a5ffenWR3J53cmh6S1D",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Maksym Makuch <maksym@cloudflare.com>"
+    },
+    "s_93fe27a62f1e11": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f73e47007ffe6X6KADkLowdf52",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Maksym Makuch <maksym@cloudflare.com>"
+    }
+  }
+}

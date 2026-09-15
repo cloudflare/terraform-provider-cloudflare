@@ -1,0 +1,19 @@
+internal/services/observatory_scheduled_test/resource_query_test.go
+  s_750318b584d786::t_9682a9c2d01e62 1-139
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2976f3ad9d884503bed0cdfb290e50a3b5878c08",
+  "prompts": {},
+  "sessions": {
+    "s_750318b584d786": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f6e735f7cffeuKfXw1zsejxalN",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "jburns <jburns@cloudflare.com>"
+    }
+  }
+}

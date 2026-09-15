@@ -1,0 +1,25 @@
+internal/services/page_rule/schema.go
+  s_9bf89155665700::t_f156e1fac0ad2c 276
+internal/services/page_rule/testdata/pageruleconfigwithedgecachettlandalwaysonline.tf
+  s_9bf89155665700::t_f156e1fac0ad2c 6
+internal/services/page_rule/testdata/pageruleconfigwithedgecachettl.tf
+  s_9bf89155665700::t_f156e1fac0ad2c 7
+internal/services/page_rule/resource_test.go
+  s_9bf89155665700::t_f156e1fac0ad2c 3178,3185,3205,3212
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "37301ef5a5eb0f153c943ceca9a4e38258000213",
+  "prompts": {},
+  "sessions": {
+    "s_9bf89155665700": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a09094-fb69-7e73-8fe6-af154d90c87d",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Chenxi Zhang <chenxi@cloudflare.com>"
+    }
+  }
+}
