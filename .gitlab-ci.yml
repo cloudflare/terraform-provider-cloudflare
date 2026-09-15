@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json
 stages:
+  - lint
+  - test
   - mr
   - review
 
@@ -7,3 +9,95 @@ include:
   - component: $CI_SERVER_FQDN/cloudflare/ci/ai/opencode@~latest
     inputs:
       runOnMR: true
+
+# Only run pipelines for:
+#   - merge requests
+#   - commits to the default branch (main)
+#   - release branches (release/* or release-*)
+# The $CI_OPEN_MERGE_REQUESTS guard prevents duplicate branch + MR pipelines.
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH =~ /^release[\/-]/
+
+# Shared rules for jobs that should run on main, MRs, and release branches.
+# Explicit rules are required so jobs are added to merge request pipelines
+# (jobs without rules default to branch/tag pipelines only).
+.ci-rules: &ci-rules
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_COMMIT_BRANCH == "main"
+  - if: $CI_COMMIT_BRANCH =~ /^release[\/-]/
+
+# Keep the Go module and build caches inside the project dir so GitLab can
+# cache them between pipelines (cache paths must live under CI_PROJECT_DIR).
+# This is what keeps `go build ./...` / `go test` fast on repeat runs.
+variables:
+  GOPATH: $CI_PROJECT_DIR/.go
+  GOMODCACHE: $CI_PROJECT_DIR/.go/pkg/mod
+  GOCACHE: $CI_PROJECT_DIR/.cache/go-build
+
+.go-cache: &go-cache
+  key:
+    files:
+      - go.sum
+  paths:
+    - .go/pkg/mod
+    - .cache/go-build
+
+# Mirrors the GitHub "check-schema-versions" job, which only runs on PRs to main.
+# It only greps schema.go files, so it stays on the default runner.
+check-schema-versions:
+  stage: lint
+  image: $IMAGE_GO_TRIXIE
+  needs: []
+  timeout: 30 minutes
+  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+  script:
+    - ./scripts/check-schema-versions
+
+# Mirrors the GitHub "lint" job. Builds the entire provider (`go build ./...`),
+# which needs a large runner + build cache to finish in time.
+lint:
+  stage: lint
+  image: $IMAGE_GO_TRIXIE
+  tags:
+    - linux-x86-16cpu-32gb
+  needs: []
+  timeout: 45 minutes
+  allow_failure: true
+  cache:
+    <<: *go-cache
+    policy: pull-push
+  rules: *ci-rules
+  script:
+    - ./scripts/bootstrap
+    - ./scripts/lint
+
+# Mirrors the GitHub "test" job, sharded 16 ways via GitLab's parallel matrix.
+# Runs independently of lint (needs: []) so a lint failure does not skip tests.
+test:
+  stage: test
+  image: $IMAGE_GO_TRIXIE
+  tags:
+    - linux-x86-8cpu-16gb
+  needs: []
+  timeout: 45 minutes
+  allow_failure: true
+  parallel: 16
+  cache:
+    <<: *go-cache
+    policy: pull
+  rules: *ci-rules
+  script:
+    - ./scripts/bootstrap
+    - |
+      # Select this shard's packages (1-indexed), matching the GitHub sharding logic.
+      packages=$(go list ./... | awk "NR % $CI_NODE_TOTAL == ($CI_NODE_INDEX - 1)")
+      if [ -n "$packages" ]; then
+        echo "$packages" | xargs go test -v -timeout 25m
+      fi
