@@ -1,0 +1,20 @@
+internal/services/load_balancer_monitor/schema.go
+  s_eb975af9a8a216::t_e352433878df0c 142
+  s_eb975af9a8a216::t_c6cf71b4e67339 98-100,103-105
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f201646479cb4c3e6409d63a092adc590ca8047e",
+  "prompts": {},
+  "sessions": {
+    "s_eb975af9a8a216": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f91bc0eabffe7Csy90MezloDwR",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
