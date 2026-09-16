@@ -32,6 +32,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Account Filter Lists Read",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "The Account ID for this resource.",

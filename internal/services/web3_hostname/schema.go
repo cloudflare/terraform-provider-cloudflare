@@ -26,6 +26,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Web3 Hostnames Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Specify the identifier of the hostname.",

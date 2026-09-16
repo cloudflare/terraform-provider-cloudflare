@@ -31,6 +31,7 @@ type ZeroTrustOrganizationDataSourceModel struct {
 	UserSeatExpirationInactiveTime         types.String                                                                           `tfsdk:"user_seat_expiration_inactive_time" json:"user_seat_expiration_inactive_time,computed"`
 	WARPAuthSessionDuration                types.String                                                                           `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration,computed"`
 	DenyUnmatchedRequestsExemptedZoneNames customfield.List[types.String]                                                         `tfsdk:"deny_unmatched_requests_exempted_zone_names" json:"deny_unmatched_requests_exempted_zone_names,computed"`
+	TrustedAccounts                        customfield.List[types.String]                                                      `tfsdk:"trusted_accounts" json:"trusted_accounts,computed"`
 	CustomPages                            customfield.NestedObject[ZeroTrustOrganizationCustomPagesDataSourceModel]              `tfsdk:"custom_pages" json:"custom_pages,computed"`
 	LoginDesign                            customfield.NestedObject[ZeroTrustOrganizationLoginDesignDataSourceModel]              `tfsdk:"login_design" json:"login_design,computed"`
 	MfaConfig                              customfield.NestedObject[ZeroTrustOrganizationMfaConfigDataSourceModel]                `tfsdk:"mfa_config" json:"mfa_config,computed"`

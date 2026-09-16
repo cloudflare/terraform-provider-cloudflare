@@ -29,6 +29,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Account: SSL and Certificates Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Custom CSR identifier tag.",

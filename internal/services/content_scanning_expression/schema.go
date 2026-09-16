@@ -24,6 +24,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Zone WAF Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Defines the unique ID for this Content Scanning custom expression.",

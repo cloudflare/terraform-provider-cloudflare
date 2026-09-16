@@ -25,6 +25,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Cloudforce One Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Description:   "Asset ID.",

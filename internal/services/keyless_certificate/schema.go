@@ -64,6 +64,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Zone Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Keyless certificate identifier tag.",

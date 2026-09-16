@@ -26,6 +26,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Zero Trust Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "API UUID.",

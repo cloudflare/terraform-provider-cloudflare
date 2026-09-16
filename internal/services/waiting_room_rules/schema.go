@@ -27,6 +27,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Waiting Rooms Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The ID of the rule.",

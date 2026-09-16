@@ -33,6 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Access: Apps and Policies Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The UUID of the policy",

@@ -29,6 +29,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Address Maps Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier of an Address Map.",

@@ -31,6 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 		}.String(),
 		DeprecationMessage: "Please use the `cloudflare_schema_validation_schemas` resource instead",
+		Version:            500,
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",

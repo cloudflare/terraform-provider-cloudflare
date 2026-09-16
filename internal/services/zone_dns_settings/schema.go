@@ -31,6 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Zone DNS Settings Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",

@@ -27,7 +27,6 @@ var _ resource.ResourceWithConfigValidators = (*WorkersScriptResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers Scripts Read",
@@ -35,6 +34,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Workers Tail Read",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Name of the script, used in URLs and route configuration.",
@@ -446,583 +446,318 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 							ElementType: types.StringType,
 						},
-					},
-					"body_part": schema.StringAttribute{
-						Description: "Name of the uploaded file that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
-						Optional:    true,
-					},
-					"cache_options": schema.SingleNestedAttribute{
-						Description: "Global CacheW configuration for the Worker. When caching is on,\nthe platform provisions a `cloudflare.app` zone for the Worker.\nA `type: worker` entry in the `exports` map can override this\nvalue for a single entrypoint.",
-						Optional:    true,
-						Attributes: map[string]schema.Attribute{
-							"enabled": schema.BoolAttribute{
-								Description: "Whether caching is enabled for this Worker.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(false),
-							},
-							"cross_version_cache": schema.BoolAttribute{
-								Description: "Whether cached responses are shared across Worker version\nuploads. This is independent of `enabled`. It can stay true\nwhile caching is off, so the preference survives turning\ncaching off and back on.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(false),
+						"allowed_sender_addresses": schema.ListAttribute{
+							Description: "List of allowed sender addresses.",
+							Optional:    true,
+							ElementType: types.StringType,
+						},
+						"destination_address": schema.StringAttribute{
+							Description: "Destination address for the email.",
+							Optional:    true,
+						},
+						"jurisdiction": schema.StringAttribute{
+							Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\", \"fedramp-high\".",
+							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"eu",
+									"fedramp",
+									"fedramp-high",
+								),
 							},
 						},
+						"dispatch_namespace": schema.StringAttribute{
+							Description: "The dispatch namespace the Durable Object script belongs to.",
+							Optional:    true,
+						},
+						"entrypoint": schema.StringAttribute{
+							Description: "Entrypoint to invoke on the target Worker.",
+							Optional:    true,
+						},
+						"service_id": schema.StringAttribute{
+							Description: "Identifier of the VPC service to bind to.",
+							Optional:    true,
+						},
+						"network_id": schema.StringAttribute{
+							Description: `Identifier of the network to bind to. Only "cf1:network" is currently supported. Mutually exclusive with tunnel_id.`,
+							Optional:    true,
+						},
+						"tunnel_id": schema.StringAttribute{
+							Description: "UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.",
+							Optional:    true,
+						},
+						"instance_name": schema.StringAttribute{
+							Description: "The user-chosen instance name. Must exist at deploy time. The worker can search, chat, update, and manage items/jobs on this instance.",
+							Optional:    true,
+						},
+						"database_id": schema.StringAttribute{
+							Description: "Identifier of the D1 database to bind to.",
+							Optional:    true,
+						},
+						"app_id": schema.StringAttribute{
+							Description: "ID of the Flagship app to bind to for feature flag evaluation.",
+							Optional:    true,
+						},
 					},
-					"compatibility_date": schema.StringAttribute{
-						Description: "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
-						Optional:    true,
-					},
-					"compatibility_flags": schema.SetAttribute{
-						Description:   "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
-						Computed:      true,
-						Optional:      true,
-						CustomType:    customfield.NewSetType[types.String](ctx),
-						ElementType:   types.StringType,
-						PlanModifiers: []planmodifier.Set{setplanmodifier.UseNonNullStateForUnknown()},
-					},
-					"exports": schema.MapNestedAttribute{
-						Description: "Declarative exports for the Worker. Worker entrypoint\nentries (`type: worker`) carry cache configuration for\nthat entrypoint.",
-						Optional:    true,
-						NestedObject: schema.NestedAttributeObject{
+				},
+			},
+			"body_part": schema.StringAttribute{
+				Description: "Name of the uploaded file that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
+				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
+			"compatibility_date": schema.StringAttribute{
+				Description: "Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
+			},
+			"compatibility_flags": schema.SetAttribute{
+				Description: "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewSetType[types.String](ctx),
+				ElementType: types.StringType,
+			},
+			"exports": schema.MapNestedAttribute{
+				Description: "Per-entrypoint export configuration. Keys are the export names; values describe the entrypoint's kind and per-entrypoint cache behavior.",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"type": schema.StringAttribute{
+							Description: "The kind of entrypoint. A `type: worker` entry overrides the top-level `cache_options` for this specific entrypoint.",
+							Required:    true,
+						},
+						"cache": schema.SingleNestedAttribute{
+							Description: "Per-entrypoint cache override. When present, this overrides the top-level `cache_options` for this specific entrypoint.",
+							Optional:    true,
 							Attributes: map[string]schema.Attribute{
-								"type": schema.StringAttribute{
-									Description: "Marks this entry as a Worker entrypoint export.\nAvailable values: \"worker\", \"durable-object\".",
+								"enabled": schema.BoolAttribute{
+									Description: "Whether caching is enabled for this entrypoint.",
 									Required:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("worker", "durable-object"),
-									},
-								},
-								"cache": schema.SingleNestedAttribute{
-									Description: "Cache override for this entrypoint. Overrides the Worker's\nglobal `cache_options.enabled` for this entrypoint only.",
-									Optional:    true,
-									Attributes: map[string]schema.Attribute{
-										"enabled": schema.BoolAttribute{
-											Description: "Whether caching is enabled for this entrypoint.",
-											Required:    true,
-										},
-									},
-								},
-								"state": schema.StringAttribute{
-									Description: "Live export. May be omitted; defaults to `created`.\nAvailable values: \"created\", \"deleted\", \"renamed\", \"transferred\", \"expecting-transfer\".",
-									Optional:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"created",
-											"deleted",
-											"renamed",
-											"transferred",
-											"expecting-transfer",
-										),
-									},
-								},
-								"storage": schema.StringAttribute{
-									Description: "Durable Object storage backend. `sqlite` is the recommended (and\nonly) backend for new namespaces. `legacy-kv` is accepted only for\na class whose namespace already exists as KV-backed; the `exports`\nflow never provisions a new `legacy-kv` namespace.\nAvailable values: \"sqlite\", \"legacy-kv\".",
-									Optional:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("sqlite", "legacy-kv"),
-									},
-								},
-								"container": schema.StringAttribute{
-									Description: "Name of the container (declared in the upload's\n`metadata.containers`) that backs this Durable Object. When\nset, the namespace is container-enabled. Valid only on live\nentries.",
-									Optional:    true,
-								},
-								"renamed_to": schema.StringAttribute{
-									Description: "The destination class name. Must differ from the source class\n(the map key) and must be declared as a live (`created`) entry\nin the same `exports` map. Write-only: never present in GET\nresponses.",
-									Optional:    true,
-								},
-								"transferred_to": schema.StringAttribute{
-									Description: "The destination script name. Must be in the same account and\nthe same dispatch-namespace context (or both non-dispatch).\nCross-dispatch-namespace transfers are rejected. Write-only:\nnever present in GET responses.",
-									Optional:    true,
-								},
-								"transfer_from": schema.StringAttribute{
-									Description: "The source script name to receive the namespace from. Must be\nin the same account and dispatch-namespace context. Present on\nreads for `expecting-transfer` entries.",
-									Optional:    true,
 								},
 							},
 						},
 					},
-					"exports_reconciliation": schema.SingleNestedAttribute{
-						Description: "Summary of the declarative exports reconciliation that ran\non this upload. Populated only when the uploaded metadata\nincluded an `exports` block. Durable Object entries drive\nreconciliation; `type: worker` entries do not contribute to\nthis summary.",
-						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataExportsReconciliationModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"created": schema.ListAttribute{
-								Description:   "Class names for which a new namespace was provisioned.",
-								Computed:      true,
-								CustomType:    customfield.NewListType[types.String](ctx),
-								ElementType:   types.StringType,
-								PlanModifiers: []planmodifier.List{listplanmodifier.UseNonNullStateForUnknown()},
-							},
-							"deleted": schema.ListAttribute{
-								Description: "Class names whose namespace was deleted by a `deleted` tombstone.",
-								Computed:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
-							},
-							"info": schema.ListNestedAttribute{
-								Description: "Non-blocking info entries (stale tombstones, tombstone applied\nwith class still in code). See `exports_reconciliation_info`.",
-								Computed:    true,
-								CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataExportsReconciliationInfoModel](ctx),
-								NestedObject: schema.NestedAttributeObject{
-									Attributes: map[string]schema.Attribute{
-										"class": schema.StringAttribute{
-											Description: "The class name the info entry is about.",
-											Computed:    true,
-										},
-										"message": schema.StringAttribute{
-											Description: "Human-readable explanation.",
-											Computed:    true,
-										},
-										"scenario": schema.StringAttribute{
-											Description: "Stable, machine-readable tag identifying which reconciliation\nscenario produced an error, warning, or info entry. Clients may\nbranch on this value instead of parsing `message`.\nAvailable values: \"code_class_not_in_exports\", \"provisioned_class_missing_from_config\", \"config_export_not_in_code\", \"config_references_nonexistent_class\", \"orphaned_provisioned_namespace\", \"storage_type_mismatch\", \"free_tier_requires_sqlite\", \"invalid_export\", \"tombstone_delete_class_still_in_code\", \"tombstone_delete_blocked_by_external_bindings\", \"tombstone_renamed_to_occupied\", \"transferred_pending_not_found\", \"transferred_target_missing\", \"transferred_target_mismatch\", \"phase_one_transfer_source_missing\", \"phase_one_transfer_source_namespace_missing\", \"phase_one_transfer_target_class_provisioned\", \"phase_one_transfer_after_commit_mismatch\", \"phase_one_transfer_duplicate\", \"phase_one_transfer_target_in_dispatch_namespace\", \"phase_one_transfer_source_in_dispatch_namespace\", \"transferred_source_in_dispatch_namespace\", \"transferred_target_in_dispatch_namespace\", \"container_undeclared_reference\", \"container_class_not_durable_object\", \"container_wiring_inconsistent\", \"container_multiple_durable_objects\", \"transfer_container_parity_mismatch\", \"transfer_container_parity_mismatch_on_commit\", \"tombstone_class_still_in_code\", \"stale_tombstone\", \"transfer_receive_already_applied\", \"transfer_receive_cleanup_complete\".",
-											Computed:    true,
-											Validators: []validator.String{
-												stringvalidator.OneOfCaseInsensitive(
-													"code_class_not_in_exports",
-													"provisioned_class_missing_from_config",
-													"config_export_not_in_code",
-													"config_references_nonexistent_class",
-													"orphaned_provisioned_namespace",
-													"storage_type_mismatch",
-													"free_tier_requires_sqlite",
-													"invalid_export",
-													"tombstone_delete_class_still_in_code",
-													"tombstone_delete_blocked_by_external_bindings",
-													"tombstone_renamed_to_occupied",
-													"transferred_pending_not_found",
-													"transferred_target_missing",
-													"transferred_target_mismatch",
-													"phase_one_transfer_source_missing",
-													"phase_one_transfer_source_namespace_missing",
-													"phase_one_transfer_target_class_provisioned",
-													"phase_one_transfer_after_commit_mismatch",
-													"phase_one_transfer_duplicate",
-													"phase_one_transfer_target_in_dispatch_namespace",
-													"phase_one_transfer_source_in_dispatch_namespace",
-													"transferred_source_in_dispatch_namespace",
-													"transferred_target_in_dispatch_namespace",
-													"container_undeclared_reference",
-													"container_class_not_durable_object",
-													"container_wiring_inconsistent",
-													"container_multiple_durable_objects",
-													"transfer_container_parity_mismatch",
-													"transfer_container_parity_mismatch_on_commit",
-													"tombstone_class_still_in_code",
-													"stale_tombstone",
-													"transfer_receive_already_applied",
-													"transfer_receive_cleanup_complete",
-												),
-											},
-										},
-										"namespace_id": schema.StringAttribute{
-											Description: "The provisioned namespace the entry relates to, when applicable.",
-											Computed:    true,
-										},
-										"referencing_scripts": schema.ListAttribute{
-											Description: "Other Workers in the account that still bind to the affected\nclass. Advisory: while non-empty the tombstone is not yet safe\nto remove — redeploy these Workers with bindings re-pointed\nfirst.",
-											Computed:    true,
-											CustomType:  customfield.NewListType[types.String](ctx),
-											ElementType: types.StringType,
-										},
-									},
-								},
-							},
-							"removable_entries": schema.ListAttribute{
-								Description: "Source class names whose tombstone entry is now stale and safe\nto delete from `exports` (no remaining referencing scripts).",
-								Computed:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
-							},
-							"renamed": schema.ListNestedAttribute{
-								Description: "Applied `renamed` tombstones.",
-								Computed:    true,
-								CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataExportsReconciliationRenamedModel](ctx),
-								NestedObject: schema.NestedAttributeObject{
-									Attributes: map[string]schema.Attribute{
-										"from": schema.StringAttribute{
-											Description: "The original (source) class name.",
-											Computed:    true,
-										},
-										"to": schema.StringAttribute{
-											Description: "The new class name (`renamed_to`).",
-											Computed:    true,
-										},
-									},
-								},
-							},
-							"transfer_pending": schema.ListNestedAttribute{
-								Description: "Phase-1 transfer hints recorded on the target side.",
-								Computed:    true,
-								CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataExportsReconciliationTransferPendingModel](ctx),
-								NestedObject: schema.NestedAttributeObject{
-									Attributes: map[string]schema.Attribute{
-										"class": schema.StringAttribute{
-											Description: "The target-side class name awaiting transfer.",
-											Computed:    true,
-										},
-										"from": schema.StringAttribute{
-											Description: "The source script the namespace will be transferred from.",
-											Computed:    true,
-										},
-									},
-								},
-							},
-							"transferred": schema.ListNestedAttribute{
-								Description: "Committed `transferred` tombstones (phase-2).",
-								Computed:    true,
-								CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataExportsReconciliationTransferredModel](ctx),
-								NestedObject: schema.NestedAttributeObject{
-									Attributes: map[string]schema.Attribute{
-										"class": schema.StringAttribute{
-											Description: "The source class name that was transferred.",
-											Computed:    true,
-										},
-										"phase": schema.StringAttribute{
-											Description: "The transfer phase. Currently always `committed`.\nAvailable values: \"committed\".",
-											Computed:    true,
-											Validators: []validator.String{
-												stringvalidator.OneOfCaseInsensitive("committed"),
-											},
-										},
-										"to": schema.StringAttribute{
-											Description: "The destination script that now owns the namespace.",
-											Computed:    true,
-										},
-									},
-								},
-							},
-							"updated": schema.ListAttribute{
-								Description: "Class names whose provisioned namespace was mutated in place.",
-								Computed:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
-							},
-							"warnings": schema.ListNestedAttribute{
-								Description: "Non-blocking warnings. See `exports_reconciliation_warning`.",
-								Computed:    true,
-								CustomType:  customfield.NewNestedObjectListType[WorkersScriptMetadataExportsReconciliationWarningsModel](ctx),
-								NestedObject: schema.NestedAttributeObject{
-									Attributes: map[string]schema.Attribute{
-										"class": schema.StringAttribute{
-											Description: "The class name the warning is about.",
-											Computed:    true,
-										},
-										"message": schema.StringAttribute{
-											Description: "Human-readable explanation of the warning.",
-											Computed:    true,
-										},
-										"scenario": schema.StringAttribute{
-											Description: "Stable, machine-readable tag identifying which reconciliation\nscenario produced an error, warning, or info entry. Clients may\nbranch on this value instead of parsing `message`.\nAvailable values: \"code_class_not_in_exports\", \"provisioned_class_missing_from_config\", \"config_export_not_in_code\", \"config_references_nonexistent_class\", \"orphaned_provisioned_namespace\", \"storage_type_mismatch\", \"free_tier_requires_sqlite\", \"invalid_export\", \"tombstone_delete_class_still_in_code\", \"tombstone_delete_blocked_by_external_bindings\", \"tombstone_renamed_to_occupied\", \"transferred_pending_not_found\", \"transferred_target_missing\", \"transferred_target_mismatch\", \"phase_one_transfer_source_missing\", \"phase_one_transfer_source_namespace_missing\", \"phase_one_transfer_target_class_provisioned\", \"phase_one_transfer_after_commit_mismatch\", \"phase_one_transfer_duplicate\", \"phase_one_transfer_target_in_dispatch_namespace\", \"phase_one_transfer_source_in_dispatch_namespace\", \"transferred_source_in_dispatch_namespace\", \"transferred_target_in_dispatch_namespace\", \"container_undeclared_reference\", \"container_class_not_durable_object\", \"container_wiring_inconsistent\", \"container_multiple_durable_objects\", \"transfer_container_parity_mismatch\", \"transfer_container_parity_mismatch_on_commit\", \"tombstone_class_still_in_code\", \"stale_tombstone\", \"transfer_receive_already_applied\", \"transfer_receive_cleanup_complete\".",
-											Computed:    true,
-											Validators: []validator.String{
-												stringvalidator.OneOfCaseInsensitive(
-													"code_class_not_in_exports",
-													"provisioned_class_missing_from_config",
-													"config_export_not_in_code",
-													"config_references_nonexistent_class",
-													"orphaned_provisioned_namespace",
-													"storage_type_mismatch",
-													"free_tier_requires_sqlite",
-													"invalid_export",
-													"tombstone_delete_class_still_in_code",
-													"tombstone_delete_blocked_by_external_bindings",
-													"tombstone_renamed_to_occupied",
-													"transferred_pending_not_found",
-													"transferred_target_missing",
-													"transferred_target_mismatch",
-													"phase_one_transfer_source_missing",
-													"phase_one_transfer_source_namespace_missing",
-													"phase_one_transfer_target_class_provisioned",
-													"phase_one_transfer_after_commit_mismatch",
-													"phase_one_transfer_duplicate",
-													"phase_one_transfer_target_in_dispatch_namespace",
-													"phase_one_transfer_source_in_dispatch_namespace",
-													"transferred_source_in_dispatch_namespace",
-													"transferred_target_in_dispatch_namespace",
-													"container_undeclared_reference",
-													"container_class_not_durable_object",
-													"container_wiring_inconsistent",
-													"container_multiple_durable_objects",
-													"transfer_container_parity_mismatch",
-													"transfer_container_parity_mismatch_on_commit",
-													"tombstone_class_still_in_code",
-													"stale_tombstone",
-													"transfer_receive_already_applied",
-													"transfer_receive_cleanup_complete",
-												),
-											},
-										},
-										"namespace_id": schema.StringAttribute{
-											Description: "The provisioned namespace the warning relates to, when applicable.",
-											Computed:    true,
-										},
-									},
-								},
-							},
-						},
-					},
-					"keep_assets": schema.BoolAttribute{
-						Description: "Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token. An explicit `assets` upload takes precedence over `keep_assets`.",
+				},
+			},
+			"keep_assets": schema.BoolAttribute{
+				Description: "Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token. An explicit `assets` upload takes precedence over `keep_assets`.",
+				Optional:    true,
+			},
+			"keep_bindings": schema.SetAttribute{
+				Description: "List of binding types to keep from previous_upload.",
+				Optional:    true,
+				ElementType: types.StringType,
+			},
+			"limits": schema.SingleNestedAttribute{
+				Description: "Limits to apply for this Worker.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"cpu_ms": schema.Int64Attribute{
+						Description: "The amount of CPU time this Worker can use in milliseconds.",
 						Optional:    true,
 					},
-					"keep_bindings": schema.SetAttribute{
-						Description: "List of binding types to keep from previous_upload.",
+					"subrequests": schema.Int64Attribute{
+						Description: "The number of subrequests this Worker can make per request.",
+						Optional:    true,
+					},
+				},
+			},
+			"logpush": schema.BoolAttribute{
+				Description: "Whether Logpush is turned on for the Worker.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"main_module": schema.StringAttribute{
+				Description: "Name of the uploaded file that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
+				Optional:    true,
+			},
+			"migrations": schema.SingleNestedAttribute{
+				Description: "Migrations to apply for Durable Objects associated with this Worker.",
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataMigrationsModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"deleted_classes": schema.ListAttribute{
+						Description: "A list of classes to delete Durable Object namespaces from.",
 						Optional:    true,
 						ElementType: types.StringType,
 					},
-					"limits": schema.SingleNestedAttribute{
-						Description: "Limits to apply for this Worker.",
+					"new_classes": schema.ListAttribute{
+						Description: "A list of classes to create Durable Object namespaces from.",
 						Optional:    true,
-						Attributes: map[string]schema.Attribute{
-							"cpu_ms": schema.Int64Attribute{
-								Description: "The amount of CPU time this Worker can use in milliseconds.",
-								Optional:    true,
-							},
-							"subrequests": schema.Int64Attribute{
-								Description: "The number of subrequests this Worker can make per request.",
-								Optional:    true,
-							},
-						},
+						ElementType: types.StringType,
 					},
-					"logpush": schema.BoolAttribute{
-						Description: "Whether Logpush is turned on for the Worker.",
-						Computed:    true,
+					"new_sqlite_classes": schema.ListAttribute{
+						Description: "A list of classes to create Durable Object namespaces with SQLite from.",
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
+						ElementType: types.StringType,
 					},
-					"main_module": schema.StringAttribute{
-						Description: "Name of the uploaded file that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker.",
+					"new_tag": schema.StringAttribute{
+						Description: "Tag to set as the latest migration tag.",
 						Optional:    true,
 					},
-					"migrations": schema.SingleNestedAttribute{
-						Description: "Migrations to apply for Durable Objects associated with this Worker.",
+					"old_tag": schema.StringAttribute{
+						Description: "Tag used to verify against the latest migration tag for this Worker. If they don't match, the upload is rejected.",
 						Optional:    true,
-						Attributes: map[string]schema.Attribute{
-							"deleted_classes": schema.ListAttribute{
-								Description: "A list of classes to delete Durable Object namespaces from.",
-								Optional:    true,
-								ElementType: types.StringType,
-							},
-							"new_classes": schema.ListAttribute{
-								Description: "A list of classes to create Durable Object namespaces from.",
-								Optional:    true,
-								ElementType: types.StringType,
-							},
-							"new_sqlite_classes": schema.ListAttribute{
-								Description: "A list of classes to create Durable Object namespaces with SQLite from.",
-								Optional:    true,
-								ElementType: types.StringType,
-							},
-							"new_tag": schema.StringAttribute{
-								Description: "Tag to set as the latest migration tag.",
-								Optional:    true,
-							},
-							"old_tag": schema.StringAttribute{
-								Description: "Tag used to verify against the latest migration tag for this Worker. If they don't match, the upload is rejected.",
-								Optional:    true,
-							},
-							"renamed_classes": schema.ListNestedAttribute{
-								Description: "A list of classes with Durable Object namespaces that were renamed.",
-								Optional:    true,
-								NestedObject: schema.NestedAttributeObject{
-									Attributes: map[string]schema.Attribute{
-										"from": schema.StringAttribute{
-											Optional: true,
-										},
-										"to": schema.StringAttribute{
-											Optional: true,
-										},
-									},
-								},
-							},
-							"transferred_classes": schema.ListNestedAttribute{
-								Description: "A list of transfers for Durable Object namespaces from a different Worker and class to a class defined in this Worker.",
-								Optional:    true,
-								NestedObject: schema.NestedAttributeObject{
-									Attributes: map[string]schema.Attribute{
-										"from": schema.StringAttribute{
-											Optional: true,
-										},
-										"from_script": schema.StringAttribute{
-											Optional: true,
-										},
-										"to": schema.StringAttribute{
-											Optional: true,
-										},
-									},
-								},
-							},
-							"steps": schema.ListNestedAttribute{
-								Description: "Migrations to apply in order.",
-								Optional:    true,
-								NestedObject: schema.NestedAttributeObject{
-									Attributes: map[string]schema.Attribute{
-										"deleted_classes": schema.ListAttribute{
-											Description: "A list of classes to delete Durable Object namespaces from.",
-											Optional:    true,
-											ElementType: types.StringType,
-										},
-										"new_classes": schema.ListAttribute{
-											Description: "A list of classes to create Durable Object namespaces from.",
-											Optional:    true,
-											ElementType: types.StringType,
-										},
-										"new_sqlite_classes": schema.ListAttribute{
-											Description: "A list of classes to create Durable Object namespaces with SQLite from.",
-											Optional:    true,
-											ElementType: types.StringType,
-										},
-										"renamed_classes": schema.ListNestedAttribute{
-											Description: "A list of classes with Durable Object namespaces that were renamed.",
-											Optional:    true,
-											NestedObject: schema.NestedAttributeObject{
-												Attributes: map[string]schema.Attribute{
-													"from": schema.StringAttribute{
-														Optional: true,
-													},
-													"to": schema.StringAttribute{
-														Optional: true,
-													},
-												},
-											},
-										},
-										"transferred_classes": schema.ListNestedAttribute{
-											Description: "A list of transfers for Durable Object namespaces from a different Worker and class to a class defined in this Worker.",
-											Optional:    true,
-											NestedObject: schema.NestedAttributeObject{
-												Attributes: map[string]schema.Attribute{
-													"from": schema.StringAttribute{
-														Optional: true,
-													},
-													"from_script": schema.StringAttribute{
-														Optional: true,
-													},
-													"to": schema.StringAttribute{
-														Optional: true,
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
 					},
-					"observability": schema.SingleNestedAttribute{
-						Description: "Observability settings for the Worker.",
-						Optional:    true,
-						Attributes: map[string]schema.Attribute{
-							"enabled": schema.BoolAttribute{
-								Description: "Whether observability is enabled for the Worker.",
-								Required:    true,
-							},
-							"head_sampling_rate": schema.Float64Attribute{
-								Description: "The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
-								Optional:    true,
-							},
-							"logs": schema.SingleNestedAttribute{
-								Description: "Log settings for the Worker.",
-								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"enabled": schema.BoolAttribute{
-										Description: "Whether logs are enabled for the Worker.",
-										Required:    true,
-									},
-									"invocation_logs": schema.BoolAttribute{
-										Description: "Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.",
-										Required:    true,
-									},
-									"destinations": schema.ListAttribute{
-										Description: "A list of destinations where logs will be exported to.",
-										Optional:    true,
-										ElementType: types.StringType,
-									},
-									"head_sampling_rate": schema.Float64Attribute{
-										Description: "The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
-										Optional:    true,
-									},
-									"persist": schema.BoolAttribute{
-										Description: "Whether log persistence is enabled for the Worker.",
-										Computed:    true,
-										Optional:    true,
-										Default:     booldefault.StaticBool(true),
-									},
-								},
-							},
-							"redact_query_string": schema.BoolAttribute{
-								Description: "Whether query strings are removed from request URLs in logs and traces.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(false),
-							},
-							"traces": schema.SingleNestedAttribute{
-								Description: "Trace settings for the Worker.",
-								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"destinations": schema.ListAttribute{
-										Description: "A list of destinations where traces will be exported to.",
-										Optional:    true,
-										ElementType: types.StringType,
-									},
-									"enabled": schema.BoolAttribute{
-										Description: "Whether traces are enabled for the Worker.",
-										Optional:    true,
-									},
-									"head_sampling_rate": schema.Float64Attribute{
-										Description: "The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
-										Optional:    true,
-									},
-									"persist": schema.BoolAttribute{
-										Description: "Whether trace persistence is enabled for the Worker.",
-										Computed:    true,
-										Optional:    true,
-										Default:     booldefault.StaticBool(true),
-									},
-									"propagation_policy": schema.StringAttribute{
-										Description: "Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. \"authenticated\" honors inbound trace context only when accompanied by a valid trace auth token. \"accept\" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled. Returns null when the trace propagation feature is not enabled for the account.\nAvailable values: \"authenticated\", \"accept\".",
-										Optional:    true,
-										Validators: []validator.String{
-											stringvalidator.OneOfCaseInsensitive("authenticated", "accept"),
-										},
-									},
-								},
-							},
-						},
-					},
-					"package_dependencies": schema.ListNestedAttribute{
-						Description: "The list of npm packages that were installed and used when this Worker\nversion was built.",
+					"renamed_classes": schema.ListNestedAttribute{
+						Description: "A list of classes with Durable Object namespaces that were renamed.",
 						Optional:    true,
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
-								"installed_version": schema.StringAttribute{
-									Description: "The exact version that was resolved and installed by the package manager.",
-									Required:    true,
+								"from": schema.StringAttribute{
+									Optional: true,
 								},
-								"name": schema.StringAttribute{
-									Description: "The npm package name.",
-									Required:    true,
-								},
-								"package_json_version": schema.StringAttribute{
-									Description: "The version constraint as written in package.json.",
-									Required:    true,
+								"to": schema.StringAttribute{
+									Optional: true,
 								},
 							},
 						},
 					},
-					"placement": schema.SingleNestedAttribute{
-						Description: "Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host.",
+					"transferred_classes": schema.ListNestedAttribute{
+						Description: "A list of transfers for Durable Object namespaces from a different Worker and class to a class defined in this Worker.",
 						Optional:    true,
-						Attributes: map[string]schema.Attribute{
-							"mode": schema.StringAttribute{
-								Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\", \"targeted\".",
-								Optional:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("smart", "targeted"),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"from": schema.StringAttribute{
+									Optional: true,
+								},
+								"from_script": schema.StringAttribute{
+									Optional: true,
+								},
+								"to": schema.StringAttribute{
+									Optional: true,
 								},
 							},
-							"last_analyzed_at": schema.StringAttribute{
-								Description: "The last time the script was analyzed for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).",
+						},
+					},
+					"steps": schema.ListNestedAttribute{
+						Description: "Migrations to apply in order.",
+						Optional:    true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"deleted_classes": schema.ListAttribute{
+									Description: "A list of classes to delete Durable Object namespaces from.",
+									Optional:    true,
+									ElementType: types.StringType,
+								},
+								"new_classes": schema.ListAttribute{
+									Description: "A list of classes to create Durable Object namespaces from.",
+									Optional:    true,
+									ElementType: types.StringType,
+								},
+								"new_sqlite_classes": schema.ListAttribute{
+									Description: "A list of classes to create Durable Object namespaces with SQLite from.",
+									Optional:    true,
+									ElementType: types.StringType,
+								},
+								"renamed_classes": schema.ListNestedAttribute{
+									Description: "A list of classes with Durable Object namespaces that were renamed.",
+									Optional:    true,
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"from": schema.StringAttribute{
+												Optional: true,
+											},
+											"to": schema.StringAttribute{
+												Optional: true,
+											},
+										},
+									},
+								},
+								"transferred_classes": schema.ListNestedAttribute{
+									Description: "A list of transfers for Durable Object namespaces from a different Worker and class to a class defined in this Worker.",
+									Optional:    true,
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"from": schema.StringAttribute{
+												Optional: true,
+											},
+											"from_script": schema.StringAttribute{
+												Optional: true,
+											},
+											"to": schema.StringAttribute{
+												Optional: true,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			"observability": schema.SingleNestedAttribute{
+				Description: "Observability settings for the Worker.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Description: "Whether observability is enabled for the Worker.",
+						Required:    true,
+					},
+					"head_sampling_rate": schema.Float64Attribute{
+						Description: "The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
+						Optional:    true,
+					},
+					"logs": schema.SingleNestedAttribute{
+						Description: "Log settings for the Worker.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Whether logs are enabled for the Worker.",
+								Required:    true,
+							},
+							"invocation_logs": schema.BoolAttribute{
+								Description: "Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.",
+								Required:    true,
+							},
+							"destinations": schema.ListAttribute{
+								Description: "A list of destinations where logs will be exported to.",
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"head_sampling_rate": schema.Float64Attribute{
+								Description: "The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
+								Optional:    true,
+							},
+							"persist": schema.BoolAttribute{
+								Description: "Whether log persistence is enabled for the Worker.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(true),
+							},
+						},
+					},
+					"traces": schema.SingleNestedAttribute{
+						Description: "Trace settings for the Worker.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"destinations": schema.ListAttribute{
+								Description: "A list of destinations where traces will be exported to.",
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"enabled": schema.BoolAttribute{
+								Description: "Whether traces are enabled for the Worker.",
+								Optional:    true,
+							},
+							"head_sampling_rate": schema.Float64Attribute{
+								Description: "The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
+								Optional:    true,
+							},
+							"persist": schema.BoolAttribute{
+								Description: "Whether trace persistence is enabled for the Worker.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(true),
+							},
+							"propagation_policy": schema.StringAttribute{
+								Description: "Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. \"authenticated\" (default) honors inbound trace context only when accompanied by a valid trace auth token. \"accept\" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled.\nAvailable values: \"authenticated\", \"accept\".",
 								Computed:    true,
 								Optional:    true,
 								PlanModifiers: []planmodifier.String{
@@ -1143,85 +878,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"observability": schema.SingleNestedAttribute{
-				Description: "Observability settings for the Worker.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[WorkersScriptObservabilityModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"enabled": schema.BoolAttribute{
-						Description: "Whether observability is enabled for the Worker.",
-						Computed:    true,
-					},
-					"head_sampling_rate": schema.Float64Attribute{
-						Description: "The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
-						Computed:    true,
-					},
-					"logs": schema.SingleNestedAttribute{
-						Description: "Log settings for the Worker.",
-						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[WorkersScriptObservabilityLogsModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"enabled": schema.BoolAttribute{
-								Description: "Whether logs are enabled for the Worker.",
-								Computed:    true,
-							},
-							"invocation_logs": schema.BoolAttribute{
-								Description: "Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.",
-								Computed:    true,
-							},
-							"destinations": schema.ListAttribute{
-								Description: "A list of destinations where logs will be exported to.",
-								Computed:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
-							},
-							"head_sampling_rate": schema.Float64Attribute{
-								Description: "The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
-								Computed:    true,
-							},
-							"persist": schema.BoolAttribute{
-								Description: "Whether log persistence is enabled for the Worker.",
-								Computed:    true,
-								Default:     booldefault.StaticBool(true),
-							},
+			"package_dependencies": schema.ListNestedAttribute{
+				Description: "The list of npm packages that were installed and used when this Worker was built.",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"installed_version": schema.StringAttribute{
+							Description: "The exact version that was resolved and installed by the package manager.",
+							Required:    true,
 						},
-					},
-					"redact_query_string": schema.BoolAttribute{
-						Description: "Whether query strings are removed from request URLs in logs and traces.",
-						Computed:    true,
-						Default:     booldefault.StaticBool(false),
-					},
-					"traces": schema.SingleNestedAttribute{
-						Description: "Trace settings for the Worker.",
-						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[WorkersScriptObservabilityTracesModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"destinations": schema.ListAttribute{
-								Description: "A list of destinations where traces will be exported to.",
-								Computed:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
-							},
-							"enabled": schema.BoolAttribute{
-								Description: "Whether traces are enabled for the Worker.",
-								Computed:    true,
-							},
-							"head_sampling_rate": schema.Float64Attribute{
-								Description: "The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
-								Computed:    true,
-							},
-							"persist": schema.BoolAttribute{
-								Description: "Whether trace persistence is enabled for the Worker.",
-								Computed:    true,
-								Default:     booldefault.StaticBool(true),
-							},
-							"propagation_policy": schema.StringAttribute{
-								Description: "Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. \"authenticated\" honors inbound trace context only when accompanied by a valid trace auth token. \"accept\" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled. Returns null when the trace propagation feature is not enabled for the account.\nAvailable values: \"authenticated\", \"accept\".",
-								Computed:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("authenticated", "accept"),
-								},
-							},
+						"name": schema.StringAttribute{
+							Description: "The npm package name.",
+							Required:    true,
+						},
+						"package_json_version": schema.StringAttribute{
+							Description: "The version constraint as written in package.json.",
+							Required:    true,
 						},
 					},
 				},
