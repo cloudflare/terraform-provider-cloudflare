@@ -72,7 +72,6 @@ func upgradeStateFromV0(ctx context.Context, req resource.UpgradeStateRequest, r
 		CreatedOn:           priorStateData.CreatedOn,
 		Number:              priorStateData.Number,
 		Source:              priorStateData.Source,
-		MainScriptBase64:    priorStateData.MainScriptBase64,
 		StartupTimeMs:       priorStateData.StartupTimeMs,
 	}
 

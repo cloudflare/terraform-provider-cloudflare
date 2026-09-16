@@ -49,24 +49,32 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"bgp": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"customer_asn": schema.Int64Attribute{
-						Description: "ASN used on the customer end of the BGP session",
-						Required:    true,
-						Validators: []validator.Int64{
-							int64validator.AtLeast(0),
-						},
-					},
-					"extra_prefixes": schema.ListAttribute{
-						Description: "Prefixes in this list will be advertised to the customer device, in addition to the routes in the Magic routing table.",
-						Optional:    true,
-						ElementType: types.StringType,
-					},
-					"md5_key": schema.StringAttribute{
-						Description: "MD5 key to use for session authentication.\n\nNote that *this is not a security measure*. MD5 is not a valid security mechanism, and the\nkey is not treated as a secret value. This is *only* supported for preventing\nmisconfiguration, not for defending against malicious attacks.\n\nThe MD5 key, if set, must be of non-zero length and consist only of the following types of\ncharacter:\n\n* ASCII alphanumerics: `[a-zA-Z0-9]`\n* Special characters in the set `'!@#$%^&*()+[]{}<>/.,;:_-~`= \\|`\n\nIn other words, MD5 keys may contain any printable ASCII character aside from newline (0x0A),\nquotation mark (`\"`), vertical tab (0x0B), carriage return (0x0D), tab (0x09), form feed\n(0x0C), and the question mark (`?`). Requests specifying an MD5 key with one or more of\nthese disallowed characters will be rejected.",
-						Optional:    true,
+				"customer_asn": schema.Int64Attribute{
+					Description: "ASN used on the customer end of the BGP session",
+					Required:    true,
+					Validators: []validator.Int64{
+						int64validator.AtLeast(0),
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
+				"export_filter_id": schema.StringAttribute{
+					Description: "ID of the BGP filter profile applied to routes advertised to the customer.",
+					Optional:    true,
+				},
+				"extra_prefixes": schema.ListAttribute{
+					Description: "Prefixes in this list will be advertised to the customer device, in addition to the routes in the Magic routing table.",
+					Optional:    true,
+					ElementType: types.StringType,
+				},
+				"import_filter_id": schema.StringAttribute{
+					Description: "ID of the BGP filter profile applied to routes received from the customer.",
+					Optional:    true,
+				},
+				"md5_key": schema.StringAttribute{
+					Description: "MD5 key to use for session authentication.\n\nNote that *this is not a security measure*. MD5 is not a valid security mechanism, and the\nkey is not treated as a secret value. This is *only* supported for preventing\nmisconfiguration, not for defending against malicious attacks.\n\nThe MD5 key, if set, must be of non-zero length and consist only of the following types of\ncharacter:\n\n* ASCII alphanumerics: `[a-zA-Z0-9]`\n* Special characters in the set `'!@#$%^&*()+[]{}<>/.,;:_-~`= \\|`\n\nIn other words, MD5 keys may contain any printable ASCII character aside from newline (0x0A),\nquotation mark (`\"`), vertical tab (0x0B), carriage return (0x0D), tab (0x09), form feed\n(0x0C), and the question mark (`?`). Requests specifying an MD5 key with one or more of\nthese disallowed characters will be rejected.",
+					Optional:    true,
+				},
+			},
+			PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"cloudflare_gre_endpoint": schema.StringAttribute{
 				Description: "The IP address assigned to the Cloudflare side of the GRE tunnel.",
@@ -262,30 +270,38 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"bgp": schema.SingleNestedAttribute{
 						Computed:   true,
-						CustomType: customfield.NewNestedObjectType[MagicWANGRETunnelGRETunnelBGPModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"customer_asn": schema.Int64Attribute{
-								Description: "ASN used on the customer end of the BGP session",
-								Computed:    true,
-								Validators: []validator.Int64{
-									int64validator.AtLeast(0),
-								},
-							},
-							"extra_prefixes": schema.ListAttribute{
-								Description: "Prefixes in this list will be advertised to the customer device, in addition to the routes in the Magic routing table.",
-								Computed:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
-							},
-							"md5_key": schema.StringAttribute{
-								Description: "MD5 key to use for session authentication.\n\nNote that *this is not a security measure*. MD5 is not a valid security mechanism, and the\nkey is not treated as a secret value. This is *only* supported for preventing\nmisconfiguration, not for defending against malicious attacks.\n\nThe MD5 key, if set, must be of non-zero length and consist only of the following types of\ncharacter:\n\n* ASCII alphanumerics: `[a-zA-Z0-9]`\n* Special characters in the set `'!@#$%^&*()+[]{}<>/.,;:_-~`= \\|`\n\nIn other words, MD5 keys may contain any printable ASCII character aside from newline (0x0A),\nquotation mark (`\"`), vertical tab (0x0B), carriage return (0x0D), tab (0x09), form feed\n(0x0C), and the question mark (`?`). Requests specifying an MD5 key with one or more of\nthese disallowed characters will be rejected.",
-								Computed:    true,
+					CustomType: customfield.NewNestedObjectType[MagicWANGRETunnelGRETunnelBGPModel](ctx),
+					Attributes: map[string]schema.Attribute{
+						"customer_asn": schema.Int64Attribute{
+							Description: "ASN used on the customer end of the BGP session",
+							Computed:    true,
+							Validators: []validator.Int64{
+								int64validator.AtLeast(0),
 							},
 						},
+						"export_filter_id": schema.StringAttribute{
+							Description: "ID of the BGP filter profile applied to routes advertised to the customer.",
+							Computed:    true,
+						},
+						"extra_prefixes": schema.ListAttribute{
+							Description: "Prefixes in this list will be advertised to the customer device, in addition to the routes in the Magic routing table.",
+							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+						"import_filter_id": schema.StringAttribute{
+							Description: "ID of the BGP filter profile applied to routes received from the customer.",
+							Computed:    true,
+						},
+						"md5_key": schema.StringAttribute{
+							Description: "MD5 key to use for session authentication.\n\nNote that *this is not a security measure*. MD5 is not a valid security mechanism, and the\nkey is not treated as a secret value. This is *only* supported for preventing\nmisconfiguration, not for defending against malicious attacks.\n\nThe MD5 key, if set, must be of non-zero length and consist only of the following types of\ncharacter:\n\n* ASCII alphanumerics: `[a-zA-Z0-9]`\n* Special characters in the set `'!@#$%^&*()+[]{}<>/.,;:_-~`= \\|`\n\nIn other words, MD5 keys may contain any printable ASCII character aside from newline (0x0A),\nquotation mark (`\"`), vertical tab (0x0B), carriage return (0x0D), tab (0x09), form feed\n(0x0C), and the question mark (`?`). Requests specifying an MD5 key with one or more of\nthese disallowed characters will be rejected.",
+							Computed:    true,
+						},
 					},
-					"bgp_status": schema.SingleNestedAttribute{
-						Computed:   true,
-						CustomType: customfield.NewNestedObjectType[MagicWANGRETunnelGRETunnelBGPStatusModel](ctx),
+				},
+				"bgp_status": schema.SingleNestedAttribute{
+					Computed:   true,
+					CustomType: customfield.NewNestedObjectType[MagicWANGRETunnelGRETunnelBGPStatusModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"state": schema.StringAttribute{
 								Description: `Available values: "BGP_DOWN", "BGP_UP", "BGP_ESTABLISHING".`,
@@ -444,30 +460,38 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"bgp": schema.SingleNestedAttribute{
 						Computed:   true,
-						CustomType: customfield.NewNestedObjectType[MagicWANGRETunnelModifiedGRETunnelBGPModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"customer_asn": schema.Int64Attribute{
-								Description: "ASN used on the customer end of the BGP session",
-								Computed:    true,
-								Validators: []validator.Int64{
-									int64validator.AtLeast(0),
-								},
-							},
-							"extra_prefixes": schema.ListAttribute{
-								Description: "Prefixes in this list will be advertised to the customer device, in addition to the routes in the Magic routing table.",
-								Computed:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
-								ElementType: types.StringType,
-							},
-							"md5_key": schema.StringAttribute{
-								Description: "MD5 key to use for session authentication.\n\nNote that *this is not a security measure*. MD5 is not a valid security mechanism, and the\nkey is not treated as a secret value. This is *only* supported for preventing\nmisconfiguration, not for defending against malicious attacks.\n\nThe MD5 key, if set, must be of non-zero length and consist only of the following types of\ncharacter:\n\n* ASCII alphanumerics: `[a-zA-Z0-9]`\n* Special characters in the set `'!@#$%^&*()+[]{}<>/.,;:_-~`= \\|`\n\nIn other words, MD5 keys may contain any printable ASCII character aside from newline (0x0A),\nquotation mark (`\"`), vertical tab (0x0B), carriage return (0x0D), tab (0x09), form feed\n(0x0C), and the question mark (`?`). Requests specifying an MD5 key with one or more of\nthese disallowed characters will be rejected.",
-								Computed:    true,
+					CustomType: customfield.NewNestedObjectType[MagicWANGRETunnelModifiedGRETunnelBGPModel](ctx),
+					Attributes: map[string]schema.Attribute{
+						"customer_asn": schema.Int64Attribute{
+							Description: "ASN used on the customer end of the BGP session",
+							Computed:    true,
+							Validators: []validator.Int64{
+								int64validator.AtLeast(0),
 							},
 						},
+						"export_filter_id": schema.StringAttribute{
+							Description: "ID of the BGP filter profile applied to routes advertised to the customer.",
+							Computed:    true,
+						},
+						"extra_prefixes": schema.ListAttribute{
+							Description: "Prefixes in this list will be advertised to the customer device, in addition to the routes in the Magic routing table.",
+							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+						"import_filter_id": schema.StringAttribute{
+							Description: "ID of the BGP filter profile applied to routes received from the customer.",
+							Computed:    true,
+						},
+						"md5_key": schema.StringAttribute{
+							Description: "MD5 key to use for session authentication.\n\nNote that *this is not a security measure*. MD5 is not a valid security mechanism, and the\nkey is not treated as a secret value. This is *only* supported for preventing\nmisconfiguration, not for defending against malicious attacks.\n\nThe MD5 key, if set, must be of non-zero length and consist only of the following types of\ncharacter:\n\n* ASCII alphanumerics: `[a-zA-Z0-9]`\n* Special characters in the set `'!@#$%^&*()+[]{}<>/.,;:_-~`= \\|`\n\nIn other words, MD5 keys may contain any printable ASCII character aside from newline (0x0A),\nquotation mark (`\"`), vertical tab (0x0B), carriage return (0x0D), tab (0x09), form feed\n(0x0C), and the question mark (`?`). Requests specifying an MD5 key with one or more of\nthese disallowed characters will be rejected.",
+							Computed:    true,
+						},
 					},
-					"bgp_status": schema.SingleNestedAttribute{
-						Computed:   true,
-						CustomType: customfield.NewNestedObjectType[MagicWANGRETunnelModifiedGRETunnelBGPStatusModel](ctx),
+				},
+				"bgp_status": schema.SingleNestedAttribute{
+					Computed:   true,
+					CustomType: customfield.NewNestedObjectType[MagicWANGRETunnelModifiedGRETunnelBGPStatusModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"state": schema.StringAttribute{
 								Description: `Available values: "BGP_DOWN", "BGP_UP", "BGP_ESTABLISHING".`,

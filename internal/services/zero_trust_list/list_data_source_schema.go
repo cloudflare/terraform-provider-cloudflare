@@ -42,34 +42,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"search": schema.StringAttribute{
-				Description: "Case-insensitive substring match on the list name or description. When\ncombined with `filter`, both must match (logical AND).",
-				Optional:    true,
-			},
-			"direction": schema.StringAttribute{
-				Description: "Sort direction. Applies to the field named in `order_by`; when `order_by`\nis omitted it applies to the default `created_at` ordering. When\n`direction` is omitted the default is field-specific: explicitly choosing\n`created_at` or `updated_at` defaults to descending (newest first); `name`\nand `item_count` default to ascending; and the default `created_at`\nordering used when `order_by` is omitted is ascending (for backwards\ncompatibility).\n  * `asc` — ascending.\n  * `desc` — descending.\nAvailable values: \"asc\", \"desc\".",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
-				},
-			},
-			"order_by": schema.StringAttribute{
-				Description: "Field to sort the returned lists by. When omitted, results are ordered by\n`created_at` in ascending order (i.e. creation order) for backwards\ncompatibility. Supported values:\n  * `name` — sort alphabetically by list name.\n  * `created_at` — sort by creation time; defaults to descending unless `direction` is set.\n  * `updated_at` — sort by last-modified time; defaults to descending unless `direction` is set.\n  * `item_count` — sort by number of items in the list.\nAvailable values: \"name\", \"created_at\", \"updated_at\", \"item_count\".",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"name",
-						"created_at",
-						"updated_at",
-						"item_count",
-					),
-				},
-			},
-			"search": schema.StringAttribute{
-				Description: "Case-insensitive substring match on the list name or description. When\ncombined with `filter`, both must match (logical AND).",
-				Optional:    true,
-			},
-			"type": schema.StringAttribute{
+		"search": schema.StringAttribute{
+			Description: "Case-insensitive substring match on the list name or description. When\ncombined with `filter`, both must match (logical AND).",
+			Optional:    true,
+		},
+		"type": schema.StringAttribute{
 				Description: "Specify the list type.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\", \"CATEGORY\", \"LOCATION\", \"DEVICE\", \"AAGUID\".",
 				Optional:    true,
 				Validators: []validator.String{

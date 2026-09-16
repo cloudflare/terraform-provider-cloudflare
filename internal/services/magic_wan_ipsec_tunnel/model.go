@@ -47,9 +47,11 @@ func (m MagicWANIPSECTunnelModel) MarshalJSONForUpdate(state MagicWANIPSECTunnel
 }
 
 type MagicWANIPSECTunnelBGPModel struct {
-	CustomerASN   types.Int64     `tfsdk:"customer_asn" json:"customer_asn,required"`
-	ExtraPrefixes *[]types.String `tfsdk:"extra_prefixes" json:"extra_prefixes,optional"`
-	Md5Key        types.String    `tfsdk:"md5_key" json:"md5_key,optional"`
+	CustomerASN    types.Int64     `tfsdk:"customer_asn" json:"customer_asn,required"`
+	ExportFilterID types.String    `tfsdk:"export_filter_id" json:"export_filter_id,optional"`
+	ExtraPrefixes  *[]types.String `tfsdk:"extra_prefixes" json:"extra_prefixes,optional"`
+	ImportFilterID types.String    `tfsdk:"import_filter_id" json:"import_filter_id,optional"`
+	Md5Key         types.String    `tfsdk:"md5_key" json:"md5_key,optional"`
 }
 
 type MagicWANIPSECTunnelCustomRemoteIdentitiesModel struct {
@@ -101,9 +103,11 @@ type MagicWANIPSECTunnelIPSECTunnelModel struct {
 }
 
 type MagicWANIPSECTunnelIPSECTunnelBGPModel struct {
-	CustomerASN   types.Int64                    `tfsdk:"customer_asn" json:"customer_asn,computed"`
-	ExtraPrefixes customfield.List[types.String] `tfsdk:"extra_prefixes" json:"extra_prefixes,computed"`
-	Md5Key        types.String                   `tfsdk:"md5_key" json:"md5_key,computed"`
+	CustomerASN    types.Int64                    `tfsdk:"customer_asn" json:"customer_asn,computed"`
+	ExportFilterID types.String                   `tfsdk:"export_filter_id" json:"export_filter_id,computed"`
+	ExtraPrefixes  customfield.List[types.String] `tfsdk:"extra_prefixes" json:"extra_prefixes,computed"`
+	ImportFilterID types.String                   `tfsdk:"import_filter_id" json:"import_filter_id,computed"`
+	Md5Key         types.String                   `tfsdk:"md5_key" json:"md5_key,computed"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelBGPStatusModel struct {
@@ -159,9 +163,11 @@ type MagicWANIPSECTunnelModifiedIPSECTunnelModel struct {
 }
 
 type MagicWANIPSECTunnelModifiedIPSECTunnelBGPModel struct {
-	CustomerASN   types.Int64                    `tfsdk:"customer_asn" json:"customer_asn,computed"`
-	ExtraPrefixes customfield.List[types.String] `tfsdk:"extra_prefixes" json:"extra_prefixes,computed"`
-	Md5Key        types.String                   `tfsdk:"md5_key" json:"md5_key,computed"`
+	CustomerASN    types.Int64                    `tfsdk:"customer_asn" json:"customer_asn,computed"`
+	ExportFilterID types.String                   `tfsdk:"export_filter_id" json:"export_filter_id,computed"`
+	ExtraPrefixes  customfield.List[types.String] `tfsdk:"extra_prefixes" json:"extra_prefixes,computed"`
+	ImportFilterID types.String                   `tfsdk:"import_filter_id" json:"import_filter_id,computed"`
+	Md5Key         types.String                   `tfsdk:"md5_key" json:"md5_key,computed"`
 }
 
 type MagicWANIPSECTunnelModifiedIPSECTunnelBGPStatusModel struct {
