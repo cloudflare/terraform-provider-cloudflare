@@ -48,7 +48,6 @@ type WorkerVersionsResultDataSourceModel struct {
 	CompatibilityFlags    customfield.Set[types.String]                                                  `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
 	Containers            customfield.NestedObjectSet[WorkerVersionsContainersDataSourceModel]           `tfsdk:"containers" json:"containers,computed"`
 	Exports               customfield.NestedObjectMap[WorkerVersionsExportsDataSourceModel]              `tfsdk:"exports" json:"exports,computed"`
-	ExportsReconciliation customfield.NestedObject[WorkerVersionsExportsReconciliationDataSourceModel]   `tfsdk:"exports_reconciliation" json:"exports_reconciliation,computed"`
 	Limits                customfield.NestedObject[WorkerVersionsLimitsDataSourceModel]                  `tfsdk:"limits" json:"limits,computed"`
 	MainModule            types.String                                                                   `tfsdk:"main_module" json:"main_module,computed"`
 	MigrationTag          types.String                                                                   `tfsdk:"migration_tag" json:"migration_tag,computed"`

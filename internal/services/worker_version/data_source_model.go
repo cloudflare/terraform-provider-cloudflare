@@ -42,7 +42,6 @@ type WorkerVersionDataSourceModel struct {
 	CacheOptions          customfield.NestedObject[WorkerVersionCacheOptionsDataSourceModel]            `tfsdk:"cache_options" json:"cache_options,computed"`
 	Containers            customfield.NestedObjectSet[WorkerVersionContainersDataSourceModel]           `tfsdk:"containers" json:"containers,computed"`
 	Exports               customfield.NestedObjectMap[WorkerVersionExportsDataSourceModel]              `tfsdk:"exports" json:"exports,computed"`
-	ExportsReconciliation customfield.NestedObject[WorkerVersionExportsReconciliationDataSourceModel]   `tfsdk:"exports_reconciliation" json:"exports_reconciliation,computed"`
 	Limits                customfield.NestedObject[WorkerVersionLimitsDataSourceModel]                  `tfsdk:"limits" json:"limits,computed"`
 	Migrations            customfield.NestedObject[WorkerVersionMigrationsDataSourceModel]              `tfsdk:"migrations" json:"migrations,computed"`
 	Modules               customfield.NestedObjectSet[WorkerVersionModulesDataSourceModel]              `tfsdk:"modules" json:"modules,computed"`

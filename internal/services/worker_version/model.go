@@ -41,7 +41,6 @@ type WorkerVersionModel struct {
 	Source                types.String                                                      `tfsdk:"source" json:"source,computed"`
 	StartupTimeMs         types.Int64                                                       `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
 	URLs                  customfield.List[types.String]                                    `tfsdk:"urls" json:"urls,computed"`
-	ExportsReconciliation customfield.NestedObject[WorkerVersionExportsReconciliationModel] `tfsdk:"exports_reconciliation" json:"exports_reconciliation,computed"`
 }
 
 func (m WorkerVersionModel) MarshalJSON() (data []byte, err error) {

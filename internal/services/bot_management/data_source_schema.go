@@ -32,14 +32,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier.",
 				Optional:    true,
 			},
-			"ai_bots_migration_opt_out": schema.BoolAttribute{
-				Description: "Temporary migration flag tracking zones opted out of AI bots managed-rule updates.",
-				Computed:    true,
-			},
-			"ai_bots_migration_opt_out": schema.BoolAttribute{
-				Description: "Temporary migration flag tracking zones opted out of AI bots managed-rule updates.",
-				Computed:    true,
-			},
+		"ai_bots_migration_opt_out": schema.BoolAttribute{
+			Description: "Temporary migration flag tracking zones opted out of AI bots managed-rule updates.",
+			Computed:    true,
+		},
 			"ai_bots_protection": schema.StringAttribute{
 				Description: "Enable rule to block AI Scrapers and Crawlers.\nAvailable values: \"block\", \"disabled\", \"only_on_ad_pages\".",
 				Computed:    true,
