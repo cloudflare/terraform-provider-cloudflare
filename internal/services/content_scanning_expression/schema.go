@@ -17,13 +17,13 @@ var _ resource.ResourceWithConfigValidators = (*ContentScanningExpressionResourc
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Account WAF Write",
 				"Zone WAF Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Defines the unique ID for this Content Scanning custom expression.",

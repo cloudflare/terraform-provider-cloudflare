@@ -23,13 +23,13 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessAIControlsMcpServ
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"MCP Portals Read",
 				"MCP Portals Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Unique identifier for the MCP server.",

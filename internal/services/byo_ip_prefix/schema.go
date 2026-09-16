@@ -20,7 +20,6 @@ var _ resource.ResourceWithConfigValidators = (*ByoIPPrefixResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"IP Prefixes: BGP On Demand Read",
@@ -31,6 +30,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Magic Transit Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier of an IP Prefix.",

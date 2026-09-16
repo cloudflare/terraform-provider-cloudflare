@@ -23,7 +23,6 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustOrganizationResource)(n
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Access: Organizations, Identity Providers, and Groups Read",
@@ -31,6 +30,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Access: Organizations, Identity Providers, and Groups Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",

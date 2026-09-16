@@ -19,7 +19,6 @@ var _ resource.ResourceWithConfigValidators = (*UserGroupResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Account Settings Read",
@@ -27,6 +26,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"SCIM Provisioning",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "User Group identifier tag.",

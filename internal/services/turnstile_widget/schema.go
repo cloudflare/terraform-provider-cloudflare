@@ -22,7 +22,6 @@ var _ resource.ResourceWithConfigValidators = (*TurnstileWidgetResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Account Settings Read",
@@ -31,6 +30,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Turnstile Sites Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Widget item identifier tag.",

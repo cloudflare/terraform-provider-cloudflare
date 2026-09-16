@@ -19,7 +19,6 @@ var _ resource.ResourceWithConfigValidators = (*URLNormalizationSettingsResource
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Account Rulesets Read",
@@ -64,6 +63,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Zone WAF Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The unique ID of the zone.",
