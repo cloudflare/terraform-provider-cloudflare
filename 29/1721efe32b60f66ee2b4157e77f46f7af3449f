@@ -1,0 +1,23 @@
+internal/services/worker_version/list_data_source_model.go
+  s_c6ca07eb5fd35b::t_7c2bc74677f3fe 53
+internal/services/worker_version/model.go
+  s_c6ca07eb5fd35b::t_11bff85a9f8567 23
+internal/services/worker_version/data_source_model.go
+  s_c6ca07eb5fd35b::t_669839f04ea331 32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "291721efe32b60f66ee2b4157e77f46f7af3449f",
+  "prompts": {},
+  "sessions": {
+    "s_c6ca07eb5fd35b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f55522fc2ffeybdyvwuytqMVe9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
