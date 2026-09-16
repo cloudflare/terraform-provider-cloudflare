@@ -1,0 +1,44 @@
+internal/services/zero_trust_access_ai_controls_mcp_server/custom_test.go
+  s_8b60d4de0187f1::t_844fd2c6605772 1-66
+  s_8b60d4de0187f1::t_c693e748c4cf63 67,95-126
+  s_8b60d4de0187f1::t_439e5da2fd598a 68-94
+docs/resources/zero_trust_access_ai_controls_mcp_server.md
+  s_8b60d4de0187f1::t_439e5da2fd598a 59
+  s_8b60d4de0187f1::t_40a7bc3346bd31 20-40,42-54,75
+  s_8b60d4de0187f1::t_e126f4bb78dd25 58,74
+internal/logging/logging_test.go
+  s_8b60d4de0187f1::t_844fd2c6605772 1-40
+internal/logging/logging.go
+  s_8b60d4de0187f1::t_844fd2c6605772 6,18-22,70-71,79-108
+  s_8b60d4de0187f1::t_40a7bc3346bd31 130
+  s_8b60d4de0187f1::t_28644510927f55 109
+internal/services/zero_trust_access_ai_controls_mcp_server/resource_test.go
+  s_8b60d4de0187f1::t_eda94bed5cad20 116-163
+examples/resources/cloudflare_zero_trust_access_ai_controls_mcp_server/resource.tf
+  s_8b60d4de0187f1::t_eda94bed5cad20 2-22,24-36
+internal/services/zero_trust_access_ai_controls_mcp_server/custom.go
+  s_8b60d4de0187f1::t_c693e748c4cf63 1-30
+internal/services/zero_trust_access_ai_controls_mcp_server/model.go
+  s_8b60d4de0187f1::t_c693e748c4cf63 50
+internal/services/zero_trust_access_ai_controls_mcp_server/schema.go
+  s_8b60d4de0187f1::t_40a7bc3346bd31 70
+  s_8b60d4de0187f1::t_e126f4bb78dd25 65
+internal/services/zero_trust_access_ai_controls_mcp_server/testdata/manual_oauth.tf
+  s_8b60d4de0187f1::t_eda94bed5cad20 1-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2a5a67242f878efa2c8ebe94f92328ffe06178df",
+  "prompts": {},
+  "sessions": {
+    "s_8b60d4de0187f1": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f5aab9bb7ffecK0mu3ifD45utE",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Miguel Saraiva <msaraiva@cloudflare.com>"
+    }
+  }
+}
