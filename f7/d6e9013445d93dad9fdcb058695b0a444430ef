@@ -1,0 +1,24 @@
+internal/services/ruleset/resource.go
+  s_ecafaeae890c8b::t_56cd0b56872db9 548-555
+  s_ecafaeae890c8b::t_89c3c867f845ca 483,492
+  s_ecafaeae890c8b::t_969ad280e5ab3c 493
+internal/services/ruleset/ruleset_test.go
+  s_ecafaeae890c8b::t_5fef5363c9e068 358-361
+  s_ecafaeae890c8b::t_59345290498d3c 346-347
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f7d6e9013445d93dad9fdcb058695b0a444430ef",
+  "prompts": {},
+  "sessions": {
+    "s_ecafaeae890c8b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fff86d891ffejaPPUNiXjpXgxr",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Jahnavi Malhotra <jahnavi@cloudflare.com>"
+    }
+  }
+}

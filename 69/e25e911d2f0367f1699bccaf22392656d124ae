@@ -1,0 +1,19 @@
+internal/services/email_sending_subdomain/resource_test.go
+  s_7c026bf10c129e::t_b3f3c68ed6da48 23-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "69e25e911d2f0367f1699bccaf22392656d124ae",
+  "prompts": {},
+  "sessions": {
+    "s_7c026bf10c129e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a05c7e-cebf-7f40-9a01-a4f8ad58794f",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Eric Falcao <efalcao@cloudflare.com>"
+    }
+  }
+}

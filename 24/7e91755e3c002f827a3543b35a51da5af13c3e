@@ -1,0 +1,31 @@
+internal/services/r2_bucket_cors/schema.go
+  s_ac2c5904e4ab72::t_087a6b75cc4760 8,37,46-47,50
+internal/services/r2_bucket_event_notification/schema.go
+  s_ac2c5904e4ab72::t_51c4ca2357d27e 9,44,53-54,57
+internal/services/r2_bucket_lifecycle/schema.go
+  s_ac2c5904e4ab72::t_d2bd4d540e6336 8,36,45-46,49
+internal/services/r2_bucket_lock/schema.go
+  s_ac2c5904e4ab72::t_10be3cfd76591a 8,36,45-46,49
+internal/services/r2_bucket_sippy/schema.go
+  s_ac2c5904e4ab72::t_354851f50da87b 9,41,50-51,54
+internal/services/r2_custom_domain/schema.go
+  s_ac2c5904e4ab72::t_34e83261a4266d 10,44,53-54,57
+internal/services/r2_managed_domain/schema.go
+  s_ac2c5904e4ab72::t_a572b836a43e02 8,35,44-45,48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "247e91755e3c002f827a3543b35a51da5af13c3e",
+  "prompts": {},
+  "sessions": {
+    "s_ac2c5904e4ab72": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f93f6e41bffefFqGsBRprtcvtY",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Riccardo Di Maio <rdm@cloudflare.com>"
+    }
+  }
+}

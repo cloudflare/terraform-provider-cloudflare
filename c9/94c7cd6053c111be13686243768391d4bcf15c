@@ -1,0 +1,56 @@
+internal/services/image_variant/testdata/basic.tf
+  s_db4c30aa458e22::t_8154cd7517db6d 6-8
+internal/services/image_variant/testdata/alt.tf
+  s_db4c30aa458e22::t_0a1744ffb1b192 1-11
+internal/services/image_variant/testdata/replace.tf
+  s_db4c30aa458e22::t_548b1d02a1eaf7 1-10
+internal/services/image_variant/resource_test.go
+  s_db4c30aa458e22::t_5fe5d98cfd4415 244-245
+  s_db4c30aa458e22::t_f70c5afec76ed3 205-207
+  s_db4c30aa458e22::t_25a751cab82255 280-281
+  s_db4c30aa458e22::t_6a5e22a3d6ffc8 117-124
+  s_db4c30aa458e22::t_ad939b79921509 5,7,18,20,28-116,125-126,132,141,144,146-148,152-158,163,170,179,186-191,194-196,213,222,230-232,234,237,248,251,259,262,270,274,277,284,289,297,303,305-306,308-309,315
+  s_db4c30aa458e22::t_499b48f7639374 164
+  s_db4c30aa458e22::t_2af4e1ce2ad473 208
+  s_db4c30aa458e22::t_b1ba3cc1e0d47e 228-229
+  s_db4c30aa458e22::t_2a725a80d9fc8e 233
+  s_db4c30aa458e22::t_de494f46fbb532 236
+  s_db4c30aa458e22::t_b1c616fa8612b0 238
+  s_db4c30aa458e22::t_cf8fd11e457bbf 246-247
+  s_db4c30aa458e22::t_a8c198246a3917 249
+  s_db4c30aa458e22::t_142d0c5af35bd6 252-254,256-258
+  s_db4c30aa458e22::t_7dbcd953278b3a 260-261
+  s_db4c30aa458e22::t_92fbda7ef3cd3a 263-265,267-269
+  s_db4c30aa458e22::t_8de13cd21f64c8 271-273
+  s_db4c30aa458e22::t_75ce0c84cc1ea9 275-276
+  s_db4c30aa458e22::t_add7358ef34ecc 282-283
+  s_db4c30aa458e22::t_e18c0b86fe68f3 285-287
+  s_db4c30aa458e22::t_9f01623c270ce3 290-292,294-296
+  s_db4c30aa458e22::t_fbc25b03b7c4dc 298-300
+  s_db4c30aa458e22::t_46dc1e6f6031f8 304
+  s_db4c30aa458e22::t_740cf45d3beea8 307
+  s_db4c30aa458e22::t_1cc58e382d6d81 310-314
+internal/services/image_variant/testdata/update.tf
+  s_db4c30aa458e22::t_f0ab2c65602c6d 1-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c994c7cd6053c111be13686243768391d4bcf15c",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_db4c30aa458e22": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fca722fd9ffebF8COOcm9kj8Ht",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}

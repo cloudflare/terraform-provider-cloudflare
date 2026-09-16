@@ -1,0 +1,26 @@
+internal/services/zero_trust_organization/model.go
+  s_eb975af9a8a216::t_36de280a3b0de1 27
+internal/services/zero_trust_organization/data_source_model.go
+  s_eb975af9a8a216::t_4b955e61c58842 37
+internal/services/zero_trust_organization/model_test.go
+  s_eb975af9a8a216::t_fa52972adc1a09 50
+  s_eb975af9a8a216::t_189093cf3480e1 20
+  s_eb975af9a8a216::t_ca344bf5c566cf 67
+  s_eb975af9a8a216::t_ccd4a130df1b4b 102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1b7eeb41ddab5cba39a56fdafd13b0c05d1c9c44",
+  "prompts": {},
+  "sessions": {
+    "s_eb975af9a8a216": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f91bc0eabffe7Csy90MezloDwR",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}

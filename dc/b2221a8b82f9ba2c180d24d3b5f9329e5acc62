@@ -1,0 +1,29 @@
+internal/services/magic_wan_gre_tunnel/schema.go
+  s_f2bfc49fb94775::t_c6d890e045cc45 626
+internal/services/magic_wan_ipsec_tunnel/custom_schema.go
+  s_f2bfc49fb94775::t_09ca5650657abc 1-18,20-86,95-251
+  s_f2bfc49fb94775::t_d4dfca4e1e8018 19
+  s_f2bfc49fb94775::t_fd638397bcf942 87-94
+internal/services/magic_wan_gre_tunnel/custom_schema.go
+  s_f2bfc49fb94775::t_fd638397bcf942 60-67
+  s_f2bfc49fb94775::t_d4dfca4e1e8018 21
+  s_f2bfc49fb94775::t_09ca5650657abc 1-20,22-59,68-231
+internal/services/magic_wan_ipsec_tunnel/schema.go
+  s_f2bfc49fb94775::t_801f9db0255332 690
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "dcb2221a8b82f9ba2c180d24d3b5f9329e5acc62",
+  "prompts": {},
+  "sessions": {
+    "s_f2bfc49fb94775": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f7a977ce4ffeTzyipthrB16PoY",
+        "model": "@cf/moonshotai/kimi-k2.7-code"
+      },
+      "human_author": null
+    }
+  }
+}

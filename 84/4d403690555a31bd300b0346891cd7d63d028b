@@ -1,0 +1,77 @@
+docs/data-sources/email_security_allow_policy.md
+  s_67d57475267cf8::t_acc5495840bd7b 1-78
+internal/services/email_security_allow_policy/data_source_schema_test.go
+  s_67d57475267cf8::t_5aa291e4c63a2a 1-19
+internal/services/email_security_allow_policy/resource.go
+  s_67d57475267cf8::t_a3dac89adea2c8 1-259
+internal/services/email_security_allow_policy/resource_schema_test.go
+  s_67d57475267cf8::t_715df466266d54 1-19
+examples/resources/cloudflare_email_security_allow_policy/resource.tf
+  s_67d57475267cf8::t_7298aa4d9734ae 1-11
+examples/resources/cloudflare_email_security_allow_policy/import.sh
+  s_67d57475267cf8::t_055a45cbe5151a 1
+internal/services/email_security_allow_policy/list_data_source_schema_test.go
+  s_67d57475267cf8::t_441b010329212b 1-19
+internal/services/email_security_allow_policy/list_data_source.go
+  s_67d57475267cf8::t_db97239218c1c8 1-100
+examples/data-sources/cloudflare_email_security_allow_policies/data-source.tf
+  s_67d57475267cf8::t_c33d9a934935bb 1-8
+examples/data-sources/cloudflare_email_security_allow_policy/data-source.tf
+  s_67d57475267cf8::t_adc915589b8747 1-4
+internal/services/email_security_allow_policy/list_data_source_schema.go
+  s_67d57475267cf8::t_6a6d9b7c9354bc 1-172
+internal/services/email_security_allow_policy/testdata/allowpolicy_basic.tf
+  s_67d57475267cf8::t_404647bc43fd30 1-11
+internal/services/email_security_allow_policy/testdata/allowpolicy_updated.tf
+  s_67d57475267cf8::t_ca273a953e772d 1-11
+internal/services/email_security_allow_policy/schema.go
+  s_67d57475267cf8::t_d810d07fbb0a27 22-24
+  s_67d57475267cf8::t_82936d9485717c 18-20
+  s_67d57475267cf8::t_574afd2e652216 21
+  s_67d57475267cf8::t_46613589e6025f 1-17,25-110
+internal/services/email_security_allow_policy/testdata/allowpolicy_regex.tf
+  s_67d57475267cf8::t_a6396ecb5310a6 1-11
+docs/data-sources/email_security_allow_policies.md
+  s_67d57475267cf8::t_0f588d8a4b920f 1-82
+internal/services/email_security_allow_policy/data_source.go
+  s_67d57475267cf8::t_b569ca41cc2976 1-119
+internal/services/email_security_allow_policy/model.go
+  s_67d57475267cf8::t_9a725a6753c752 1-40
+internal/services/email_security_allow_policy/data_source_schema.go
+  s_67d57475267cf8::t_1c5944382be4ad 1-167
+internal/services/email_security_allow_policy/migrations.go
+  s_67d57475267cf8::t_09042f259c4b86 1-15
+internal/services/email_security_allow_policy/data_source_model.go
+  s_67d57475267cf8::t_b922bc02a623dd 1-94
+scripts/run-ci-tests
+  s_67d57475267cf8::t_d1fe3fbb7e3044 54
+  s_67d57475267cf8::t_c62239d28e7228 202
+internal/services/email_security_allow_policy/list_data_source_model.go
+  s_67d57475267cf8::t_06df3378f2848e 1-87
+internal/services/email_security_allow_policy/testdata/allowpolicy_domain.tf
+  s_67d57475267cf8::t_5857ea7d07eb4e 1-10
+docs/resources/email_security_allow_policy.md
+  s_67d57475267cf8::t_5a81dc860a641a 1-69
+internal/services/email_security_allow_policy/resource_test.go
+  s_67d57475267cf8::t_6f2bf97c85c88e 239,241
+  s_67d57475267cf8::t_e97e6f7831a5f9 1-49,51-54,56-238,240,242-252
+  s_67d57475267cf8::t_1c43551779e466 50,55
+internal/provider.go
+  s_67d57475267cf8::t_b13409c2625bb9 84,516,809-810
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "844d403690555a31bd300b0346891cd7d63d028b",
+  "prompts": {},
+  "sessions": {
+    "s_67d57475267cf8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_032cdaee3ffeeMonyh0jg57vLZ",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Greg Thompson Jr. <gregt@cloudflare.com>"
+    }
+  }
+}

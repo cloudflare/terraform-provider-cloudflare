@@ -1,0 +1,86 @@
+internal/services/image/testdata/metadata.tf
+  s_db4c30aa458e22::t_db0f9adaab169f 1-10
+internal/services/image/testdata/no_metadata.tf
+  s_db4c30aa458e22::t_27429cfe18e3e9 1-5
+internal/services/image/resource.go
+  s_db4c30aa458e22::t_5b53f2145796a3 118-122,124,135
+  s_db4c30aa458e22::t_b8245139634f06 67-70
+templates/resources/image.md.tmpl
+  s_db4c30aa458e22::t_37875d6b787c2d 12-14,16-18,22,32
+  s_db4c30aa458e22::t_b9ba425c509149 1-11,15,19-21,23-31,33-52
+internal/services/image/resource_test.go
+  s_db4c30aa458e22::t_2adfc0dc9d9dc6 121-124,164-190
+  s_db4c30aa458e22::t_73ff6e5970a8b3 34-35
+  s_db4c30aa458e22::t_ef7028acd32de3 1-18,22,25-33,45-69,84-120,191-223,227-231,236-264,266-270,275-278,280-288,290-291,294,296-300,305-307,309-317,319-323,325-326,328-331,333-337
+  s_db4c30aa458e22::t_9e40a9fa4c4d01 36-44
+  s_db4c30aa458e22::t_fc9c61913c1ee2 21
+  s_db4c30aa458e22::t_c434e7a442f707 70-83
+  s_db4c30aa458e22::t_114e2fcf1c98f8 20,23-24
+  s_db4c30aa458e22::t_28830926663a9f 129-132,135-160
+  s_db4c30aa458e22::t_546a838273d492 226
+  s_db4c30aa458e22::t_b18e001bda0197 272-273
+  s_db4c30aa458e22::t_ebc2842a3fada0 302-303
+  s_db4c30aa458e22::t_fe651b536af76a 161-163
+  s_db4c30aa458e22::t_bd7e2c53bf3d46 133-134
+  s_db4c30aa458e22::t_b688f7cc56c3ec 265,293
+  s_db4c30aa458e22::t_1ddb270d99a334 232-235
+  s_db4c30aa458e22::t_d4960c801a8eee 19
+  s_db4c30aa458e22::t_48a6096a61b679 125-128
+  s_db4c30aa458e22::t_b8f29838ddb374 224-225
+  s_db4c30aa458e22::t_8ca0aa30410e52 271
+  s_db4c30aa458e22::t_7d5c3d318bc1f2 274
+  s_db4c30aa458e22::t_d0d8c70f94bf74 279
+  s_db4c30aa458e22::t_b1d1221c379cc5 289
+  s_db4c30aa458e22::t_28a671316b9101 292
+  s_db4c30aa458e22::t_96d995ac28354d 295
+  s_db4c30aa458e22::t_814ad21dbf2702 301
+  s_db4c30aa458e22::t_9d30b91ffa8a6f 304
+  s_db4c30aa458e22::t_dde4bb28326f97 308
+  s_db4c30aa458e22::t_659b4d97e63991 318
+  s_db4c30aa458e22::t_2eac177e6c31a0 324
+  s_db4c30aa458e22::t_11bb9321064fde 327
+  s_db4c30aa458e22::t_1d1405073f389f 332
+internal/services/image/testdata/update.tf
+  s_db4c30aa458e22::t_23975581e9f6af 1,9
+  s_db4c30aa458e22::t_55a3f8add6de29 2-8
+internal/services/image/testdata/basic.tf
+  s_db4c30aa458e22::t_dc6af5e0043cbd 5-7
+  s_db4c30aa458e22::t_cf28b0d7d0b381 1-4,8
+internal/services/image/marshal.go
+  s_db4c30aa458e22::t_7b28f89ae8584a 16-20
+  s_db4c30aa458e22::t_3b9f3e593f636e 85-86
+  s_db4c30aa458e22::t_09e4ab5c883ca7 1-4,7,9-10,12,14-15,21-31,33-36,40,59-84,87-107
+  s_db4c30aa458e22::t_43386b88e14ef9 132,135-142,144-149,151-168
+  s_db4c30aa458e22::t_404ae674a56820 108,114-124,126-131
+  s_db4c30aa458e22::t_c1c335966253e2 125
+  s_db4c30aa458e22::t_34f54e81153fc0 5,8,11,13
+  s_db4c30aa458e22::t_cb073ea047a520 32,37-39
+  s_db4c30aa458e22::t_7e293c47b87a3c 109-113
+  s_db4c30aa458e22::t_d2ef8dd9c4fc27 41-58
+  s_db4c30aa458e22::t_a9b2bcb7dc5ab7 6
+  s_db4c30aa458e22::t_89e8ccff4a9827 133-134,143,150
+internal/services/image/testdata/file_upload.tf
+  s_db4c30aa458e22::t_ba533a5ded56c1 5-7
+  s_db4c30aa458e22::t_45cd1327e17c33 1-4,8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6be8991732e5b5667554768ad50af3ea99ee2f1d",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_db4c30aa458e22": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fca722fd9ffebF8COOcm9kj8Ht",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}

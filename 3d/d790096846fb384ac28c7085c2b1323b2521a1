@@ -1,0 +1,24 @@
+internal/services/turnstile_widget/schema.go
+  h_5f12c8df3da73f 111
+internal/services/zero_trust_device_default_profile/schema.go
+  h_5f12c8df3da73f 252
+internal/services/zero_trust_device_custom_profile/schema.go
+  h_5f12c8df3da73f 291
+internal/services/account_member/schema.go
+  h_5f12c8df3da73f 10,17,109
+internal/services/account_subscription/schema.go
+  h_5f12c8df3da73f 14
+internal/services/dns_record/schema.go
+  h_5f12c8df3da73f 7,18,20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3dd790096846fb384ac28c7085c2b1323b2521a1",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}

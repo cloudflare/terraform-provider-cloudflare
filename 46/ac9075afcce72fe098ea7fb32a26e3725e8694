@@ -1,0 +1,21 @@
+examples/resources/cloudflare_account_subscription/resource.tf
+  s_b15b721d29b585::t_2ee43ffeb00f8c 2
+docs/resources/account_subscription.md
+  s_b15b721d29b585::t_5a3dddd9d500e5 20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "46ac9075afcce72fe098ea7fb32a26e3725e8694",
+  "prompts": {},
+  "sessions": {
+    "s_b15b721d29b585": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdb5562a8ffe2msnnRE0sgpvPE",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

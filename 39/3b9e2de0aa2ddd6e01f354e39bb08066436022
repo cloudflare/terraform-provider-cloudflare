@@ -1,0 +1,19 @@
+internal/services/ruleset/resource.go
+  s_ecafaeae890c8b::t_dd9d4324b9d64d 481-485
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "393b9e2de0aa2ddd6e01f354e39bb08066436022",
+  "prompts": {},
+  "sessions": {
+    "s_ecafaeae890c8b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fff86d891ffejaPPUNiXjpXgxr",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Jahnavi Malhotra <jahnavi@cloudflare.com>"
+    }
+  }
+}

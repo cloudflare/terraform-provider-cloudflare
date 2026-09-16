@@ -1,0 +1,31 @@
+docs/data-sources/r2_bucket.md
+  s_a072aef1bddd7d::t_274a766b1bfdc1 37
+docs/resources/r2_bucket.md
+  s_a072aef1bddd7d::t_f1b3b08634653d 37
+internal/services/r2_bucket/jurisdiction_test.go
+  s_43f9ac7963ea59::t_14593fa1c259f3 1-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3c8fe204f0811fb39f6e6e7f6aa3265b4eb91516",
+  "prompts": {},
+  "sessions": {
+    "s_43f9ac7963ea59": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa2863026ffecVDMlkAqe5u5a2",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Riccardo Di Maio <rdm@cloudflare.com>"
+    },
+    "s_a072aef1bddd7d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa287b03bffepBW0taY9Lo2rm4",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Riccardo Di Maio <rdm@cloudflare.com>"
+    }
+  }
+}

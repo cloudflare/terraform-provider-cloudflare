@@ -1,0 +1,23 @@
+.gitlab-ci.yml
+  s_b0f278eac5ddf8::t_6e94c43eb43fc1 3-4,12-103
+internal/services/r2_bucket/data_source_schema.go
+  s_b0f278eac5ddf8::t_c4adaee61fefaf 36
+internal/services/r2_bucket/schema.go
+  s_b0f278eac5ddf8::t_8557a975e724bc 94,104
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2677b478a30ff7b67f0cdb5f6175369a17ecc67e",
+  "prompts": {},
+  "sessions": {
+    "s_b0f278eac5ddf8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f78da2e1bffe6kxIjbvNp4p0p7",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Riccardo Di Maio <rdm@cloudflare.com>"
+    }
+  }
+}
