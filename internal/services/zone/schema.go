@@ -25,7 +25,6 @@ var _ resource.ResourceWithConfigValidators = (*ZoneResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Access: Apps and Policies Read",
@@ -68,6 +67,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Zone Zone Edit",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier",

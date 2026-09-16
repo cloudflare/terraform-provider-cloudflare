@@ -18,13 +18,13 @@ var _ resource.ResourceWithConfigValidators = (*WorkersKVNamespaceResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers KV Storage Read",
 				"Workers KV Storage Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Namespace identifier tag.",

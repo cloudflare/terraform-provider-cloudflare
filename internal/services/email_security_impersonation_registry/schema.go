@@ -19,13 +19,13 @@ var _ resource.ResourceWithConfigValidators = (*EmailSecurityImpersonationRegist
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Cloud Email Security: Read",
 				"Cloud Email Security: Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Impersonation registry entry identifier",

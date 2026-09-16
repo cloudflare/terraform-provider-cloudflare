@@ -30,13 +30,13 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessIdentityProviderR
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Access: Organizations, Identity Providers, and Groups Read",
 				"Access: Organizations, Identity Providers, and Groups Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID.",
