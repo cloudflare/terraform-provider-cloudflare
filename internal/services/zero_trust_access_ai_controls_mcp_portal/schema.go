@@ -28,7 +28,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"MCP Portals Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Unique identifier for the MCP portal.",

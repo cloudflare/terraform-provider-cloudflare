@@ -29,7 +29,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Flagship Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Unique identifier for the flag within an app. Used in all evaluation and SDK calls.",
