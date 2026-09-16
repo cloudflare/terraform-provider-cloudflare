@@ -83,6 +83,17 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "The sampling rate for observability. From 0 to 1 (1 = 100%, 0.1 = 10%).",
 						Computed:    true,
 					},
+					"issues": schema.SingleNestedAttribute{
+						Description: "Real-time Issues settings for the Worker.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[WorkerObservabilityIssuesDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Whether real-time Issues are enabled for the Worker.",
+								Computed:    true,
+							},
+						},
+					},
 					"logs": schema.SingleNestedAttribute{
 						Description: "Log settings for the Worker.",
 						Computed:    true,

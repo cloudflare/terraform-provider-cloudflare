@@ -92,6 +92,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
+			"trusted_accounts": schema.ListAttribute{
+				Description: "The account tags of organizations trusted by this organization for policy and device posture sharing.",
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
+			},
 			"custom_pages": schema.SingleNestedAttribute{
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[ZeroTrustOrganizationCustomPagesDataSourceModel](ctx),

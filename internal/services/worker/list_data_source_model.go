@@ -57,9 +57,14 @@ type WorkersResultDataSourceModel struct {
 type WorkersObservabilityDataSourceModel struct {
 	Enabled           types.Bool                                                          `tfsdk:"enabled" json:"enabled,computed"`
 	HeadSamplingRate  types.Float64                                                       `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Issues            customfield.NestedObject[WorkersObservabilityIssuesDataSourceModel] `tfsdk:"issues" json:"issues,computed"`
 	Logs              customfield.NestedObject[WorkersObservabilityLogsDataSourceModel]   `tfsdk:"logs" json:"logs,computed"`
 	RedactQueryString types.Bool                                                          `tfsdk:"redact_query_string" json:"redact_query_string,computed"`
 	Traces            customfield.NestedObject[WorkersObservabilityTracesDataSourceModel] `tfsdk:"traces" json:"traces,computed"`
+}
+
+type WorkersObservabilityIssuesDataSourceModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 type WorkersObservabilityLogsDataSourceModel struct {

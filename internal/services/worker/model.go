@@ -39,9 +39,14 @@ func (m WorkerModel) MarshalJSONForUpdate(state WorkerModel) (data []byte, err e
 type WorkerObservabilityModel struct {
 	Enabled           types.Bool                                               `tfsdk:"enabled" json:"enabled,computed_optional"`
 	HeadSamplingRate  types.Float64                                            `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed_optional"`
+	Issues            customfield.NestedObject[WorkerObservabilityIssuesModel] `tfsdk:"issues" json:"issues,computed_optional"`
 	Logs              customfield.NestedObject[WorkerObservabilityLogsModel]   `tfsdk:"logs" json:"logs,computed_optional"`
 
 	Traces            customfield.NestedObject[WorkerObservabilityTracesModel] `tfsdk:"traces" json:"traces,computed_optional"`
+}
+
+type WorkerObservabilityIssuesModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed_optional"`
 }
 
 type WorkerObservabilityLogsModel struct {

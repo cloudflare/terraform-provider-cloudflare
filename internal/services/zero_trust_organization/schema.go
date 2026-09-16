@@ -5,6 +5,7 @@ package zero_trust_organization
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -245,6 +246,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
+			},
+			"trusted_accounts": schema.ListAttribute{
+				Description: "The account tags of organizations trusted by this organization for policy and device posture sharing.",
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 		},
 	}

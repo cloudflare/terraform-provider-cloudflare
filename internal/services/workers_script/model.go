@@ -297,8 +297,13 @@ type WorkersScriptMetadataMigrationsStepsTransferredClassesModel struct {
 type WorkersScriptMetadataObservabilityModel struct {
 	Enabled           types.Bool                                     `tfsdk:"enabled" json:"enabled,required"`
 	HeadSamplingRate  types.Float64                                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
+	Issues            *WorkersScriptMetadataObservabilityIssuesModel `tfsdk:"issues" json:"issues,optional"`
 	Logs              *WorkersScriptMetadataObservabilityLogsModel   `tfsdk:"logs" json:"logs,optional"`
 	Traces            *WorkersScriptMetadataObservabilityTracesModel `tfsdk:"traces" json:"traces,optional"`
+}
+
+type WorkersScriptMetadataObservabilityIssuesModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,optional"`
 }
 
 type WorkersScriptMetadataObservabilityLogsModel struct {
@@ -353,8 +358,13 @@ type WorkersScriptNamedHandlersModel struct {
 type WorkersScriptObservabilityModel struct {
 	Enabled           types.Bool                                                      `tfsdk:"enabled" json:"enabled,computed"`
 	HeadSamplingRate  types.Float64                                                   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Issues            customfield.NestedObject[WorkersScriptObservabilityIssuesModel] `tfsdk:"issues" json:"issues,computed"`
 	Logs              customfield.NestedObject[WorkersScriptObservabilityLogsModel]   `tfsdk:"logs" json:"logs,computed"`
 	Traces            customfield.NestedObject[WorkersScriptObservabilityTracesModel] `tfsdk:"traces" json:"traces,computed"`
+}
+
+type WorkersScriptObservabilityIssuesModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 type WorkersScriptObservabilityLogsModel struct {

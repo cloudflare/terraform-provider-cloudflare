@@ -84,6 +84,9 @@ resource "cloudflare_workers_script" "example_workers_script" {
     observability = {
       enabled = true
       head_sampling_rate = 0.1
+      issues = {
+        enabled = true
+      }
       logs = {
         enabled = true
         invocation_logs = true

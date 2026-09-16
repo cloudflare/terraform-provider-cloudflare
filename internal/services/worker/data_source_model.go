@@ -60,8 +60,13 @@ func (m *WorkerDataSourceModel) toListParams(_ context.Context) (params workers.
 type WorkerObservabilityDataSourceModel struct {
 	Enabled           types.Bool                                                         `tfsdk:"enabled" json:"enabled,computed"`
 	HeadSamplingRate  types.Float64                                                      `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Issues            customfield.NestedObject[WorkerObservabilityIssuesDataSourceModel] `tfsdk:"issues" json:"issues,computed"`
 	Logs              customfield.NestedObject[WorkerObservabilityLogsDataSourceModel]   `tfsdk:"logs" json:"logs,computed"`
 	Traces            customfield.NestedObject[WorkerObservabilityTracesDataSourceModel] `tfsdk:"traces" json:"traces,computed"`
+}
+
+type WorkerObservabilityIssuesDataSourceModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 type WorkerObservabilityLogsDataSourceModel struct {

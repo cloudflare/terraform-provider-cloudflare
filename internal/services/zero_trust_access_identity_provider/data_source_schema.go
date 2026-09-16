@@ -114,13 +114,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"prompt": schema.StringAttribute{
-						Description: "Indicates the type of user interaction that is required. prompt=login forces the user to enter their credentials on that request, negating single-sign on. prompt=none is the opposite. It ensures that the user isn't presented with any interactive prompt. If the request can't be completed silently by using single-sign on, the Microsoft identity platform returns an interaction_required error. prompt=select_account interrupts single sign-on providing account selection experience listing all the accounts either in session or any remembered account or an option to choose to use a different account altogether.\nAvailable values: \"login\", \"select_account\", \"none\".",
+						Description: "Indicates the type of user interaction that is required. prompt=login forces the user to enter their credentials on that request, negating single-sign on. prompt=none is the opposite. It ensures that the user isn't presented with any interactive prompt. If the request can't be completed silently by using single-sign on, the Microsoft identity platform returns an interaction_required error. prompt=select_account interrupts single sign-on providing account selection experience listing all the accounts either in session or any remembered account or an option to choose to use a different account altogether.\nAvailable values: \"login\", \"select_account\", \"none\", \"consent\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"login",
 								"select_account",
 								"none",
+								"consent",
 							),
 						},
 					},
@@ -138,6 +139,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 					"apps_domain": schema.StringAttribute{
 						Description: "Your companies TLD",
+						Computed:    true,
+					},
+					"use_login_hint": schema.BoolAttribute{
+						Description: "Whether to use a previously authenticated Access email as a Google login hint when exactly one email matches the Workspace domain.",
 						Computed:    true,
 					},
 					"auth_url": schema.StringAttribute{

@@ -90,9 +90,14 @@ type WorkersScriptsNamedHandlersDataSourceModel struct {
 type WorkersScriptsObservabilityDataSourceModel struct {
 	Enabled           types.Bool                                                                 `tfsdk:"enabled" json:"enabled,computed"`
 	HeadSamplingRate  types.Float64                                                              `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Issues            customfield.NestedObject[WorkersScriptsObservabilityIssuesDataSourceModel] `tfsdk:"issues" json:"issues,computed"`
 	Logs              customfield.NestedObject[WorkersScriptsObservabilityLogsDataSourceModel]   `tfsdk:"logs" json:"logs,computed"`
 	RedactQueryString types.Bool                                                                 `tfsdk:"redact_query_string" json:"redact_query_string,computed"`
 	Traces            customfield.NestedObject[WorkersScriptsObservabilityTracesDataSourceModel] `tfsdk:"traces" json:"traces,computed"`
+}
+
+type WorkersScriptsObservabilityIssuesDataSourceModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 type WorkersScriptsObservabilityLogsDataSourceModel struct {

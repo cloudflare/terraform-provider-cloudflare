@@ -65,6 +65,7 @@ type ZeroTrustAccessIdentityProvidersConfigDataSourceModel struct {
 	CentrifyAccount          types.String                                                                                        `tfsdk:"centrify_account" json:"centrify_account,computed"`
 	CentrifyAppID            types.String                                                                                        `tfsdk:"centrify_app_id" json:"centrify_app_id,computed"`
 	AppsDomain               types.String                                                                                        `tfsdk:"apps_domain" json:"apps_domain,computed"`
+	UseLoginHint             types.Bool                                                                                          `tfsdk:"use_login_hint" json:"use_login_hint,computed"`
 	AuthURL                  types.String                                                                                        `tfsdk:"auth_url" json:"auth_url,computed"`
 	CERTsURL                 types.String                                                                                        `tfsdk:"certs_url" json:"certs_url,computed"`
 	PKCEEnabled              types.Bool                                                                                          `tfsdk:"pkce_enabled" json:"pkce_enabled,computed"`

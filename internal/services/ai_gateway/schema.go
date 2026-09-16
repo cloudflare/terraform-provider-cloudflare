@@ -15,6 +15,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -69,32 +71,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					int64validator.AtLeast(0),
 				},
 			},
-			"authentication": schema.BoolAttribute{
-				Optional: true,
-			},
-			"byok_only": schema.BoolAttribute{
-				Description: "Requires customer-provided provider credentials and prevents fallback to Unified Billing.",
-				Optional:    true,
-			},
-			"log_classification": schema.BoolAttribute{
-				Optional: true,
-			},
-			"log_management": schema.Int64Attribute{
-				Optional: true,
-				Validators: []validator.Int64{
-					int64validator.Between(10000, 10000000),
-				},
-			},
-			"log_management_strategy": schema.StringAttribute{
-				Description: `Available values: "STOP_INSERTING", "DELETE_OLDEST".`,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("STOP_INSERTING", "DELETE_OLDEST"),
-				},
-			},
-			"logpush": schema.BoolAttribute{
-				Optional: true,
-			},
 			"logpush_public_key": schema.StringAttribute{
 				Optional: true,
 			},
@@ -129,12 +105,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.Int64{
 					int64validator.Between(1, 5),
 				},
-			},
-			"store_id": schema.StringAttribute{
-				Optional: true,
-			},
-			"zdr": schema.BoolAttribute{
-				Optional: true,
 			},
 			"dlp": schema.SingleNestedAttribute{
 				Optional: true,
@@ -417,6 +387,49 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"authentication": schema.BoolAttribute{
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"byok_only": schema.BoolAttribute{
+				Description:   "Requires customer-provided provider credentials and prevents fallback to Unified Billing.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"log_classification": schema.BoolAttribute{
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"log_management": schema.Int64Attribute{
+				Computed: true,
+				Optional: true,
+				Validators: []validator.Int64{
+					int64validator.Between(10000, 10000000),
+				},
+				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseNonNullStateForUnknown()},
+			},
+			"log_management_strategy": schema.StringAttribute{
+				Description: `Available values: "STOP_INSERTING", "DELETE_OLDEST".`,
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("STOP_INSERTING", "DELETE_OLDEST"),
+				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"logpush": schema.BoolAttribute{
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"store_id": schema.StringAttribute{
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+			},
 			"workers_ai_billing_mode": schema.StringAttribute{
 				Description: "Controls how Workers AI inference calls routed through this gateway are billed. 'postpaid' bills the account directly through Workers AI; 'unified' deducts credits via AI Gateway using neuron-based pricing and delegates billing to AI Gateway.\nAvailable values: \"postpaid\", \"unified\".",
 				Computed:    true,
@@ -425,6 +438,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("postpaid", "unified"),
 				},
 				Default: stringdefault.StaticString("postpaid"),
+			},
+			"zdr": schema.BoolAttribute{
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"otel": schema.ListNestedAttribute{
 				Computed:   true,
@@ -493,7 +511,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"id": schema.StringAttribute{
 									Computed: true,
 									Optional: true,
-									Default:  stringdefault.StaticString("91caa4d5"),
+									Default:  stringdefault.StaticString("ca5a9257"),
 								},
 								"enabled": schema.BoolAttribute{
 									Computed: true,
