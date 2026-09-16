@@ -158,11 +158,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "google-apps"),
 						},
 					},
-					"use_login_hint": schema.BoolAttribute{
-						Description: "Whether to use a previously authenticated Access email as a Google login hint when exactly one email matches the Workspace domain.",
-						Optional:    true,
-					},
-					"use_login_hint": schema.BoolAttribute{
+				"use_login_hint": schema.BoolAttribute{
 						Description: "Whether to use a previously authenticated Access email as a Google login hint when exactly one email matches the Workspace domain.",
 						Optional:    true,
 					},

@@ -89,22 +89,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							NormalizeFloat64(),
 						},
 					},
-					"issues": schema.SingleNestedAttribute{
-						Description: "Real-time Issues settings for the Worker.",
-						Computed:    true,
-						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[WorkerObservabilityIssuesModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"enabled": schema.BoolAttribute{
-								Description: "Whether real-time Issues are enabled for the Worker.",
-								Computed:    true,
-								Optional:    true,
-								Default:     booldefault.StaticBool(false),
-							},
-						},
-						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
-					},
-					"issues": schema.SingleNestedAttribute{
+				"issues": schema.SingleNestedAttribute{
 						Description: "Real-time Issues settings for the Worker.",
 						Computed:    true,
 						Optional:    true,
