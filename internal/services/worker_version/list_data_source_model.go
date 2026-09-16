@@ -50,6 +50,7 @@ type WorkerVersionsResultDataSourceModel struct {
 	Exports               customfield.NestedObjectMap[WorkerVersionsExportsDataSourceModel]              `tfsdk:"exports" json:"exports,computed"`
 	Limits                customfield.NestedObject[WorkerVersionsLimitsDataSourceModel]                  `tfsdk:"limits" json:"limits,computed"`
 	MainModule            types.String                                                                   `tfsdk:"main_module" json:"main_module,computed"`
+	MainScriptBase64      types.String                                                                   `tfsdk:"main_script_base64" json:"main_script_base64,computed"`
 	MigrationTag          types.String                                                                   `tfsdk:"migration_tag" json:"migration_tag,computed"`
 	Migrations            customfield.NestedObject[WorkerVersionsMigrationsDataSourceModel]              `tfsdk:"migrations" json:"migrations,computed"`
 	Modules               customfield.NestedObjectSet[WorkerVersionsModulesDataSourceModel]              `tfsdk:"modules" json:"modules,computed"`
