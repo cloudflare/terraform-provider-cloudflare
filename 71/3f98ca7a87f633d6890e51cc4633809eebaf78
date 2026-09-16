@@ -1,0 +1,19 @@
+internal/services/zone_subscription/schema.go
+  s_eb975af9a8a216::t_4f587e849603e2 82-83,86-87,90-91,94-95,98-100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "713f98ca7a87f633d6890e51cc4633809eebaf78",
+  "prompts": {},
+  "sessions": {
+    "s_eb975af9a8a216": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f91bc0eabffe7Csy90MezloDwR",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+.gitlab-ci.yml
+  s_781d2d8f135041::t_c311e65a3f887d 72
+  s_781d2d8f135041::t_1ecc7b0f19600f 90
+  s_781d2d8f135041::t_07a6752d2c24ff 57
+go.mod
+  h_5f12c8df3da73f 123-124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3845e0618678b2c897466cd23996800e91cf1edc",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_781d2d8f135041": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f6ebd1cfdffeaFIZBdZgRN1Dp8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+internal/version.go
+  s_eb975af9a8a216::t_67c691cf894c38 5
+internal/services/zero_trust_organization/normalizations.go
+  s_eb975af9a8a216::t_af2aaf1cb28e1f 76-78
+internal/services/zero_trust_organization/model.go
+  s_eb975af9a8a216::t_c9e73feb98b6b5 65
+internal/services/zero_trust_organization/data_source_model.go
+  s_eb975af9a8a216::t_1b86091e329335 73
+internal/services/zero_trust_organization/migration/v500/model.go
+  s_eb975af9a8a216::t_210a16175e1cba 102-103
+  s_eb975af9a8a216::t_038b2f65409dfd 54-73
+internal/services/zero_trust_organization/data_source_schema.go
+  s_eb975af9a8a216::t_175c3761b2618f 174
+.release-please-manifest.json
+  s_eb975af9a8a216::t_118f882daebe2b 2
+README.md
+  s_eb975af9a8a216::t_3c8726b83e54a8 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9646da6dcf074bfde2e5c4f4de13f7c0f13dc03d",
+  "prompts": {},
+  "sessions": {
+    "s_eb975af9a8a216": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f91bc0eabffe7Csy90MezloDwR",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}

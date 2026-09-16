@@ -1,0 +1,487 @@
+.release-please-manifest.json
+  s_51a261c51ba783::t_124f2ee0f5daad 2
+.stats.yml
+  s_51a261c51ba783::t_612c724298807a 1
+CHANGELOG.md
+  s_51a261c51ba783::t_b5822a1e32e8ff 3-86
+README.md
+  s_51a261c51ba783::t_ecfc2591db70d4 23
+examples/data-sources/cloudflare_field_extractor/data-source.tf
+  s_51a261c51ba783::t_60ed9f08f3c746 1-4
+examples/data-sources/cloudflare_magic_wan_bgp_filter_profile/data-source.tf
+  s_51a261c51ba783::t_8d5e007b63c32d 1-4
+examples/data-sources/cloudflare_magic_wan_bgp_filter_profiles/data-source.tf
+  s_51a261c51ba783::t_03bb9854aff085 1-3
+examples/data-sources/cloudflare_organization/data-source.tf
+  s_51a261c51ba783::t_21cebd3c735306 2
+examples/data-sources/cloudflare_organization_profile/data-source.tf
+  s_51a261c51ba783::t_2d553fbe08e7d8 2
+examples/data-sources/cloudflare_organizations/data-source.tf
+  s_51a261c51ba783::t_97e227113db550 2,16
+examples/data-sources/cloudflare_zero_trust_access_infrastructure_targets/data-source.tf
+  s_51a261c51ba783::t_43f9a5e2afff7a 19
+examples/data-sources/cloudflare_zero_trust_casb_policies/data-source.tf
+  s_51a261c51ba783::t_a36bf43213d55b 1-3
+examples/data-sources/cloudflare_zero_trust_casb_policy/data-source.tf
+  s_51a261c51ba783::t_48d557688986e3 1-4
+examples/data-sources/cloudflare_zero_trust_connectivity_settings/data-source.tf
+  s_51a261c51ba783::t_0dc2696e0c1991 1-3
+examples/data-sources/cloudflare_zero_trust_dns_locations/data-source.tf
+  s_51a261c51ba783::t_888f771bfaf532 3-8
+examples/data-sources/cloudflare_zero_trust_gateway_policies/data-source.tf
+  s_51a261c51ba783::t_7d50a23ddd4024 3-8
+examples/data-sources/cloudflare_zero_trust_gateway_proxy_endpoints/data-source.tf
+  s_51a261c51ba783::t_dac25ad53c4b73 3-8
+examples/data-sources/cloudflare_zero_trust_lists/data-source.tf
+  s_51a261c51ba783::t_34c3e24ba3c5a0 3-8
+examples/resources/cloudflare_ai_gateway/resource.tf
+  s_51a261c51ba783::t_4ab8c16499d6a3 10
+examples/resources/cloudflare_aisearch_instance/resource.tf
+  s_51a261c51ba783::t_d1d82b7ddcaa6e 25
+examples/resources/cloudflare_bot_management/resource.tf
+  s_51a261c51ba783::t_fea75268ae1fd5 3,5-7
+examples/resources/cloudflare_field_extractor/import.sh
+  s_51a261c51ba783::t_3b5e2b134294ae 1
+examples/resources/cloudflare_field_extractor/resource.tf
+  s_51a261c51ba783::t_37df1dd1f40080 1-12
+examples/resources/cloudflare_flagship_flag/import.sh
+  s_51a261c51ba783::t_8d80567979b5df 1
+examples/resources/cloudflare_logpush_job/resource.tf
+  s_51a261c51ba783::t_51874e0a33d016 4,7,16-20,23-25
+examples/resources/cloudflare_magic_wan_bgp_filter_profile/import.sh
+  s_51a261c51ba783::t_66e8d682b7d526 1
+examples/resources/cloudflare_magic_wan_bgp_filter_profile/resource.tf
+  s_51a261c51ba783::t_f73dca1e90aa20 1-7
+examples/resources/cloudflare_organization/resource.tf
+  s_51a261c51ba783::t_47556c11625382 4
+examples/resources/cloudflare_organization_profile/resource.tf
+  s_51a261c51ba783::t_21a7f339be660a 2
+examples/resources/cloudflare_queue/resource.tf
+  s_51a261c51ba783::t_2a373ec62e55bf 4
+examples/resources/cloudflare_zero_trust_access_infrastructure_target/resource.tf
+  s_51a261c51ba783::t_609472dd764276 14-16
+examples/resources/cloudflare_zero_trust_casb_policy/import.sh
+  s_51a261c51ba783::t_5389f9f3d7411e 1
+examples/resources/cloudflare_zero_trust_casb_policy/resource.tf
+  s_51a261c51ba783::t_04e48e5280d0d4 1-17
+examples/resources/cloudflare_zero_trust_connectivity_settings/import.sh
+  s_51a261c51ba783::t_a28ebf2e170622 1
+examples/resources/cloudflare_zero_trust_connectivity_settings/resource.tf
+  s_51a261c51ba783::t_28702aeec35aea 1-5
+internal/provider.go
+  s_51a261c51ba783::t_4a301a1782c058 90,124,240-241,588,650,656,742,938-939,1040-1041,1052,1210
+internal/services/ai_gateway/data_source_model.go
+  s_51a261c51ba783::t_8f28c1827b60e3 24
+internal/services/ai_gateway/data_source_schema.go
+  s_51a261c51ba783::t_862d3106de191c 45-48,125,128
+internal/services/ai_gateway/list_data_source_model.go
+  s_51a261c51ba783::t_e73adad8eab48f 49
+internal/services/ai_gateway/list_data_source_schema.go
+  s_51a261c51ba783::t_1019ccb6005d80 91-94,436,439
+internal/services/ai_gateway/model.go
+  s_51a261c51ba783::t_510aeb41df37c6 25
+internal/services/ai_gateway/schema.go
+  s_51a261c51ba783::t_b5ea2cff4a4bdf 75-78,120,123,496
+internal/services/ai_search_instance/data_source_model.go
+  s_51a261c51ba783::t_d303eea01fdcb7 105
+internal/services/ai_search_instance/data_source_schema.go
+  s_51a261c51ba783::t_f1fbc8d80d1846 239-242
+internal/services/ai_search_instance/list_data_source_model.go
+  s_51a261c51ba783::t_e73526d93b6598 105
+internal/services/ai_search_instance/list_data_source_schema.go
+  s_51a261c51ba783::t_f8805cc25ee3d5 250-252
+internal/services/ai_search_instance/model.go
+  s_51a261c51ba783::t_e3259c930e89e2 101
+internal/services/ai_search_instance/schema.go
+  s_51a261c51ba783::t_c05882d749a91e 31,59,64,68,75,79,84,320-325
+internal/services/bot_management/data_source_model.go
+  s_51a261c51ba783::t_c74fbb27ea8fc0 21-22,24-26
+internal/services/bot_management/data_source_schema.go
+  s_51a261c51ba783::t_595989db373536 35-42,54-87
+internal/services/bot_management/migration/v500/model.go
+  s_51a261c51ba783::t_c19356691145fe 54
+internal/services/bot_management/model.go
+  s_51a261c51ba783::t_828e17ba2b999c 51,53-55,58
+internal/services/bot_management/resource_test.go
+  s_51a261c51ba783::t_d18e71da3525e3 727-729,781-783
+internal/services/bot_management/schema.go
+  s_51a261c51ba783::t_3a3016224e9fb4 42-47,61-100
+internal/services/cloud_connector_rules/data_source_model.go
+  s_51a261c51ba783::t_57fa773f008e8d 19-25
+internal/services/cloud_connector_rules/model.go
+  s_51a261c51ba783::t_9271669b01c41b 34
+internal/services/custom_pages/schema.go
+  s_51a261c51ba783::t_aab4825c652ed5 96-97
+internal/services/dns_record/resource_test.go
+  s_51a261c51ba783::t_4ceb9b6b0c2f33 534
+internal/services/email_routing_dns/schema.go
+  s_51a261c51ba783::t_04168d10b407e0 22
+internal/services/email_routing_settings/resource_test.go
+  s_51a261c51ba783::t_d7ee4e00ba2892 52-53
+internal/services/email_routing_settings/schema.go
+  s_51a261c51ba783::t_983f1ea8315bbf 63-66
+internal/services/email_security_allow_policy/schema.go
+  s_51a261c51ba783::t_60c52446f25671 22
+internal/services/email_security_block_sender/data_source_model.go
+  s_51a261c51ba783::t_5846c50ebfb782 22
+internal/services/email_security_block_sender/list_data_source_model.go
+  s_51a261c51ba783::t_fbf32022e0df92 21
+internal/services/email_security_block_sender/schema.go
+  s_51a261c51ba783::t_ea2d8c7eac64da 22
+internal/services/email_security_domain/schema.go
+  s_51a261c51ba783::t_ae2bdcf4825c70 27
+internal/services/email_sending_subdomain/schema.go
+  s_51a261c51ba783::t_e254c44c133287 20
+internal/services/field_extractor/data_source.go
+  s_51a261c51ba783::t_60a926da16c320 1-88
+internal/services/field_extractor/data_source_model.go
+  s_51a261c51ba783::t_1a4b232d68d9e6 1-42
+internal/services/field_extractor/data_source_schema.go
+  s_51a261c51ba783::t_9e85f9a25f9203 1-68
+internal/services/field_extractor/data_source_schema_test.go
+  s_51a261c51ba783::t_89f58df1b7f207 1-19
+internal/services/field_extractor/migrations.go
+  s_51a261c51ba783::t_64b68c2690a18b 1-15
+internal/services/field_extractor/model.go
+  s_51a261c51ba783::t_21d36066cd7b69 1-38
+internal/services/field_extractor/resource.go
+  s_51a261c51ba783::t_722ff03ecefda4 1-265
+internal/services/field_extractor/resource_schema_test.go
+  s_51a261c51ba783::t_56177c49f0fb34 1-19
+internal/services/field_extractor/schema.go
+  s_51a261c51ba783::t_013bb7a1bc33bb 1-70
+internal/services/flagship_flag/data_source.go
+  s_51a261c51ba783::t_13d7c73f221fa9 60-93,121
+internal/services/flagship_flag/data_source_model.go
+  s_51a261c51ba783::t_c2febada96245f 21-22,34,45-56,116-119
+internal/services/flagship_flag/data_source_schema.go
+  s_51a261c51ba783::t_d5516a69ac38d2 11,17,32-39,382-390,400-402
+internal/services/flagship_flag/list_data_source_model.go
+  s_51a261c51ba783::t_074eb210a0f506 41,46
+internal/services/flagship_flag/list_data_source_schema.go
+  s_51a261c51ba783::t_1c9af07cbf00bc 55-58,367,378-386
+internal/services/flagship_flag/model.go
+  s_51a261c51ba783::t_bb65f3c4ec7191 16-17,25
+internal/services/flagship_flag/resource.go
+  s_51a261c51ba783::t_ffb2780d3aeccc 15,18,24,95,127,146,165,188,205,215-265
+internal/services/flagship_flag/schema.go
+  s_51a261c51ba783::t_653f59729f28d8 33-42,356-359,368
+internal/services/load_balancer/model.go
+  s_51a261c51ba783::t_c12160cb3bd411 112-117,121-126
+internal/services/load_balancer/schema.go
+  s_51a261c51ba783::t_90bd5fa9d21f1a 400-405,513-518,569
+internal/services/load_balancer_monitor/migration/v500/handler.go
+  s_51a261c51ba783::t_61aa533caf788d 7,10-12,16-22,24-41,43,45-50,52-54,56-57,60-64,67,70
+internal/services/load_balancer_monitor/migration/v500/handler_test.go
+  s_51a261c51ba783::t_4731e74e0fd041 1-121
+internal/services/load_balancer_monitor/migration/v500/migrations_test.go
+  s_51a261c51ba783::t_b6bce607371cd2 23,180-186
+internal/services/load_balancer_monitor/migrations.go
+  s_51a261c51ba783::t_81d37f9c00f037 7,18-20,23,25-26,34-37
+internal/services/load_balancer_monitor/schema.go
+  s_51a261c51ba783::t_7d4cf59418acfe 98-100,103-105,142
+internal/services/logpush_dataset_job/data_source_model.go
+  s_51a261c51ba783::t_888e8d0d26cbe7 28
+internal/services/logpush_dataset_job/data_source_schema.go
+  s_51a261c51ba783::t_247a6f8a8ad2b9 144-147,256
+internal/services/logpush_job/data_source_model.go
+  s_51a261c51ba783::t_83375a9c7cc5a2 29
+internal/services/logpush_job/data_source_schema.go
+  s_51a261c51ba783::t_d9b190e75b807e 112-115,217
+internal/services/logpush_job/list_data_source_model.go
+  s_51a261c51ba783::t_9ab2bd09695c78 45
+internal/services/logpush_job/list_data_source_schema.go
+  s_51a261c51ba783::t_fc95d6fcadb271 118-121,223
+internal/services/logpush_job/model.go
+  s_51a261c51ba783::t_8c915382a0f2c3 30
+internal/services/logpush_job/schema.go
+  s_51a261c51ba783::t_3f8fd980273e93 222,249-254
+internal/services/magic_transit_connector/data_source_model.go
+  s_51a261c51ba783::t_1431058afbb28b 22,31-32
+internal/services/magic_transit_connector/list_data_source_model.go
+  s_51a261c51ba783::t_19ce2cdfb528a5 20,47-48
+internal/services/magic_transit_connector/model.go
+  s_51a261c51ba783::t_af49d42daf6914 24-25
+internal/services/magic_wan_bgp_filter_profile/data_source.go
+  s_51a261c51ba783::t_b93843fd4c9652 1-89
+internal/services/magic_wan_bgp_filter_profile/data_source_model.go
+  s_51a261c51ba783::t_5ec1d4a5a8b905 1-38
+internal/services/magic_wan_bgp_filter_profile/data_source_schema.go
+  s_51a261c51ba783::t_6fc7e13e8fb8d5 1-73
+internal/services/magic_wan_bgp_filter_profile/data_source_schema_test.go
+  s_51a261c51ba783::t_7c235a24b5d62c 1-19
+internal/services/magic_wan_bgp_filter_profile/list_data_source.go
+  s_51a261c51ba783::t_432883c86142b0 1-100
+internal/services/magic_wan_bgp_filter_profile/list_data_source_model.go
+  s_51a261c51ba783::t_8b3ad0d25ad16a 1-42
+internal/services/magic_wan_bgp_filter_profile/list_data_source_schema.go
+  s_51a261c51ba783::t_b2868c96cc35ff 1-86
+internal/services/magic_wan_bgp_filter_profile/list_data_source_schema_test.go
+  s_51a261c51ba783::t_4a86719ab4fec2 1-19
+internal/services/magic_wan_bgp_filter_profile/migrations.go
+  s_51a261c51ba783::t_0f4376beb0a536 1-15
+internal/services/magic_wan_bgp_filter_profile/model.go
+  s_51a261c51ba783::t_f9ef3a1fcf5d2d 1-32
+internal/services/magic_wan_bgp_filter_profile/resource.go
+  s_51a261c51ba783::t_ea281eac7145d9 1-259
+internal/services/magic_wan_bgp_filter_profile/resource_schema_test.go
+  s_51a261c51ba783::t_38182b9828c6e5 1-19
+internal/services/magic_wan_bgp_filter_profile/schema.go
+  s_51a261c51ba783::t_cc7388f6c5f959 1-75
+internal/services/nel_setting/schema.go
+  s_51a261c51ba783::t_2020bdfddb356a 22
+internal/services/notification_policy/schema.go
+  s_51a261c51ba783::t_7bb37b540d0bda 421-422
+internal/services/notification_policy_webhooks/schema.go
+  s_51a261c51ba783::t_99a11e3105e35a 57-59
+internal/services/page_rule/resource_test.go
+  s_51a261c51ba783::t_0451282dd21cc9 665,3179,3186,3206,3213
+internal/services/page_rule/schema.go
+  s_51a261c51ba783::t_9c6e4095e5156c 276
+internal/services/page_rule/testdata/pageruleconfigwithedgecachettl.tf
+  s_51a261c51ba783::t_d14f2262c9dc02 7
+internal/services/page_rule/testdata/pageruleconfigwithedgecachettlandalwaysonline.tf
+  s_51a261c51ba783::t_a992c37783ecd8 6
+internal/services/queue/data_source_model.go
+  s_51a261c51ba783::t_522ae4531e8f1f 26
+internal/services/queue/data_source_schema.go
+  s_51a261c51ba783::t_a9c9d0879b3e0a 48-58
+internal/services/queue/list_data_source_model.go
+  s_51a261c51ba783::t_87f754064b4ddb 39
+internal/services/queue/list_data_source_schema.go
+  s_51a261c51ba783::t_29179f3c89b246 121-131
+internal/services/queue/model.go
+  s_51a261c51ba783::t_337ff8666e224c 21-22
+internal/services/queue/schema.go
+  s_51a261c51ba783::t_875426bf937cda 49-59
+internal/services/queue_consumer/schema.go
+  s_51a261c51ba783::t_364c0a45d0a86e 106
+internal/services/r2_data_catalog/data_source_model.go
+  s_51a261c51ba783::t_b6b8776b1c4818 40
+internal/services/r2_data_catalog/data_source_schema.go
+  s_51a261c51ba783::t_8f0f5734ed0f14 93-96
+internal/services/r2_data_catalog/model.go
+  s_51a261c51ba783::t_4b0b3609e70ed5 36
+internal/services/r2_data_catalog/schema.go
+  s_51a261c51ba783::t_b0107d34896705 99-102
+internal/services/regional_hostname/schema.go
+  s_51a261c51ba783::t_598304f22308ac 56-58
+internal/services/registrar_domain/list_data_source_model.go
+  s_51a261c51ba783::t_c39cfdbc3dff49 21
+internal/services/sso_connector/data_source_test.go
+  s_51a261c51ba783::t_1a3c330e4d7e2f 17
+internal/services/sso_connector/resource_test.go
+  s_51a261c51ba783::t_463d8f8a2f5d84 76
+internal/services/turnstile_widget/data_source_schema.go
+  s_51a261c51ba783::t_872d459a4a2ed6 67-79,84-96
+internal/services/turnstile_widget/list_data_source_model.go
+  s_51a261c51ba783::t_30ffcd40ceb13f 48-61
+internal/services/turnstile_widget/list_data_source_schema.go
+  s_51a261c51ba783::t_eb5171ddb48a15 142-167
+internal/services/turnstile_widget/schema.go
+  s_51a261c51ba783::t_40f008f04db110 113-138
+internal/services/worker/data_source_schema.go
+  s_51a261c51ba783::t_9fe83470d0d193 115-117
+internal/services/worker/model.go
+  s_51a261c51ba783::t_35e9ea000ae72f 43,60
+internal/services/worker/schema.go
+  s_51a261c51ba783::t_2cf4cfd66ed40e 140
+internal/services/worker_version/data_source_model.go
+  s_51a261c51ba783::t_a6e7841c7c87ee 22-50
+internal/services/worker_version/data_source_schema.go
+  s_51a261c51ba783::t_9f8439404a7e8f 54-61
+internal/services/worker_version/list_data_source_model.go
+  s_51a261c51ba783::t_501b0fdd4547cd 37-61
+internal/services/worker_version/list_data_source_schema.go
+  s_51a261c51ba783::t_593b4a63751c8f 139-146
+internal/services/worker_version/model.go
+  s_51a261c51ba783::t_f0ca55b11af0b9 18-44
+internal/services/worker_version/schema.go
+  s_51a261c51ba783::t_44313908274aa2 822-837
+internal/services/workers_custom_domain/list_data_source_model.go
+  s_51a261c51ba783::t_b44ef474ff51d2 57
+internal/services/workers_custom_domain/resource_test.go
+  s_51a261c51ba783::t_ab08667d37b919 307,392
+internal/services/workers_kv_namespace/migration/v500/model.go
+  s_51a261c51ba783::t_aa449e84e125d3 22
+internal/services/workers_script/migrations.go
+  s_51a261c51ba783::t_d386516d1cb55a 115,179
+internal/services/workers_script/model.go
+  s_51a261c51ba783::t_6452077b6f0b7c 135
+internal/services/workers_script/resource.go
+  s_51a261c51ba783::t_815963f6f55f16 152-158,259-263,473-475
+internal/services/workers_script/resource_test.go
+  s_51a261c51ba783::t_f3ff7481c1db7e 12,73-74,76-77,79,81-107,109,115
+internal/services/workers_script/schema.go
+  s_51a261c51ba783::t_ecda28bfbf1114 130,507-510
+internal/services/zero_trust_access_ai_controls_mcp_portal/schema.go
+  s_51a261c51ba783::t_b4ec5e9a770625 8,74,76,85,87,91,93
+internal/services/zero_trust_access_group/migration/v500/model.go
+  s_51a261c51ba783::t_b2b6c4f4942b89 206
+internal/services/zero_trust_access_identity_provider/model.go
+  s_51a261c51ba783::t_e12460c449c567 62
+internal/services/zero_trust_access_identity_provider/schema.go
+  s_51a261c51ba783::t_9d0f0a86d9937c 242-245
+internal/services/zero_trust_access_infrastructure_target/data_source_model.go
+  s_51a261c51ba783::t_e40d93b5a18b5b 27,47-52,71,159
+internal/services/zero_trust_access_infrastructure_target/data_source_schema.go
+  s_51a261c51ba783::t_9534174189a417 50-55,171-175
+internal/services/zero_trust_access_infrastructure_target/list_data_source_model.go
+  s_51a261c51ba783::t_21c4a9d0ec6cdf 39,52-57,76,138
+internal/services/zero_trust_access_infrastructure_target/list_data_source_schema.go
+  s_51a261c51ba783::t_68630223bbc7f3 106-110,184-189
+internal/services/zero_trust_access_infrastructure_target/model.go
+  s_51a261c51ba783::t_a368f94e6c9d52 7,21
+internal/services/zero_trust_access_infrastructure_target/schema.go
+  s_51a261c51ba783::t_46dce2570f4f12 8,12,15,76-83
+internal/services/zero_trust_access_policy/migration/v500/model.go
+  s_51a261c51ba783::t_ff4a9b9edc7091 251
+internal/services/zero_trust_casb_policy/data_source.go
+  s_51a261c51ba783::t_de27320e3f2519 1-89
+internal/services/zero_trust_casb_policy/data_source_model.go
+  s_51a261c51ba783::t_50c962a1f78671 1-59
+internal/services/zero_trust_casb_policy/data_source_schema.go
+  s_51a261c51ba783::t_b19213edcae663 1-137
+internal/services/zero_trust_casb_policy/data_source_schema_test.go
+  s_51a261c51ba783::t_8787427207b36b 1-19
+internal/services/zero_trust_casb_policy/list_data_source.go
+  s_51a261c51ba783::t_858b9f041f5db8 1-100
+internal/services/zero_trust_casb_policy/list_data_source_model.go
+  s_51a261c51ba783::t_b9cdda37466319 1-63
+internal/services/zero_trust_casb_policy/list_data_source_schema.go
+  s_51a261c51ba783::t_176cfbb599701c 1-153
+internal/services/zero_trust_casb_policy/list_data_source_schema_test.go
+  s_51a261c51ba783::t_bf126814258dfc 1-19
+internal/services/zero_trust_casb_policy/migrations.go
+  s_51a261c51ba783::t_2876675a53260a 1-15
+internal/services/zero_trust_casb_policy/model.go
+  s_51a261c51ba783::t_b60dd3674ba1e5 1-51
+internal/services/zero_trust_casb_policy/resource.go
+  s_51a261c51ba783::t_b919a25ac93e63 1-259
+internal/services/zero_trust_casb_policy/resource_schema_test.go
+  s_51a261c51ba783::t_e54108f0252689 1-19
+internal/services/zero_trust_casb_policy/schema.go
+  s_51a261c51ba783::t_e6a09258e3294d 1-131
+internal/services/zero_trust_connectivity_settings/data_source.go
+  s_51a261c51ba783::t_732e0c1e02d5e6 1-88
+internal/services/zero_trust_connectivity_settings/data_source_model.go
+  s_51a261c51ba783::t_680abfbe809217 1-31
+internal/services/zero_trust_connectivity_settings/data_source_schema.go
+  s_51a261c51ba783::t_3ff15b00ee3a9a 1-51
+internal/services/zero_trust_connectivity_settings/data_source_schema_test.go
+  s_51a261c51ba783::t_0fafa4c23a8b3d 1-19
+internal/services/zero_trust_connectivity_settings/migrations.go
+  s_51a261c51ba783::t_a72623e8ff46c9 1-15
+internal/services/zero_trust_connectivity_settings/model.go
+  s_51a261c51ba783::t_bd1761ece84c7f 1-27
+internal/services/zero_trust_connectivity_settings/resource.go
+  s_51a261c51ba783::t_fdf9a2a851dd12 1-250
+internal/services/zero_trust_connectivity_settings/resource_schema_test.go
+  s_51a261c51ba783::t_d2e6a53c6d61be 1-19
+internal/services/zero_trust_connectivity_settings/schema.go
+  s_51a261c51ba783::t_eb68867ed710a2 1-55
+internal/services/zero_trust_device_custom_profile/data_source_model.go
+  s_51a261c51ba783::t_76210c21dca814 44
+internal/services/zero_trust_device_custom_profile/data_source_schema.go
+  s_51a261c51ba783::t_f2216070ce7058 111-114
+internal/services/zero_trust_device_custom_profile/list_data_source_model.go
+  s_51a261c51ba783::t_ef40dc5cae32eb 63
+internal/services/zero_trust_device_custom_profile/list_data_source_schema.go
+  s_51a261c51ba783::t_796da5d3c03944 237-240
+internal/services/zero_trust_device_custom_profile/model.go
+  s_51a261c51ba783::t_afdbb8178afd91 39
+internal/services/zero_trust_device_custom_profile/schema.go
+  s_51a261c51ba783::t_c38432fa05ec5d 272-283
+internal/services/zero_trust_device_default_profile/data_source_model.go
+  s_51a261c51ba783::t_a7f9f7b55e6213 38
+internal/services/zero_trust_device_default_profile/data_source_schema.go
+  s_51a261c51ba783::t_838ef72fa293f0 87-90
+internal/services/zero_trust_device_default_profile/model.go
+  s_51a261c51ba783::t_3c87e935f138c3 33
+internal/services/zero_trust_device_default_profile/schema.go
+  s_51a261c51ba783::t_e71a96380d64c7 233-238
+internal/services/zero_trust_dns_location/data_source.go
+  s_51a261c51ba783::t_adec9ad7ac7dd4 60-89
+internal/services/zero_trust_dns_location/data_source_model.go
+  s_51a261c51ba783::t_2699ce99b07402 11,39,50-75,123-129
+internal/services/zero_trust_dns_location/data_source_schema.go
+  s_51a261c51ba783::t_b10298cf9836e0 10,12,17,37,214-245,255-257
+internal/services/zero_trust_dns_location/list_data_source_model.go
+  s_51a261c51ba783::t_d2ee137802f2d0 11,23-26,32-38,41-51
+internal/services/zero_trust_dns_location/list_data_source_schema.go
+  s_51a261c51ba783::t_af427b82f8a3cc 10,34-87
+internal/services/zero_trust_gateway_policy/data_source.go
+  s_51a261c51ba783::t_375a48d08ad036 60-89
+internal/services/zero_trust_gateway_policy/data_source_model.go
+  s_51a261c51ba783::t_19745f7a268572 11,45,56-81,223-229
+internal/services/zero_trust_gateway_policy/data_source_schema.go
+  s_51a261c51ba783::t_e8bebf0bacf92f 9,11,17,33,631-663,673-675
+internal/services/zero_trust_gateway_policy/list_data_source_model.go
+  s_51a261c51ba783::t_92e0023fb37ea4 11,23-26,32-38,41-51
+internal/services/zero_trust_gateway_policy/list_data_source_schema.go
+  s_51a261c51ba783::t_2e34d296d577cd 9,28-83
+internal/services/zero_trust_gateway_policy/schema.go
+  s_51a261c51ba783::t_79ed6c6443c22c 107-109,594-595
+internal/services/zero_trust_gateway_proxy_endpoint/data_source.go
+  s_51a261c51ba783::t_ecbdad454e8279 60-89
+internal/services/zero_trust_gateway_proxy_endpoint/data_source_model.go
+  s_51a261c51ba783::t_3561beaaf937a4 11,22-31,41-73
+internal/services/zero_trust_gateway_proxy_endpoint/data_source_schema.go
+  s_51a261c51ba783::t_666b5e4c7792f2 9,11,15,29,63-94,104-106
+internal/services/zero_trust_gateway_proxy_endpoint/list_data_source_model.go
+  s_51a261c51ba783::t_5d2798ffbce979 11,23-26,32-38,41-51
+internal/services/zero_trust_gateway_proxy_endpoint/list_data_source_schema.go
+  s_51a261c51ba783::t_55aad2d78d2f0f 9,27-80
+internal/services/zero_trust_list/data_source_model.go
+  s_51a261c51ba783::t_c6c8ba0a962413 11,44-50,53,56-64,79-83
+internal/services/zero_trust_list/data_source_schema.go
+  s_51a261c51ba783::t_98fa930d265e89 9,96-123
+internal/services/zero_trust_list/list_data_source_model.go
+  s_51a261c51ba783::t_1aded4c8c722f3 11,23-25,27,33-39,42,45-53
+internal/services/zero_trust_list/list_data_source_schema.go
+  s_51a261c51ba783::t_84fbee5cf47ea4 9,26-71,89-93
+internal/services/zero_trust_organization/data_source_model.go
+  s_51a261c51ba783::t_4abef20836cd5c 20-38,73
+internal/services/zero_trust_organization/data_source_schema.go
+  s_51a261c51ba783::t_6bd8bea803adde 171-172,174,188
+internal/services/zero_trust_organization/migration/v500/model.go
+  s_51a261c51ba783::t_666370836f41dc 54-73,102-103
+internal/services/zero_trust_organization/model.go
+  s_51a261c51ba783::t_ca67813cdaef8a 15-34,65
+internal/services/zero_trust_organization/model_test.go
+  s_51a261c51ba783::t_67465169dcaa06 13,16,19,46,63,83,98
+internal/services/zero_trust_organization/normalizations.go
+  s_51a261c51ba783::t_12c17d406f2dd9 76-78
+internal/services/zero_trust_organization/schema.go
+  s_51a261c51ba783::t_078e6ff0970c68 145-146,161
+internal/services/zero_trust_resource_library_application/schema.go
+  s_51a261c51ba783::t_5e75ec896bb8d2 24
+internal/services/zero_trust_tunnel_cloudflared/schema.go
+  s_51a261c51ba783::t_2bcfbb327a80e2 81-83
+internal/services/zero_trust_tunnel_cloudflared_config/schema.go
+  s_51a261c51ba783::t_55ba67c1c8f822 240-241
+internal/services/zone_subscription/resource_test.go
+  s_51a261c51ba783::t_2c47f66262e83d 40,89,190,238
+internal/services/zone_subscription/schema.go
+  s_51a261c51ba783::t_532f73eaaf1d3a 82-83,86-87,90-91,94-95,98-100
+internal/version.go
+  s_51a261c51ba783::t_4be8a8dfbf0225 5
+scripts/mock
+  s_51a261c51ba783::t_26e0631ee8b8b6 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "22bd88e58e0081710bf974925d8ac24b07f3fe0c",
+  "prompts": {},
+  "sessions": {
+    "s_51a261c51ba783": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f5b13b36cffe8aXxRjOy54s69V",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Riccardo Di Maio <rdm@cloudflare.com>"
+    }
+  }
+}
