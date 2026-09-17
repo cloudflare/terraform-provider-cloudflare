@@ -120,7 +120,7 @@ func (r *FlagshipFlagResource) Update(ctx context.Context, req resource.UpdateRe
 	_, err = r.client.Flagship.Apps.Flags.Update(
 		ctx,
 		data.AppID.ValueString(),
-		data.FlagKey.ValueString(),
+		state.Key.ValueString(),
 		flagship.AppFlagUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -157,7 +157,7 @@ func (r *FlagshipFlagResource) Read(ctx context.Context, req resource.ReadReques
 	_, err := r.client.Flagship.Apps.Flags.Get(
 		ctx,
 		data.AppID.ValueString(),
-		data.FlagKey.ValueString(),
+		data.Key.ValueString(),
 		flagship.AppFlagGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -196,7 +196,7 @@ func (r *FlagshipFlagResource) Delete(ctx context.Context, req resource.DeleteRe
 	_, err := r.client.Flagship.Apps.Flags.Delete(
 		ctx,
 		data.AppID.ValueString(),
-		data.FlagKey.ValueString(),
+		data.Key.ValueString(),
 		flagship.AppFlagDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},

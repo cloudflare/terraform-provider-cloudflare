@@ -3,7 +3,7 @@ resource "cloudflare_flagship_flag" "example_flagship_flag" {
   app_id = "app_id"
   default_variation = "x"
   enabled = true
-  key = "x"
+  key = "example-flag"
   rules = [{
     conditions = [{
       attribute = "x"

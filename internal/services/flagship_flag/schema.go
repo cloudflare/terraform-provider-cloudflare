@@ -22,7 +22,7 @@ var _ resource.ResourceWithConfigValidators = (*FlagshipFlagResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
+		Version: 501,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Flagship Read",
@@ -38,11 +38,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"app_id": schema.StringAttribute{
 				Description:   "App identifier.",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"flag_key": schema.StringAttribute{
-				Description:   "Flag key (slug).",
-				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"default_variation": schema.StringAttribute{

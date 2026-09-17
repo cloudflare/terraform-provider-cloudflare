@@ -18,7 +18,7 @@ Accepted Permissions
 data "cloudflare_flagship_flag" "example_flagship_flag" {
   account_id = "account_id"
   app_id = "app_id"
-  flag_key = "flag_key"
+  key = "example-flag"
 }
 ```
 
@@ -29,14 +29,13 @@ data "cloudflare_flagship_flag" "example_flagship_flag" {
 
 - `account_id` (String) Cloudflare account ID.
 - `app_id` (String) App identifier.
-- `flag_key` (String) Flag key (slug).
+- `key` (String) Unique identifier for the flag within an app. Used in all evaluation and SDK calls.
 
 ### Read-Only
 
 - `default_variation` (String) Variation served when no rule matches or the flag is disabled. Must be a key in `variations`.
 - `description` (String)
 - `enabled` (Boolean) When false, the flag bypasses all rules and always serves `default_variation`.
-- `key` (String) Unique identifier for the flag within an app. Used in all evaluation and SDK calls.
 - `rules` (Attributes List) Targeting rules evaluated in ascending `priority`; the first matching rule wins. An empty array means the flag always serves `default_variation`. (see [below for nested schema](#nestedatt--rules))
 - `type` (String) Value type of the flag's variations. Inferred from the variation values on write, so it may be omitted in requests.
 Available values: "boolean", "string", "number", "json".
