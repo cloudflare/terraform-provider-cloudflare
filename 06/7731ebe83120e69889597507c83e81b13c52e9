@@ -1,0 +1,35 @@
+internal/services/zero_trust_gateway_proxy_endpoint/list_data_source_schema.go
+  s_c6ca07eb5fd35b::t_4975d8134ee75f 49-54
+internal/services/zero_trust_gateway_policy/list_data_source_schema.go
+  s_c6ca07eb5fd35b::t_b92e8ff933041f 51-56
+internal/services/turnstile_widget/schema.go
+  s_c6ca07eb5fd35b::t_aea17e2e78509e 113
+internal/services/zero_trust_dns_location/list_data_source_schema.go
+  s_c6ca07eb5fd35b::t_e83a7651a9a46a 56-61
+internal/services/load_balancer/schema.go
+  s_c6ca07eb5fd35b::t_36bc4515b177cd 18
+internal/services/zero_trust_device_custom_profile/schema.go
+  s_c6ca07eb5fd35b::t_fc2068dc30b610 272-277
+internal/services/zero_trust_list/list_data_source_schema.go
+  s_c6ca07eb5fd35b::t_0ad6bdf397c16e 45-49
+internal/services/worker_version/schema.go
+  s_c6ca07eb5fd35b::t_5897351f2eb414 822-829
+internal/services/bot_management/data_source_schema.go
+  s_c6ca07eb5fd35b::t_4eedee37821716 35-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "067731ebe83120e69889597507c83e81b13c52e9",
+  "prompts": {},
+  "sessions": {
+    "s_c6ca07eb5fd35b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f55522fc2ffeybdyvwuytqMVe9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
