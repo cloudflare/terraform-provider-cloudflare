@@ -595,9 +595,16 @@ func transformCKQueryString(ctx context.Context, src *SourceV4QueryStringModel) 
 		excludeStrings, setDiags := convertSetToStringSlice(ctx, src.Exclude)
 		diags.Append(setDiags...)
 		if !diags.HasError() {
-			target.Exclude = &TargetV5QSExcludeModel{
-				All:  types.BoolValue(false),
-				List: excludeStrings,
+			if len(excludeStrings) == 1 && excludeStrings[0].ValueString() == "*" {
+				target.Exclude = &TargetV5QSExcludeModel{
+					All:  types.BoolValue(true),
+					List: nil,
+				}
+			} else {
+				target.Exclude = &TargetV5QSExcludeModel{
+					All:  types.BoolValue(false),
+					List: excludeStrings,
+				}
 			}
 		}
 	}

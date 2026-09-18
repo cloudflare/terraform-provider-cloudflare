@@ -81,6 +81,7 @@ func (d *RulesetDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	bytes = transformQueryStringJSON(bytes)
 	err = apijsoncustom.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
