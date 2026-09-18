@@ -1,0 +1,63 @@
+internal/services/d1_database/model.go
+  s_c6ca07eb5fd35b::t_4d72682396cb96 22
+  s_c6ca07eb5fd35b::t_ca1ebe36e49282 19-21
+  s_c6ca07eb5fd35b::t_0c6a0e62638646 23-25
+internal/services/workers_kv/resource.go
+  s_c6ca07eb5fd35b::t_d4f69a0b65d12e 92
+  s_c6ca07eb5fd35b::t_0db2386ec1366f 154,189,216,253
+  s_c6ca07eb5fd35b::t_ae58043e67ce13 213-215
+  s_c6ca07eb5fd35b::t_fe67fe5c5b398e 217-219
+internal/services/hyperdrive_config/data_source_model.go
+  s_c6ca07eb5fd35b::t_281b96c1260528 23
+internal/services/account/schema.go
+  s_c6ca07eb5fd35b::t_183947fec83474 76
+  s_c6ca07eb5fd35b::t_338a7ada300ccd 73,77-80,83-89,98-101,105-107
+  s_c6ca07eb5fd35b::t_99d2db694f1803 72
+  s_c6ca07eb5fd35b::t_1464d00d75b686 74-75
+internal/services/snippet_rules/list_data_source_schema.go
+  s_c6ca07eb5fd35b::t_5e9371b3a32b13 46-54
+  s_c6ca07eb5fd35b::t_4083042a099bde 59-67
+internal/services/dns_record/model.go
+  s_c6ca07eb5fd35b::t_ab1108bc1a4f78 24
+internal/services/observatory_scheduled_test/schema.go
+  s_c6ca07eb5fd35b::t_2f827949236252 48-50
+internal/services/dns_record/resource.go
+  s_c6ca07eb5fd35b::t_a39a7cce7273de 73-74,111,170,222,298
+  s_c6ca07eb5fd35b::t_da08f1eedf47ce 184-185
+  s_c6ca07eb5fd35b::t_ea4d81069a65ff 70-72
+  s_c6ca07eb5fd35b::t_321283e5c3554d 108-110
+  s_c6ca07eb5fd35b::t_14e5715e93e57c 167-169
+  s_c6ca07eb5fd35b::t_29f81a5ed2629b 219-221
+  s_c6ca07eb5fd35b::t_afa4e97db4b1bc 223-224
+  s_c6ca07eb5fd35b::t_a74b64c5ade805 295-297
+internal/services/workers_script/model.go
+  s_ab7a48d75efc3c::t_2fdb07754e5383 7-8,11,16,19-22,27-38,40-64,67-101,103-113,116,124-130,132-151,155-157,161-164,168-173,187,202,206-215,222-223,243-244
+internal/services/workers_script/resource.go
+  s_ab7a48d75efc3c::t_a7d72969cffad8 7-8,11-12,14,20,23-25,28,77-97,100-114,117,127-130,146-162,176-198,207-208,210-221,224,234-237,253-267,274,277,283-286,288-289,291-293,305-540,545-576,589-591,647-655,657-664
+internal/services/workers_script/schema.go
+  s_ab7a48d75efc3c::t_8fa5aec30d88bd 12-13,15,42,47,54-55,58-60,63-64,66-73,75-105,107-124,128-135,139-140,142-156,159-160,162-180,184-185,187-273,275-276,278,280,284-285,288-289,296-301,303-313,316-344,346-347,350-352,354-355,360-394,396-413,415-466,468-540,545-586,588,590-591,595-596,598,600-601,604-605,608-609,611-618,620-634,637-669,673-679,681-685,693-708,712,715-720,722,724-725,728-732,736-737,740-741,743,745-746,749-750,753-755,757,759-761,763-764,775,828,846,851,857,881-888,890-892,894-896,904-905,909,968-969,974,978,982,987-1006,1016-1026
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "55a2d1bf134a2ebac361878358f56235b42a32da",
+  "prompts": {},
+  "sessions": {
+    "s_ab7a48d75efc3c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f4b056111ffej66GFBl9s3VX4D",
+        "model": "gpt-5.6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    },
+    "s_c6ca07eb5fd35b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f55522fc2ffeybdyvwuytqMVe9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
