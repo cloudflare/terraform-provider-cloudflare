@@ -15,25 +15,26 @@ type DNSRecordResultEnvelope struct {
 }
 
 type DNSRecordModel struct {
-	ID                types.String                                     `tfsdk:"id" json:"id,computed"`
-	ZoneID            types.String                                     `tfsdk:"zone_id" path:"zone_id,required"`
-	Name              types.String                                     `tfsdk:"name" json:"name,required"`
-	Type              types.String                                     `tfsdk:"type" json:"type,required"`
-	Comment           types.String                                     `tfsdk:"comment" json:"comment,optional"`
-	Content           types.String                                     `tfsdk:"content" json:"content,computed_optional"`
-	Priority          types.Float64                                    `tfsdk:"priority" json:"priority,optional"`
-	Data              *DNSRecordDataModel                              `tfsdk:"data" json:"data,optional"`
-	PrivateRouting    types.Bool                                       `tfsdk:"private_routing" json:"private_routing,optional"`
-	Proxied           types.Bool                                       `tfsdk:"proxied" json:"proxied,computed_optional"`
-	TTL               types.Float64                                    `tfsdk:"ttl" json:"ttl,required"`
-	Tags              customfield.Set[types.String]                    `tfsdk:"tags" json:"tags,computed_optional"`
-	Settings          customfield.NestedObject[DNSRecordSettingsModel] `tfsdk:"settings" json:"settings,computed_optional"`
-	CommentModifiedOn timetypes.RFC3339                                `tfsdk:"comment_modified_on" json:"comment_modified_on,computed" format:"date-time"`
-	CreatedOn         timetypes.RFC3339                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ModifiedOn        timetypes.RFC3339                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Proxiable         types.Bool                                       `tfsdk:"proxiable" json:"proxiable,computed"`
-	TagsModifiedOn    timetypes.RFC3339                                `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
-	Meta              jsontypes.Normalized                             `tfsdk:"meta" json:"meta,computed"`
+	ID                    types.String                                     `tfsdk:"id" json:"id,computed"`
+	ZoneID                types.String                                     `tfsdk:"zone_id" path:"zone_id,required"`
+	IncludeShadowMetadata types.Bool                                       `tfsdk:"include_shadow_metadata" query:"include_shadow_metadata,computed_optional"`
+	Name                  types.String                                     `tfsdk:"name" json:"name,required"`
+	Type                  types.String                                     `tfsdk:"type" json:"type,required"`
+	Comment               types.String                                     `tfsdk:"comment" json:"comment,optional"`
+	Content               types.String                                     `tfsdk:"content" json:"content,computed_optional"`
+	Priority              types.Float64                                    `tfsdk:"priority" json:"priority,optional"`
+	Data                  *DNSRecordDataModel                              `tfsdk:"data" json:"data,optional"`
+	PrivateRouting        types.Bool                                       `tfsdk:"private_routing" json:"private_routing,computed_optional"`
+	Proxied               types.Bool                                       `tfsdk:"proxied" json:"proxied,computed_optional"`
+	TTL                   types.Float64                                    `tfsdk:"ttl" json:"ttl,computed_optional"`
+	Tags                  customfield.Set[types.String]                    `tfsdk:"tags" json:"tags,computed_optional"`
+	Settings              customfield.NestedObject[DNSRecordSettingsModel] `tfsdk:"settings" json:"settings,computed_optional"`
+	CommentModifiedOn     timetypes.RFC3339                                `tfsdk:"comment_modified_on" json:"comment_modified_on,computed" format:"date-time"`
+	CreatedOn             timetypes.RFC3339                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn            timetypes.RFC3339                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Proxiable             types.Bool                                       `tfsdk:"proxiable" json:"proxiable,computed"`
+	TagsModifiedOn        timetypes.RFC3339                                `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
+	Meta                  customfield.NestedObject[DNSRecordMetaModel]     `tfsdk:"meta" json:"meta,computed"`
 }
 
 func (m DNSRecordModel) MarshalJSON() (data []byte, err error) {

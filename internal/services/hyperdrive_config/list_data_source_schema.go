@@ -47,20 +47,45 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Define configurations using a unique string identifier.",
 							Computed:    true,
 						},
+						"caching": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[HyperdriveConfigsCachingDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"disabled": schema.BoolAttribute{
+									Description: "Defines whether caching is disabled.",
+									Computed:    true,
+								},
+								"max_age": schema.Int64Attribute{
+									Description: "Defines the maximum duration (in seconds) items persist in the cache.",
+									Computed:    true,
+									Validators: []validator.Int64{
+										int64validator.Between(1, 3600),
+									},
+								},
+								"stale_while_revalidate": schema.Int64Attribute{
+									Description: "Defines the number of seconds the cache may serve a stale response.",
+									Computed:    true,
+									Validators: []validator.Int64{
+										int64validator.AtLeast(0),
+									},
+								},
+							},
+						},
 						"name": schema.StringAttribute{
 							Description: "The name of the Hyperdrive configuration. Used to identify the configuration in the Cloudflare dashboard and API.",
 							Computed:    true,
 						},
 						"origin": schema.SingleNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectType[HyperdriveConfigsOriginDataSourceModel](ctx),
+							Description: "Combines database connection fields with exactly one supported network location.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[HyperdriveConfigsOriginDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"database": schema.StringAttribute{
 									Description: "Set the name of your origin database.",
 									Computed:    true,
 								},
 								"host": schema.StringAttribute{
-									Description: "Defines the host (hostname or IP) of your origin database.",
+									Description: "Defines the publicly reachable hostname or IP of your origin database. Private, loopback, and link-local IP addresses are not allowed.",
 									Computed:    true,
 								},
 								"password": schema.StringAttribute{
@@ -71,6 +96,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"port": schema.Int64Attribute{
 									Description: "Defines the port of your origin database. Defaults to 5432 for PostgreSQL or 3306 for MySQL if not specified.",
 									Computed:    true,
+									Validators: []validator.Int64{
+										int64validator.Between(1, 65535),
+									},
 								},
 								"scheme": schema.StringAttribute{
 									Description: "Specifies the URL scheme used to connect to your origin database.\nAvailable values: \"postgres\", \"postgresql\", \"mysql\".",
@@ -102,28 +130,51 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"caching": schema.SingleNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectType[HyperdriveConfigsCachingDataSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"disabled": schema.BoolAttribute{
-									Description: "Set to true to disable caching of SQL responses. Default is false.",
-									Computed:    true,
-								},
-								"max_age": schema.Int64Attribute{
-									Description: "Specify the maximum duration (in seconds) items should persist in the cache. Defaults to 60 seconds if not specified.",
-									Computed:    true,
-								},
-								"stale_while_revalidate": schema.Int64Attribute{
-									Description: "Specify the number of seconds the cache may serve a stale response. Defaults to 15 seconds if not specified.",
-									Computed:    true,
-								},
-							},
-						},
 						"created_on": schema.StringAttribute{
 							Description: "Defines the creation time of the Hyperdrive configuration.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
+						},
+						"integration": schema.SingleNestedAttribute{
+							Description: "Connects to a PlanetScale database using credentials managed by Cloudflare. The Cloudflare account must already be linked to PlanetScale in the Hyperdrive dashboard.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[HyperdriveConfigsIntegrationDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"database_branch_name": schema.StringAttribute{
+									Description: "The name of the PlanetScale database branch.",
+									Computed:    true,
+								},
+								"database_name": schema.StringAttribute{
+									Description: "The name of the PlanetScale database.",
+									Computed:    true,
+								},
+								"integration": schema.StringAttribute{
+									Description: "The database integration used by this operation.\nAvailable values: \"planetscale\".",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("planetscale"),
+									},
+								},
+								"organization_name": schema.StringAttribute{
+									Description: "The name of the PlanetScale organization.",
+									Computed:    true,
+								},
+								"scheme": schema.StringAttribute{
+									Description: "Specifies the URL scheme used to connect to your origin database.\nAvailable values: \"postgres\", \"postgresql\", \"mysql\".",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive(
+											"postgres",
+											"postgresql",
+											"mysql",
+										),
+									},
+								},
+								"custom_database_name": schema.StringAttribute{
+									Description: "The database name to use when connecting. Defaults to `postgres` for PostgreSQL and `mysql` for MySQL.",
+									Computed:    true,
+								},
+							},
 						},
 						"modified_on": schema.StringAttribute{
 							Description: "Defines the last modified time of the Hyperdrive configuration.",
@@ -144,7 +195,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"sslmode": schema.StringAttribute{
-									Description: "Set SSL mode to 'require', 'verify-ca', or 'verify-full' to verify the CA.",
+									Description: "PostgreSQL accepts `require`, `verify-ca`, and `verify-full`. MySQL accepts `REQUIRED`, `VERIFY_CA`, and `VERIFY_IDENTITY`. The verify modes require a CA certificate; the require modes cannot be used with a CA certificate.",
 									Computed:    true,
 								},
 							},

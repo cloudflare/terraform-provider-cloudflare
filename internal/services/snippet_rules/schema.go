@@ -75,6 +75,29 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"description": schema.StringAttribute{
+				Description: "Provide an informative description of the rule.",
+				Computed:    true,
+				Default:     stringdefault.StaticString(""),
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "Indicate whether to execute the rule.",
+				Computed:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"expression": schema.StringAttribute{
+				Description: "Define the expression that determines which traffic matches the rule.",
+				Computed:    true,
+			},
+			"last_updated": schema.StringAttribute{
+				Description: "Specify the timestamp of when the rule was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"snippet_name": schema.StringAttribute{
+				Description: "Identify the snippet.",
+				Computed:    true,
+			},
 		},
 	}
 }

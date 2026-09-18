@@ -72,6 +72,14 @@ func (r *DNSRecordResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
+	params := dns.RecordNewParams{
+		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	}
+
+	if !data.IncludeShadowMetadata.IsNull() && !data.IncludeShadowMetadata.IsUnknown() {
+		params.IncludeShadowMetadata = cloudflare.F(data.IncludeShadowMetadata.ValueBool())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -81,9 +89,7 @@ func (r *DNSRecordResource) Create(ctx context.Context, req resource.CreateReque
 	env := DNSRecordResultEnvelope{*data}
 	_, err = r.client.DNS.Records.New(
 		ctx,
-		dns.RecordNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -124,6 +130,14 @@ func (r *DNSRecordResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
+	params := dns.RecordUpdateParams{
+		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	}
+
+	if !data.IncludeShadowMetadata.IsNull() && !data.IncludeShadowMetadata.IsUnknown() {
+		params.IncludeShadowMetadata = cloudflare.F(data.IncludeShadowMetadata.ValueBool())
+	}
+
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -134,9 +148,7 @@ func (r *DNSRecordResource) Update(ctx context.Context, req resource.UpdateReque
 	_, err = r.client.DNS.Records.Update(
 		ctx,
 		data.ID.ValueString(),
-		dns.RecordUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -171,14 +183,20 @@ func (r *DNSRecordResource) Read(ctx context.Context, req resource.ReadRequest, 
 
 	priorName := data.Name.ValueString()
 
+	params := dns.RecordGetParams{
+		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	}
+
+	if !data.IncludeShadowMetadata.IsNull() && !data.IncludeShadowMetadata.IsUnknown() {
+		params.IncludeShadowMetadata = cloudflare.F(data.IncludeShadowMetadata.ValueBool())
+	}
+
 	res := new(http.Response)
 	env := DNSRecordResultEnvelope{*data}
 	_, err := r.client.DNS.Records.Get(
 		ctx,
 		data.ID.ValueString(),
-		dns.RecordGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

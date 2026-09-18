@@ -17,6 +17,7 @@ type StreamResultEnvelope struct {
 type StreamModel struct {
 	AccountID             types.String                                   `tfsdk:"account_id" path:"account_id,required"`
 	Identifier            types.String                                   `tfsdk:"identifier" path:"identifier,optional"`
+	DirectUser            types.Bool                                     `tfsdk:"direct_user" query:"direct_user,computed_optional"`
 	Creator               types.String                                   `tfsdk:"creator" json:"creator,optional"`
 	MaxDurationSeconds    types.Int64                                    `tfsdk:"max_duration_seconds" json:"maxDurationSeconds,optional"`
 	ScheduledDeletion     timetypes.RFC3339                              `tfsdk:"scheduled_deletion" json:"scheduledDeletion,optional" format:"date-time"`

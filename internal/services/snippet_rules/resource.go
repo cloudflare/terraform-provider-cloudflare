@@ -155,6 +155,7 @@ func (r *SnippetRulesResource) Read(ctx context.Context, req resource.ReadReques
 	}
 
 	res := new(http.Response)
+	env := SnippetRulesResultEnvelope{*data}
 	_, err := r.client.Snippets.Rules.Get(
 		ctx,
 		snippets.RuleGetParams{
@@ -172,6 +173,13 @@ func (r *SnippetRulesResource) Read(ctx context.Context, req resource.ReadReques
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

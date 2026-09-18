@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -48,7 +47,7 @@ func (m *ZeroTrustDNSLocationDataSourceModel) toReadParams(_ context.Context) (p
 }
 
 func (m *ZeroTrustDNSLocationDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayLocationListParams, diags diag.Diagnostics) {
-	mFilterFilter := []interface{}{}
+	mFilterFilter := []string{}
 	if m.Filter.Filter != nil {
 		for _, item := range *m.Filter.Filter {
 			mFilterFilter = append(mFilterFilter, item.ValueString())
@@ -122,8 +121,8 @@ type ZeroTrustDNSLocationNetworksDataSourceModel struct {
 }
 
 type ZeroTrustDNSLocationFindOneByDataSourceModel struct {
-	Direction types.String            `tfsdk:"direction" query:"direction,optional"`
-	Filter    *[]jsontypes.Normalized `tfsdk:"filter" query:"filter,optional"`
-	OrderBy   types.String            `tfsdk:"order_by" query:"order_by,optional"`
-	Search    types.String            `tfsdk:"search" query:"search,optional"`
+	Direction types.String    `tfsdk:"direction" query:"direction,optional"`
+	Filter    *[]types.String `tfsdk:"filter" query:"filter,optional"`
+	OrderBy   types.String    `tfsdk:"order_by" query:"order_by,optional"`
+	Search    types.String    `tfsdk:"search" query:"search,optional"`
 }

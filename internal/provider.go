@@ -889,6 +889,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		workers_script_subdomain.NewWorkersScriptSubdomainDataSource,
 		workers_cron_trigger.NewWorkersCronTriggerDataSource,
 		workers_deployment.NewWorkersDeploymentDataSource,
+		workers_deployment.NewWorkersDeploymentsDataSource,
 		workers_custom_domain.NewWorkersCustomDomainDataSource,
 		workers_custom_domain.NewWorkersCustomDomainsDataSource,
 		workers_kv_namespace.NewWorkersKVNamespaceDataSource,

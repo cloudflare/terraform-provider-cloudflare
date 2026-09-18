@@ -16,6 +16,11 @@ type TurnstileWidgetModel struct {
 	ID              types.String      `tfsdk:"id" json:"-,computed"`
 	Sitekey         types.String      `tfsdk:"sitekey" json:"sitekey,computed"`
 	AccountID       types.String      `tfsdk:"account_id" path:"account_id,required"`
+	Direction       types.String      `tfsdk:"direction" query:"direction,optional"`
+	Filter          types.String      `tfsdk:"filter" query:"filter,optional"`
+	Order           types.String      `tfsdk:"order" query:"order,optional"`
+	Page            types.Float64     `tfsdk:"page" query:"page,computed_optional"`
+	PerPage         types.Float64     `tfsdk:"per_page" query:"per_page,computed_optional"`
 	Mode            types.String      `tfsdk:"mode" json:"mode,required"`
 	Name            types.String      `tfsdk:"name" json:"name,required"`
 	Domains         *[]types.String   `tfsdk:"domains" json:"domains,required"`

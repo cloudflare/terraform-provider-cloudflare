@@ -19,6 +19,7 @@ type D1DatabaseModel struct {
 	Name                types.String                    `tfsdk:"name" json:"name,required"`
 	Jurisdiction        types.String                    `tfsdk:"jurisdiction" json:"jurisdiction,optional"`
 	PrimaryLocationHint types.String                    `tfsdk:"primary_location_hint" json:"primary_location_hint,optional,no_refresh"`
+	Fields              *[]types.String                 `tfsdk:"fields" query:"fields,optional"`
 	ReadReplication     *D1DatabaseReadReplicationModel `tfsdk:"read_replication" json:"read_replication,optional"`
 	CreatedAt           timetypes.RFC3339               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	FileSize            types.Float64                   `tfsdk:"file_size" json:"file_size,computed"`

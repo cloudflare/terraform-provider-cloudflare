@@ -64,11 +64,6 @@ func (r *ZeroTrustAccessShortLivedCertificateResource) Create(ctx context.Contex
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
 	res := new(http.Response)
 	env := ZeroTrustAccessShortLivedCertificateResultEnvelope{*data}
 	params := zero_trust.AccessApplicationCANewParams{}
@@ -79,11 +74,10 @@ func (r *ZeroTrustAccessShortLivedCertificateResource) Create(ctx context.Contex
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	_, err = r.client.ZeroTrust.Access.Applications.CAs.New(
+	_, err := r.client.ZeroTrust.Access.Applications.CAs.New(
 		ctx,
 		data.AppID.ValueString(),
 		params,
-		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

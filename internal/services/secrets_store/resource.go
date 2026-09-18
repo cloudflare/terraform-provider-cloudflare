@@ -148,12 +148,18 @@ func (r *SecretsStoreResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
+	params := secrets_store.StoreDeleteParams{
+		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	}
+
+	if !data.Force.IsNull() && !data.Force.IsUnknown() {
+		params.Force = cloudflare.F(data.Force.ValueBool())
+	}
+
 	_, err := r.client.SecretsStore.Stores.Delete(
 		ctx,
 		data.ID.ValueString(),
-		secrets_store.StoreDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
