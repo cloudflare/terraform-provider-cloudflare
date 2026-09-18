@@ -43,28 +43,28 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-						Description: "Specify the unique ID of the rule.",
-						Computed:    true,
-					},
-					"expression": schema.StringAttribute{
-						Description: "Define the expression that determines which traffic matches the rule.",
-						Computed:    true,
-					},
-					"last_updated": schema.StringAttribute{
-						Description: "Specify the timestamp of when the rule was last modified.",
+							Description: "Specify the unique ID of the rule.",
+							Computed:    true,
+						},
+						"expression": schema.StringAttribute{
+							Description: "Define the expression that determines which traffic matches the rule.",
+							Computed:    true,
+						},
+						"last_updated": schema.StringAttribute{
+							Description: "Specify the timestamp of when the rule was last modified.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
 						"snippet_name": schema.StringAttribute{
-						Description: "Identify the snippet.",
-						Computed:    true,
-					},
-					"description": schema.StringAttribute{
-						Description: "Provide an informative description of the rule.",
-						Computed:    true,
-					},
-					"enabled": schema.BoolAttribute{
-						Description: "Indicate whether to execute the rule.",
+							Description: "Identify the snippet.",
+							Computed:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "Provide an informative description of the rule.",
+							Computed:    true,
+						},
+						"enabled": schema.BoolAttribute{
+							Description: "Indicate whether to execute the rule.",
 							Computed:    true,
 						},
 					},

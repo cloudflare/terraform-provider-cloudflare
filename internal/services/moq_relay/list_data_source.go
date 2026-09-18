@@ -5,10 +5,10 @@ package moq_relay
 import (
 	"context"
 	"fmt"
+
+	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/cloudflare/cloudflare-go/v7"
-
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
