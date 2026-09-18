@@ -1,0 +1,56 @@
+internal/services/api_shield_operation/resource.go
+  s_67dfb1d494a6a4::t_5397deb8aab16a 124
+internal/services/zero_trust_dns_location/data_source_model.go
+  s_67dfb1d494a6a4::t_88dd179de30623 22
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 50
+internal/services/workers_deployment/list_data_source_model.go
+  s_67dfb1d494a6a4::t_8f70b8e89f7f82 36-42
+  s_67dfb1d494a6a4::t_ba111185113446 17,45,50
+internal/services/zero_trust_gateway_policy/list_data_source_model.go
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 31
+internal/services/zero_trust_gateway_proxy_endpoint/list_data_source_model.go
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 31
+internal/services/workers_deployment/list_data_source_schema.go
+  s_67dfb1d494a6a4::t_8f70b8e89f7f82 52-69,71,74,76-77,80,86-102
+internal/services/workers_deployment/list_data_source.go
+  s_67dfb1d494a6a4::t_ba111185113446 80
+internal/services/zero_trust_list/list_data_source_model.go
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 32
+internal/services/observatory_scheduled_test/schema.go
+  s_67dfb1d494a6a4::t_8f70b8e89f7f82 48-50
+internal/services/zero_trust_dns_location/list_data_source_model.go
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 31
+internal/services/zero_trust_list/data_source_model.go
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 43
+internal/services/hyperdrive_config/schema.go
+  s_67dfb1d494a6a4::t_5d36f4e8b5c3e1 62-65,68-69,72-73
+internal/services/zero_trust_gateway_proxy_endpoint/data_source_model.go
+  s_67dfb1d494a6a4::t_88dd179de30623 23
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 42
+internal/services/dns_record/model.go
+  s_67dfb1d494a6a4::t_88dd179de30623 27,29
+  s_67dfb1d494a6a4::t_5397deb8aab16a 37
+scripts/unlink
+  s_67dfb1d494a6a4::t_7bd3acb8eec87d 8
+internal/services/zero_trust_gateway_policy/data_source_model.go
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 56
+  s_67dfb1d494a6a4::t_88dd179de30623 22
+internal/services/d1_database/resource.go
+  s_67dfb1d494a6a4::t_5397deb8aab16a 170
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "60dcdf32b019cc3de439acc7e676f6fc8feca0f4",
+  "prompts": {},
+  "sessions": {
+    "s_67dfb1d494a6a4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f49fd8563ffeljbSq4zkizMgRa",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Sarah Sicard <ssicard@cloudflare.com>"
+    }
+  }
+}
