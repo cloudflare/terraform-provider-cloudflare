@@ -34,7 +34,7 @@ type DNSRecordModel struct {
 	ModifiedOn            timetypes.RFC3339                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Proxiable             types.Bool                                       `tfsdk:"proxiable" json:"proxiable,computed"`
 	TagsModifiedOn        timetypes.RFC3339                                `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
-	Meta                  customfield.NestedObject[DNSRecordMetaModel]     `tfsdk:"meta" json:"meta,computed"`
+	Meta                  jsontypes.Normalized                             `tfsdk:"meta" json:"meta,computed"`
 }
 
 func (m DNSRecordModel) MarshalJSON() (data []byte, err error) {

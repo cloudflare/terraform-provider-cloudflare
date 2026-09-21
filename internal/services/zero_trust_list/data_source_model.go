@@ -40,7 +40,7 @@ func (m *ZeroTrustListDataSourceModel) toReadParams(_ context.Context) (params z
 }
 
 func (m *ZeroTrustListDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayListListParams, diags diag.Diagnostics) {
-	mFilterFilter := []string{}
+	mFilterFilter := []interface{}{}
 	if m.Filter.Filter != nil {
 		for _, item := range *m.Filter.Filter {
 			mFilterFilter = append(mFilterFilter, item.ValueString())

@@ -39,7 +39,7 @@ func (m *ZeroTrustGatewayProxyEndpointDataSourceModel) toReadParams(_ context.Co
 }
 
 func (m *ZeroTrustGatewayProxyEndpointDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayProxyEndpointListParams, diags diag.Diagnostics) {
-	mFilterFilter := []string{}
+	mFilterFilter := []interface{}{}
 	if m.Filter.Filter != nil {
 		for _, item := range *m.Filter.Filter {
 			mFilterFilter = append(mFilterFilter, item.ValueString())

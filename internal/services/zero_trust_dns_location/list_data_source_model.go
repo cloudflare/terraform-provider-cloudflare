@@ -28,7 +28,7 @@ type ZeroTrustDNSLocationsDataSourceModel struct {
 }
 
 func (m *ZeroTrustDNSLocationsDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayLocationListParams, diags diag.Diagnostics) {
-	mFilter := []string{}
+	mFilter := []interface{}{}
 	if m.Filter != nil {
 		for _, item := range *m.Filter {
 			mFilter = append(mFilter, item.ValueString())

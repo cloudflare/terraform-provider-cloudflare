@@ -53,7 +53,7 @@ func (m *ZeroTrustGatewayPolicyDataSourceModel) toReadParams(_ context.Context) 
 }
 
 func (m *ZeroTrustGatewayPolicyDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayRuleListParams, diags diag.Diagnostics) {
-	mFilterFilter := []string{}
+	mFilterFilter := []interface{}{}
 	if m.Filter.Filter != nil {
 		for _, item := range *m.Filter.Filter {
 			mFilterFilter = append(mFilterFilter, item.ValueString())
