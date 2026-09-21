@@ -47,7 +47,7 @@ func (m *ZeroTrustDNSLocationDataSourceModel) toReadParams(_ context.Context) (p
 }
 
 func (m *ZeroTrustDNSLocationDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayLocationListParams, diags diag.Diagnostics) {
-	mFilterFilter := []string{}
+	mFilterFilter := []interface{}{}
 	if m.Filter.Filter != nil {
 		for _, item := range *m.Filter.Filter {
 			mFilterFilter = append(mFilterFilter, item.ValueString())

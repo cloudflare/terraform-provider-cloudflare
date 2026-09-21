@@ -77,7 +77,7 @@ func (d *WorkersDeploymentsDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 
-	for page != nil && len(page.Result.Items) > 0 {
+	if page != nil && len(page.Deployments) > 0 {
 		bytes := []byte(page.JSON.RawJSON())
 		err = apijson.UnmarshalComputed(bytes, &env)
 		if err != nil {
@@ -85,14 +85,6 @@ func (d *WorkersDeploymentsDataSource) Read(ctx context.Context, req datasource.
 			return
 		}
 		acc = append(acc, env.Items.Elements()...)
-		if len(acc) >= maxItems {
-			break
-		}
-		page, err = page.GetNextPage()
-		if err != nil {
-			resp.Diagnostics.AddError("failed to fetch next page", err.Error())
-			return
-		}
 	}
 
 	acc = acc[:min(len(acc), maxItems)]
