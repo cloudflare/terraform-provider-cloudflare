@@ -1,0 +1,47 @@
+internal/services/zero_trust_casb_integration/schema.go
+  s_c124501c564855::t_f78742838798b8 81-87,89-91
+  s_c124501c564855::t_16470d89732541 88
+docs/data-sources/zero_trust_casb_integrations.md
+  s_c124501c564855::t_eb1b88e3895229 49
+internal/services/zero_trust_casb_integration/resource_test.go
+  s_c124501c564855::t_f6404e91f1bd3d 729-733
+  s_c124501c564855::t_6b21613a9b93b4 852,855-856
+  s_c124501c564855::t_170274d0d0a1e2 865-866
+  s_c124501c564855::t_3f6d52af0967ed 886-895
+  s_c124501c564855::t_12005017cde1f1 676-681
+examples/resources/cloudflare_zero_trust_casb_integration/import.sh
+  s_c124501c564855::t_2cec92768a9efe 1
+internal/services/zero_trust_casb_integration/list_data_source_schema.go
+  s_c124501c564855::t_4947a5e5cd5e33 79
+internal/services/zero_trust_casb_integration/resource.go
+  s_c124501c564855::t_e5a119e961e42e 558-559
+  s_c124501c564855::t_f26e023838fe24 129-135,141
+  s_c124501c564855::t_0c49cd7a85b6ca 187-193
+  s_c124501c564855::t_6c89da5b5efe1b 579-582
+  s_c124501c564855::t_9fcaafa1bc0232 11,916-917,919
+  s_c124501c564855::t_d37906052529c4 226-227
+docs/resources/zero_trust_casb_integration.md
+  s_c124501c564855::t_dbcb5dd2970416 312-313,317
+docs/data-sources/zero_trust_casb_integration.md
+  s_c124501c564855::t_e6aed0aea65084 29-32
+  s_c124501c564855::t_f45cb6cc0c0b7a 66
+internal/services/zero_trust_casb_integration/data_source_schema.go
+  s_c124501c564855::t_c3f356bfa7746d 27-29
+  s_c124501c564855::t_48574681fafda6 169
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "fa6ec2548a383be68d4eff88635ef4af16ebd0d5",
+  "prompts": {},
+  "sessions": {
+    "s_c124501c564855": {
+      "agent_id": {
+        "tool": "windsurf",
+        "id": "humble-shape",
+        "model": "unknown"
+      },
+      "human_author": "Peter Bandziukas <pbandziukas@cloudflare.com>"
+    }
+  }
+}
