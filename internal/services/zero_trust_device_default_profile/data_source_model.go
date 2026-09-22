@@ -70,6 +70,14 @@ type ZeroTrustDeviceDefaultProfileFallbackDomainsDataSourceModel struct {
 	DNSServer   customfield.List[types.String] `tfsdk:"dns_server" json:"dns_server,computed"`
 }
 
+type ZeroTrustDeviceDefaultProfileGlobalAccelerationDataSourceModel struct {
+	APIEndpoints       customfield.List[types.String] `tfsdk:"api_endpoints" json:"api_endpoints,computed"`
+	Enabled            types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
+	MasqueEndpoints    customfield.List[types.String] `tfsdk:"masque_endpoints" json:"masque_endpoints,computed"`
+	WireguardEndpoints customfield.List[types.String] `tfsdk:"wireguard_endpoints" json:"wireguard_endpoints,computed"`
+	Autoswitch         types.Bool                     `tfsdk:"autoswitch" json:"autoswitch,computed"`
+}
+
 type ZeroTrustDeviceDefaultProfileIncludeDataSourceModel struct {
 	Address     types.String `tfsdk:"address" json:"address,computed"`
 	Description types.String `tfsdk:"description" json:"description,computed"`

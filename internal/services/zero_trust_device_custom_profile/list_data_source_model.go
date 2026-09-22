@@ -99,6 +99,7 @@ type ZeroTrustDeviceCustomProfilesGlobalAccelerationDataSourceModel struct {
 	Enabled            types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
 	MasqueEndpoints    customfield.List[types.String] `tfsdk:"masque_endpoints" json:"masque_endpoints,computed"`
 	WireguardEndpoints customfield.List[types.String] `tfsdk:"wireguard_endpoints" json:"wireguard_endpoints,computed"`
+	Autoswitch         types.Bool                     `tfsdk:"autoswitch" json:"autoswitch,computed"`
 }
 
 type ZeroTrustDeviceCustomProfilesIncludeDataSourceModel struct {

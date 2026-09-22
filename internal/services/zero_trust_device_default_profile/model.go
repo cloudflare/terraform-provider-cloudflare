@@ -17,6 +17,7 @@ type ZeroTrustDeviceDefaultProfileModel struct {
 	AccountID                  types.String                                                                      `tfsdk:"account_id" path:"account_id,required"`
 	LANAllowMinutes            types.Float64                                                                     `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes,optional,no_refresh"`
 	LANAllowSubnetSize         types.Float64                                                                     `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size,optional,no_refresh"`
+	GlobalAcceleration         *ZeroTrustDeviceDefaultProfileGlobalAccelerationModel                             `tfsdk:"global_acceleration" json:"global_acceleration,optional"`
 	VirtualNetworks            *ZeroTrustDeviceDefaultProfileVirtualNetworksModel                                `tfsdk:"virtual_networks" json:"virtual_networks,optional"`
 	AllowModeSwitch            types.Bool                                                                        `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed_optional"`
 	AllowUpdates               types.Bool                                                                        `tfsdk:"allow_updates" json:"allow_updates,computed_optional"`
@@ -33,7 +34,6 @@ type ZeroTrustDeviceDefaultProfileModel struct {
 	UninstallProtection        types.Bool                                                                        `tfsdk:"uninstall_protection" json:"uninstall_protection,computed_optional"`
 	DNSSearchSuffixes          customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileDNSSearchSuffixesModel] `tfsdk:"dns_search_suffixes" json:"dns_search_suffixes,computed_optional"`
 	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileExcludeModel]           `tfsdk:"exclude" json:"exclude,computed_optional"`
-	GlobalAcceleration         *ZeroTrustDeviceDefaultProfileGlobalAccelerationModel                             `tfsdk:"global_acceleration" json:"global_acceleration,optional"`
 	Include                    customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileIncludeModel]           `tfsdk:"include" json:"include,computed_optional"`
 	ServiceModeV2              customfield.NestedObject[ZeroTrustDeviceDefaultProfileServiceModeV2Model]         `tfsdk:"service_mode_v2" json:"service_mode_v2,computed_optional"`
 	Default                    types.Bool                                                                        `tfsdk:"default" json:"default,computed"`
@@ -52,6 +52,7 @@ func (m ZeroTrustDeviceDefaultProfileModel) MarshalJSONForUpdate(state ZeroTrust
 	return apijson.MarshalForPatch(m, state)
 }
 
+
 type ZeroTrustDeviceDefaultProfileVirtualNetworksModel struct {
 	Allowed *[]types.String `tfsdk:"allowed" json:"allowed,required"`
 	Default types.String    `tfsdk:"default" json:"default,required"`
@@ -68,6 +69,14 @@ type ZeroTrustDeviceDefaultProfileExcludeModel struct {
 	Host        types.String `tfsdk:"host" json:"host,optional"`
 }
 
+type ZeroTrustDeviceDefaultProfileGlobalAccelerationModel struct {
+	APIEndpoints       *[]types.String `tfsdk:"api_endpoints" json:"api_endpoints,required"`
+	Enabled            types.Bool      `tfsdk:"enabled" json:"enabled,required"`
+	MasqueEndpoints    *[]types.String `tfsdk:"masque_endpoints" json:"masque_endpoints,required"`
+	WireguardEndpoints *[]types.String `tfsdk:"wireguard_endpoints" json:"wireguard_endpoints,required"`
+	Autoswitch         types.Bool      `tfsdk:"autoswitch" json:"autoswitch,computed_optional"`
+}
+
 type ZeroTrustDeviceDefaultProfileIncludeModel struct {
 	Address     types.String `tfsdk:"address" json:"address,optional"`
 	Description types.String `tfsdk:"description" json:"description,optional"`
@@ -77,13 +86,6 @@ type ZeroTrustDeviceDefaultProfileIncludeModel struct {
 type ZeroTrustDeviceDefaultProfileServiceModeV2Model struct {
 	Mode types.String  `tfsdk:"mode" json:"mode,optional"`
 	Port types.Float64 `tfsdk:"port" json:"port,optional"`
-}
-
-type ZeroTrustDeviceDefaultProfileGlobalAccelerationModel struct {
-	APIEndpoints       customfield.List[types.String] `tfsdk:"api_endpoints" json:"api_endpoints,required"`
-	Enabled            types.Bool                     `tfsdk:"enabled" json:"enabled,required"`
-	MasqueEndpoints    customfield.List[types.String] `tfsdk:"masque_endpoints" json:"masque_endpoints,required"`
-	WireguardEndpoints customfield.List[types.String] `tfsdk:"wireguard_endpoints" json:"wireguard_endpoints,required"`
 }
 
 type ZeroTrustDeviceDefaultProfileFallbackDomainsModel struct {

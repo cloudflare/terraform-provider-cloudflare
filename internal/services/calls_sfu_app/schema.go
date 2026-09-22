@@ -37,7 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description: "A short description of Calls app, not shown to end users.",
+				Description: "A short description of a Realtime SFU app, not shown to end users.",
 				Computed:    true,
 				Optional:    true,
 				Default:     stringdefault.StaticString(""),

@@ -305,6 +305,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_subscription"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_tracing"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_tracing_rules"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -483,6 +485,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		user.NewResource,
 		api_token.NewResource,
 		zone.NewResource,
+		zone_tracing.NewResource,
+		zone_tracing_rules.NewResource,
 		zone_setting.NewResource,
 		nel_setting.NewResource,
 		zone_hold.NewResource,
@@ -770,6 +774,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		api_token_permission_groups.NewAPITokenPermissionGroupsListDataSource,
 		zone.NewZoneDataSource,
 		zone.NewZonesDataSource,
+		zone_tracing.NewZoneTracingDataSource,
+		zone_tracing_rules.NewZoneTracingRulesDataSource,
 		zone_setting.NewZoneSettingDataSource,
 		nel_setting.NewNELSettingDataSource,
 		zone_hold.NewZoneHoldDataSource,
