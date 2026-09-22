@@ -1,0 +1,23 @@
+internal/services/custom_ssl/model.go
+  s_279715510d0e77::t_46f443df18fc4d 21
+internal/services/custom_ssl/schema.go
+  s_279715510d0e77::t_e719101cafedc8 11,13
+  s_279715510d0e77::t_3a7309dc2f6f80 64-65
+  s_279715510d0e77::t_211adf141587ef 239-249
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6b82f34ecd4ef35f824d40cb5190f70ee79d8699",
+  "prompts": {},
+  "sessions": {
+    "s_279715510d0e77": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3b3385afffe3Lff8FOi4r5Dwz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}

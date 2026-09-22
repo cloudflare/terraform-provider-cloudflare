@@ -1,0 +1,125 @@
+internal/services/queue_consumer/model.go
+  h_5f12c8df3da73f 7,19,21-24,38-43
+internal/services/zero_trust_device_custom_profile/data_source_model.go
+  h_5f12c8df3da73f 22,50
+internal/services/d1_database/model.go
+  h_5f12c8df3da73f 22
+  s_a3c28aae836ac1::t_8912df3a061f68 16-21,23-26
+internal/services/dns_record/schema.go
+  h_5f12c8df3da73f 9,12,14,25-27,53,63-68,70-71,75-76,105,108,110-114,354,413-414,416
+  s_a3c28aae836ac1::t_14f36a47c2fc71 56-62,69,72-74,353
+internal/services/worker/schema.go
+  h_5f12c8df3da73f 18,21,66,73-75,88-90,112-114,123,137-139,155,161-163,172,194-195,200-202,205-210,213-229,498-499,507-510,525,532-534,541-543
+internal/services/worker_version/resource.go
+  h_5f12c8df3da73f 7,15-19,21,72-123,151-155,163-231,236-240,242-250,262-272,281,302-317,319-368,407,424-439
+internal/services/r2_bucket/resource.go
+  h_5f12c8df3da73f 15,68-76,88,128,134-135,172,212,229,232,235,245-249,259,279-280
+internal/services/turnstile_widget/schema.go
+  h_5f12c8df3da73f 13,71,76,89,94,96
+internal/services/r2_bucket/resource_test.go
+  h_5f12c8df3da73f 543
+internal/services/zero_trust_device_custom_profile/list_data_source_schema.go
+  h_5f12c8df3da73f 23
+internal/services/certificate_authorities_hostname_associations/resource.go
+  h_5f12c8df3da73f 10,157-164,169,201-209,213-220,226
+internal/services/workers_script/schema.go
+  h_5f12c8df3da73f 12-13,15,42,47,54-96,98,100-105,107-124,128-135,139-140,144-145,154-156,159-160,162-175,177-180,184-185,187-273,275-276,278,280,284-285,288-289,296-298,300-301,304-305,308-309,312-313,316-336,338-344,346-347,350-352,354-355,360-366,368-370,372-374,376-378,380-383,385-394,396-402,404-413,415-466,468-479,481-483,485-532,534-540,545-546,548-561,564-586,590-591,595-596,598,600-601,604-605,608-609,613-614,617,622-623,625,627-628,630-631,633-634,639-640,644-647,649-652,654-669,673-679,681-685,693-708,712,715-720,722,724-725,728-729,731-732,736-737,740-741,743,745-746,749-750,753-755,757,759-761,763-764,775,828,846,851,857,881-884,886-888,890-892,894-896,904-905,909,968-969,974,978,982,987-995,997-1004,1017-1025
+internal/services/workflow/data_source_model.go
+  h_5f12c8df3da73f 23
+internal/services/snippet_rules/resource_test.go
+  h_5f12c8df3da73f 112
+internal/services/rate_limit/data_source_schema.go
+  h_5f12c8df3da73f 8,10-12,15-16,31-34,41-200
+internal/services/observatory_scheduled_test/model.go
+  h_5f12c8df3da73f 20-21
+internal/services/zero_trust_device_custom_profile/schema.go
+  h_5f12c8df3da73f 10,12,16,55-60,69-77,81-93,97-106,110-122,173-187,297,326-327,329
+internal/services/queue_consumer/schema.go
+  h_5f12c8df3da73f 8,14,46-47,66-67,71-73,78,83,88,93,98,103,145,149
+internal/services/zero_trust_gateway_policy/list_data_source_model.go
+  h_5f12c8df3da73f 21
+internal/services/zero_trust_gateway_proxy_endpoint/list_data_source_model.go
+  h_5f12c8df3da73f 21
+internal/services/rate_limit/data_source_model.go
+  h_5f12c8df3da73f 10,15-18,20,22-29,39-75
+internal/services/zero_trust_gateway_certificate/resource.go
+  h_5f12c8df3da73f 67-69,98-135,141-237,249-251,280-281
+internal/services/zero_trust_dns_location/list_data_source_model.go
+  h_5f12c8df3da73f 21
+internal/services/zero_trust_device_custom_profile/list_data_source_model.go
+  h_5f12c8df3da73f 20,55
+internal/services/workers_deployment/list_data_source.go
+  h_5f12c8df3da73f 80
+go.mod
+  h_5f12c8df3da73f 6-11,14,22-26,29-30,39-40,43-56,59,61,63-64,70,74-79,82,88,91-92,94-95,97,102,107,109-116,118
+internal/services/worker/model.go
+  h_5f12c8df3da73f 66
+internal/services/workers_script/resource.go
+  h_5f12c8df3da73f 7-8,11-12,14,20,23-25,28,77-117,130,146-162,176-195,207-220,224,237,253-262,264-267,274,277,283-286,288-289,291-293,305-355,357-540,545-574,647-650,652-655,657-664
+internal/services/worker_version/model.go
+  h_5f12c8df3da73f 23,117,120-121,151,153-154,158-160,170,180
+  s_a3c28aae836ac1::t_84a28184e134b9 33-34,152,161
+internal/services/zero_trust_device_default_profile/schema.go
+  h_5f12c8df3da73f 11-12,16,54-62,66-75,79-88,92-101,105,131-143,264,273,288
+internal/services/dns_record/model.go
+  h_5f12c8df3da73f 8,23,36
+  s_a3c28aae836ac1::t_cc8bf8530bac93 26,28
+internal/services/dns_record/resource.go
+  h_5f12c8df3da73f 67-74,102-105,155-158,172,201-204,206,277-280
+internal/services/workers_kv/resource.go
+  h_5f12c8df3da73f 10,18,69,71,79,83,120,122,125,131,135,168,184-186,188-212,214,232,273,285-296,298-308
+internal/services/rate_limit/list_data_source.go
+  h_5f12c8df3da73f 1-80
+internal/services/observatory_scheduled_test/schema.go
+  h_5f12c8df3da73f 15,48-50,58,84
+internal/services/zero_trust_list/data_source_model.go
+  h_5f12c8df3da73f 23
+internal/services/worker/data_source_model.go
+  h_5f12c8df3da73f 23
+internal/services/workers_script/model.go
+  h_5f12c8df3da73f 7-8,11,16,19-22,27-36,43-61,64,67-101,103-113,116,124-128,132,134-135,137,139,145,148-150,157,163-164,170-173,188,204,208-217,224
+internal/services/zero_trust_device_custom_profile/model.go
+  h_5f12c8df3da73f 19,21
+  s_a3c28aae836ac1::t_d2314461525a0c 32
+internal/services/zero_trust_list/list_data_source_model.go
+  h_5f12c8df3da73f 21
+internal/services/account/model.go
+  s_a3c28aae836ac1::t_fa82a3bb582397 21
+internal/services/bot_management/data_source_model.go
+  s_a3c28aae836ac1::t_a49dd391e85d04 21
+internal/services/queue/model.go
+  s_a3c28aae836ac1::t_1e6c1c583f3f31 22,40-42
+internal/services/ruleset/list_data_source.go
+  s_a3c28aae836ac1::t_2957481eb90b19 1-101
+internal/services/snippets/list_data_source_schema_test.go
+  s_a3c28aae836ac1::t_bb907955cf11dc 1-19
+internal/services/zero_trust_dns_location/data_source_model.go
+  s_a3c28aae836ac1::t_683b0679525356 23
+internal/services/zero_trust_gateway_policy/data_source_model.go
+  s_a3c28aae836ac1::t_1e58cc405b8261 23
+internal/services/zero_trust_gateway_proxy_endpoint/data_source_model.go
+  s_a3c28aae836ac1::t_9ba09994f309a8 23
+review-merge.sh
+  s_a3c28aae836ac1::t_829b4925579dab 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "bae9e37563532bd9c34a0aa049a0f4c360fa6b81",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_a3c28aae836ac1": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3a539bc5fferAa4ZLfxKMkXIx",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
