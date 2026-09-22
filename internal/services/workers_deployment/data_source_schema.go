@@ -73,18 +73,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"versions": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[WorkersDeploymentVersionsDataSourceModel](ctx),
+				Description: "Worker versions included in this deployment. Each object must contain a `version_id` UUID and a `percentage`; percentages across all objects must total 100. In the `cf` CLI, pass the entire array as one JSON value to `--versions`, either inline, for example `--versions '[{\"version_id\":\"023e105f-2a42-4f8b-a1c1-73f6a2a30c0f\",\"percentage\":100}]'`, or from a JSON file with `--versions @versions.json`.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[WorkersDeploymentVersionsDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"percentage": schema.Float64Attribute{
-							Computed: true,
+							Description: "Percentage of traffic served by this version.",
+							Computed:    true,
 							Validators: []validator.Float64{
 								float64validator.Between(0.01, 100),
 							},
 						},
 						"version_id": schema.StringAttribute{
-							Computed: true,
+							Description: "Identifier of the Worker Version.",
+							Computed:    true,
 						},
 					},
 				},

@@ -61,14 +61,20 @@ func (r *StreamDownloadResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 
+	dataBytes, err := data.MarshalJSON()
+	if err != nil {
+		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+		return
+	}
 	res := new(http.Response)
 	env := StreamDownloadResultEnvelope{*data}
-	_, err := r.client.Stream.Downloads.New(
+	_, err = r.client.Stream.Downloads.New(
 		ctx,
 		data.Identifier.ValueString(),
 		stream.DownloadNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
+		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

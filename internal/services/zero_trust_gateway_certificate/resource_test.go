@@ -94,7 +94,6 @@ func testSweepCloudflareZeroTrustGatewayCertificate(r string) error {
 					cert.ID,
 					zero_trust.GatewayCertificateDeactivateParams{
 						AccountID: cfv7.F(accountID),
-						Body:      struct{}{},
 					},
 				)
 				if err != nil {

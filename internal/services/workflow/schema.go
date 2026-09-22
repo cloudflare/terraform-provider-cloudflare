@@ -123,6 +123,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"script_deleted": schema.BoolAttribute{
+				Description: "Whether the bound Worker was deleted, leaving this Workflow inactive.",
+				Computed:    true,
+			},
 			"terminator_running": schema.Float64Attribute{
 				Computed: true,
 			},

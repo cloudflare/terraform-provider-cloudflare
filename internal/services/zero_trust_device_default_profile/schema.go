@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -273,6 +274,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"policy_id": schema.StringAttribute{
 				Computed: true,
+			},
+			"profile_type": schema.StringAttribute{
+				Description: "The client type to which the device settings profile applies.\nAvailable values: \"warp\", \"browser_extension\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("warp", "browser_extension"),
+				},
+				Default: stringdefault.StaticString("warp"),
 			},
 			"fallback_domains": schema.ListNestedAttribute{
 				Computed:      true,

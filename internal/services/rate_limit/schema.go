@@ -5,7 +5,6 @@ package rate_limit
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -31,14 +30,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 500,
 		DeprecationMessage: "Rate limiting API is deprecated in favour of using the Ruleset Engine. See https://developers.cloudflare.com/fundamentals/api/reference/deprecations/#rate-limiting-api-previous-version for full details.",
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description:   "The unique identifier of the rate limit.",
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
-			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Defines an identifier.",
 				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"rate_limit_id": schema.StringAttribute{
+				Description:   "Defines the unique identifier of the rate limit.",
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"period": schema.Float64Attribute{
@@ -160,34 +159,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "When true, only the uncached traffic served from your origin servers will count towards rate limiting. In this case, any cached traffic served by Cloudflare will not count towards rate limiting. This field is optional.\nNotes: This field is deprecated. Instead, use response headers and set \"origin_traffic\" to \"false\" to avoid legacy behaviour interacting with the \"response_headers\" property.",
 								Optional:    true,
 							},
-						},
-					},
-				},
-			},
-			"description": schema.StringAttribute{
-				Description: "An informative summary of the rule. This value is sanitized and any tags will be removed.",
-				Computed:    true,
-			},
-			"disabled": schema.BoolAttribute{
-				Description: "When true, indicates that the rate limit is currently disabled.",
-				Computed:    true,
-			},
-			"bypass": schema.ListNestedAttribute{
-				Description: "Criteria specifying when the current rate limit should be bypassed. You can specify that the rate limit should not apply to one or more URLs.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[RateLimitBypassModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"name": schema.StringAttribute{
-							Description: `Available values: "url".`,
-							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("url"),
-							},
-						},
-						"value": schema.StringAttribute{
-							Description: "The URL to bypass.",
-							Computed:    true,
 						},
 					},
 				},

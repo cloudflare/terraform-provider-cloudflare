@@ -6,8 +6,12 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -20,7 +24,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"policy_id": schema.StringAttribute{
-				Required: true,
+				Computed: true,
+				Optional: true,
 			},
 			"account_id": schema.StringAttribute{
 				Optional:    true,
@@ -46,7 +51,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"default": schema.BoolAttribute{
-				Description: "Whether the policy is the default policy for an account.",
+				Description: "Whether the policy is the account default. WARP group profiles cannot set this field.",
 				Computed:    true,
 			},
 			"description": schema.StringAttribute{
@@ -88,6 +93,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.",
 				Computed:    true,
 			},
+			"profile_type": schema.StringAttribute{
+				Description: "The client type to which the device settings profile applies.\nAvailable values: \"warp\", \"browser_extension\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("warp", "browser_extension"),
+				},
+			},
 			"register_interface_ip_with_dns": schema.BoolAttribute{
 				Description: "Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.",
 				Computed:    true,
@@ -111,6 +123,24 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"uninstall_protection": schema.BoolAttribute{
 				Description: "Determines whether uninstalling the WARP client requires an override code. (Windows only).",
 				Computed:    true,
+			},
+			"browser_extension_config": schema.SingleNestedAttribute{
+				Description: "Browser extension proxy settings. Required when profile_type is browser_extension and invalid for WARP profiles.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustDeviceCustomProfileBrowserExtensionConfigDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"proxy_control": schema.StringAttribute{
+						Description: "Whether the user may disable the browser extension proxy.\nAvailable values: \"unlocked\", \"locked\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("unlocked", "locked"),
+						},
+					},
+					"proxy_enabled": schema.BoolAttribute{
+						Description: "Whether the browser extension proxy is active.",
+						Computed:    true,
+					},
+				},
 			},
 			"dns_search_suffixes": schema.ListNestedAttribute{
 				Description: "List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear.",
@@ -240,6 +270,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"filter": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"profile_type": schema.StringAttribute{
+						Description: "Filter profiles by client type. When omitted, only WARP profiles are returned.\nAvailable values: \"warp\", \"browser_extension\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("warp", "browser_extension"),
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -249,5 +292,7 @@ func (d *ZeroTrustDeviceCustomProfileDataSource) Schema(ctx context.Context, req
 }
 
 func (d *ZeroTrustDeviceCustomProfileDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("policy_id"), path.MatchRoot("filter")),
+	}
 }

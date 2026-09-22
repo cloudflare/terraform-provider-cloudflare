@@ -126,6 +126,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Enable cloudflare managed robots.txt. If an existing robots.txt is detected, then managed robots.txt will be prepended to the existing robots.txt.",
 				Computed:    true,
 			},
+			"jsd_api_results_enabled": schema.BoolAttribute{
+				Description: "Whether to use JavaScript Detection results submitted through the API for this zone.",
+				Computed:    true,
+			},
 			"optimize_wordpress": schema.BoolAttribute{
 				Description: "Whether to optimize Super Bot Fight Mode protections for Wordpress.",
 				Computed:    true,

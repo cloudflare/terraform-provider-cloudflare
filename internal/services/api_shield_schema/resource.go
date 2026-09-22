@@ -150,20 +150,14 @@ func (r *APIShieldSchemaResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	params := api_gateway.UserSchemaGetParams{
-		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-	}
-
-	if !data.OmitSource.IsNull() && !data.OmitSource.IsUnknown() {
-		params.OmitSource = cloudflare.F(data.OmitSource.ValueBool())
-	}
-
 	res := new(http.Response)
 	env := APIShieldSchemaResultEnvelope{*data}
 	_, err := r.client.APIGateway.UserSchemas.Get(
 		ctx,
 		data.SchemaID.ValueString(),
-		params,
+		api_gateway.UserSchemaGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

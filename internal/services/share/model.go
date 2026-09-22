@@ -18,8 +18,6 @@ type ShareModel struct {
 	AccountID                    types.String             `tfsdk:"account_id" path:"account_id,required"`
 	Recipients                   *[]*ShareRecipientsModel `tfsdk:"recipients" json:"recipients,required,no_refresh"`
 	Resources                    *[]*ShareResourcesModel  `tfsdk:"resources" json:"resources,required"`
-	IncludeRecipientCounts       types.Bool               `tfsdk:"include_recipient_counts" query:"include_recipient_counts,optional"`
-	IncludeResources             types.Bool               `tfsdk:"include_resources" query:"include_resources,optional"`
 	Name                         types.String             `tfsdk:"name" json:"name,required"`
 	AccountName                  types.String             `tfsdk:"account_name" json:"account_name,computed"`
 	AssociatedRecipientCount     types.Int64              `tfsdk:"associated_recipient_count" json:"associated_recipient_count,computed"`

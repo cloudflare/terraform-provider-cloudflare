@@ -47,10 +47,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"type": schema.StringAttribute{
-				Description: `Available values: "worker", "http_pull".`,
+				Description: `Available values: "worker", "http_pull", "notification".`,
 				Required:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("worker", "http_pull"),
+					stringvalidator.OneOfCaseInsensitive(
+						"worker",
+						"http_pull",
+						"notification",
+					),
 				},
 			},
 			"dead_letter_queue": schema.StringAttribute{
@@ -97,6 +101,41 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The number of milliseconds that a message is exclusively leased. After the timeout, the message becomes available for another attempt.",
 						Optional:    true,
 						Computed:    true,
+					},
+					"email": schema.ListNestedAttribute{
+						Optional: true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "The email address.",
+									Required:    true,
+								},
+							},
+						},
+					},
+					"pagerduty": schema.ListNestedAttribute{
+						Description: "PagerDuty notification destinations.",
+						Optional:    true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "UUID.",
+									Required:    true,
+								},
+							},
+						},
+					},
+					"webhooks": schema.ListNestedAttribute{
+						Description: "Webhook notification destinations.",
+						Optional:    true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "UUID.",
+									Required:    true,
+								},
+							},
+						},
 					},
 				},
 			},

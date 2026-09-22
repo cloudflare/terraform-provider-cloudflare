@@ -74,6 +74,7 @@ type WorkerVersionAssetsDataSourceModel struct {
 }
 
 type WorkerVersionAssetsConfigDataSourceModel struct {
+	BasePath         types.String                   `tfsdk:"base_path" json:"base_path,computed"`
 	HTMLHandling     types.String                   `tfsdk:"html_handling" json:"html_handling,computed"`
 	NotFoundHandling types.String                   `tfsdk:"not_found_handling" json:"not_found_handling,computed"`
 	RunWorkerFirst   customfield.List[types.String] `tfsdk:"run_worker_first" json:"run_worker_first,computed"`
@@ -100,6 +101,7 @@ type WorkerVersionBindingsDataSourceModel struct {
 	CertificateID               types.String                                                           `tfsdk:"certificate_id" json:"certificate_id,computed"`
 	Text                        types.String                                                           `tfsdk:"text" json:"text,computed"`
 	Pipeline                    types.String                                                           `tfsdk:"pipeline" json:"pipeline,computed"`
+	Stream                      types.String                                                           `tfsdk:"stream" json:"stream,computed"`
 	QueueName                   types.String                                                           `tfsdk:"queue_name" json:"queue_name,computed"`
 	Simple                      customfield.NestedObject[WorkerVersionBindingsSimpleDataSourceModel]   `tfsdk:"simple" json:"simple,computed"`
 	BucketName                  types.String                                                           `tfsdk:"bucket_name" json:"bucket_name,computed"`

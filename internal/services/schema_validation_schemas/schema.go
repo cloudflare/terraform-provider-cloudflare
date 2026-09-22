@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -62,12 +61,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "The raw schema, e.g., the OpenAPI schema, either as JSON or YAML",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"omit_source": schema.BoolAttribute{
-				Description: "Omit the source-files of schemas and only retrieve their meta-data.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
 			},
 			"validation_enabled": schema.BoolAttribute{
 				Description: "An indicator if this schema is enabled",

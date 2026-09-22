@@ -96,13 +96,55 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Description: "The number of milliseconds that a message is exclusively leased. After the timeout, the message becomes available for another attempt.",
 									Computed:    true,
 								},
+								"email": schema.ListNestedAttribute{
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectListType[QueueConsumersSettingsEmailDataSourceModel](ctx),
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The email address.",
+												Computed:    true,
+											},
+										},
+									},
+								},
+								"pagerduty": schema.ListNestedAttribute{
+									Description: "PagerDuty notification destinations.",
+									Computed:    true,
+									CustomType:  customfield.NewNestedObjectListType[QueueConsumersSettingsPagerdutyDataSourceModel](ctx),
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "UUID.",
+												Computed:    true,
+											},
+										},
+									},
+								},
+								"webhooks": schema.ListNestedAttribute{
+									Description: "Webhook notification destinations.",
+									Computed:    true,
+									CustomType:  customfield.NewNestedObjectListType[QueueConsumersSettingsWebhooksDataSourceModel](ctx),
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "UUID.",
+												Computed:    true,
+											},
+										},
+									},
+								},
 							},
 						},
 						"type": schema.StringAttribute{
-							Description: `Available values: "worker", "http_pull".`,
+							Description: `Available values: "worker", "http_pull", "notification".`,
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("worker", "http_pull"),
+								stringvalidator.OneOfCaseInsensitive(
+									"worker",
+									"http_pull",
+									"notification",
+								),
 							},
 						},
 					},

@@ -77,7 +77,7 @@ func (d *WorkersDeploymentsDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 
-	if page != nil && len(page.Deployments) > 0 {
+	if page != nil && len(page.Result.Items) > 0 {
 		bytes := []byte(page.JSON.RawJSON())
 		err = apijson.UnmarshalComputed(bytes, &env)
 		if err != nil {

@@ -49,11 +49,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"include_shadow_metadata": schema.BoolAttribute{
-				Description: "Whether to include shadow metadata in the `meta` field of each record in the response. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
+			"name": schema.StringAttribute{
+				Description: "DNS record name (or @ for the zone apex) in Punycode.",
+				Required:    true,
 			},
 			"comment": schema.StringAttribute{
 				Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
@@ -115,17 +113,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				Attributes: map[string]schema.Attribute{
-					"priority": schema.Float64Attribute{
-						Description: "Required for MX and URI records; ignored for other record types (but may still be returned by the API). Records with lower priorities are preferred. This field is to be deprecated in favor of the priority field within the data map.",
-						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.Between(0, 65535),
-						},
-					},
-					"target": schema.StringAttribute{
-						Description: `A valid mail server hostname, or "." for a NULL MX record.`,
-						Optional:    true,
-					},
 					"flags": schema.DynamicAttribute{
 						Description: "Flags for the CAA record.",
 						Optional:    true,
@@ -189,6 +176,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Validators: []validator.Float64{
 							float64validator.Between(0, 255),
 						},
+					},
+					"priority": schema.Float64Attribute{
+						Description: "Priority.",
+						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 65535),
+						},
+					},
+					"target": schema.StringAttribute{
+						Description: "Target.",
+						Optional:    true,
 					},
 					"altitude": schema.Float64Attribute{
 						Description: "Altitude of location in meters.",
@@ -357,8 +355,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"tags": schema.SetAttribute{
 				Description:   "Custom tags for the DNS record. This field has no effect on DNS responses.",
-				Optional:      true,
 				Computed:      true,
+				Optional:      true,
 				CustomType:    customfield.NewSetType[types.String](ctx),
 				ElementType:   types.StringType,
 				PlanModifiers: []planmodifier.Set{setplanmodifier.UseNonNullStateForUnknown()},
@@ -416,10 +414,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Extra Cloudflare-specific information about the record.",
 				Computed:    true,
 				CustomType:  jsontypes.NormalizedType{},
-			},
-			"name": schema.StringAttribute{
-				Description: "DNS record name (or @ for the zone apex) in Punycode.",
-				Required:    true,
 			},
 		},
 	}

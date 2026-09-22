@@ -179,7 +179,6 @@ func init() {
 				tflog.Info(ctx, fmt.Sprintf("Disabling main zone email routing (zone: %s)", zoneID))
 				_, err = client.EmailRouting.Disable(ctx, email_routing.EmailRoutingDisableParams{
 					ZoneID: cloudflare.F(zoneID),
-					Body:   map[string]interface{}{"name": settings.Name},
 				})
 				if err != nil {
 					tflog.Error(ctx, fmt.Sprintf("Failed to disable main zone email routing: %s", err))

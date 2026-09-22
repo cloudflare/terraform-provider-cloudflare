@@ -7,12 +7,10 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -48,48 +46,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"direction": schema.StringAttribute{
-				Description: "Direction to order widgets.\nAvailable values: \"asc\", \"desc\".",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
-				},
-			},
-			"filter": schema.StringAttribute{
-				Description: "Filter widgets by field using case-insensitive substring matching.\nFormat: `field:value`\n\nSupported fields:\n- `name` - Filter by widget name (e.g., `filter=name:login-form`)\n- `sitekey` - Filter by sitekey (e.g., `filter=sitekey:0x4AAA`)\n\nReturns 400 Bad Request if the field is unsupported or format is invalid.\nAn empty filter value returns all results.",
-				Optional:    true,
-			},
-			"order": schema.StringAttribute{
-				Description: "Field to order widgets by.\nAvailable values: \"id\", \"sitekey\", \"name\", \"created_on\", \"modified_on\".",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"id",
-						"sitekey",
-						"name",
-						"created_on",
-						"modified_on",
-					),
-				},
-			},
-			"page": schema.Float64Attribute{
-				Description: "Page number of paginated results.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.AtLeast(1),
-				},
-				Default: float64default.StaticFloat64(1),
-			},
-			"per_page": schema.Float64Attribute{
-				Description: "Number of items per page.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(5, 1000),
-				},
-				Default: float64default.StaticFloat64(25),
 			},
 			"mode": schema.StringAttribute{
 				Description: "Widget Mode\nAvailable values: \"non-interactive\", \"invisible\", \"managed\".",
@@ -154,16 +110,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:    timetypes.RFC3339Type{},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
-		"modified_on": schema.StringAttribute{
-				Description: "When the widget was modified.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"secret": schema.StringAttribute{
-				Description: "Secret key for this widget.",
-				Computed:    true,
-				Sensitive:   true,
-			},
 			"deployed_via": schema.StringAttribute{
 				Description: "Origin that created this widget, recorded at creation time and\nimmutable afterward. Server-derived from the create request; not\nclient-settable. Omitted from the response for widgets created\nbefore this field existed.\nAvailable values: \"wrangler\", \"dashboard\", \"spin\", \"api\", \"unknown\".",
 				Computed:    true,
@@ -189,6 +135,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"unknown",
 					),
 				},
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the widget was modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"secret": schema.StringAttribute{
+				Description: "Secret key for this widget.",
+				Computed:    true,
+				Sensitive:   true,
 			},
 		},
 	}

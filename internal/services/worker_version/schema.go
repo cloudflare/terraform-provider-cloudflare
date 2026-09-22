@@ -14,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/mapplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
@@ -52,19 +51,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"worker_id": schema.StringAttribute{
 				Description:   "Identifier for the Worker, which can be ID or name.",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"deploy": schema.BoolAttribute{
-				Description:   "If true, a deployment will be created that sends 100% of traffic to the new version.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
-			},
-			"include": schema.StringAttribute{
-				Description: "Whether to include the `modules` property of the version in the response, which contains code and sourcemap content and may add several megabytes to the response size.\nAvailable values: \"modules\".",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("modules"),
-				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"compatibility_date": schema.StringAttribute{
@@ -430,6 +416,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						CustomType:  customfield.NewNestedObjectType[WorkerVersionAssetsConfigModel](ctx),
 						Attributes: map[string]schema.Attribute{
+							"base_path": schema.StringAttribute{
+								Description: "The public URL path prefix under which assets are served. A null request value resets it to `/`; responses represent the root as `/`. All versions in a gradual deployment must use the same canonical value. To change it, first deploy the version containing the change at 100%.",
+								Computed:    true,
+								Optional:    true,
+								Default:     stringdefault.StaticString("/"),
+							},
 							"html_handling": schema.StringAttribute{
 								Description: "Determines the redirects and rewrites of requests for HTML content.\nAvailable values: \"auto-trailing-slash\", \"force-trailing-slash\", \"drop-trailing-slash\", \"none\".",
 								Optional:    true,
@@ -496,7 +488,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"messaging\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"flagship\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\".",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"messaging\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"k2\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"flagship\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -520,6 +512,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"mtls_certificate",
 									"plain_text",
 									"pipelines",
+									"k2",
 									"queue",
 									"ratelimit",
 									"r2_bucket",
@@ -656,6 +649,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"pipeline": schema.StringAttribute{
 							Description: "Name of the Pipeline to bind to.",
+							Optional:    true,
+						},
+						"stream": schema.StringAttribute{
+							Description: "ID of a K2 stream owned by the account deploying the Worker.",
 							Optional:    true,
 						},
 						"queue_name": schema.StringAttribute{

@@ -17,7 +17,6 @@ type WorkersDeploymentModel struct {
 	ID          types.String                                                `tfsdk:"id" json:"id,computed"`
 	AccountID   types.String                                                `tfsdk:"account_id" path:"account_id,required"`
 	ScriptName  types.String                                                `tfsdk:"script_name" path:"script_name,required"`
-	Force       types.Bool                                                  `tfsdk:"force" query:"force,optional"`
 	Strategy    types.String                                                `tfsdk:"strategy" json:"strategy,required"`
 	Versions    *[]*WorkersDeploymentVersionsModel                          `tfsdk:"versions" json:"versions,required"`
 	Annotations customfield.NestedObject[WorkersDeploymentAnnotationsModel] `tfsdk:"annotations" json:"annotations,computed_optional"`

@@ -539,8 +539,8 @@ func testAccCheckCloudflareR2BucketDestroy(s *terraform.State) error {
 			context.Background(),
 			rs.Primary.ID,
 			r2.BucketGetParams{
-				AccountID:    cloudflare.F(accountID),
-				Jurisdiction: cloudflare.F(r2.BucketGetParamsCfR2Jurisdiction(jurisdiction)),
+				AccountID:        cloudflare.F(accountID),
+				CfR2Jurisdiction: cloudflare.F(r2.BucketGetParamsCfR2Jurisdiction(jurisdiction)),
 			},
 		)
 		if err == nil {

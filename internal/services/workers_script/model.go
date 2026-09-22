@@ -129,26 +129,26 @@ type WorkersScriptFileModel struct {
 }
 
 type WorkersScriptMetadataModel struct {
-	Annotations         customfield.NestedObject[WorkersScriptMetadataAnnotationsModel           ] `tfsdk:"annotations" json:"annotations,computed_optional"`
-	Assets              *WorkersScriptMetadataAssetsModel                 `tfsdk:"assets" json:"assets,optional"`
-	Bindings            customfield.NestedObjectList[WorkersScriptMetadataBindingsModel           ] `tfsdk:"bindings" json:"bindings,computed_optional"`
-	BodyPart            types.String                                      `tfsdk:"body_part" json:"body_part,computed_optional"`
-	CacheOptions        *WorkersScriptMetadataCacheOptionsModel           `tfsdk:"cache_options" json:"cache_options,optional"`
-	CompatibilityDate   types.String                                      `tfsdk:"compatibility_date" json:"compatibility_date,computed_optional"`
-	CompatibilityFlags  customfield.Set[types.String]                     `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
-	Exports             *map[string]WorkersScriptMetadataExportsModel     `tfsdk:"exports" json:"exports,optional"`
-	KeepAssets          types.Bool                                        `tfsdk:"keep_assets" json:"keep_assets,optional"`
-	KeepBindings        *[]types.String                                   `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
-	Limits              *WorkersScriptMetadataLimitsModel                 `tfsdk:"limits" json:"limits,optional"`
-	Logpush             types.Bool                                        `tfsdk:"logpush" json:"logpush,computed_optional"`
-	MainModule          types.String                                      `tfsdk:"main_module" json:"main_module,optional"`
-	Migrations          customfield.NestedObject[WorkersScriptMetadataMigrationsModel          ]   `tfsdk:"migrations" json:"migrations,optional"`
-	Observability       *WorkersScriptMetadataObservabilityModel          `tfsdk:"observability" json:"observability,optional"`
-	PackageDependencies *[]*WorkersScriptMetadataPackageDependenciesModel `tfsdk:"package_dependencies" json:"package_dependencies,optional"`
-	Placement           customfield.NestedObject[WorkersScriptMetadataPlacementModel          ]    `tfsdk:"placement" json:"placement,computed_optional"`
+	Annotations         customfield.NestedObject[WorkersScriptMetadataAnnotationsModel]  `tfsdk:"annotations" json:"annotations,computed_optional"`
+	Assets              *WorkersScriptMetadataAssetsModel                                `tfsdk:"assets" json:"assets,optional"`
+	Bindings            customfield.NestedObjectList[WorkersScriptMetadataBindingsModel] `tfsdk:"bindings" json:"bindings,computed_optional"`
+	BodyPart            types.String                                                     `tfsdk:"body_part" json:"body_part,computed_optional"`
+	CacheOptions        *WorkersScriptMetadataCacheOptionsModel                          `tfsdk:"cache_options" json:"cache_options,optional"`
+	CompatibilityDate   types.String                                                     `tfsdk:"compatibility_date" json:"compatibility_date,computed_optional"`
+	CompatibilityFlags  customfield.Set[types.String]                                    `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
+	Exports             *map[string]WorkersScriptMetadataExportsModel                    `tfsdk:"exports" json:"exports,optional"`
+	KeepAssets          types.Bool                                                       `tfsdk:"keep_assets" json:"keep_assets,optional"`
+	KeepBindings        *[]types.String                                                  `tfsdk:"keep_bindings" json:"keep_bindings,optional"`
+	Limits              *WorkersScriptMetadataLimitsModel                                `tfsdk:"limits" json:"limits,optional"`
+	Logpush             types.Bool                                                       `tfsdk:"logpush" json:"logpush,computed_optional"`
+	MainModule          types.String                                                     `tfsdk:"main_module" json:"main_module,optional"`
+	Migrations          customfield.NestedObject[WorkersScriptMetadataMigrationsModel]   `tfsdk:"migrations" json:"migrations,optional"`
+	Observability       *WorkersScriptMetadataObservabilityModel                         `tfsdk:"observability" json:"observability,optional"`
+	PackageDependencies *[]*WorkersScriptMetadataPackageDependenciesModel                `tfsdk:"package_dependencies" json:"package_dependencies,optional"`
+	Placement           customfield.NestedObject[WorkersScriptMetadataPlacementModel]    `tfsdk:"placement" json:"placement,computed_optional"`
 	//Tags                *[]types.String                                   `tfsdk:"tags" json:"tags,optional"`
-	TailConsumers       customfield.NestedObjectSet[WorkersScriptMetadataTailConsumersModel      ] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
-	UsageModel          types.String                                      `tfsdk:"usage_model" json:"usage_model,computed_optional"`
+	TailConsumers customfield.NestedObjectSet[WorkersScriptMetadataTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
+	UsageModel    types.String                                                         `tfsdk:"usage_model" json:"usage_model,computed_optional"`
 }
 
 type WorkersScriptMetadataAnnotationsModel struct {
@@ -171,6 +171,7 @@ type WorkersScriptMetadataAssetsConfigModel struct {
 	NotFoundHandling types.String                       `tfsdk:"not_found_handling" json:"not_found_handling,optional"`
 	RunWorkerFirst   customfield.NormalizedDynamicValue `tfsdk:"run_worker_first" json:"run_worker_first,optional"`
 	ServeDirectly    types.Bool                         `tfsdk:"serve_directly" json:"serve_directly,optional"`
+	BasePath         types.String                       `tfsdk:"base_path" json:"base_path,computed_optional"`
 }
 
 type WorkersScriptMetadataBindingsModel struct {
@@ -189,6 +190,7 @@ type WorkersScriptMetadataBindingsModel struct {
 	CertificateID               types.String                                `tfsdk:"certificate_id" json:"certificate_id,optional"`
 	Text                        types.String                                `tfsdk:"text" json:"text,optional"`
 	Pipeline                    types.String                                `tfsdk:"pipeline" json:"pipeline,optional"`
+	Stream                      types.String                                `tfsdk:"stream" json:"stream,optional"`
 	QueueName                   types.String                                `tfsdk:"queue_name" json:"queue_name,optional"`
 	Simple                      *WorkersScriptMetadataBindingsSimpleModel   `tfsdk:"simple" json:"simple,optional"`
 	BucketName                  types.String                                `tfsdk:"bucket_name" json:"bucket_name,optional"`
@@ -248,6 +250,49 @@ type WorkersScriptMetadataExportsCacheModel struct {
 	Enabled types.Bool `tfsdk:"enabled" json:"enabled,required"`
 }
 
+type WorkersScriptMetadataExportsReconciliationModel struct {
+	Created          customfield.List[types.String]                                                               `tfsdk:"created" json:"created,computed"`
+	Deleted          customfield.List[types.String]                                                               `tfsdk:"deleted" json:"deleted,computed"`
+	Info             customfield.NestedObjectList[WorkersScriptMetadataExportsReconciliationInfoModel]            `tfsdk:"info" json:"info,computed"`
+	RemovableEntries customfield.List[types.String]                                                               `tfsdk:"removable_entries" json:"removable_entries,computed"`
+	Renamed          customfield.NestedObjectList[WorkersScriptMetadataExportsReconciliationRenamedModel]         `tfsdk:"renamed" json:"renamed,computed"`
+	TransferPending  customfield.NestedObjectList[WorkersScriptMetadataExportsReconciliationTransferPendingModel] `tfsdk:"transfer_pending" json:"transfer_pending,computed"`
+	Transferred      customfield.NestedObjectList[WorkersScriptMetadataExportsReconciliationTransferredModel]     `tfsdk:"transferred" json:"transferred,computed"`
+	Updated          customfield.List[types.String]                                                               `tfsdk:"updated" json:"updated,computed"`
+	Warnings         customfield.NestedObjectList[WorkersScriptMetadataExportsReconciliationWarningsModel]        `tfsdk:"warnings" json:"warnings,computed"`
+}
+
+type WorkersScriptMetadataExportsReconciliationInfoModel struct {
+	Class              types.String                   `tfsdk:"class" json:"class,computed"`
+	Message            types.String                   `tfsdk:"message" json:"message,computed"`
+	Scenario           types.String                   `tfsdk:"scenario" json:"scenario,computed"`
+	NamespaceID        types.String                   `tfsdk:"namespace_id" json:"namespace_id,computed"`
+	ReferencingScripts customfield.List[types.String] `tfsdk:"referencing_scripts" json:"referencing_scripts,computed"`
+}
+
+type WorkersScriptMetadataExportsReconciliationRenamedModel struct {
+	From types.String `tfsdk:"from" json:"from,computed"`
+	To   types.String `tfsdk:"to" json:"to,computed"`
+}
+
+type WorkersScriptMetadataExportsReconciliationTransferPendingModel struct {
+	Class types.String `tfsdk:"class" json:"class,computed"`
+	From  types.String `tfsdk:"from" json:"from,computed"`
+}
+
+type WorkersScriptMetadataExportsReconciliationTransferredModel struct {
+	Class types.String `tfsdk:"class" json:"class,computed"`
+	Phase types.String `tfsdk:"phase" json:"phase,computed"`
+	To    types.String `tfsdk:"to" json:"to,computed"`
+}
+
+type WorkersScriptMetadataExportsReconciliationWarningsModel struct {
+	Class       types.String `tfsdk:"class" json:"class,computed"`
+	Message     types.String `tfsdk:"message" json:"message,computed"`
+	Scenario    types.String `tfsdk:"scenario" json:"scenario,computed"`
+	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id,computed"`
+}
+
 type WorkersScriptMetadataLimitsModel struct {
 	CPUMs       types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,optional"`
 	Subrequests types.Int64 `tfsdk:"subrequests" json:"subrequests,optional"`
@@ -295,11 +340,11 @@ type WorkersScriptMetadataMigrationsStepsTransferredClassesModel struct {
 }
 
 type WorkersScriptMetadataObservabilityModel struct {
-	Enabled           types.Bool                                     `tfsdk:"enabled" json:"enabled,required"`
-	HeadSamplingRate  types.Float64                                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
-	Issues            *WorkersScriptMetadataObservabilityIssuesModel `tfsdk:"issues" json:"issues,optional"`
-	Logs              *WorkersScriptMetadataObservabilityLogsModel   `tfsdk:"logs" json:"logs,optional"`
-	Traces            *WorkersScriptMetadataObservabilityTracesModel `tfsdk:"traces" json:"traces,optional"`
+	Enabled          types.Bool                                     `tfsdk:"enabled" json:"enabled,required"`
+	HeadSamplingRate types.Float64                                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
+	Issues           *WorkersScriptMetadataObservabilityIssuesModel `tfsdk:"issues" json:"issues,optional"`
+	Logs             *WorkersScriptMetadataObservabilityLogsModel   `tfsdk:"logs" json:"logs,optional"`
+	Traces           *WorkersScriptMetadataObservabilityTracesModel `tfsdk:"traces" json:"traces,optional"`
 }
 
 type WorkersScriptMetadataObservabilityIssuesModel struct {
@@ -356,11 +401,11 @@ type WorkersScriptNamedHandlersModel struct {
 }
 
 type WorkersScriptObservabilityModel struct {
-	Enabled           types.Bool                                                      `tfsdk:"enabled" json:"enabled,computed"`
-	HeadSamplingRate  types.Float64                                                   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Issues            customfield.NestedObject[WorkersScriptObservabilityIssuesModel] `tfsdk:"issues" json:"issues,computed"`
-	Logs              customfield.NestedObject[WorkersScriptObservabilityLogsModel]   `tfsdk:"logs" json:"logs,computed"`
-	Traces            customfield.NestedObject[WorkersScriptObservabilityTracesModel] `tfsdk:"traces" json:"traces,computed"`
+	Enabled          types.Bool                                                      `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate types.Float64                                                   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Issues           customfield.NestedObject[WorkersScriptObservabilityIssuesModel] `tfsdk:"issues" json:"issues,computed"`
+	Logs             customfield.NestedObject[WorkersScriptObservabilityLogsModel]   `tfsdk:"logs" json:"logs,computed"`
+	Traces           customfield.NestedObject[WorkersScriptObservabilityTracesModel] `tfsdk:"traces" json:"traces,computed"`
 }
 
 type WorkersScriptObservabilityIssuesModel struct {

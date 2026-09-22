@@ -14,7 +14,6 @@ type APIShieldResultEnvelope struct {
 type APIShieldModel struct {
 	ID                    types.String                            `tfsdk:"id" json:"-,computed"`
 	ZoneID                types.String                            `tfsdk:"zone_id" path:"zone_id,required"`
-	Normalize             types.Bool                              `tfsdk:"normalize" query:"normalize,optional"`
 	AuthIDCharacteristics *[]*APIShieldAuthIDCharacteristicsModel `tfsdk:"auth_id_characteristics" json:"auth_id_characteristics,required"`
 }
 

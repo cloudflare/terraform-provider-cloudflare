@@ -153,24 +153,14 @@ func (r *ShareResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		return
 	}
 
-	params := resource_sharing.ResourceSharingGetParams{
-		AccountID: cloudflare.F(data.AccountID.ValueString()),
-	}
-
-	if !data.IncludeRecipientCounts.IsNull() && !data.IncludeRecipientCounts.IsUnknown() {
-		params.IncludeRecipientCounts = cloudflare.F(data.IncludeRecipientCounts.ValueBool())
-	}
-
-	if !data.IncludeResources.IsNull() && !data.IncludeResources.IsUnknown() {
-		params.IncludeResources = cloudflare.F(data.IncludeResources.ValueBool())
-	}
-
 	res := new(http.Response)
 	env := ShareResultEnvelope{*data}
 	_, err := r.client.ResourceSharing.Get(
 		ctx,
 		data.ID.ValueString(),
-		params,
+		resource_sharing.ResourceSharingGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

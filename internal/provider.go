@@ -238,6 +238,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_short_lived_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_tag"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_casb_policy"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_casb_webhook"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_connectivity_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_custom_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_custom_profile_local_domain_fallback"
@@ -648,6 +649,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_access_tag.NewResource,
 		zero_trust_access_policy.NewResource,
 		zero_trust_casb_policy.NewResource,
+		zero_trust_casb_webhook.NewResource,
 		zero_trust_dex_rule.NewResource,
 		zero_trust_tunnel_cloudflared.NewResource,
 		zero_trust_tunnel_cloudflared_config.NewResource,
@@ -869,7 +871,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		authenticated_origin_pulls_settings.NewAuthenticatedOriginPullsSettingsDataSource,
 		page_rule.NewPageRuleDataSource,
 		rate_limit.NewRateLimitDataSource,
-		rate_limit.NewRateLimitsDataSource,
 		waiting_room.NewWaitingRoomDataSource,
 		waiting_room.NewWaitingRoomsDataSource,
 		waiting_room_event.NewWaitingRoomEventDataSource,
@@ -1040,6 +1041,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_access_policy.NewZeroTrustAccessPoliciesDataSource,
 		zero_trust_casb_policy.NewZeroTrustCasbPolicyDataSource,
 		zero_trust_casb_policy.NewZeroTrustCasbPoliciesDataSource,
+		zero_trust_casb_webhook.NewZeroTrustCasbWebhookDataSource,
+		zero_trust_casb_webhook.NewZeroTrustCasbWebhooksDataSource,
 		zero_trust_dex_rule.NewZeroTrustDEXRuleDataSource,
 		zero_trust_dex_rule.NewZeroTrustDEXRulesDataSource,
 		zero_trust_tunnel_cloudflared.NewZeroTrustTunnelCloudflaredDataSource,

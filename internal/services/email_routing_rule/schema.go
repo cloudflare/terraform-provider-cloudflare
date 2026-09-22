@@ -58,6 +58,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"value": schema.ListAttribute{
+							Description: "List of values for the action. Currently limited to a single value.",
 							Optional:    true,
 							ElementType: types.StringType,
 						},

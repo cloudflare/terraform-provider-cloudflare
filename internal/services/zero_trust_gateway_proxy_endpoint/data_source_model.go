@@ -20,7 +20,7 @@ type ZeroTrustGatewayProxyEndpointResultDataSourceEnvelope struct {
 type ZeroTrustGatewayProxyEndpointDataSourceModel struct {
 	ID              types.String                                           `tfsdk:"id" path:"proxy_endpoint_id,computed"`
 	ProxyEndpointID types.String                                           `tfsdk:"proxy_endpoint_id" path:"proxy_endpoint_id,optional"`
-	AccountID       types.String                                           `tfsdk:"account_id" path:"account_id,required"`
+	AccountID       types.String                                           `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedAt       timetypes.RFC3339                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Kind            types.String                                           `tfsdk:"kind" json:"kind,computed"`
 	Name            types.String                                           `tfsdk:"name" json:"name,computed"`
@@ -39,7 +39,7 @@ func (m *ZeroTrustGatewayProxyEndpointDataSourceModel) toReadParams(_ context.Co
 }
 
 func (m *ZeroTrustGatewayProxyEndpointDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayProxyEndpointListParams, diags diag.Diagnostics) {
-	mFilterFilter := []interface{}{}
+	mFilterFilter := []string{}
 	if m.Filter.Filter != nil {
 		for _, item := range *m.Filter.Filter {
 			mFilterFilter = append(mFilterFilter, item.ValueString())

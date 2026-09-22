@@ -27,6 +27,7 @@ type WorkflowModel struct {
 	CreatedOn         timetypes.RFC3339              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	IsDeleted         types.Float64                  `tfsdk:"is_deleted" json:"is_deleted,computed,no_refresh"`
 	ModifiedOn        timetypes.RFC3339              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	ScriptDeleted     types.Bool                     `tfsdk:"script_deleted" json:"script_deleted,computed"`
 	TerminatorRunning types.Float64                  `tfsdk:"terminator_running" json:"terminator_running,computed,no_refresh"`
 	TriggeredOn       timetypes.RFC3339              `tfsdk:"triggered_on" json:"triggered_on,computed" format:"date-time"`
 	VersionID         types.String                   `tfsdk:"version_id" json:"version_id,computed,no_refresh"`

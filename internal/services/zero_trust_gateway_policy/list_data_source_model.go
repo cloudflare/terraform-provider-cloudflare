@@ -28,7 +28,7 @@ type ZeroTrustGatewayPoliciesDataSourceModel struct {
 }
 
 func (m *ZeroTrustGatewayPoliciesDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayRuleListParams, diags diag.Diagnostics) {
-	mFilter := []interface{}{}
+	mFilter := []string{}
 	if m.Filter != nil {
 		for _, item := range *m.Filter {
 			mFilter = append(mFilter, item.ValueString())

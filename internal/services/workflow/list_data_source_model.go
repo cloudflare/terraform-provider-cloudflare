@@ -37,15 +37,16 @@ func (m *WorkflowsDataSourceModel) toListParams(_ context.Context) (params workf
 }
 
 type WorkflowsResultDataSourceModel struct {
-	ID          types.String                                                    `tfsdk:"id" json:"id,computed"`
-	ClassName   types.String                                                    `tfsdk:"class_name" json:"class_name,computed"`
-	CreatedOn   timetypes.RFC3339                                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Instances   customfield.Map[types.Float64]                                  `tfsdk:"instances" json:"instances,computed"`
-	ModifiedOn  timetypes.RFC3339                                               `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Name        types.String                                                    `tfsdk:"name" json:"name,computed"`
-	ScriptName  types.String                                                    `tfsdk:"script_name" json:"script_name,computed"`
-	TriggeredOn timetypes.RFC3339                                               `tfsdk:"triggered_on" json:"triggered_on,computed" format:"date-time"`
-	Schedules   customfield.NestedObjectList[WorkflowsSchedulesDataSourceModel] `tfsdk:"schedules" json:"schedules,computed"`
+	ID            types.String                                                    `tfsdk:"id" json:"id,computed"`
+	ClassName     types.String                                                    `tfsdk:"class_name" json:"class_name,computed"`
+	CreatedOn     timetypes.RFC3339                                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Instances     customfield.Map[types.Float64]                                  `tfsdk:"instances" json:"instances,computed"`
+	ModifiedOn    timetypes.RFC3339                                               `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name          types.String                                                    `tfsdk:"name" json:"name,computed"`
+	ScriptName    types.String                                                    `tfsdk:"script_name" json:"script_name,computed"`
+	TriggeredOn   timetypes.RFC3339                                               `tfsdk:"triggered_on" json:"triggered_on,computed" format:"date-time"`
+	Schedules     customfield.NestedObjectList[WorkflowsSchedulesDataSourceModel] `tfsdk:"schedules" json:"schedules,computed"`
+	ScriptDeleted types.Bool                                                      `tfsdk:"script_deleted" json:"script_deleted,computed"`
 }
 
 type WorkflowsSchedulesDataSourceModel struct {

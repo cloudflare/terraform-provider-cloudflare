@@ -37,10 +37,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
-			"subdomain": schema.StringAttribute{
-				Description: "Deprecated. When supplied, the response shape differs from the documented default and is not modeled in generated SDKs. Do not rely on this parameter.",
-				Optional:    true,
-			},
 			"name": schema.StringAttribute{
 				Description: "Domain of your zone.",
 				Optional:    true,

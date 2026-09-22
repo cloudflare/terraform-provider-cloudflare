@@ -38,10 +38,25 @@ func (m *QueueConsumerDataSourceModel) toReadParams(_ context.Context) (params q
 }
 
 type QueueConsumerSettingsDataSourceModel struct {
-	BatchSize           types.Float64 `tfsdk:"batch_size" json:"batch_size,computed"`
-	MaxConcurrency      types.Float64 `tfsdk:"max_concurrency" json:"max_concurrency,computed"`
-	MaxRetries          types.Float64 `tfsdk:"max_retries" json:"max_retries,computed"`
-	MaxWaitTimeMs       types.Float64 `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms,computed"`
-	RetryDelay          types.Float64 `tfsdk:"retry_delay" json:"retry_delay,computed"`
-	VisibilityTimeoutMs types.Float64 `tfsdk:"visibility_timeout_ms" json:"visibility_timeout_ms,computed"`
+	BatchSize           types.Float64                                                               `tfsdk:"batch_size" json:"batch_size,computed"`
+	MaxConcurrency      types.Float64                                                               `tfsdk:"max_concurrency" json:"max_concurrency,computed"`
+	MaxRetries          types.Float64                                                               `tfsdk:"max_retries" json:"max_retries,computed"`
+	MaxWaitTimeMs       types.Float64                                                               `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms,computed"`
+	RetryDelay          types.Float64                                                               `tfsdk:"retry_delay" json:"retry_delay,computed"`
+	VisibilityTimeoutMs types.Float64                                                               `tfsdk:"visibility_timeout_ms" json:"visibility_timeout_ms,computed"`
+	Email               customfield.NestedObjectList[QueueConsumerSettingsEmailDataSourceModel]     `tfsdk:"email" json:"email,computed"`
+	Pagerduty           customfield.NestedObjectList[QueueConsumerSettingsPagerdutyDataSourceModel] `tfsdk:"pagerduty" json:"pagerduty,computed"`
+	Webhooks            customfield.NestedObjectList[QueueConsumerSettingsWebhooksDataSourceModel]  `tfsdk:"webhooks" json:"webhooks,computed"`
+}
+
+type QueueConsumerSettingsEmailDataSourceModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed"`
+}
+
+type QueueConsumerSettingsPagerdutyDataSourceModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed"`
+}
+
+type QueueConsumerSettingsWebhooksDataSourceModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }

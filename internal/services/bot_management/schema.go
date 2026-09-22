@@ -159,6 +159,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 			},
+			"jsd_api_results_enabled": schema.BoolAttribute{
+				Description:   "Whether to use JavaScript Detection results submitted through the API for this zone.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
+			},
 			"optimize_wordpress": schema.BoolAttribute{
 				Description:   "Whether to optimize Super Bot Fight Mode protections for Wordpress.",
 				Computed:      true,

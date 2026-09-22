@@ -69,13 +69,6 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	params := workers.BetaWorkerVersionNewParams{
-		AccountID: cloudflare.F(data.AccountID.ValueString()),
-	}
-
-	if !data.Deploy.IsNull() && !data.Deploy.IsUnknown() {
-		params.Deploy = cloudflare.F(data.Deploy.ValueBool())
-	}
 	var assets *WorkerVersionAssetsModel
 	if !data.Assets.IsNull() && !data.Assets.IsUnknown() {
 		planAssets, diags := data.Assets.Value(ctx)
@@ -143,7 +136,9 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	_, err = r.client.Workers.Beta.Workers.Versions.New(
 		ctx,
 		data.WorkerID.ValueString(),
-		params,
+		workers.BetaWorkerVersionNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -264,13 +259,6 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	params := workers.BetaWorkerVersionGetParams{
-		AccountID: cloudflare.F(data.AccountID.ValueString()),
-	}
-
-	if !data.Include.IsNull() && !data.Include.IsUnknown() {
-		params.Include = cloudflare.F(workers.BetaWorkerVersionGetParamsInclude(data.Include.ValueString()))
-	}
 	assets := data.Assets
 	var stateModules *[]*WorkerVersionModulesModel
 	if data.Modules != nil {
@@ -288,7 +276,10 @@ func (r *WorkerVersionResource) Read(ctx context.Context, req resource.ReadReque
 		ctx,
 		data.WorkerID.ValueString(),
 		data.ID.ValueString(),
-		params,
+		workers.BetaWorkerVersionGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+			Include:   cloudflare.F(workers.BetaWorkerVersionGetParamsIncludeModules),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

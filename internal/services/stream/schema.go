@@ -45,12 +45,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"direct_user": schema.BoolAttribute{
-				Description: "Provisions a URL to let your end users upload videos directly to Cloudflare Stream without exposing your API token to clients.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
 			"creator": schema.StringAttribute{
 				Description: "A user-defined identifier for the media creator.",
 				Optional:    true,

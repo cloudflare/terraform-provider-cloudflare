@@ -62,6 +62,7 @@ type BotManagementModel struct {
 	EnableJS                     types.Bool                                                         `tfsdk:"enable_js" json:"enable_js,computed_optional"`
 	FightMode                    types.Bool                                                         `tfsdk:"fight_mode" json:"fight_mode,computed_optional"`
 	IsRobotsTXTManaged           types.Bool                                                         `tfsdk:"is_robots_txt_managed" json:"is_robots_txt_managed,computed_optional"`
+	JsdAPIResultsEnabled         types.Bool                                                         `tfsdk:"jsd_api_results_enabled" json:"jsd_api_results_enabled,computed_optional"`
 	OptimizeWordpress            types.Bool                                                         `tfsdk:"optimize_wordpress" json:"optimize_wordpress,computed_optional"`
 	SBFMDefinitelyAutomated      types.String                                                       `tfsdk:"sbfm_definitely_automated" json:"sbfm_definitely_automated,computed_optional"`
 	SBFMLikelyAutomated          types.String                                                       `tfsdk:"sbfm_likely_automated" json:"sbfm_likely_automated,computed_optional"`

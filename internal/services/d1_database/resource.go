@@ -155,28 +155,14 @@ func (r *D1DatabaseResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 
-	dataFields := []d1.DatabaseGetParamsField{}
-
-	if data.Fields != nil {
-		for _, item := range *data.Fields {
-			dataFields = append(dataFields, d1.DatabaseGetParamsField(item.ValueString()))
-		}
-	}
-
-	params := d1.DatabaseGetParams{
-		AccountID: cloudflare.F(data.AccountID.ValueString()),
-	}
-
-	if data.Fields != nil {
-		params.Fields = cloudflare.F(dataFields)
-	}
-
 	res := new(http.Response)
 	env := D1DatabaseResultEnvelope{*data}
 	_, err := r.client.D1.Database.Get(
 		ctx,
 		data.UUID.ValueString(),
-		params,
+		d1.DatabaseGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

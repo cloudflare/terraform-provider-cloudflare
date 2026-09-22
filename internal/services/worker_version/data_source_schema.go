@@ -145,6 +145,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[WorkerVersionAssetsConfigDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
+							"base_path": schema.StringAttribute{
+								Description: "The public URL path prefix under which assets are served. A null request value resets it to `/`; responses represent the root as `/`. All versions in a gradual deployment must use the same canonical value. To change it, first deploy the version containing the change at 100%.",
+								Computed:    true,
+							},
 							"html_handling": schema.StringAttribute{
 								Description: "Determines the redirects and rewrites of requests for HTML content.\nAvailable values: \"auto-trailing-slash\", \"force-trailing-slash\", \"drop-trailing-slash\", \"none\".",
 								Computed:    true,
@@ -194,7 +198,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"messaging\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"flagship\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\".",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"messaging\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"k2\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"flagship\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -218,6 +222,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									"mtls_certificate",
 									"plain_text",
 									"pipelines",
+									"k2",
 									"queue",
 									"ratelimit",
 									"r2_bucket",
@@ -344,6 +349,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"pipeline": schema.StringAttribute{
 							Description: "Name of the Pipeline to bind to.",
+							Computed:    true,
+						},
+						"stream": schema.StringAttribute{
+							Description: "ID of a K2 stream owned by the account deploying the Worker.",
 							Computed:    true,
 						},
 						"queue_name": schema.StringAttribute{

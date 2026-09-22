@@ -64,8 +64,7 @@ func (d *RateLimitDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	res := new(http.Response)
-	env := RateLimitResultDataSourceEnvelope{*data}
-	_, err := d.client.RateLimits.Get(
+	err := d.client.RateLimits.Get(
 		ctx,
 		data.RateLimitID.ValueString(),
 		params,
@@ -77,13 +76,11 @@ func (d *RateLimitDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
-	data.ID = data.RateLimitID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
