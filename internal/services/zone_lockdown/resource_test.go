@@ -87,6 +87,25 @@ func TestAccCloudflareZoneLockdown(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "configurations.#", "1"),
 				),
 			},
+			// Mutate only `urls`, which is the one configurable attribute that is
+			// not RequiresReplace, so this exercises Update in-place rather than a
+			// destroy/create. This is the path that surfaces the `created_on`
+			// plan-vs-apply inconsistency.
+			{
+				Config: testCloudflareZoneLockdownConfig(rnd, zoneID, "false", "1", "this is notes", rnd+"."+zoneName+"/updated/*", "ip", "198.51.100.4"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+					},
+				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(name, "urls.#", "1"),
+					resource.TestCheckResourceAttr(name, "urls.0", rnd+"."+zoneName+"/updated/*"),
+					resource.TestCheckResourceAttr(name, "configurations.#", "1"),
+					resource.TestCheckResourceAttrSet(name, "created_on"),
+				),
+			},
 		},
 	})
 }
