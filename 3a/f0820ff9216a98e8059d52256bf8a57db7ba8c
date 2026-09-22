@@ -1,0 +1,23 @@
+internal/services/account/schema.go
+  s_fb5224f0f7a7c8::t_3740cc59f9f84e 72-76
+internal/services/observatory_scheduled_test/schema.go
+  s_fb5224f0f7a7c8::t_31958900560f3e 48-50
+internal/services/snippet_rules/list_data_source_schema.go
+  s_fb5224f0f7a7c8::t_b616dfc320ffae 46-54,59-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3af0820ff9216a98e8059d52256bf8a57db7ba8c",
+  "prompts": {},
+  "sessions": {
+    "s_fb5224f0f7a7c8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3a1eec8cffeI3yUFT8u2c9i2n",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
