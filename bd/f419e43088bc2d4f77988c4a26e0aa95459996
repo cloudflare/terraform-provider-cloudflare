@@ -1,0 +1,41 @@
+internal/services/magic_wan_ipsec_tunnel/data_source_model.go
+  s_c6ca07eb5fd35b::t_79ffd4799f60fc 56-60
+internal/services/magic_wan_ipsec_tunnel/data_source_schema.go
+  s_c6ca07eb5fd35b::t_5b494b2d36665b 76-80,83-100,102-105
+internal/services/magic_wan_ipsec_tunnel/model.go
+  s_c6ca07eb5fd35b::t_f397ae61be5519 106-110
+  s_c6ca07eb5fd35b::t_fc0abc89853cd6 166-170
+  s_c6ca07eb5fd35b::t_9765e542e83096 50-54
+internal/services/magic_wan_gre_tunnel/model.go
+  s_c6ca07eb5fd35b::t_9ca5fadccbec90 47-51
+  s_c6ca07eb5fd35b::t_594c687ed204e7 97-101
+  s_c6ca07eb5fd35b::t_eb5d453df1f9ca 147-151
+internal/services/magic_wan_gre_tunnel/data_source_schema.go
+  s_c6ca07eb5fd35b::t_d37a8b9188995c 76-80,83-100,102-105
+internal/services/magic_wan_gre_tunnel/schema.go
+  s_c6ca07eb5fd35b::t_c204a48f997777 273-279,282-299,301-304
+  s_c6ca07eb5fd35b::t_00071774527c83 463-469,472-489,491-494
+  s_c6ca07eb5fd35b::t_885e6dbe350573 52-56,59-77
+internal/services/magic_wan_ipsec_tunnel/schema.go
+  s_c6ca07eb5fd35b::t_f4835f00dda899 283-289,292-309,311-314
+  s_c6ca07eb5fd35b::t_8e0c82f017a7b6 494-500,503-520,522-525
+  s_c6ca07eb5fd35b::t_927e76382f105a 80-84,87-103,105-106
+internal/services/magic_wan_gre_tunnel/data_source_model.go
+  s_c6ca07eb5fd35b::t_6b41378b2499c4 54-58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "bdf419e43088bc2d4f77988c4a26e0aa95459996",
+  "prompts": {},
+  "sessions": {
+    "s_c6ca07eb5fd35b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f55522fc2ffeybdyvwuytqMVe9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

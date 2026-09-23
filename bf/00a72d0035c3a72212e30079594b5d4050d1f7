@@ -1,0 +1,24 @@
+examples/resources/cloudflare_zero_trust_casb_integration/resource.tf
+  s_c124501c564855::t_80aa2387db81c5 4-6
+internal/services/zero_trust_casb_integration/schema.go
+  s_c124501c564855::t_5cab9e429e67fb 200
+docs/resources/zero_trust_casb_integration.md
+  s_c124501c564855::t_c7f472b6b41ff8 18-20
+  s_c124501c564855::t_dbfc947dadb2c4 161
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "bf00a72d0035c3a72212e30079594b5d4050d1f7",
+  "prompts": {},
+  "sessions": {
+    "s_c124501c564855": {
+      "agent_id": {
+        "tool": "windsurf",
+        "id": "humble-shape",
+        "model": "unknown"
+      },
+      "human_author": "Peter Bandziukas <pbandziukas@cloudflare.com>"
+    }
+  }
+}

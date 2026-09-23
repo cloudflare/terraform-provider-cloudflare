@@ -1,0 +1,26 @@
+internal/services/zone_lockdown/resource_test.go
+  s_279715510d0e77::t_d0f98a23493762 90-108
+internal/services/zone_lockdown/schema.go
+  s_279715510d0e77::t_98737350a75a0f 85-90,92-94
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1e435af44abb714a8b4a4531d76ea7dd94899161",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_279715510d0e77": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3b3385afffe3Lff8FOi4r5Dwz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}

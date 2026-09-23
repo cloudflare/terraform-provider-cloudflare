@@ -1,0 +1,46 @@
+internal/services/zero_trust_dns_location/list_data_source_model.go
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 31
+internal/services/api_shield_operation/resource.go
+  s_67dfb1d494a6a4::t_5397deb8aab16a 124
+internal/services/zero_trust_list/data_source_model.go
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 43
+internal/services/workers_deployment/list_data_source.go
+  s_67dfb1d494a6a4::t_ba111185113446 80
+internal/services/d1_database/resource.go
+  s_67dfb1d494a6a4::t_5397deb8aab16a 170
+internal/services/zero_trust_dns_location/data_source_model.go
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 50
+internal/services/workers_deployment/list_data_source_schema.go
+  s_67dfb1d494a6a4::t_8f70b8e89f7f82 52-69,71,74,76-77,80,86-102
+internal/services/zero_trust_list/list_data_source_model.go
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 32
+internal/services/workers_deployment/list_data_source_model.go
+  s_67dfb1d494a6a4::t_8f70b8e89f7f82 36-42
+  s_67dfb1d494a6a4::t_ba111185113446 17,45,50
+internal/services/zero_trust_gateway_proxy_endpoint/data_source_model.go
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 42
+internal/services/dns_record/model.go
+  s_67dfb1d494a6a4::t_62d4aa47c13a5b 37
+internal/services/zero_trust_gateway_policy/list_data_source_model.go
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 31
+internal/services/zero_trust_gateway_proxy_endpoint/list_data_source_model.go
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 31
+internal/services/zero_trust_gateway_policy/data_source_model.go
+  s_67dfb1d494a6a4::t_6cec6b783b9e11 56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a0f28e14a26a7ac1683fe084bf4898e4ec85e82b",
+  "prompts": {},
+  "sessions": {
+    "s_67dfb1d494a6a4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f49fd8563ffeljbSq4zkizMgRa",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": null
+    }
+  }
+}
