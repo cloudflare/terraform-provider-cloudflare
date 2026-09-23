@@ -36,6 +36,10 @@ TEMPLATE_FILES = [
 BEGIN_MARKER = "<!-- BEGIN_ZONE_SETTING_IDS -->"
 END_MARKER = "<!-- END_ZONE_SETTING_IDS -->"
 
+# These settings have dedicated resources and must not be advertised through
+# the generic zone setting resource even if they remain in the upstream spec.
+EXCLUDED_SETTING_IDS = {"cname_flattening"}
+
 
 def load_spec(path_or_url):
     """Load and parse the OpenAPI spec from a local file path or https:// URL."""
@@ -166,6 +170,9 @@ def extract_settings(spec):
             if "enum" in id_prop
             else id_prop.get("example", "?")
         )
+
+        if setting_id in EXCLUDED_SETTING_IDS:
+            continue
 
         # Extract description
         description = schema.get("description", "")
