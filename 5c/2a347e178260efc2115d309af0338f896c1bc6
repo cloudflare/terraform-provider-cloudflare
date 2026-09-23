@@ -1,0 +1,42 @@
+go.mod
+  h_5f12c8df3da73f 6-11,14,22-26,29-30,39-40,43-56,59,61,63-64,70,74-79,82,88,91-92,94-95,97,102,107,109-116,118
+internal/services/zero_trust_device_default_profile/model.go
+  h_5f12c8df3da73f 20,55,67-69,81-83,87-88
+internal/services/zero_trust_device_default_profile/schema.go
+  h_5f12c8df3da73f 11-12,16,54-62,66-75,79-88,92-101,108,129-143,264,273,288
+internal/services/zero_trust_device_default_profile/data_source_model.go
+  h_5f12c8df3da73f 21
+internal/services/zero_trust_device_custom_profile/schema.go
+  h_5f12c8df3da73f 10,12,16,55-60,69-77,81-93,97-106,110-122,148-150,169,173-187,297,326-329
+internal/services/zero_trust_device_custom_profile/list_data_source_schema.go
+  h_5f12c8df3da73f 23
+internal/services/zero_trust_device_custom_profile/data_source_schema.go
+  h_5f12c8df3da73f 31
+internal/provider.go
+  h_5f12c8df3da73f 7,9,13-14,41-43,130,170,181,228,306-307,311,315,331-336,347-350,352-377,379-383,385-388,390-393,429-430,435-436,441-461,515-516,551-553,576,588,648,708,872-876,930-931,963-964,1035-1036,1145-1146
+internal/services/zero_trust_device_default_profile/data_source_schema.go
+  h_5f12c8df3da73f 25
+internal/services/zero_trust_device_custom_profile/model.go
+  s_a3c28aae836ac1::t_533b72d4504466 19,21,31,45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5c2a347e178260efc2115d309af0338f896c1bc6",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_a3c28aae836ac1": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3a539bc5fferAa4ZLfxKMkXIx",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
