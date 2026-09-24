@@ -64,20 +64,24 @@ func (r *ObservatoryScheduledTestResource) Create(ctx context.Context, req resou
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
+	params := speed.ScheduleNewParams{
+		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 	}
+
+	if !data.Frequency.IsNull() && !data.Frequency.IsUnknown() {
+		params.Frequency = cloudflare.F(speed.ScheduleNewParamsFrequency(data.Frequency.ValueString()))
+	}
+
+	if !data.Region.IsNull() && !data.Region.IsUnknown() {
+		params.Region = cloudflare.F(speed.ScheduleNewParamsRegion(data.Region.ValueString()))
+	}
+
 	res := new(http.Response)
 	env := ObservatoryScheduledTestResultEnvelope{*data}
-	_, err = r.client.Speed.Schedule.New(
+	_, err := r.client.Speed.Schedule.New(
 		ctx,
 		data.URL.ValueString(),
-		speed.ScheduleNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -110,14 +114,20 @@ func (r *ObservatoryScheduledTestResource) Read(ctx context.Context, req resourc
 		return
 	}
 
+	params := speed.ScheduleGetParams{
+		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	}
+
+	if !data.Region.IsNull() && !data.Region.IsUnknown() {
+		params.Region = cloudflare.F(speed.ScheduleGetParamsRegion(data.Region.ValueString()))
+	}
+
 	res := new(http.Response)
 	env := ObservatoryScheduledTestResultEnvelope{*data}
 	_, err := r.client.Speed.Schedule.Get(
 		ctx,
 		data.URL.ValueString(),
-		speed.ScheduleGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -151,12 +161,18 @@ func (r *ObservatoryScheduledTestResource) Delete(ctx context.Context, req resou
 		return
 	}
 
+	params := speed.ScheduleDeleteParams{
+		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	}
+
+	if !data.Region.IsNull() && !data.Region.IsUnknown() {
+		params.Region = cloudflare.F(speed.ScheduleDeleteParamsRegion(data.Region.ValueString()))
+	}
+
 	_, err := r.client.Speed.Schedule.Delete(
 		ctx,
 		data.URL.ValueString(),
-		speed.ScheduleDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

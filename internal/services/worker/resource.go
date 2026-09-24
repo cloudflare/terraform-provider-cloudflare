@@ -203,12 +203,18 @@ func (r *WorkerResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		return
 	}
 
+	params := workers.BetaWorkerDeleteParams{
+		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	}
+
+	if !data.Force.IsNull() && !data.Force.IsUnknown() {
+		params.Force = cloudflare.F(data.Force.ValueBool())
+	}
+
 	_, err := r.client.Workers.Beta.Workers.Delete(
 		ctx,
 		data.ID.ValueString(),
-		workers.BetaWorkerDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

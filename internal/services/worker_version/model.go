@@ -18,6 +18,8 @@ type WorkerVersionModel struct {
 	ID                    types.String                                                      `tfsdk:"id" json:"id,computed"`
 	AccountID             types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	WorkerID              types.String                                                      `tfsdk:"worker_id" path:"worker_id,required"`
+	Deploy                types.Bool                                                        `tfsdk:"deploy" query:"deploy,optional"`
+	Include               types.String                                                      `tfsdk:"include" query:"include,optional"`
 	CompatibilityDate     types.String                                                      `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
 	MainModule            types.String                                                      `tfsdk:"main_module" json:"main_module,optional"`
 	MainScriptBase64      types.String                                                      `tfsdk:"main_script_base64" json:"main_script_base64,computed"`

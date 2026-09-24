@@ -91,6 +91,7 @@ type NotificationPolicyFiltersModel struct {
 	TargetHostname               *[]types.String `tfsdk:"target_hostname" json:"target_hostname,optional"`
 	TargetIP                     *[]types.String `tfsdk:"target_ip" json:"target_ip,optional"`
 	TargetZoneName               *[]types.String `tfsdk:"target_zone_name" json:"target_zone_name,optional"`
+	TokenID                      *[]types.String `tfsdk:"token_id" json:"token_id,optional"`
 	TrafficExclusions            *[]types.String `tfsdk:"traffic_exclusions" json:"traffic_exclusions,optional"`
 	TunnelID                     *[]types.String `tfsdk:"tunnel_id" json:"tunnel_id,optional"`
 	TunnelName                   *[]types.String `tfsdk:"tunnel_name" json:"tunnel_name,optional"`

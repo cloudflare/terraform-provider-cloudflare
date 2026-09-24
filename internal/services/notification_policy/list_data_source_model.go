@@ -82,6 +82,7 @@ type NotificationPoliciesFiltersDataSourceModel struct {
 	TargetHostname               customfield.List[types.String] `tfsdk:"target_hostname" json:"target_hostname,computed"`
 	TargetIP                     customfield.List[types.String] `tfsdk:"target_ip" json:"target_ip,computed"`
 	TargetZoneName               customfield.List[types.String] `tfsdk:"target_zone_name" json:"target_zone_name,computed"`
+	TokenID                      customfield.List[types.String] `tfsdk:"token_id" json:"token_id,computed"`
 	TrafficExclusions            customfield.List[types.String] `tfsdk:"traffic_exclusions" json:"traffic_exclusions,computed"`
 	TunnelID                     customfield.List[types.String] `tfsdk:"tunnel_id" json:"tunnel_id,computed"`
 	TunnelName                   customfield.List[types.String] `tfsdk:"tunnel_name" json:"tunnel_name,computed"`

@@ -69,6 +69,13 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
+	params := workers.BetaWorkerVersionNewParams{
+		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	}
+
+	if !data.Deploy.IsNull() && !data.Deploy.IsUnknown() {
+		params.Deploy = cloudflare.F(data.Deploy.ValueBool())
+	}
 	var assets *WorkerVersionAssetsModel
 	if !data.Assets.IsNull() && !data.Assets.IsUnknown() {
 		planAssets, diags := data.Assets.Value(ctx)
@@ -136,9 +143,7 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	_, err = r.client.Workers.Beta.Workers.Versions.New(
 		ctx,
 		data.WorkerID.ValueString(),
-		workers.BetaWorkerVersionNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

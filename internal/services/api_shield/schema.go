@@ -38,6 +38,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
+			"normalize": schema.BoolAttribute{
+				Description: "Ensures that the configuration is written or retrieved in normalized fashion",
+				Optional:    true,
+			},
 			"auth_id_characteristics": schema.ListNestedAttribute{
 				Required: true,
 				NestedObject: schema.NestedAttributeObject{

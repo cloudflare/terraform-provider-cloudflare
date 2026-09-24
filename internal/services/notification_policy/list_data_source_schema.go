@@ -382,6 +382,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
 								},
+								"token_id": schema.ListAttribute{
+									Description: "Access service token IDs to include for expiring_service_token_alert. Omit this property to include all current and future service tokens.",
+									Computed:    true,
+									CustomType:  customfield.NewListType[types.String](ctx),
+									ElementType: types.StringType,
+								},
 								"traffic_exclusions": schema.ListAttribute{
 									Description: "Used for configuring traffic_anomalies_alert",
 									Computed:    true,

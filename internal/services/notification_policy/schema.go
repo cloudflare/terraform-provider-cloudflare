@@ -374,6 +374,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						ElementType: types.StringType,
 					},
+					"token_id": schema.ListAttribute{
+						Description: "Access service token IDs to include for expiring_service_token_alert. Omit this property to include all current and future service tokens.",
+						Optional:    true,
+						ElementType: types.StringType,
+					},
 					"traffic_exclusions": schema.ListAttribute{
 						Description: "Used for configuring traffic_anomalies_alert",
 						Optional:    true,
