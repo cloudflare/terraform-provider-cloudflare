@@ -1,0 +1,25 @@
+internal/services/logpush_dataset_field/data_source_test.go
+  s_8138c1e112c560::t_a27ff4d8a68959 6,35,60
+internal/services/logpush_dataset_field/data_source_model_test.go
+  s_8138c1e112c560::t_a27ff4d8a68959 1-33
+internal/services/logpush_dataset_field/data_source_model.go
+  s_8138c1e112c560::t_a27ff4d8a68959 16
+internal/services/logpush_dataset_field/data_source.go
+  s_8138c1e112c560::t_a27ff4d8a68959 15,18,70-72,90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "fddd9ae810105449e0ecb9e36a4d66659d7cfaaf",
+  "prompts": {},
+  "sessions": {
+    "s_8138c1e112c560": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f4ef27ab3ffellroz59xMWLMdZ",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Young Park <young@cloudflare.com>"
+    }
+  }
+}

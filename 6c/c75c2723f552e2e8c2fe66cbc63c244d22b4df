@@ -1,0 +1,39 @@
+examples/data-sources/cloudflare_zero_trust_casb_integration/data-source.tf
+  s_c124501c564855::t_b727cbfd23fada 1-4
+examples/data-sources/cloudflare_zero_trust_casb_integrations/data-source.tf
+  s_c124501c564855::t_19b2d0e62ccf41 1-12
+examples/resources/cloudflare_zero_trust_casb_integration/import.sh
+  s_c124501c564855::t_615f912210fa98 1
+examples/resources/cloudflare_zero_trust_casb_integration/resource.tf
+  s_c124501c564855::t_fd991691baa0f6 1-110
+docs/data-sources/zero_trust_casb_integration.md
+  s_a281d2d3e089d8::t_fb4a2d6e7ddbdb 1-76
+docs/data-sources/zero_trust_casb_integrations.md
+  s_a281d2d3e089d8::t_5633f0e0e9f677 1-69
+docs/resources/zero_trust_casb_integration.md
+  s_a281d2d3e089d8::t_bdfd6dc49bff2d 1-307
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6cc75c2723f552e2e8c2fe66cbc63c244d22b4df",
+  "prompts": {},
+  "sessions": {
+    "s_a281d2d3e089d8": {
+      "agent_id": {
+        "tool": "devin",
+        "id": "s_a281d2d3e089d8",
+        "model": "unknown"
+      },
+      "human_author": "Peter Bandziukas <pbandziukas@cloudflare.com>"
+    },
+    "s_c124501c564855": {
+      "agent_id": {
+        "tool": "windsurf",
+        "id": "humble-shape",
+        "model": "unknown"
+      },
+      "human_author": "Peter Bandziukas <pbandziukas@cloudflare.com>"
+    }
+  }
+}

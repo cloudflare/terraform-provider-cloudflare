@@ -1,0 +1,39 @@
+examples/resources/cloudflare_zero_trust_casb_integration/resource.tf
+  s_c124501c564855::t_55571c3e1bb04c 106
+  s_c124501c564855::t_5eed2ef9f117a8 96-105
+  s_c124501c564855::t_be0e2c5b444bf0 1-95,107-121
+docs/resources/zero_trust_casb_integration.md
+  s_c124501c564855::t_b72621a54024f2 110-119
+  s_c124501c564855::t_35bfe515e264ec 236
+  s_c124501c564855::t_2334a50190f038 229
+  s_c124501c564855::t_0bf177517ea1da 120
+  s_c124501c564855::t_7b5e90cec853fe 1-109,121-228,230-235,237-316
+examples/data-sources/cloudflare_zero_trust_casb_integrations/data-source.tf
+  s_c124501c564855::t_c3b9f2ad963897 1-12
+docs/data-sources/zero_trust_casb_integrations.md
+  s_c124501c564855::t_7b5e90cec853fe 1-66
+internal/services/zero_trust_casb_integration/schema.go
+  s_c124501c564855::t_dc4ed7fc3c18c7 241,243
+examples/resources/cloudflare_zero_trust_casb_integration/import.sh
+  s_c124501c564855::t_c3b9f2ad963897 1
+docs/data-sources/zero_trust_casb_integration.md
+  s_c124501c564855::t_7b5e90cec853fe 1-73
+examples/data-sources/cloudflare_zero_trust_casb_integration/data-source.tf
+  s_c124501c564855::t_c3b9f2ad963897 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "943d40dea1af01a9454ab67ce208798e15ccddd2",
+  "prompts": {},
+  "sessions": {
+    "s_c124501c564855": {
+      "agent_id": {
+        "tool": "windsurf",
+        "id": "humble-shape",
+        "model": "unknown"
+      },
+      "human_author": "Peter Bandziukas <pbandziukas@cloudflare.com>"
+    }
+  }
+}

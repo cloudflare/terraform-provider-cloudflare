@@ -1,0 +1,19 @@
+.gitlab-ci.yml
+  s_781d2d8f135041::t_0a91eb599ebde8 3-4,12-68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "bf14ef3fd43fb4f2e58d42dc5f2933a633f44123",
+  "prompts": {},
+  "sessions": {
+    "s_781d2d8f135041": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f6ebd1cfdffeaFIZBdZgRN1Dp8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
