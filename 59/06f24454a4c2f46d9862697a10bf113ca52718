@@ -1,0 +1,25 @@
+templates/guides/version-5-upgrade.md
+  s_279715510d0e77::t_f16afdda4386d2 1970-1976,2007-2016
+  s_279715510d0e77::t_3e29bc83334402 2017
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5906f24454a4c2f46d9862697a10bf113ca52718",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_279715510d0e77": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3b3385afffe3Lff8FOi4r5Dwz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
