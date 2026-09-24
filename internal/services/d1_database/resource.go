@@ -167,7 +167,7 @@ func (r *D1DatabaseResource) Read(ctx context.Context, req resource.ReadRequest,
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 	}
 
-	if !data.Fields.IsNull() && !data.Fields.IsUnknown() {
+	if data.Fields != nil {
 		params.Fields = cloudflare.F(dataFields)
 	}
 
