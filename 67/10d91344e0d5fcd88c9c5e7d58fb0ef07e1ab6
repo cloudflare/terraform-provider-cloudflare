@@ -1,0 +1,27 @@
+internal/services/firewall_rule/schema.go
+  s_67dfb1d494a6a4::t_e1d7606d9c63fc 31
+internal/services/filter/schema.go
+  s_67dfb1d494a6a4::t_e1d7606d9c63fc 26
+internal/services/rate_limit/schema.go
+  s_67dfb1d494a6a4::t_e1d7606d9c63fc 31
+internal/services/api_shield_operation_schema_validation_settings/schema.go
+  s_67dfb1d494a6a4::t_e1d7606d9c63fc 29
+internal/services/api_shield_schema/schema.go
+  s_67dfb1d494a6a4::t_e1d7606d9c63fc 33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6710d91344e0d5fcd88c9c5e7d58fb0ef07e1ab6",
+  "prompts": {},
+  "sessions": {
+    "s_67dfb1d494a6a4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f49fd8563ffeljbSq4zkizMgRa",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Sarah Sicard <ssicard@cloudflare.com>"
+    }
+  }
+}
