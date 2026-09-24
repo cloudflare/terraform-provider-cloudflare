@@ -87,6 +87,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"origin_worker_id": schema.StringAttribute{
+				Description: `Optional Worker script tag (worker ID) to use as the application's origin. Only supported for TCP applications with traffic_type "worker"; mutually exclusive with origin_direct, origin_dns, origin_port, proxy_protocol, and argo_smart_routing. tls may only be "off" or "flexible".`,
+				Optional:    true,
+			},
 			"virtual_network_id": schema.StringAttribute{
 				Description: "Optional UUID of a virtual network for routing origin traffic through tunnel virtual networks.",
 				Optional:    true,
@@ -135,16 +139,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Dynamic{customfield.NormalizeDynamicPlanModifier()},
 			},
 			"argo_smart_routing": schema.BoolAttribute{
-				Computed:      true,
-				Default:       booldefault.StaticBool(false),
-				Description:   "Enables Argo Smart Routing for this application.\nNotes: Only available for TCP applications with traffic_type set to \"direct\".",
-				Optional:      true,
+				Description: "Enables Argo Smart Routing for this application.\nNotes: Only available for TCP or UDP applications with traffic_type set to \"direct\".",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 			},
 			"proxy_protocol": schema.StringAttribute{
-				Computed:    true,
-				Default:     stringdefault.StaticString("off"),
 				Description: "Enables Proxy Protocol to the origin. Refer to [Enable Proxy protocol](https://developers.cloudflare.com/spectrum/getting-started/proxy-protocol/) for implementation details on PROXY Protocol V1, PROXY Protocol V2, and Simple Proxy Protocol.\nAvailable values: \"off\", \"v1\", \"v2\", \"simple\".",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -157,7 +160,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"traffic_type": schema.StringAttribute{
-				Description: "Determines how data travels from the edge to your origin. When set to \"direct\", Spectrum will send traffic directly to your origin, and the application's type is derived from the `protocol`. When set to \"http\" or \"https\", Spectrum will apply Cloudflare's HTTP/HTTPS features as it sends traffic to your origin, and the application type matches this property exactly.\nAvailable values: \"direct\", \"http\", \"https\".",
+				Description: "Determines how data travels from the edge to your origin. When set to \"direct\", Spectrum will send traffic directly to your origin, and the application's type is derived from the `protocol`. When set to \"http\" or \"https\", Spectrum will apply Cloudflare's HTTP/HTTPS features as it sends traffic to your origin, and the application type matches this property exactly. When set to \"worker\", traffic is sent to the Worker specified by `origin_worker_id`.\nAvailable values: \"direct\", \"http\", \"https\", \"worker\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -165,9 +168,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"direct",
 						"http",
 						"https",
+						"worker",
 					),
 				},
-				Default:       stringdefault.StaticString("direct"),
+				Default: stringdefault.StaticString("direct"),
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"edge_ips": schema.SingleNestedAttribute{

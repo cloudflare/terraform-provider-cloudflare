@@ -37,7 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"category_id": schema.Int64Attribute{
 				Description: "Returns the category ID.",
-				Required:    true,
+				Optional:    true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 4294967295),
 				},
@@ -45,12 +45,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"human_id": schema.StringAttribute{
 				Description:   "Returns the human readable ID.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
 				Description:   "Returns the application name.",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"hostnames": schema.SetAttribute{
@@ -59,7 +59,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"ip_subnets": schema.SetAttribute{
-				Description: "IP subnets matched by the application.",
+				Description: "IP subnets for this application. Custom application create and update requests accept IPv4 prefix lengths /8 through /32 and IPv6 prefix lengths /32 through /128.",
 				Optional:    true,
 				ElementType: types.StringType,
 			},

@@ -61,11 +61,12 @@ type TargetAccountManagedByModel struct {
 // We duplicate it here to keep the migration package self-contained,
 // but use simpler types to avoid customfield dependency issues during migration.
 type TargetAccountModel struct {
-	ID        types.String                                          `tfsdk:"id"`
-	Unit      customfield.NestedObject[TargetAccountUnitModel]      `tfsdk:"unit"`
-	Name      types.String                                          `tfsdk:"name"`
-	Type      types.String                                          `tfsdk:"type"`
-	ManagedBy customfield.NestedObject[TargetAccountManagedByModel] `tfsdk:"managed_by"`
-	Settings  customfield.NestedObject[TargetAccountSettingsModel]  `tfsdk:"settings"`
-	CreatedOn timetypes.RFC3339                                     `tfsdk:"created_on"`
+	ID         types.String                                          `tfsdk:"id"`
+	Unit       customfield.NestedObject[TargetAccountUnitModel]      `tfsdk:"unit"`
+	Standalone types.Bool                                            `tfsdk:"standalone"`
+	Name       types.String                                          `tfsdk:"name"`
+	Type       types.String                                          `tfsdk:"type"`
+	ManagedBy  customfield.NestedObject[TargetAccountManagedByModel] `tfsdk:"managed_by"`
+	Settings   customfield.NestedObject[TargetAccountSettingsModel]  `tfsdk:"settings"`
+	CreatedOn  timetypes.RFC3339                                     `tfsdk:"created_on"`
 }

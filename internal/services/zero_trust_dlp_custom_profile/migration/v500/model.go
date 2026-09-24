@@ -72,6 +72,7 @@ type TargetZeroTrustDLPCustomProfileModel struct {
 	ConfidenceThreshold types.String                     `tfsdk:"confidence_threshold"`
 	OCREnabled          types.Bool                       `tfsdk:"ocr_enabled"`
 	CreatedAt           timetypes.RFC3339                `tfsdk:"created_at"`
+	IntegrationID       types.String                     `tfsdk:"integration_id"`
 	OpenAccess          types.Bool                       `tfsdk:"open_access"`
 	Type                types.String                     `tfsdk:"type"`
 	UpdatedAt           timetypes.RFC3339                `tfsdk:"updated_at"`

@@ -18,6 +18,7 @@ type SpectrumApplicationModel struct {
 	ZoneID           types.String                                              `tfsdk:"zone_id" path:"zone_id,required"`
 	Protocol         types.String                                              `tfsdk:"protocol" json:"protocol,required"`
 	DNS              *SpectrumApplicationDNSModel                              `tfsdk:"dns" json:"dns,required"`
+	OriginWorkerID   types.String                                              `tfsdk:"origin_worker_id" json:"origin_worker_id,optional"`
 	VirtualNetworkID types.String                                              `tfsdk:"virtual_network_id" json:"virtual_network_id,optional"`
 	OriginDirect     *[]types.String                                           `tfsdk:"origin_direct" json:"origin_direct,optional"`
 	OriginDNS        *SpectrumApplicationOriginDNSModel                        `tfsdk:"origin_dns" json:"origin_dns,optional"`

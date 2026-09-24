@@ -64,6 +64,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The description of the profile.",
 				Computed:    true,
 			},
+			"integration_id": schema.StringAttribute{
+				Computed: true,
+			},
 			"name": schema.StringAttribute{
 				Description: "The name of the profile.",
 				Computed:    true,

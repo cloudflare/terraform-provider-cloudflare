@@ -206,6 +206,30 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"service_token_inactivity": schema.SingleNestedAttribute{
+				Description: "Configures automatic enforcement for inactive service tokens. A service token is inactive if no policy references it, and it has not successfully authenticated with an Access application during the selected inactivity period. This setting applies to every service token in your Zero Trust account.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"action": schema.StringAttribute{
+						Description: "The action applied to an inactive service token.\nAvailable values: \"disable\", \"delete\".",
+						Required:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("disable", "delete"),
+						},
+					},
+					"enabled": schema.BoolAttribute{
+						Description: "Whether automatic enforcement for inactive service tokens is enabled.",
+						Required:    true,
+					},
+					"inactivity_threshold_days": schema.Int64Attribute{
+						Description: "The number of days a service token must be inactive before the configured action is applied.",
+						Required:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(30, 365),
+						},
+					},
+				},
+			},
 			"allow_authenticate_via_warp": schema.BoolAttribute{
 				Description: "When set to true, users can authenticate via WARP for any application in your organization. Application settings will take precedence over this value.",
 				Computed:    true,

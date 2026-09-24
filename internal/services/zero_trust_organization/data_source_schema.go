@@ -240,6 +240,31 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"service_token_inactivity": schema.SingleNestedAttribute{
+				Description: "Configures automatic enforcement for inactive service tokens. A service token is inactive if no policy references it, and it has not successfully authenticated with an Access application during the selected inactivity period. This setting applies to every service token in your Zero Trust account.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustOrganizationServiceTokenInactivityDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"action": schema.StringAttribute{
+						Description: "The action applied to an inactive service token.\nAvailable values: \"disable\", \"delete\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("disable", "delete"),
+						},
+					},
+					"enabled": schema.BoolAttribute{
+						Description: "Whether automatic enforcement for inactive service tokens is enabled.",
+						Computed:    true,
+					},
+					"inactivity_threshold_days": schema.Int64Attribute{
+						Description: "The number of days a service token must be inactive before the configured action is applied.",
+						Computed:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(30, 365),
+						},
+					},
+				},
+			},
 		},
 	}
 }

@@ -1,6 +1,7 @@
 package v500
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -9,11 +10,11 @@ import (
 // This corresponds to schema_version=0 from the legacy (framework) cloudflare provider v4.
 // Used by UpgradeFromV0 to parse legacy state.
 type SourceCloudflareHyperdriveConfigModel struct {
-	ID        types.String                              `tfsdk:"id"`
-	AccountID types.String                              `tfsdk:"account_id"`
-	Name      types.String                              `tfsdk:"name"`
+	ID        types.String                                 `tfsdk:"id"`
+	AccountID types.String                                 `tfsdk:"account_id"`
+	Name      types.String                                 `tfsdk:"name"`
 	Origin    *SourceCloudflareHyperdriveConfigOriginModel `tfsdk:"origin"`
-	Caching   types.Object                              `tfsdk:"caching"`
+	Caching   types.Object                                 `tfsdk:"caching"`
 }
 
 // SourceCloudflareHyperdriveConfigOriginModel represents the v4 origin nested object.
@@ -31,16 +32,17 @@ type SourceCloudflareHyperdriveConfigOriginModel struct {
 // TargetHyperdriveConfigModel represents the target cloudflare_hyperdrive_config state structure (v500).
 // Must match the v5 HyperdriveConfigModel structure exactly.
 type TargetHyperdriveConfigModel struct {
-	ID                    types.String                       `tfsdk:"id"`
-	AccountID             types.String                       `tfsdk:"account_id"`
-	Name                  types.String                       `tfsdk:"name"`
-	Origin                *TargetHyperdriveConfigOriginModel `tfsdk:"origin"`
-	OriginConnectionLimit types.Int64                        `tfsdk:"origin_connection_limit"`
+	ID                    types.String                        `tfsdk:"id"`
+	AccountID             types.String                        `tfsdk:"account_id"`
+	Integration           jsontypes.Normalized                `tfsdk:"integration"`
+	Name                  types.String                        `tfsdk:"name"`
+	Origin                *TargetHyperdriveConfigOriginModel  `tfsdk:"origin"`
+	OriginConnectionLimit types.Int64                         `tfsdk:"origin_connection_limit"`
 	Caching               *TargetHyperdriveConfigCachingModel `tfsdk:"caching"`
-	MTLS                  *TargetHyperdriveConfigMTLSModel   `tfsdk:"mtls"`
-	CreatedOn             timetypes.RFC3339                  `tfsdk:"created_on"`
-	ModifiedOn            timetypes.RFC3339                  `tfsdk:"modified_on"`
-	RestartedOn           timetypes.RFC3339                  `tfsdk:"restarted_on"`
+	MTLS                  *TargetHyperdriveConfigMTLSModel    `tfsdk:"mtls"`
+	CreatedOn             timetypes.RFC3339                   `tfsdk:"created_on"`
+	ModifiedOn            timetypes.RFC3339                   `tfsdk:"modified_on"`
+	RestartedOn           timetypes.RFC3339                   `tfsdk:"restarted_on"`
 }
 
 // TargetHyperdriveConfigOriginModel represents the target origin nested object (v500).

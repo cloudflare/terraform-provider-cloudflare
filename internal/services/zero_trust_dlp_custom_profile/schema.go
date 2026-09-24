@@ -214,6 +214,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:    timetypes.RFC3339Type{},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
+			"integration_id": schema.StringAttribute{
+				Computed: true,
+			},
 			"open_access": schema.BoolAttribute{
 				Description: "Whether this profile can be accessed by anyone.",
 				Computed:    true,

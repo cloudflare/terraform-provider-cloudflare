@@ -58,7 +58,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplaceIfConfigured()},
 				Default:       booldefault.StaticBool(false),
 			},
-			"urls": schema.ListAttribute{
+			"urls": schema.SetAttribute{
 				Description: "The URLs to include in the current WAF override. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.",
 				Required:    true,
 				ElementType: types.StringType,
