@@ -227,6 +227,9 @@ func (r *APIShieldOperationResource) ImportState(ctx context.Context, req resour
 	}
 	data = &env.Result
 	data.ID = data.OperationID
+	if data.WithSchemas.IsNull() {
+		data.WithSchemas = types.BoolValue(false)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
