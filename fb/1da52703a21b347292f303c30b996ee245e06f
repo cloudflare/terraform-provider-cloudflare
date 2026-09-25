@@ -1,0 +1,23 @@
+internal/services/bot_management/testdata/cloudflarebotmanagementenablejs.tf
+  s_bc866926eb2f14::t_c38e82621a90a3 5-8
+internal/services/bot_management/resource_test.go
+  s_bc866926eb2f14::t_44233bad486942 693
+internal/services/bot_management/resource.go
+  s_bc866926eb2f14::t_f1687b12a5d186 250-257
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "fb1da52703a21b347292f303c30b996ee245e06f",
+  "prompts": {},
+  "sessions": {
+    "s_bc866926eb2f14": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2b08f86cffeZw1R3nijHbmwMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
