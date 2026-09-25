@@ -113,6 +113,7 @@ type TargetWorkersScriptModel struct {
 	ID               types.String                                           `tfsdk:"id"`
 	ScriptName       types.String                                           `tfsdk:"script_name"`
 	AccountID        types.String                                           `tfsdk:"account_id"`
+	Force            types.Bool                                             `tfsdk:"force"`
 	Content          types.String                                           `tfsdk:"content"`
 	ContentFile      types.String                                           `tfsdk:"content_file"`
 	ContentSHA256    types.String                                           `tfsdk:"content_sha256"`
