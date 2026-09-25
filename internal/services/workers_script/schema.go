@@ -339,6 +339,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "Name of the Pipeline to bind to.",
 							Optional:    true,
 						},
+						"stream": schema.StringAttribute{
+							Description: "ID of a K2 stream owned by the account deploying the Worker.",
+							Optional:    true,
+						},
 						"queue_name": schema.StringAttribute{
 							Description: "Name of the Queue to bind to.",
 							Optional:    true,
