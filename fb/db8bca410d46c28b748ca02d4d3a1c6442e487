@@ -1,0 +1,21 @@
+internal/services/api_shield_operation/migration/v500/model.go
+  s_bc866926eb2f14::t_474d38b6658e0a 37-38
+  s_bc866926eb2f14::t_d0025ce5426d82 34-36
+  s_bc866926eb2f14::t_8a6320cdc3b98b 39-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "fbdb8bca410d46c28b748ca02d4d3a1c6442e487",
+  "prompts": {},
+  "sessions": {
+    "s_bc866926eb2f14": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2b08f86cffeZw1R3nijHbmwMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
