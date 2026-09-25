@@ -183,6 +183,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:           true,
 								DeprecationMessage: "This attribute is deprecated.",
 							},
+							"base_path": schema.StringAttribute{
+								Description: "The public URL path prefix under which assets are served. A null request value resets it to `/`; responses represent the root as `/`. All versions in a gradual deployment must use the same canonical value. To change it, first deploy the version containing the change at 100%.",
+								Computed:    true,
+								Optional:    true,
+								Default:     stringdefault.StaticString("/"),
+							},
 						},
 					},
 					"jwt": schema.StringAttribute{
@@ -711,6 +717,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"head_sampling_rate": schema.Float64Attribute{
 						Description: "The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
 						Optional:    true,
+					},
+					"issues": schema.SingleNestedAttribute{
+						Description: "Real-time Issues settings for the Worker.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Whether real-time Issues are enabled for the Worker.",
+								Optional:    true,
+							},
+						},
 					},
 					"logs": schema.SingleNestedAttribute{
 						Description: "Log settings for the Worker.",
