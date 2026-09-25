@@ -1,0 +1,22 @@
+internal/services/dns_record/migration/v500/model.go
+  s_bc866926eb2f14::t_0a683cfdbe4c1e 96-98
+  s_bc866926eb2f14::t_cec6fea5d3cdd9 99-101
+internal/services/turnstile_widget/migration/v500/model.go
+  s_bc866926eb2f14::t_0e0f19df07f3c8 68-72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4bffa9cfb36505452dd7f54aa838d4b444675818",
+  "prompts": {},
+  "sessions": {
+    "s_bc866926eb2f14": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2b08f86cffeZw1R3nijHbmwMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
