@@ -246,6 +246,7 @@ type TargetAssetsConfigModel struct {
 	NotFoundHandling types.String                       `tfsdk:"not_found_handling"`
 	RunWorkerFirst   customfield.NormalizedDynamicValue `tfsdk:"run_worker_first"`
 	ServeDirectly    types.Bool                         `tfsdk:"serve_directly"`
+	BasePath         types.String                       `tfsdk:"base_path"`
 }
 
 type TargetLimitsModel struct {
