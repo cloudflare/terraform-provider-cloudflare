@@ -27,7 +27,7 @@ type LogpushJobModel struct {
 	OwnershipChallenge       types.String                  `tfsdk:"ownership_challenge" json:"ownership_challenge,optional,no_refresh"`
 	OutputOptions            *LogpushJobOutputOptionsModel `tfsdk:"output_options" json:"output_options,optional"`
 	Enabled                  types.Bool                    `tfsdk:"enabled" json:"enabled,computed_optional"`
-	FilterAttackTraffic      types.Bool                    `tfsdk:"filter_attack_traffic" json:"filter_attack_traffic,computed_optional"`
+	FilterAttackTraffic      types.Bool                    `tfsdk:"filter_attack_traffic" json:"filter_attack_traffic,computed_optional,decode_null_to_zero"`
 	Frequency                types.String                  `tfsdk:"frequency" json:"frequency,computed_optional"`
 	Kind                     types.String                  `tfsdk:"kind" json:"kind,computed_optional"`
 	ErrorMessage             types.String                  `tfsdk:"error_message" json:"error_message,computed"`
