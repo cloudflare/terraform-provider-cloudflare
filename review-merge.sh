@@ -1,1 +1,0 @@
-/Users/vaishak/cf-repos/sdk/sdk-devstack/.worktrees/_tools/review-merge.sh
