@@ -30,6 +30,12 @@ resource "cloudflare_secrets_store" "example_secrets_store" {
 - `account_id` (String)
 - `name` (String) The name of the store.
 
+### Optional
+
+- `force` (Boolean) When true, cascade-deletes all secrets in the store before deleting the store itself.
+Required when deleting a non-empty store. Without this parameter, attempting to
+delete a non-empty store returns 409.
+
 ### Read-Only
 
 - `created` (String) When the secret was created.

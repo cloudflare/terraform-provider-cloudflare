@@ -32,6 +32,7 @@ resource "cloudflare_stream" "example_stream" {
 
 - `allowed_origins` (List of String) Lists the origins allowed to display the video. Enter allowed origin domains in an array and use `*` for wildcard subdomains. Empty arrays allow the video to be viewed on any origin.
 - `creator` (String) A user-defined identifier for the media creator.
+- `direct_user` (Boolean) Provisions a URL to let your end users upload videos directly to Cloudflare Stream without exposing your API token to clients.
 - `identifier` (String) A Cloudflare-generated unique identifier for a media item.
 - `max_duration_seconds` (Number) The maximum duration in seconds for a video upload. Can be set for a video that is not yet uploaded to limit its duration. Uploads that exceed the specified duration will fail during processing. A value of `-1` means the value is unknown.
 - `meta` (String) A user modifiable key-value store used to reference other systems of record for managing videos.

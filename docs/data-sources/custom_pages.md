@@ -31,7 +31,7 @@ data "cloudflare_custom_pages" "example_custom_pages" {
 
 ### Required
 
-- `identifier` (String) Error Page Types
+- `identifier` (String) Custom page type.
 Available values: "1000_errors", "500_errors", "basic_challenge", "country_challenge", "ip_block", "managed_challenge", "ratelimit_block", "under_attack", "waf_block", "waf_challenge".
 
 ### Optional
@@ -43,7 +43,7 @@ Available values: "1000_errors", "500_errors", "basic_challenge", "country_chall
 
 - `created_on` (String)
 - `description` (String)
-- `id` (String) Error Page Types
+- `id` (String) Custom page type.
 Available values: "1000_errors", "500_errors", "basic_challenge", "country_challenge", "ip_block", "managed_challenge", "ratelimit_block", "under_attack", "waf_block", "waf_challenge".
 - `modified_on` (String)
 - `preview_target` (String)

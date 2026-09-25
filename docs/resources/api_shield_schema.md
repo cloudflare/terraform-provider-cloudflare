@@ -43,6 +43,7 @@ Available values: "openapi_v3".
 ### Optional
 
 - `name` (String) Name of the schema
+- `omit_source` (Boolean) Omit the source-files of schemas and only retrieve their meta-data.
 - `schema_id` (String)
 - `validation_enabled` (String) Flag whether schema is enabled for validation.
 Available values: "true", "false".

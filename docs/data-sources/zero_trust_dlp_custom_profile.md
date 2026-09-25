@@ -45,6 +45,7 @@ data "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_custom_p
 - `description` (String) The description of the profile.
 - `entries` (Attributes List, Deprecated) (see [below for nested schema](#nestedatt--entries))
 - `id` (String) The ID of this resource.
+- `integration_id` (String)
 - `name` (String) The name of the profile.
 - `ocr_enabled` (Boolean)
 - `open_access` (Boolean) Whether this profile can be accessed by anyone.

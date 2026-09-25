@@ -37,7 +37,12 @@ resource "cloudflare_snippet_rules" "example_snippet_rules" {
 
 ### Read-Only
 
+- `description` (String) Provide an informative description of the rule.
+- `enabled` (Boolean) Indicate whether to execute the rule.
+- `expression` (String) Define the expression that determines which traffic matches the rule.
 - `id` (String) Use this field to specify the unique ID of the zone.
+- `last_updated` (String) Specify the timestamp of when the rule was last modified.
+- `snippet_name` (String) Identify the snippet.
 
 <a id="nestedatt--rules"></a>
 ### Nested Schema for `rules`

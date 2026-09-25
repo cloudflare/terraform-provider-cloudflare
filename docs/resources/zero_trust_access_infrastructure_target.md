@@ -25,6 +25,9 @@ resource "cloudflare_zero_trust_access_infrastructure_target" "example_zero_trus
       virtual_network_id = "c77b744e-acc8-428f-9257-6878c046ed55"
     }
   }
+  tags = {
+    foo = "string"
+  }
 }
 ```
 
@@ -39,6 +42,11 @@ length of 255 characters, supports the use of special characters dash
 and period, does not support spaces, and must start and end with an
 alphanumeric character.
 - `ip` (Attributes) The IPv4/IPv6 address that identifies where to reach a target (see [below for nested schema](#nestedatt--ip))
+
+### Optional
+
+- `tags` (Map of String) Optional tags to associate with the target. Keys and values are
+user-defined strings.
 
 ### Read-Only
 

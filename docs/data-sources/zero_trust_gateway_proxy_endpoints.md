@@ -14,6 +14,12 @@ description: |-
 ```terraform
 data "cloudflare_zero_trust_gateway_proxy_endpoints" "example_zero_trust_gateway_proxy_endpoints" {
   account_id = "699d98642c564d2e855e9661899b7252"
+  direction = "asc"
+  filter = [{
+
+  }]
+  order_by = "name"
+  search = "search"
 }
 ```
 
@@ -23,7 +29,34 @@ data "cloudflare_zero_trust_gateway_proxy_endpoints" "example_zero_trust_gateway
 ### Optional
 
 - `account_id` (String)
+- `direction` (String) Sort direction. Only takes effect when `order_by` is also provided; it
+is ignored otherwise. When `direction` is omitted the effective
+direction is field-specific: `created_at` and `updated_at` default to
+descending (newest first); `name` defaults to ascending.
+  * `asc` — ascending.
+  * `desc` — descending.
+Available values: "asc", "desc".
+- `filter` (List of String) Filter the returned proxy endpoints by one or more `field:value` pairs.
+Repeat the parameter to apply multiple filters; they are combined with
+logical AND (an endpoint must satisfy every filter to be returned).
+
+Supported fields and their matching behaviour:
+  * `name` — case-insensitive substring match on the endpoint name.
+  * `id` — substring match on the endpoint ID (UUID), with or without dashes.
+  * `kind` — exact match on the endpoint kind. The value must be `ip` or `identity`; any other value returns `400`.
+
+Each entry must match one of the per-field patterns below: the field
+must be one of `name`, `id`, or `kind`; `name`/`id` accept any value,
+while `kind` only accepts `ip` or `identity`.
 - `max_items` (Number) Max items to fetch, default: 1000
+- `order_by` (String) Field to sort the returned endpoints by. When omitted, the order of
+results is unspecified. Supported values:
+  * `name` — sort alphabetically by endpoint name.
+  * `created_at` — sort by creation time; defaults to descending unless `direction` is set.
+  * `updated_at` — sort by last-modified time; defaults to descending unless `direction` is set.
+Available values: "name", "created_at", "updated_at".
+- `search` (String) Case-insensitive substring match on the endpoint name. When combined
+with `filter`, both must match (logical AND).
 
 ### Read-Only
 

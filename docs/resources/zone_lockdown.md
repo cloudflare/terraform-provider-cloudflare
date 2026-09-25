@@ -35,7 +35,7 @@ resource "cloudflare_zone_lockdown" "example_zone_lockdown" {
 ### Required
 
 - `configurations` (Attributes List) A list of IP addresses or CIDR ranges that will be allowed to access the URLs specified in the Zone Lockdown rule. You can include any number of `ip` or `ip_range` configurations. (see [below for nested schema](#nestedatt--configurations))
-- `urls` (List of String) The URLs to include in the current WAF override. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.
+- `urls` (Set of String) The URLs to include in the current WAF override. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.
 - `zone_id` (String) Defines an identifier.
 
 ### Optional

@@ -42,7 +42,7 @@ all fields are returned.
 - `jurisdiction` (String) Specify the location to restrict the D1 database to run and store data. If this option is present, the location hint is ignored.
 Available values: "eu", "fedramp", "us".
 - `name` (String) D1 database name.
-- `num_tables` (Number)
+- `num_tables` (Number, Deprecated) The number of tables in the D1 database. This count is no longer accurate and should not be relied upon.
 - `read_replication` (Attributes) Configuration for D1 read replication. (see [below for nested schema](#nestedatt--read_replication))
 - `uuid` (String) D1 database identifier (UUID).
 - `version` (String)

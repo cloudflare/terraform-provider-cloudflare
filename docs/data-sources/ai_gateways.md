@@ -41,6 +41,7 @@ data "cloudflare_ai_gateways" "example_ai_gateways" {
 Read-Only:
 
 - `authentication` (Boolean)
+- `byok_only` (Boolean) Requires customer-provided provider credentials and prevents fallback to Unified Billing.
 - `cache_invalidate_on_update` (Boolean)
 - `cache_ttl` (Number)
 - `collect_logs` (Boolean)
@@ -61,7 +62,7 @@ Read-Only:
 - `rate_limiting_technique` (String) Available values: "fixed", "sliding".
 - `retry_backoff` (String) Backoff strategy for retry delays
 Available values: "constant", "linear", "exponential".
-- `retry_delay` (Number) Delay between retry attempts in milliseconds (0-5000)
+- `retry_delay` (Number) Delay between retry attempts in milliseconds (0-60000)
 - `retry_max_attempts` (Number) Maximum number of retry attempts for failed requests (1-5)
 - `spend_limits` (Attributes) (see [below for nested schema](#nestedatt--result--spend_limits))
 - `store_id` (String)

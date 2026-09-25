@@ -39,6 +39,10 @@ Available values: "openapi_v3".
 - `validation_enabled` (Boolean) An indicator if this schema is enabled
 - `zone_id` (String) Identifier.
 
+### Optional
+
+- `omit_source` (Boolean) Omit the source-files of schemas and only retrieve their meta-data.
+
 ### Read-Only
 
 - `created_at` (String)

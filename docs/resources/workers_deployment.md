@@ -39,11 +39,12 @@ resource "cloudflare_workers_deployment" "example_workers_deployment" {
 - `account_id` (String) Identifier.
 - `script_name` (String) Name of the script, used in URLs and route configuration.
 - `strategy` (String) Available values: "percentage".
-- `versions` (Attributes List) (see [below for nested schema](#nestedatt--versions))
+- `versions` (Attributes List) Worker versions included in this deployment. Each object must contain a `version_id` UUID and a `percentage`; percentages across all objects must total 100. In the `cf` CLI, pass the entire array as one JSON value to `--versions`, either inline, for example `--versions '[{"version_id":"023e105f-2a42-4f8b-a1c1-73f6a2a30c0f","percentage":100}]'`, or from a JSON file with `--versions @versions.json`. (see [below for nested schema](#nestedatt--versions))
 
 ### Optional
 
 - `annotations` (Attributes) (see [below for nested schema](#nestedatt--annotations))
+- `force` (Boolean) If set to true, the deployment will be created even if normally blocked by something such rolling back to an older version when a secret has changed.
 
 ### Read-Only
 
@@ -57,8 +58,8 @@ resource "cloudflare_workers_deployment" "example_workers_deployment" {
 
 Required:
 
-- `percentage` (Number)
-- `version_id` (String)
+- `percentage` (Number) Percentage of traffic served by this version.
+- `version_id` (String) Identifier of the Worker Version.
 
 
 <a id="nestedatt--annotations"></a>

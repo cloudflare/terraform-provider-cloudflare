@@ -41,6 +41,7 @@ data "cloudflare_workflow" "example_workflow" {
 - `modified_on` (String)
 - `name` (String)
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
+- `script_deleted` (Boolean) Whether the bound Worker was deleted, leaving this Workflow inactive.
 - `script_name` (String)
 - `triggered_on` (String)
 

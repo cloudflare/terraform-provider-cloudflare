@@ -41,10 +41,11 @@ Read-Only:
 - `caching` (Attributes) (see [below for nested schema](#nestedatt--result--caching))
 - `created_on` (String) Defines the creation time of the Hyperdrive configuration.
 - `id` (String) Define configurations using a unique string identifier.
+- `integration` (Attributes) Connects to a PlanetScale database using credentials managed by Cloudflare. The Cloudflare account must already be linked to PlanetScale in the Hyperdrive dashboard. (see [below for nested schema](#nestedatt--result--integration))
 - `modified_on` (String) Defines the last modified time of the Hyperdrive configuration.
 - `mtls` (Attributes) mTLS configuration for the origin connection. Cannot be used with VPC Service origins; TLS must be managed on the VPC Service. (see [below for nested schema](#nestedatt--result--mtls))
 - `name` (String) The name of the Hyperdrive configuration. Used to identify the configuration in the Cloudflare dashboard and API.
-- `origin` (Attributes) (see [below for nested schema](#nestedatt--result--origin))
+- `origin` (Attributes) Combines database connection fields with exactly one supported network location. (see [below for nested schema](#nestedatt--result--origin))
 - `origin_connection_limit` (Number) The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.
 
 Maximum allowed: 20 for free tier accounts, 100 for paid tier accounts.
@@ -58,9 +59,24 @@ Contact Cloudflare if you need a higher limit.
 
 Read-Only:
 
-- `disabled` (Boolean) Set to true to disable caching of SQL responses. Default is false.
-- `max_age` (Number) Specify the maximum duration (in seconds) items should persist in the cache. Defaults to 60 seconds if not specified.
-- `stale_while_revalidate` (Number) Specify the number of seconds the cache may serve a stale response. Defaults to 15 seconds if not specified.
+- `disabled` (Boolean) Defines whether caching is disabled.
+- `max_age` (Number) Defines the maximum duration (in seconds) items persist in the cache.
+- `stale_while_revalidate` (Number) Defines the number of seconds the cache may serve a stale response.
+
+
+<a id="nestedatt--result--integration"></a>
+### Nested Schema for `result.integration`
+
+Read-Only:
+
+- `custom_database_name` (String) The database name to use when connecting. Defaults to `postgres` for PostgreSQL and `mysql` for MySQL.
+- `database_branch_name` (String) The name of the PlanetScale database branch.
+- `database_name` (String) The name of the PlanetScale database.
+- `integration` (String) The database integration used by this operation.
+Available values: "planetscale".
+- `organization_name` (String) The name of the PlanetScale organization.
+- `scheme` (String) Specifies the URL scheme used to connect to your origin database.
+Available values: "postgres", "postgresql", "mysql".
 
 
 <a id="nestedatt--result--mtls"></a>
@@ -70,7 +86,7 @@ Read-Only:
 
 - `ca_certificate_id` (String) Define CA certificate ID obtained after uploading CA cert.
 - `mtls_certificate_id` (String) Define mTLS certificate ID obtained after uploading client cert.
-- `sslmode` (String) Set SSL mode to 'require', 'verify-ca', or 'verify-full' to verify the CA.
+- `sslmode` (String) PostgreSQL accepts `require`, `verify-ca`, and `verify-full`. MySQL accepts `REQUIRED`, `VERIFY_CA`, and `VERIFY_IDENTITY`. The verify modes require a CA certificate; the require modes cannot be used with a CA certificate.
 
 
 <a id="nestedatt--result--origin"></a>
@@ -81,7 +97,7 @@ Read-Only:
 - `access_client_id` (String) Defines the Client ID of the Access token to use when connecting to the origin database.
 - `access_client_secret` (String, Sensitive) Defines the Client Secret of the Access Token to use when connecting to the origin database. The API never returns this write-only value.
 - `database` (String) Set the name of your origin database.
-- `host` (String) Defines the host (hostname or IP) of your origin database.
+- `host` (String) Defines the publicly reachable hostname or IP of your origin database. Private, loopback, and link-local IP addresses are not allowed.
 - `password` (String, Sensitive) Set the password needed to access your origin database. The API never returns this write-only value.
 - `port` (Number) Defines the port of your origin database. Defaults to 5432 for PostgreSQL or 3306 for MySQL if not specified.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.

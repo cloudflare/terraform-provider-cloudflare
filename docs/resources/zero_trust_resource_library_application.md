@@ -30,14 +30,14 @@ resource "cloudflare_zero_trust_resource_library_application" "example_zero_trus
 ### Required
 
 - `account_id` (String)
-- `category_id` (Number) Returns the category ID.
-- `human_id` (String) Returns the human readable ID.
-- `name` (String) Returns the application name.
 
 ### Optional
 
+- `category_id` (Number) Returns the category ID.
 - `hostnames` (Set of String) Hostnames matched by the application.
-- `ip_subnets` (Set of String) IP subnets matched by the application.
+- `human_id` (String) Returns the human readable ID.
+- `ip_subnets` (Set of String) IP subnets for this application. Custom application create and update requests accept IPv4 prefix lengths /8 through /32 and IPv6 prefix lengths /32 through /128.
+- `name` (String) Returns the application name.
 - `port_protocols` (Set of String) Port and protocol pairs matched by the application.
 - `support_domains` (Set of String) Support domains matched by the application.
 

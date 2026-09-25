@@ -125,6 +125,10 @@ resource "cloudflare_api_shield" "example_api_shield" {
 - `auth_id_characteristics` (Attributes List) (see [below for nested schema](#nestedatt--auth_id_characteristics))
 - `zone_id` (String) Identifier.
 
+### Optional
+
+- `normalize` (Boolean) Ensures that the configuration is written or retrieved in normalized fashion
+
 ### Read-Only
 
 - `id` (String) Identifier.

@@ -63,6 +63,7 @@ resource "cloudflare_workflow" "example_workflow" {
 - `is_deleted` (Number)
 - `modified_on` (String)
 - `name` (String)
+- `script_deleted` (Boolean) Whether the bound Worker was deleted, leaving this Workflow inactive.
 - `terminator_running` (Number)
 - `triggered_on` (String)
 - `version_id` (String)

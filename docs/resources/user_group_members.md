@@ -35,6 +35,14 @@ resource "cloudflare_user_group_members" "example_user_group_members" {
 - `members` (Attributes List) (see [below for nested schema](#nestedatt--members))
 - `user_group_id` (String) User Group identifier tag.
 
+### Optional
+
+- `direction` (String) The sort order of returned user group members by email.
+Available values: "asc", "desc".
+- `fuzzy_email` (String) A string used for filtering members by partial email match.
+- `page` (Number) Page number of paginated results.
+- `per_page` (Number) Maximum number of results per page.
+
 ### Read-Only
 
 - `id` (String) User Group identifier tag.

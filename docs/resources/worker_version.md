@@ -131,20 +131,23 @@ value for a single entrypoint. (see [below for nested schema](#nestedatt--cache_
 - `compatibility_date` (String) Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
 - `compatibility_flags` (Set of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
 - `containers` (Attributes Set) List of containers attached to a Worker. Containers can only be attached to Durable Object classes of this Worker script. (see [below for nested schema](#nestedatt--containers))
+- `deploy` (Boolean) If true, a deployment will be created that sends 100% of traffic to the new version.
 - `exports` (Attributes Map) Declarative exports for the version, including Durable Object
 classes (with their `storage` backend) and named Worker
 entrypoints. On reads, tombstoned lifecycle entries are
 omitted, so only live exports (`created` and
 `expecting-transfer`) are returned. `exports` and `migrations`
 are mutually exclusive on upload. (see [below for nested schema](#nestedatt--exports))
+- `include` (String) Whether to include the `modules` property of the version in the response, which contains code and sourcemap content and may add several megabytes to the response size.
+Available values: "modules".
 - `limits` (Attributes) Resource limits enforced at runtime. (see [below for nested schema](#nestedatt--limits))
 - `main_module` (String) The name of the main module in the `modules` array (e.g. the name of the module that exports a `fetch` handler).
 - `migrations` (Attributes) Migrations for Durable Objects associated with the version. Migrations are applied when the version is deployed. (see [below for nested schema](#nestedatt--migrations))
 - `modules` (Attributes Set) Code, sourcemaps, and other content used at runtime.
 
 This includes [`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and
-[`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files used to configure 
-[Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be 
+[`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files used to configure
+[Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be
 included as modules named `_headers` and `_redirects` with content type `text/plain`. (see [below for nested schema](#nestedatt--modules))
 - `package_dependencies` (Attributes List) The list of npm packages that were installed and used when this Worker
 version was built. (see [below for nested schema](#nestedatt--package_dependencies))
@@ -154,6 +157,8 @@ Available values: "standard", "bundled", "unbound".
 
 ### Read-Only
 
+- `author_email` (String) Email of the user who created the version.
+- `author_id` (String) Identifier of the user who created the version.
 - `created_on` (String) When the version was created.
 - `id` (String) Version identifier.
 - `main_script_base64` (String) The base64-encoded main script content. This is only returned for service worker syntax workers (not ES modules). Used when importing existing workers that use the older service worker syntax.
@@ -194,6 +199,7 @@ Read-Only:
 
 Optional:
 
+- `base_path` (String) The public URL path prefix under which assets are served. A null request value resets it to `/`; responses represent the root as `/`. All versions in a gradual deployment must use the same canonical value. To change it, first deploy the version containing the change at 100%.
 - `html_handling` (String) Determines the redirects and rewrites of requests for HTML content.
 Available values: "auto-trailing-slash", "force-trailing-slash", "drop-trailing-slash", "none".
 - `not_found_handling` (String) Determines the response when a request does not match a static asset, and there is no Worker script.
@@ -209,7 +215,7 @@ Required:
 
 - `name` (String) A JavaScript variable name for the binding.
 - `type` (String) The kind of resource that the binding provides.
-Available values: "ai", "ai_search", "ai_search_namespace", "messaging", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "media", "mtls_certificate", "plain_text", "pipelines", "queue", "ratelimit", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "flagship", "secret_key", "workflow", "wasm_module", "vpc_service", "vpc_network".
+Available values: "ai", "ai_search", "ai_search_namespace", "messaging", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "media", "mtls_certificate", "plain_text", "pipelines", "k2", "queue", "ratelimit", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "flagship", "secret_key", "workflow", "wasm_module", "vpc_service", "vpc_network".
 
 Optional:
 
@@ -252,6 +258,7 @@ Available values: "eu", "fedramp", "fedramp-high", "us".
 - `service_id` (String) Identifier of the VPC service to bind to.
 - `simple` (Attributes) The rate limit configuration. (see [below for nested schema](#nestedatt--bindings--simple))
 - `store_id` (String) ID of the store containing the secret.
+- `stream` (String) ID of a K2 stream owned by the account deploying the Worker.
 - `text` (String, Sensitive) The text value to use.
 - `tunnel_id` (String) UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.
 - `usages` (Set of String) Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).

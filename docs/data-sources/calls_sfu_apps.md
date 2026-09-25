@@ -40,7 +40,7 @@ Read-Only:
 
 - `created` (String) The date and time the item was created.
 - `modified` (String) The date and time the item was last modified.
-- `name` (String) A short description of Calls app, not shown to end users.
+- `name` (String) A short description of a Realtime SFU app, not shown to end users.
 - `uid` (String) A Cloudflare-generated unique identifier for a item.
 
 

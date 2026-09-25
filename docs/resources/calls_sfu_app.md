@@ -32,7 +32,7 @@ resource "cloudflare_calls_sfu_app" "example_calls_sfu_app" {
 ### Optional
 
 - `app_id` (String) A Cloudflare-generated unique identifier for a item.
-- `name` (String) A short description of Calls app, not shown to end users.
+- `name` (String) A short description of a Realtime SFU app, not shown to end users.
 
 ### Read-Only
 

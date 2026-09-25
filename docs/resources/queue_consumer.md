@@ -41,7 +41,7 @@ resource "cloudflare_queue_consumer" "example_queue_consumer" {
 
 - `account_id` (String) A Resource identifier.
 - `queue_id` (String) A Resource identifier.
-- `type` (String) Available values: "worker", "http_pull".
+- `type` (String) Available values: "worker", "http_pull", "notification".
 
 ### Optional
 
@@ -61,11 +61,37 @@ resource "cloudflare_queue_consumer" "example_queue_consumer" {
 Optional:
 
 - `batch_size` (Number) The maximum number of messages to include in a batch.
+- `email` (Attributes List) (see [below for nested schema](#nestedatt--settings--email))
 - `max_concurrency` (Number) Maximum number of concurrent consumers that may consume from this Queue. Set to `null` to automatically opt in to the platform's maximum (recommended).
 - `max_retries` (Number) The maximum number of retries
 - `max_wait_time_ms` (Number) The number of milliseconds to wait for a batch to fill up before attempting to deliver it
+- `pagerduty` (Attributes List) PagerDuty notification destinations. (see [below for nested schema](#nestedatt--settings--pagerduty))
 - `retry_delay` (Number) The number of seconds to delay before making the message available for another attempt.
 - `visibility_timeout_ms` (Number) The number of milliseconds that a message is exclusively leased. After the timeout, the message becomes available for another attempt.
+- `webhooks` (Attributes List) Webhook notification destinations. (see [below for nested schema](#nestedatt--settings--webhooks))
+
+<a id="nestedatt--settings--email"></a>
+### Nested Schema for `settings.email`
+
+Required:
+
+- `id` (String) The email address.
+
+
+<a id="nestedatt--settings--pagerduty"></a>
+### Nested Schema for `settings.pagerduty`
+
+Required:
+
+- `id` (String) UUID.
+
+
+<a id="nestedatt--settings--webhooks"></a>
+### Nested Schema for `settings.webhooks`
+
+Required:
+
+- `id` (String) UUID.
 
 ## Import
 

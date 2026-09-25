@@ -121,7 +121,7 @@ func (r *APIShieldOperationResource) Read(ctx context.Context, req resource.Read
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 	}
 
-	if !data.Feature.IsNull() && !data.Feature.IsUnknown() {
+	if data.Feature != nil {
 		params.Feature = cloudflare.F(dataFeature)
 	}
 

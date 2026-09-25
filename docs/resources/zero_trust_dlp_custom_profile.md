@@ -70,6 +70,7 @@ If this field is omitted, entries owned by this profile will not be changed. (se
 
 - `created_at` (String) When the profile was created.
 - `id` (String) The id of the profile (uuid).
+- `integration_id` (String)
 - `open_access` (Boolean) Whether this profile can be accessed by anyone.
 - `type` (String) Available values: "custom", "predefined", "integration".
 - `updated_at` (String) When the profile was lasted updated.

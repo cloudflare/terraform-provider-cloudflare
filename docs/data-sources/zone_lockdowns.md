@@ -62,7 +62,7 @@ Read-Only:
 - `id` (String) The unique identifier of the Zone Lockdown rule.
 - `modified_on` (String) The timestamp of when the rule was last modified.
 - `paused` (Boolean) When true, indicates that the rule is currently paused.
-- `urls` (List of String) The URLs to include in the rule definition. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.
+- `urls` (Set of String) The URLs to include in the rule definition. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.
 
 <a id="nestedatt--result--configurations"></a>
 ### Nested Schema for `result.configurations`

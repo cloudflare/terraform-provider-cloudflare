@@ -34,6 +34,7 @@ data "cloudflare_zero_trust_access_infrastructure_target" "example_zero_trust_ac
 - `id` (String) Target identifier
 - `ip` (Attributes) The IPv4/IPv6 address that identifies where to reach a target (see [below for nested schema](#nestedatt--ip))
 - `modified_at` (String) Date and time at which the target was modified
+- `tags` (Map of String) Tags assigned to the target. Empty when no tags are assigned.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -64,6 +65,9 @@ Supports `*` as a wildcard character
 - `modified_before` (String) Date and time at which the target was modified before (inclusive)
 - `order` (String) The field to sort by.
 Available values: "hostname", "created_at".
+- `tag` (List of String) Filter by tag key:value pairs. Multiple `tag` params are AND'd.
+Format: `tag=key:value` (e.g., `tag=environment:production`).
+Key and value must both be non-empty; `tag=:value` and `tag=key:` return 400.
 - `target_ids` (List of String) Filters for targets that have any of the following UUIDs. Specify
 `target_ids` multiple times in query parameter to build list of
 candidates.
