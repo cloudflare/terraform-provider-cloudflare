@@ -10,6 +10,7 @@ import (
 )
 
 func TestAccCloudflareFieldExtractorDataSource_Basic(t *testing.T) {
+	t.Skip("Skipping: test account does not have permission for this API (403)")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	dataSourceName := "data.cloudflare_field_extractor.test"
 
