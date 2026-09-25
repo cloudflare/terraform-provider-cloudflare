@@ -83,7 +83,15 @@ func normalizeReadZeroTrustOrganizationAPIData(_ context.Context, data, sourceDa
 	normalizeFalseAndNullBool(&data.MfaRequiredForAllApps, sourceData.MfaRequiredForAllApps)
 	normalizeFalseAndNullBool(&data.MfaConfigurationAllowed, sourceData.MfaConfigurationAllowed)
 	normalizeEmptyAndNullObject(&data.LoginDesign, sourceData.LoginDesign)
-	normalizeEmptyAndNullObject(&data.ServiceTokenInactivity, sourceData.ServiceTokenInactivity)
+	// service_token_inactivity is not Computed, but the API can populate
+	// action/inactivity_threshold_days with server-side defaults even when
+	// enabled=false, so the generic all-fields-zero check in
+	// normalizeEmptyAndNullObject never collapses it. Treat enabled=false as
+	// the disabled/null signal instead.
+	if data.ServiceTokenInactivity != nil && !data.ServiceTokenInactivity.Enabled.ValueBool() &&
+		(sourceData.ServiceTokenInactivity == nil || !sourceData.ServiceTokenInactivity.Enabled.ValueBool()) {
+		data.ServiceTokenInactivity = sourceData.ServiceTokenInactivity
+	}
 	normalizeUnknownCustomList(&data.TrustedAccounts, sourceData.TrustedAccounts)
 	normalizeEmptyAndNullList(&data.DenyUnmatchedRequestsExemptedZoneNames, sourceData.DenyUnmatchedRequestsExemptedZoneNames)
 	normalizeEmptyAndNullString(&data.UIReadOnlyToggleReason, sourceData.UIReadOnlyToggleReason)
