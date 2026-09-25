@@ -18,17 +18,18 @@ type SourceCloudflareD1DatabaseModel struct {
 // TargetD1DatabaseModel represents the target cloudflare_d1_database state structure (v500).
 // Must match the v5 D1DatabaseModel structure exactly.
 type TargetD1DatabaseModel struct {
-	ID                  types.String                       `tfsdk:"id"`
-	UUID                types.String                       `tfsdk:"uuid"`
-	AccountID           types.String                       `tfsdk:"account_id"`
-	Name                types.String                       `tfsdk:"name"`
-	Jurisdiction        types.String                       `tfsdk:"jurisdiction"`
-	PrimaryLocationHint types.String                       `tfsdk:"primary_location_hint"`
+	ID                  types.String                          `tfsdk:"id"`
+	UUID                types.String                          `tfsdk:"uuid"`
+	AccountID           types.String                          `tfsdk:"account_id"`
+	Name                types.String                          `tfsdk:"name"`
+	Jurisdiction        types.String                          `tfsdk:"jurisdiction"`
+	PrimaryLocationHint types.String                          `tfsdk:"primary_location_hint"`
 	ReadReplication     *TargetD1DatabaseReadReplicationModel `tfsdk:"read_replication"`
-	CreatedAt           timetypes.RFC3339                  `tfsdk:"created_at"`
-	FileSize            types.Float64                      `tfsdk:"file_size"`
-	NumTables           types.Float64                      `tfsdk:"num_tables"`
-	Version             types.String                       `tfsdk:"version"`
+	CreatedAt           timetypes.RFC3339                     `tfsdk:"created_at"`
+	FileSize            types.Float64                         `tfsdk:"file_size"`
+	NumTables           types.Float64                         `tfsdk:"num_tables"`
+	Fields              *[]types.String                       `tfsdk:"fields"`
+	Version             types.String                          `tfsdk:"version"`
 }
 
 // TargetD1DatabaseReadReplicationModel represents the read_replication nested object (v500).
