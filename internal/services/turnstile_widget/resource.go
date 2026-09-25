@@ -276,6 +276,12 @@ func (r *TurnstileWidgetResource) ImportState(ctx context.Context, req resource.
 	}
 	data = &env.Result
 	data.ID = data.Sitekey
+	if data.Page.IsNull() {
+		data.Page = types.Float64Value(1)
+	}
+	if data.PerPage.IsNull() {
+		data.PerPage = types.Float64Value(25)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
