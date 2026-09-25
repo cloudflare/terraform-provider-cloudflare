@@ -1,0 +1,21 @@
+internal/services/zero_trust_organization/normalizations.go
+  s_bc866926eb2f14::t_d14a37b92f0129 6,10-11
+  s_bc866926eb2f14::t_19f87924c032e0 84,86-87
+  s_bc866926eb2f14::t_bf1ba8c4239bbe 47-58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "32912b46bd6b2b5864b0236fc2452073f4c33469",
+  "prompts": {},
+  "sessions": {
+    "s_bc866926eb2f14": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2b08f86cffeZw1R3nijHbmwMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
