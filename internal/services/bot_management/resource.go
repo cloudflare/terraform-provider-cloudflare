@@ -247,6 +247,14 @@ func (r *BotManagementResource) ImportState(ctx context.Context, req resource.Im
 	data.UpdateFromAPIModel(env.Result)
 	data.ID = data.ZoneID
 
+	// ai_bots_migration_opt_out is not part of the hand-maintained
+	// BotManagementAPIModel plumbing, so UpdateFromAPIModel never populates it.
+	// ImportState builds its model from a zero value with no plan phase, so
+	// without this it stays null instead of the schema's documented default.
+	if data.AIBotsMigrationOptOut.IsNull() {
+		data.AIBotsMigrationOptOut = types.BoolValue(false)
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
