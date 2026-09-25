@@ -1,0 +1,23 @@
+internal/services/worker_version/migrations_test.go
+  s_bc866926eb2f14::t_a417311a88eac1 265-268
+  s_bc866926eb2f14::t_74dd4397a44289 262-264
+internal/services/worker_version/migrations.go
+  s_bc866926eb2f14::t_6ac432de5c64f2 120-121
+  s_bc866926eb2f14::t_dfb3869e9b24fc 135-136
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f566e64fb1b2732a80e8fdbfcd4ff6e09bfeca46",
+  "prompts": {},
+  "sessions": {
+    "s_bc866926eb2f14": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2b08f86cffeZw1R3nijHbmwMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
