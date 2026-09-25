@@ -1,0 +1,21 @@
+internal/services/dns_record/custom.go
+  s_bc866926eb2f14::t_2e7548f03733c9 455-467
+internal/services/dns_record/resource.go
+  s_bc866926eb2f14::t_654753586cdb41 297
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5d981e9d108428033feabd21b07c849234457aa1",
+  "prompts": {},
+  "sessions": {
+    "s_bc866926eb2f14": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2b08f86cffeZw1R3nijHbmwMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
