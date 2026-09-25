@@ -206,6 +206,7 @@ type TargetBindingsModel struct {
 	ServiceID                   types.String                  `tfsdk:"service_id"`
 	NetworkID                   types.String                  `tfsdk:"network_id"`
 	TunnelID                    types.String                  `tfsdk:"tunnel_id"`
+	Stream                      types.String                  `tfsdk:"stream"`
 }
 
 // TargetAnnotationsModel represents the annotations nested attribute in v5.
@@ -305,8 +306,13 @@ type TargetMigrationsStepsModel struct {
 type TargetObservabilityModel struct {
 	Enabled          types.Bool                      `tfsdk:"enabled"`
 	HeadSamplingRate types.Float64                   `tfsdk:"head_sampling_rate"`
+	Issues           *TargetObservabilityIssuesModel `tfsdk:"issues"`
 	Logs             *TargetObservabilityLogsModel   `tfsdk:"logs"`
 	Traces           *TargetObservabilityTracesModel `tfsdk:"traces"`
+}
+
+type TargetObservabilityIssuesModel struct {
+	Enabled types.Bool `tfsdk:"enabled"`
 }
 
 type TargetObservabilityLogsModel struct {
