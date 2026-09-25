@@ -41,7 +41,7 @@ data "cloudflare_workers_deployment" "example_workers_deployment" {
 - `id` (String) The ID of this resource.
 - `source` (String)
 - `strategy` (String) Available values: "percentage".
-- `versions` (Attributes List) (see [below for nested schema](#nestedatt--versions))
+- `versions` (Attributes List) Worker versions included in this deployment. Each object must contain a `version_id` UUID and a `percentage`; percentages across all objects must total 100. In the `cf` CLI, pass the entire array as one JSON value to `--versions`, either inline, for example `--versions '[{"version_id":"023e105f-2a42-4f8b-a1c1-73f6a2a30c0f","percentage":100}]'`, or from a JSON file with `--versions @versions.json`. (see [below for nested schema](#nestedatt--versions))
 
 <a id="nestedatt--annotations"></a>
 ### Nested Schema for `annotations`
@@ -57,7 +57,7 @@ Read-Only:
 
 Read-Only:
 
-- `percentage` (Number)
-- `version_id` (String)
+- `percentage` (Number) Percentage of traffic served by this version.
+- `version_id` (String) Identifier of the Worker Version.
 
 

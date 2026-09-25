@@ -47,6 +47,7 @@ Available values: "active", "inactive".
 Read-Only:
 
 - `compaction` (Attributes) Configures compaction for catalog maintenance. (see [below for nested schema](#nestedatt--maintenance_config--compaction))
+- `interval` (String) Scheduling interval between normal table maintenance runs.
 - `snapshot_expiration` (Attributes) Configures snapshot expiration settings. (see [below for nested schema](#nestedatt--maintenance_config--snapshot_expiration))
 
 <a id="nestedatt--maintenance_config--compaction"></a>

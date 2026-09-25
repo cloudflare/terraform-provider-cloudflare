@@ -57,7 +57,6 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 ### Required
 
 - `account_id` (String)
-- `match` (String) The wirefilter expression to match devices. Available values: "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.service_token_uuid", "identity.saml_attributes", "network", "os.name", "os.version".
 - `name` (String) The name of the device settings profile.
 
 ### Optional
@@ -66,6 +65,7 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 - `allow_updates` (Boolean) Whether to receive update notifications when a new version of the client is available.
 - `allowed_to_leave` (Boolean) Whether to allow devices to leave the organization.
 - `auto_connect` (Number) The amount of time in seconds to reconnect after having been disabled.
+- `browser_extension_config` (Attributes) Browser extension proxy settings. Required when profile_type is browser_extension and invalid for WARP profiles. (see [below for nested schema](#nestedatt--browser_extension_config))
 - `captive_portal` (Number) Turn on the captive portal after the specified amount of time.
 - `description` (String) A description of the policy.
 - `disable_auto_fallback` (Boolean) If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.
@@ -77,13 +77,17 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 - `include` (Attributes List) List of routes included in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request. (see [below for nested schema](#nestedatt--include))
 - `lan_allow_minutes` (Number) The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.
 - `lan_allow_subnet_size` (Number) The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.
+- `match` (String) The wirefilter expression to match devices. Available values: "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.service_token_uuid", "identity.saml_attributes", "network", "os.name", "os.version".
 - `precedence` (Number) The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.
+- `profile_type` (String) The client type to which the device settings profile applies.
+Available values: "warp", "browser_extension".
 - `register_interface_ip_with_dns` (Boolean) Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.
 - `sccm_vpn_boundary_support` (Boolean) Determines whether the WARP client indicates to SCCM that it is inside a VPN boundary. (Windows only).
 - `service_mode_v2` (Attributes) (see [below for nested schema](#nestedatt--service_mode_v2))
 - `support_url` (String) The URL to launch when the Send Feedback button is clicked.
 - `switch_locked` (Boolean) Whether to allow the user to turn off the WARP switch and disconnect the client.
 - `tunnel_protocol` (String) Determines which tunnel protocol to use.
+- `uninstall_protection` (Boolean) Determines whether uninstalling the WARP client requires an override code. (Windows only).
 - `virtual_networks` (Attributes) Virtual network access settings for the device. (see [below for nested schema](#nestedatt--virtual_networks))
 
 ### Read-Only
@@ -94,6 +98,16 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 - `id` (String) The ID of this resource.
 - `policy_id` (String)
 - `target_tests` (Attributes List) (see [below for nested schema](#nestedatt--target_tests))
+
+<a id="nestedatt--browser_extension_config"></a>
+### Nested Schema for `browser_extension_config`
+
+Required:
+
+- `proxy_control` (String) Whether the user may disable the browser extension proxy.
+Available values: "unlocked", "locked".
+- `proxy_enabled` (Boolean) Whether the browser extension proxy is active.
+
 
 <a id="nestedatt--dns_search_suffixes"></a>
 ### Nested Schema for `dns_search_suffixes`

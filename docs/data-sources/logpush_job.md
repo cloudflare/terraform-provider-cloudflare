@@ -41,6 +41,7 @@ Available values: "access_requests", "account_abuse_protection_events", "audit_l
 - `destination_conf` (String, Sensitive) Uniquely identifies a resource (such as an s3 bucket) where data. will be pushed. Additional configuration parameters supported by the destination may be included.
 - `enabled` (Boolean) Flag that indicates if the job is enabled.
 - `error_message` (String) If not null, the job is currently failing. Failures are usually. repetitive (example: no permissions to write to destination bucket). Only the last failure is recorded. On successful execution of a job the error_message and last_error are set to null.
+- `filter_attack_traffic` (Boolean) When true, excludes DDoS attack traffic from logs. This option is supported for the `http_requests`, `firewall_events`, and `network_analytics_logs` datasets.
 - `frequency` (String, Deprecated) This field is deprecated. Please use `max_upload_*` parameters instead. . The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.
 Available values: "high", "low".
 - `id` (Number) Unique id of the job.
@@ -72,7 +73,7 @@ Available values: "ndjson", "csv".
 - `record_prefix` (String) String to be prepended before each record.
 - `record_suffix` (String) String to be appended after each record.
 - `record_template` (String) String to use as template for each record instead of the default json key value mapping. All fields used in the template must be present in `field_names` as well, otherwise they will end up as null. Format as a Go `text/template` without any standard functions, like conditionals, loops, sub-templates, etc.
-- `sample_rate` (Number) Floating number to specify sampling rate. Sampling is applied on top of filtering, and regardless of the current `sample_interval` of the data.
+- `sample_rate` (Number) Specifies the sampling rate as a floating number greater than 0 and at most 1. Sampling is applied on top of filtering, and regardless of the current `sample_interval` of the data.
 - `timestamp_format` (String) String to specify the format for timestamps, such as `unixnano`, `unix`, `rfc3339`, `rfc3339ms` or `rfc3339ns`.
 Available values: "unixnano", "unix", "rfc3339", "rfc3339ms", "rfc3339ns".
 

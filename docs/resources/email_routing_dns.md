@@ -32,6 +32,7 @@ resource "cloudflare_email_routing_dns" "example_email_routing_dns" {
 ### Optional
 
 - `name` (String) Domain of your zone.
+- `subdomain` (String) Deprecated. When supplied, the response shape differs from the documented default and is not modeled in generated SDKs. Do not rely on this parameter.
 
 ### Read-Only
 

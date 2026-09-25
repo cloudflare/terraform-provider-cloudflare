@@ -37,6 +37,8 @@ resource "cloudflare_d1_database" "example_d1_database" {
 
 ### Optional
 
+- `fields` (List of String) Comma-separated list of fields to include in the response. When omitted,
+all fields are returned.
 - `jurisdiction` (String) Specify the location to restrict the D1 database to run and store data. If this option is present, the location hint is ignored.
 Available values: "eu", "fedramp", "us".
 - `primary_location_hint` (String) Specify the region to create the D1 primary, if available. If this option is omitted, the D1 will be created as close as possible to the current user.
@@ -48,7 +50,7 @@ Available values: "wnam", "enam", "weur", "eeur", "apac", "oc".
 - `created_at` (String) Specifies the timestamp the resource was created as an ISO8601 string.
 - `file_size` (Number) The D1 database's size, in bytes.
 - `id` (String) D1 database identifier (UUID).
-- `num_tables` (Number)
+- `num_tables` (Number, Deprecated) The number of tables in the D1 database. This count is no longer accurate and should not be relied upon.
 - `uuid` (String) D1 database identifier (UUID).
 - `version` (String)
 

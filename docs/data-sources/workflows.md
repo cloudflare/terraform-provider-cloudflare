@@ -48,6 +48,7 @@ Read-Only:
 - `modified_on` (String)
 - `name` (String)
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--result--schedules))
+- `script_deleted` (Boolean) Whether the bound Worker was deleted, leaving this Workflow inactive.
 - `script_name` (String)
 - `triggered_on` (String)
 

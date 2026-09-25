@@ -28,6 +28,10 @@ resource "cloudflare_email_routing_settings" "example_email_routing_settings" {
 
 - `zone_id` (String) Identifier.
 
+### Optional
+
+- `support_subaddress` (Boolean) Whether subaddressing (plus-addressing) is honored when matching incoming mail against routing rules.
+
 ### Read-Only
 
 - `created` (String) The date and time the settings have been created.

@@ -30,6 +30,7 @@ resource "cloudflare_share_recipient" "example_share_recipient" {
 
 ### Optional
 
+- `include_resources` (Boolean) Include resources in the response.
 - `organization_id` (String) Organization identifier.
 - `recipient_account_id` (String) The account that will receive the share.
 

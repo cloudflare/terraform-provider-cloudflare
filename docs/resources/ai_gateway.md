@@ -25,6 +25,7 @@ resource "cloudflare_ai_gateway" "example_ai_gateway" {
   rate_limiting_interval = 0
   rate_limiting_limit = 0
   authentication = true
+  byok_only = true
   log_management = 10000
   log_management_strategy = "STOP_INSERTING"
   logpush = true
@@ -55,6 +56,7 @@ resource "cloudflare_ai_gateway" "example_ai_gateway" {
 ### Optional
 
 - `authentication` (Boolean)
+- `byok_only` (Boolean) Requires customer-provided provider credentials and prevents fallback to Unified Billing.
 - `dlp` (Attributes) (see [below for nested schema](#nestedatt--dlp))
 - `guardrails` (Attributes) (see [below for nested schema](#nestedatt--guardrails))
 - `log_classification` (Boolean)
@@ -66,7 +68,7 @@ resource "cloudflare_ai_gateway" "example_ai_gateway" {
 - `rate_limiting_technique` (String) Available values: "fixed", "sliding".
 - `retry_backoff` (String) Backoff strategy for retry delays
 Available values: "constant", "linear", "exponential".
-- `retry_delay` (Number) Delay between retry attempts in milliseconds (0-5000)
+- `retry_delay` (Number) Delay between retry attempts in milliseconds (0-60000)
 - `retry_max_attempts` (Number) Maximum number of retry attempts for failed requests (1-5)
 - `spend_limits` (Attributes) (see [below for nested schema](#nestedatt--spend_limits))
 - `store_id` (String)

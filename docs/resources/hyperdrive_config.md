@@ -46,12 +46,13 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
 
 - `account_id` (String) Define configurations using a unique string identifier.
 - `name` (String) The name of the Hyperdrive configuration. Used to identify the configuration in the Cloudflare dashboard and API.
-- `origin` (Attributes) (see [below for nested schema](#nestedatt--origin))
 
 ### Optional
 
 - `caching` (Attributes) (see [below for nested schema](#nestedatt--caching))
+- `integration` (String)
 - `mtls` (Attributes) mTLS configuration for the origin connection. Cannot be used with VPC Service origins; TLS must be managed on the VPC Service. (see [below for nested schema](#nestedatt--mtls))
+- `origin` (Attributes) Combines database connection fields with exactly one supported network location. (see [below for nested schema](#nestedatt--origin))
 - `origin_connection_limit` (Number) The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.
 
 Maximum allowed: 20 for free tier accounts, 100 for paid tier accounts.
@@ -65,6 +66,26 @@ Contact Cloudflare if you need a higher limit.
 - `id` (String) Define configurations using a unique string identifier.
 - `modified_on` (String) Defines the last modified time of the Hyperdrive configuration.
 - `restarted_on` (String) Defines the last time the Hyperdrive connection pool was explicitly restarted via the restart endpoint. Omitted if the pool has never been explicitly restarted.
+
+<a id="nestedatt--caching"></a>
+### Nested Schema for `caching`
+
+Optional:
+
+- `disabled` (Boolean)
+- `max_age` (Number)
+- `stale_while_revalidate` (Number)
+
+
+<a id="nestedatt--mtls"></a>
+### Nested Schema for `mtls`
+
+Optional:
+
+- `ca_certificate_id` (String) Define CA certificate ID obtained after uploading CA cert.
+- `mtls_certificate_id` (String) Define mTLS certificate ID obtained after uploading client cert.
+- `sslmode` (String) PostgreSQL accepts `require`, `verify-ca`, and `verify-full`. MySQL accepts `REQUIRED`, `VERIFY_CA`, and `VERIFY_IDENTITY`. The verify modes require a CA certificate; the require modes cannot be used with a CA certificate.
+
 
 <a id="nestedatt--origin"></a>
 ### Nested Schema for `origin`
@@ -81,29 +102,9 @@ Optional:
 
 - `access_client_id` (String) Defines the Client ID of the Access token to use when connecting to the origin database.
 - `access_client_secret` (String, Sensitive) Defines the Client Secret of the Access Token to use when connecting to the origin database. The API never returns this write-only value.
-- `host` (String) Defines the host (hostname or IP) of your origin database.
+- `host` (String) Defines the publicly reachable hostname or IP of your origin database. Private, loopback, and link-local IP addresses are not allowed.
 - `port` (Number) Defines the port of your origin database. Defaults to 5432 for PostgreSQL or 3306 for MySQL if not specified.
 - `service_id` (String) The identifier of the Workers VPC Service to connect through. Hyperdrive will egress through the specified VPC Service to reach the origin database.
-
-
-<a id="nestedatt--caching"></a>
-### Nested Schema for `caching`
-
-Optional:
-
-- `disabled` (Boolean) Set to true to disable caching of SQL responses. Default is false.
-- `max_age` (Number) Specify the maximum duration (in seconds) items should persist in the cache. Defaults to 60 seconds if not specified.
-- `stale_while_revalidate` (Number) Specify the number of seconds the cache may serve a stale response. Defaults to 15 seconds if not specified.
-
-
-<a id="nestedatt--mtls"></a>
-### Nested Schema for `mtls`
-
-Optional:
-
-- `ca_certificate_id` (String) Define CA certificate ID obtained after uploading CA cert.
-- `mtls_certificate_id` (String) Define mTLS certificate ID obtained after uploading client cert.
-- `sslmode` (String) Set SSL mode to 'require', 'verify-ca', or 'verify-full' to verify the CA.
 
 ## Import
 

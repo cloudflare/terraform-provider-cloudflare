@@ -51,8 +51,23 @@ expensive challenges in response to malicious bots (ENT only).
 - `clearance_level` (String) If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,
 this setting can determine the clearance level to be set
 Available values: "no_clearance", "jschallenge", "managed", "interactive".
+- `direction` (String) Direction to order widgets.
+Available values: "asc", "desc".
 - `ephemeral_id` (Boolean) Return the Ephemeral ID in /siteverify (ENT only).
+- `filter` (String) Filter widgets by field using case-insensitive substring matching.
+Format: `field:value`
+
+Supported fields:
+- `name` - Filter by widget name (e.g., `filter=name:login-form`)
+- `sitekey` - Filter by sitekey (e.g., `filter=sitekey:0x4AAA`)
+
+Returns 400 Bad Request if the field is unsupported or format is invalid.
+An empty filter value returns all results.
 - `offlabel` (Boolean) Do not show any Cloudflare branding on the widget (ENT only).
+- `order` (String) Field to order widgets by.
+Available values: "id", "sitekey", "name", "created_on", "modified_on".
+- `page` (Number) Page number of paginated results.
+- `per_page` (Number) Number of items per page.
 - `region` (String) Region where this widget can be used. This cannot be changed after creation.
 Available values: "world", "china".
 

@@ -31,7 +31,7 @@ data "cloudflare_account_dns_settings" "example_account_dns_settings" {
 ### Read-Only
 
 - `enforce_dns_only` (Boolean) When enabled, forces all proxied DNS records in the account to behave as DNS-only at the edge, regardless of each record's individual proxy setting. Note that this account-level override does not modify the records themselves; it only affects how they are served at the edge. See more on [Enforce DNS-only](https://developers.cloudflare.com/dns/proxy-status/enforce-dns-only).
-- `zone_defaults` (Attributes) (see [below for nested schema](#nestedatt--zone_defaults))
+- `zone_defaults` (Attributes) Default settings for new zones created in this account. (see [below for nested schema](#nestedatt--zone_defaults))
 
 <a id="nestedatt--zone_defaults"></a>
 ### Nested Schema for `zone_defaults`

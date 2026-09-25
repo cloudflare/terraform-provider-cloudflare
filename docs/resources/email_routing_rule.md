@@ -71,7 +71,7 @@ Available values: "drop", "forward", "worker".
 
 Optional:
 
-- `value` (List of String)
+- `value` (List of String) List of values for the action. Currently limited to a single value.
 
 
 <a id="nestedatt--matchers"></a>
