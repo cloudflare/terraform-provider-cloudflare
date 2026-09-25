@@ -114,6 +114,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "Account settings",
@@ -132,11 +133,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     booldefault.StaticBool(false),
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"created_on": schema.StringAttribute{
-				Description: "Timestamp for the creation of the account",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "Timestamp for the creation of the account",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 		},
 	}

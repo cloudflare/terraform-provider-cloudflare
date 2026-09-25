@@ -2,7 +2,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
   account_id = "c3dc5f0b34a14ff8e1b3ec04895e1b22"
   id = "my-ai-search"
   ai_gateway_id = "ai_gateway_id"
-  aisearch_model = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+  aisearch_model = "ai_search_model"
   cache = true
   cache_threshold = "super_strict_match"
   cache_ttl = 600
@@ -13,7 +13,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
     data_type = "text"
     field_name = "x"
   }]
-  embedding_model = "@cf/qwen/qwen3-embedding-0.6b"
+  embedding_model = "embedding_model"
   fusion_method = "max"
   hybrid_search_enabled = true
   index_method = {
@@ -50,7 +50,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
     }
   }
   reranking = true
-  reranking_model = "@cf/baai/bge-reranker-base"
+  reranking_model = "reranking_model"
   retrieval_options = {
     boost_by = [{
       field = "timestamp"
@@ -58,7 +58,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
     }]
     keyword_match_mode = "and"
   }
-  rewrite_model = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+  rewrite_model = "rewrite_model"
   rewrite_query = true
   score_threshold = 0
   source = "source"

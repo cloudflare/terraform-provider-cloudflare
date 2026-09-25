@@ -143,6 +143,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"expired",
 					),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"issued_on": schema.StringAttribute{
 				Description: "The time on which the token was created.",

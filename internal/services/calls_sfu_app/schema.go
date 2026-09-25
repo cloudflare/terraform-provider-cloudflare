@@ -43,9 +43,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     stringdefault.StaticString(""),
 			},
 			"created": schema.StringAttribute{
-				Description: "The date and time the item was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "The date and time the item was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified": schema.StringAttribute{
 				Description: "The date and time the item was last modified.",

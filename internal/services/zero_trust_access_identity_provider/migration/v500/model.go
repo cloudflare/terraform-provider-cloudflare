@@ -115,6 +115,8 @@ type TargetConfigModel struct {
 	Attributes               *[]types.String                 `tfsdk:"attributes"`
 	EmailAttributeName       types.String                    `tfsdk:"email_attribute_name"`
 	EnableEncryption         types.Bool                      `tfsdk:"enable_encryption"`
+	ForceAuthn               types.Bool                      `tfsdk:"force_authn"`
+	MaxSsoUrlLength          types.Int64                     `tfsdk:"max_sso_url_length"`
 	HeaderAttributes         *[]*TargetHeaderAttributesModel `tfsdk:"header_attributes"`
 	IdPPublicCERTs           *[]types.String                 `tfsdk:"idp_public_certs"`
 	IssuerURL                types.String                    `tfsdk:"issuer_url"`

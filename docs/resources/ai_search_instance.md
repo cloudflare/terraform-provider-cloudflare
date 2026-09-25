@@ -22,7 +22,7 @@ description: |-
 ### Optional
 
 - `ai_gateway_id` (String)
-- `aisearch_model` (String) Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "@cf/google/gemma-4-26b-a4b-it", "@cf/moonshotai/kimi-k2.5", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".
+- `aisearch_model` (String) A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
 - `cache` (Boolean)
 - `cache_threshold` (String) Available values: "super_strict_match", "close_enough", "flexible_friend", "anything_goes".
 - `cache_ttl` (Number) Cache entry TTL in seconds. Allowed values: 600 (10min), 1800 (30min), 3600 (1h), 7200 (2h), 21600 (6h), 43200 (12h), 86400 (24h), 172800 (48h), 259200 (72h), 518400 (6d).
@@ -31,7 +31,7 @@ Available values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 51
 - `chunk_overlap` (Number)
 - `chunk_size` (Number)
 - `custom_metadata` (Attributes List) (see [below for nested schema](#nestedatt--custom_metadata))
-- `embedding_model` (String) Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "google-ai-studio/gemini-embedding-2", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".
+- `embedding_model` (String)
 - `fusion_method` (String) Available values: "max", "rrf".
 - `hybrid_search_enabled` (Boolean, Deprecated) Deprecated — use index_method instead.
 - `index_method` (Attributes) Controls which storage backends are used during indexing. Defaults to vector-only. (see [below for nested schema](#nestedatt--index_method))
@@ -41,15 +41,15 @@ Available values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 51
 - `paused` (Boolean)
 - `public_endpoint_params` (Attributes) (see [below for nested schema](#nestedatt--public_endpoint_params))
 - `reranking` (Boolean)
-- `reranking_model` (String) Available values: "@cf/baai/bge-reranker-base", "".
+- `reranking_model` (String)
 - `retrieval_options` (Attributes) (see [below for nested schema](#nestedatt--retrieval_options))
-- `rewrite_model` (String) Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "@cf/google/gemma-4-26b-a4b-it", "@cf/moonshotai/kimi-k2.5", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".
+- `rewrite_model` (String) A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
 - `rewrite_query` (Boolean)
 - `score_threshold` (Number)
 - `source` (String)
 - `source_params` (Attributes) (see [below for nested schema](#nestedatt--source_params))
 - `summarization` (Boolean)
-- `summarization_model` (String) Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "@cf/google/gemma-4-26b-a4b-it", "@cf/moonshotai/kimi-k2.5", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".
+- `summarization_model` (String)
 - `sync_interval` (Number) Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).
 Available values: 900, 1800, 3600, 7200, 14400, 21600, 43200, 86400.
 - `system_prompt_aisearch` (String)
@@ -70,7 +70,6 @@ Available values: 900, 1800, 3600, 7200, 14400, 21600, 43200, 86400.
 - `namespace` (String)
 - `public_endpoint_id` (String)
 - `status` (String)
-- `vectorize_name` (String)
 
 <a id="nestedatt--custom_metadata"></a>
 ### Nested Schema for `custom_metadata`
@@ -201,7 +200,6 @@ Optional:
 - `parse_options` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler--parse_options))
 - `parse_type` (String) How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.
 Available values: "sitemap", "discover".
-- `store_options` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler--store_options))
 
 <a id="nestedatt--source_params--web_crawler--discover_options"></a>
 ### Nested Schema for `source_params.web_crawler.discover_options`
@@ -235,20 +233,6 @@ Required:
 
 - `path` (String) Glob pattern to match against the page URL path. Uses standard glob syntax: * matches within a segment, ** crosses directories.
 - `selector` (String) CSS selector to extract content from pages matching the path pattern. Must not contain disallowed characters (;, `, $, {, }, \). Must target a single element; if multiple elements match, the selector is ignored and the full page is used.
-
-
-
-<a id="nestedatt--source_params--web_crawler--store_options"></a>
-### Nested Schema for `source_params.web_crawler.store_options`
-
-Required:
-
-- `storage_id` (String)
-
-Optional:
-
-- `r2_jurisdiction` (String)
-- `storage_type` (String) Available values: "r2".
 
 ## Import
 

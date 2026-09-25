@@ -126,6 +126,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										"account_creation": schema.StringAttribute{
 											Computed: true,
 										},
+										"account_creation_applies_tenant_defaults": schema.StringAttribute{
+											Computed: true,
+										},
 										"account_deletion": schema.StringAttribute{
 											Computed: true,
 										},

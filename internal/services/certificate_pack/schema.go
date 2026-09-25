@@ -100,7 +100,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				CustomType:    customfield.NewSetType[types.String](ctx),
 				ElementType:   types.StringType,
-				PlanModifiers: []planmodifier.Set{setplanmodifier.RequiresReplaceIfConfigured()},
+				PlanModifiers: []planmodifier.Set{setplanmodifier.UseNonNullStateForUnknown(), setplanmodifier.RequiresReplaceIfConfigured()},
 			},
 			"primary_certificate": schema.StringAttribute{
 				Description:   "Identifier of the primary certificate in a pack.",

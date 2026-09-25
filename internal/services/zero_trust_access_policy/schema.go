@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -255,6 +256,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The ID of a device posture integration.",
 									Required:    true,
 								},
+								"account_id": schema.StringAttribute{
+									Description: "The ID of the account that owns the device posture integration.",
+									Optional:    true,
+								},
 							},
 						},
 						"email_domain": schema.SingleNestedAttribute{
@@ -455,6 +460,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+				PlanModifiers: []planmodifier.Set{setplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"include": schema.SetNestedAttribute{
 				Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
@@ -548,6 +554,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The ID of a device posture integration.",
 									Required:    true,
 								},
+								"account_id": schema.StringAttribute{
+									Description: "The ID of the account that owns the device posture integration.",
+									Optional:    true,
+								},
 							},
 						},
 						"email_domain": schema.SingleNestedAttribute{
@@ -748,6 +758,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+				PlanModifiers: []planmodifier.Set{setplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"require": schema.SetNestedAttribute{
 				Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
@@ -841,6 +852,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The ID of a device posture integration.",
 									Required:    true,
 								},
+								"account_id": schema.StringAttribute{
+									Description: "The ID of the account that owns the device posture integration.",
+									Optional:    true,
+								},
 							},
 						},
 						"email_domain": schema.SingleNestedAttribute{
@@ -1041,14 +1056,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+				PlanModifiers: []planmodifier.Set{setplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"app_count": schema.Int64Attribute{
 				Description: "Number of access applications currently using this policy.",
 				Computed:    true,
 			},
 			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"reusable": schema.BoolAttribute{
 				Computed: true,

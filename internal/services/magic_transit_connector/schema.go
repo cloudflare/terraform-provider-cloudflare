@@ -12,6 +12,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -36,7 +40,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Account identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -45,16 +48,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
-						Computed: true,
-						Optional: true,
+						Computed:      true,
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"provision_license": schema.BoolAttribute{
 						Description: "When true, create and provision a new licence key for the connector.",
 						Optional:    true,
 					},
 					"serial_number": schema.StringAttribute{
-						Computed: true,
-						Optional: true,
+						Computed:      true,
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
@@ -64,8 +69,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"activated": schema.BoolAttribute{
-				Computed: true,
-				Optional: true,
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"interrupt_window_duration_hours": schema.Float64Attribute{
 				Computed: true,
@@ -73,18 +79,32 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.Float64{
 					float64validator.Between(1, 24),
 				},
+				PlanModifiers: []planmodifier.Float64{float64planmodifier.UseNonNullStateForUnknown()},
 			},
 			"interrupt_window_hour_of_day": schema.Float64Attribute{
-				Computed: true,
-				Optional: true,
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Float64{float64planmodifier.UseNonNullStateForUnknown()},
 			},
 			"notes": schema.StringAttribute{
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"primary": schema.BoolAttribute{
 				Computed: true,
 				Optional: true,
+				Default:  booldefault.StaticBool(true),
+			},
+			"site_id": schema.StringAttribute{
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"timezone": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"interrupt_window_days_of_week": schema.ListAttribute{
 				Description: "Allowed days of the week for upgrades. Default is all days.",
@@ -103,15 +123,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						),
 					),
 				},
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
+				CustomType:    customfield.NewListType[types.String](ctx),
+				ElementType:   types.StringType,
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"interrupt_window_embargo_dates": schema.ListAttribute{
-				Description: "List of dates (YYYY-MM-DD) when upgrades are blocked.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
+				Description:   "List of dates (YYYY-MM-DD) when upgrades are blocked.",
+				Computed:      true,
+				Optional:      true,
+				CustomType:    customfield.NewListType[types.String](ctx),
+				ElementType:   types.StringType,
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"last_heartbeat": schema.StringAttribute{
 				Computed: true,

@@ -61,6 +61,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"created_on": schema.StringAttribute{
 				Description: "The RFC 3339 timestamp of when the item was created.",
 				Computed:    true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "The RFC 3339 timestamp of when the item was last modified.",

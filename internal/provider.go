@@ -81,9 +81,12 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_allow_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_block_sender"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_impersonation_registry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_trusted_domains"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_sending_subdomain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/filter"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/firewall_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/flagship_app"
@@ -124,6 +127,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/moq_relay"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate_associations"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/nel_setting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy_webhooks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/oauth_client"
@@ -174,6 +178,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_protocol"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/sso_connector"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_audio_track"
@@ -474,6 +479,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		api_token.NewResource,
 		zone.NewResource,
 		zone_setting.NewResource,
+		nel_setting.NewResource,
 		zone_hold.NewResource,
 		zone_subscription.NewResource,
 		ct_alerting.NewResource,
@@ -512,7 +518,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		dns_zone_transfers_acl.NewResource,
 		dns_zone_transfers_peer.NewResource,
 		dns_zone_transfers_tsig.NewResource,
+		email_security_allow_policy.NewResource,
 		email_security_block_sender.NewResource,
+		email_security_domain.NewResource,
 		email_security_impersonation_registry.NewResource,
 		email_security_trusted_domains.NewResource,
 		email_routing_settings.NewResource,
@@ -520,6 +528,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		email_routing_rule.NewResource,
 		email_routing_catch_all.NewResource,
 		email_routing_address.NewResource,
+		email_sending_subdomain.NewResource,
 		filter.NewResource,
 		zone_lockdown.NewResource,
 		firewall_rule.NewResource,
@@ -666,6 +675,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_network_hostname_route.NewResource,
 		zero_trust_risk_behavior.NewResource,
 		zero_trust_risk_scoring_integration.NewResource,
+		zero_trust_resource_library_application.NewResource,
 		turnstile_widget.NewResource,
 		connectivity_directory_service.NewResource,
 		hyperdrive_config.NewResource,
@@ -751,6 +761,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zone.NewZoneDataSource,
 		zone.NewZonesDataSource,
 		zone_setting.NewZoneSettingDataSource,
+		nel_setting.NewNELSettingDataSource,
 		zone_hold.NewZoneHoldDataSource,
 		zone_subscription.NewZoneSubscriptionDataSource,
 		ct_alerting.NewCTAlertingDataSource,
@@ -804,8 +815,12 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		dns_zone_transfers_peer.NewDNSZoneTransfersPeersDataSource,
 		dns_zone_transfers_tsig.NewDNSZoneTransfersTSIGDataSource,
 		dns_zone_transfers_tsig.NewDNSZoneTransfersTSIGsDataSource,
+		email_security_allow_policy.NewEmailSecurityAllowPolicyDataSource,
+		email_security_allow_policy.NewEmailSecurityAllowPoliciesDataSource,
 		email_security_block_sender.NewEmailSecurityBlockSenderDataSource,
 		email_security_block_sender.NewEmailSecurityBlockSendersDataSource,
+		email_security_domain.NewEmailSecurityDomainDataSource,
+		email_security_domain.NewEmailSecurityDomainsDataSource,
 		email_security_impersonation_registry.NewEmailSecurityImpersonationRegistryDataSource,
 		email_security_impersonation_registry.NewEmailSecurityImpersonationRegistriesDataSource,
 		email_security_trusted_domains.NewEmailSecurityTrustedDomainsDataSource,
@@ -817,6 +832,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		email_routing_catch_all.NewEmailRoutingCatchAllDataSource,
 		email_routing_address.NewEmailRoutingAddressDataSource,
 		email_routing_address.NewEmailRoutingAddressesDataSource,
+		email_sending_subdomain.NewEmailSendingSubdomainDataSource,
+		email_sending_subdomain.NewEmailSendingSubdomainsDataSource,
 		filter.NewFilterDataSource,
 		filter.NewFiltersDataSource,
 		zone_lockdown.NewZoneLockdownDataSource,
@@ -893,6 +910,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		url_normalization_settings.NewURLNormalizationSettingsDataSource,
 		spectrum_application.NewSpectrumApplicationDataSource,
 		spectrum_application.NewSpectrumApplicationsDataSource,
+		spectrum_protocol.NewSpectrumProtocolsDataSource,
 		ruleset.NewRulesetDataSource,
 		ruleset.NewRulesetsDataSource,
 		regional_hostname.NewRegionalHostnameDataSource,

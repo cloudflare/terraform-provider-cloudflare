@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -22,12 +23,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Required: true,
 			},
+			"fields": schema.StringAttribute{
+				Description: "Return only the listed properties on each application, as a comma-separated list.\nUse this to keep responses small when you only need part of each application — for\nexample populating a picker with `fields=id,name` instead of downloading every\nhostname and IP subnet.\n\nOmit this parameter to receive the full application object.\n\n`id` is always returned.\n\nSelectable properties: `id`, `name`, `human_id`, `version`, `hostnames`,\n`support_domains`, `ip_subnets`, `port_protocols`, `supported`, `gen_ai_score`,\n`application_confidence_score`, `created_at`, `updated_at`, `review_status`.\n\nUnknown or empty property names return `400`.",
+				Optional:    true,
+			},
 			"filter": schema.StringAttribute{
-				Description: "Filter applications using key:value format. Supported filter keys:\n- name: Filter by application name (e.g., name:HR)\n- id: Filter by application ID (e.g., id:498)\n- human_id: Filter by human-readable ID (e.g., human_id:HR)\n- hostname: Filter by hostname or support domain (e.g., hostname:portal.example.com)\n- source: Filter by application source name (e.g., source:cloudflare)\n- ip_subnet: Filter by IP subnet using CIDR containment — returns applications where any stored subnet contains the search value (e.g., ip_subnet:10.0.1.5/32 matches apps with 10.0.0.0/16)\n- category_id: Filter by category ID (e.g., category_id:12).\n- category_name: Filter by category name (e.g., category_name:HR).\n- supported: Filter by supported Cloudflare product (e.g., supported:ACCESS). Values: GATEWAY, ACCESS, CASB.\n.",
+				Description: "Filter applications using key:value format. Supported filter keys:\n- name: Filter by application name (e.g., name:HR)\n- id: Filter by application ID (e.g., id:498)\n- human_id: Filter by human-readable ID (e.g., human_id:HR)\n- hostname: Filter by hostname or support domain (e.g., hostname:portal.example.com)\n- source: Filter by application source name (e.g., source:cloudflare)\n- ip_subnet: Filter by IP subnet using CIDR containment — returns applications where any stored subnet contains the search value (e.g., ip_subnet:10.0.1.5/32 matches apps with 10.0.0.0/16)\n- category_id: Filter by category ID (e.g., category_id:12).\n- category_name: Filter by category name (e.g., category_name:HR).\n- supported: Filter by supported Cloudflare product (e.g., supported:ACCESS). Values: GATEWAY, ACCESS, CASB.\n- review_status: Filter by the account's Gateway review status. Values: approved, unapproved, in_review, unreviewed.\n.",
 				Optional:    true,
 			},
 			"order_by": schema.StringAttribute{
-				Description: "Order results by field name and direction (e.g., name:asc). Ignored when search is provided; results are ranked by relevance instead.",
+				Description: "Order results using field:direction format. Supported fields are name, id, human_id,\ncategory_id, application_type, application_confidence_score, and gen_ai_score.\nSupported directions are asc and desc. Ignored when search is provided; results are\nranked by relevance instead.",
 				Optional:    true,
 			},
 			"search": schema.StringAttribute{
@@ -67,6 +72,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"application_confidence_score": schema.Float64Attribute{
 							Description: "Confidence score for the application. Returns -1 when no score is available.",
 							Computed:    true,
+						},
+						"application_score_composition": schema.StringAttribute{
+							Description: "Returns the score composition breakdown for the application.",
+							Computed:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"application_source": schema.StringAttribute{
 							Description: "Returns the application source.",
@@ -121,6 +131,18 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewSetType[types.String](ctx),
 							ElementType: types.StringType,
 						},
+						"review_status": schema.StringAttribute{
+							Description: "The account-specific Gateway review status. Applications with no assigned review status are returned as `unreviewed`.\nAvailable values: \"approved\", \"unapproved\", \"in_review\", \"unreviewed\".",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"approved",
+									"unapproved",
+									"in_review",
+									"unreviewed",
+								),
+							},
+						},
 						"support_domains": schema.SetAttribute{
 							Description: "Support domains matched by the application.",
 							Computed:    true,
@@ -140,11 +162,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"version": schema.StringAttribute{
 							Description: "Returns the application version.",
 							Computed:    true,
-						},
-						"application_score_composition": schema.StringAttribute{
-							Description: "Returns the score composition breakdown for the application.",
-							Computed:    true,
-							CustomType:  jsontypes.NormalizedType{},
 						},
 					},
 				},

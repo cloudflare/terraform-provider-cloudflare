@@ -44,11 +44,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "defines the unique ID for this custom scan expression.",
+							Description: "Defines the unique ID for this Content Scanning custom expression.",
 							Computed:    true,
 						},
 						"payload": schema.StringAttribute{
-							Description: "Defines the ruleset expression to use in matching content objects.",
+							Description: "Defines the custom content extraction expression used to reach content objects in the request.",
 							Computed:    true,
 						},
 					},

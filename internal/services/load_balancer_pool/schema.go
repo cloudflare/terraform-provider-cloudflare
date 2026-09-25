@@ -148,6 +148,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"SAS",
 							"SEAS",
 							"NEAS",
+							"CHINA",
 							"ALL_REGIONS",
 						),
 					),
@@ -235,7 +236,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("hash"),
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"notification_filter": schema.SingleNestedAttribute{
 				Description: "Filter pool and origin health notifications by resource type or health status. Use null to reset.",
@@ -272,6 +273,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"origin_steering": schema.SingleNestedAttribute{
 				Description: "Configures origin steering for the pool. Controls how origins are selected for new sessions and traffic without session affinity.",
@@ -294,12 +296,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("random"),
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"created_on": schema.StringAttribute{
-				Computed: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"disabled_at": schema.StringAttribute{
 				Description: "This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.",

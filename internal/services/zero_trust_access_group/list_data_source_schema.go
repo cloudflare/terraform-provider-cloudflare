@@ -159,6 +159,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												Description: "The ID of a device posture integration.",
 												Computed:    true,
 											},
+											"account_id": schema.StringAttribute{
+												Description: "The ID of the account that owns the device posture integration.",
+												Computed:    true,
+											},
 										},
 									},
 									"email_domain": schema.SingleNestedAttribute{
@@ -475,6 +479,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												Description: "The ID of a device posture integration.",
 												Computed:    true,
 											},
+											"account_id": schema.StringAttribute{
+												Description: "The ID of the account that owns the device posture integration.",
+												Computed:    true,
+											},
 										},
 									},
 									"email_domain": schema.SingleNestedAttribute{
@@ -789,6 +797,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Attributes: map[string]schema.Attribute{
 											"integration_uid": schema.StringAttribute{
 												Description: "The ID of a device posture integration.",
+												Computed:    true,
+											},
+											"account_id": schema.StringAttribute{
+												Description: "The ID of the account that owns the device posture integration.",
 												Computed:    true,
 											},
 										},
@@ -1109,6 +1121,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Attributes: map[string]schema.Attribute{
 											"integration_uid": schema.StringAttribute{
 												Description: "The ID of a device posture integration.",
+												Computed:    true,
+											},
+											"account_id": schema.StringAttribute{
+												Description: "The ID of the account that owns the device posture integration.",
 												Computed:    true,
 											},
 										},

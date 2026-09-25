@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -111,11 +112,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     int64default.StaticInt64(0),
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"created": schema.StringAttribute{
-				Description: "The date and time the live input was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "The date and time the live input was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"keys_rotated_at": schema.StringAttribute{
 				Description: "The date and time the live input keys were last rotated. Omitted for live inputs that have never had their keys rotated.",
@@ -146,6 +149,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"uid": schema.StringAttribute{
 				Description: "A unique identifier for a live input.",
 				Computed:    true,
+			},
+			"playback": schema.SingleNestedAttribute{
+				Description: "Details for playing a live input's broadcast using the HLS or DASH manifests. URLs reference the live input ID.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[StreamLiveInputPlaybackModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"dash": schema.StringAttribute{
+						Description: "The DASH manifest URL used to play live video, referencing the live input ID.",
+						Computed:    true,
+					},
+					"hls": schema.StringAttribute{
+						Description: "The HLS manifest URL used to play live video, referencing the live input ID.",
+						Computed:    true,
+					},
+				},
 			},
 			"rtmps": schema.SingleNestedAttribute{
 				Description: "Details for streaming to an live input using RTMPS.",

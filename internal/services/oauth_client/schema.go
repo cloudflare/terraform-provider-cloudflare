@@ -120,6 +120,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				ElementType: types.StringType,
 			},
+			"optional_scopes": schema.ListAttribute{
+				Description: "Scopes that the authorizing user may decline during consent. Each value must also appear in `scopes`. The scopes `openid`, `offline`, and `offline_access` cannot be optional.",
+				Optional:    true,
+				ElementType: types.StringType,
+			},
 			"post_logout_redirect_uris": schema.ListAttribute{
 				Description: "Array of allowed post-logout redirect URIs.",
 				Optional:    true,
@@ -140,7 +145,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "Timestamp when the OAuth client was created.",
 				Computed:      true,
 				CustomType:    timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"has_rotated_secret": schema.BoolAttribute{
 				Description:   "Indicates whether the client has a rotated secret that has not yet been deleted.",

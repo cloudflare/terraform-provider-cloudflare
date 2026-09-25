@@ -57,6 +57,7 @@ resource "cloudflare_stream_live_input" "example_stream_live_input" {
 - `created` (String) The date and time the live input was created.
 - `keys_rotated_at` (String) The date and time the live input keys were last rotated. Omitted for live inputs that have never had their keys rotated.
 - `modified` (String) The date and time the live input was last modified.
+- `playback` (Attributes) Details for playing a live input's broadcast using the HLS or DASH manifests. URLs reference the live input ID. (see [below for nested schema](#nestedatt--playback))
 - `rtmps` (Attributes) Details for streaming to an live input using RTMPS. (see [below for nested schema](#nestedatt--rtmps))
 - `rtmps_playback` (Attributes) Details for playback from an live input using RTMPS. (see [below for nested schema](#nestedatt--rtmps_playback))
 - `srt` (Attributes) Details for streaming to a live input using SRT. (see [below for nested schema](#nestedatt--srt))
@@ -78,6 +79,15 @@ Optional:
 Available values: "off", "automatic".
 - `require_signed_urls` (Boolean) Indicates if a video using the live input has the `requireSignedURLs` property set. Also enforces access controls on any video recording of the livestream with the live input.
 - `timeout_seconds` (Number) Determines the amount of time a live input configured in `automatic` mode should wait before a recording transitions from live to on-demand. `0` is recommended for most use cases and indicates the platform default should be used.
+
+
+<a id="nestedatt--playback"></a>
+### Nested Schema for `playback`
+
+Read-Only:
+
+- `dash` (String) The DASH manifest URL used to play live video, referencing the live input ID.
+- `hls` (String) The HLS manifest URL used to play live video, referencing the live input ID.
 
 
 <a id="nestedatt--rtmps"></a>

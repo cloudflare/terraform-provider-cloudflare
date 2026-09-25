@@ -45,6 +45,7 @@ resource "cloudflare_pipeline_sink" "example_pipeline_sink" {
   }
   format = {
     type = "json"
+    compression = "uncompressed"
     decimal_encoding = "number"
     timestamp_format = "rfc3339"
     unstructured = true
@@ -57,12 +58,6 @@ resource "cloudflare_pipeline_sink" "example_pipeline_sink" {
       required = true
       sql_name = "sql_name"
     }]
-    format = {
-      type = "json"
-      decimal_encoding = "number"
-      timestamp_format = "rfc3339"
-      unstructured = true
-    }
     inferred = true
   }
 }
@@ -81,8 +76,8 @@ Available values: "r2", "r2_data_catalog".
 ### Optional
 
 - `config` (Attributes) Defines the configuration of the R2 Sink. (see [below for nested schema](#nestedatt--config))
-- `format` (Attributes) (see [below for nested schema](#nestedatt--format))
-- `schema` (Attributes) (see [below for nested schema](#nestedatt--schema))
+- `format` (Attributes) Defines the output data format of a sink. (see [below for nested schema](#nestedatt--format))
+- `schema` (Attributes) Defines the schema of the events in the data stream. (see [below for nested schema](#nestedatt--schema))
 
 ### Read-Only
 
@@ -158,7 +153,8 @@ Required:
 
 Optional:
 
-- `compression` (String) Available values: "uncompressed", "snappy", "gzip", "zstd", "lz4".
+- `compression` (String) Specifies the compression applied to JSON sink output.
+Available values: "uncompressed", "gzip", "snappy", "zstd", "lz4".
 - `decimal_encoding` (String) Available values: "number", "string", "bytes".
 - `row_group_bytes` (Number)
 - `timestamp_format` (String) Available values: "rfc3339", "unix_millis".
@@ -171,7 +167,6 @@ Optional:
 Optional:
 
 - `fields` (Attributes List) (see [below for nested schema](#nestedatt--schema--fields))
-- `format` (Attributes) (see [below for nested schema](#nestedatt--schema--format))
 - `inferred` (Boolean)
 
 <a id="nestedatt--schema--fields"></a>
@@ -188,22 +183,6 @@ Optional:
 - `required` (Boolean)
 - `sql_name` (String)
 - `unit` (String) Available values: "second", "millisecond", "microsecond", "nanosecond".
-
-
-<a id="nestedatt--schema--format"></a>
-### Nested Schema for `schema.format`
-
-Required:
-
-- `type` (String) Available values: "json", "parquet".
-
-Optional:
-
-- `compression` (String) Available values: "uncompressed", "snappy", "gzip", "zstd", "lz4".
-- `decimal_encoding` (String) Available values: "number", "string", "bytes".
-- `row_group_bytes` (Number)
-- `timestamp_format` (String) Available values: "rfc3339", "unix_millis".
-- `unstructured` (Boolean)
 
 ## Import
 

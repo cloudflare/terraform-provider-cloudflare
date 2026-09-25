@@ -60,7 +60,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "Indicates when the snippet was created.",
 				Computed:      true,
 				CustomType:    timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "Indicates when the snippet was last modified.",

@@ -34,6 +34,7 @@ data "cloudflare_bot_management" "example_bot_management" {
 Available values: "block", "disabled", "only_on_ad_pages".
 - `auto_update_model` (Boolean) Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes)
 - `bm_cookie_enabled` (Boolean) Indicates that the bot management cookie can be placed on end user devices accessing the site. Defaults to true
+- `bot_preference_sync_enabled` (Boolean) Enable Bot Preference Sync for this zone. When enabled, Cloudflare can serve robots.txt content derived from the zone's AI Search, AI User, and AI Training preferences.
 - `cf_robots_variant` (String) Specifies the Robots Access Control License variant to use.
 Available values: "off", "policy_only".
 - `content_bots_protection` (String) Enable rule to block content bots. When enabled, blocks automated traffic with low bot scores, excluding safe verified bot categories. Exceptions should be managed via skip rules.

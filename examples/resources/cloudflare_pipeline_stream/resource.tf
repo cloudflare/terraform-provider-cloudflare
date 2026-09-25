@@ -22,12 +22,6 @@ resource "cloudflare_pipeline_stream" "example_pipeline_stream" {
       required = true
       sql_name = "sql_name"
     }]
-    format = {
-      type = "json"
-      decimal_encoding = "number"
-      timestamp_format = "rfc3339"
-      unstructured = true
-    }
     inferred = true
   }
   worker_binding = {

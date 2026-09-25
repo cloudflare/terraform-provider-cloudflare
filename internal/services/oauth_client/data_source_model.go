@@ -34,6 +34,7 @@ type OAuthClientDataSourceModel struct {
 	Visibility              types.String                                                              `tfsdk:"visibility" json:"visibility,computed"`
 	AllowedCORSOrigins      customfield.List[types.String]                                            `tfsdk:"allowed_cors_origins" json:"allowed_cors_origins,computed"`
 	GrantTypes              customfield.List[types.String]                                            `tfsdk:"grant_types" json:"grant_types,computed"`
+	OptionalScopes          customfield.List[types.String]                                            `tfsdk:"optional_scopes" json:"optional_scopes,computed"`
 	PostLogoutRedirectURIs  customfield.List[types.String]                                            `tfsdk:"post_logout_redirect_uris" json:"post_logout_redirect_uris,computed"`
 	RedirectURIs            customfield.List[types.String]                                            `tfsdk:"redirect_uris" json:"redirect_uris,computed"`
 	ResponseTypes           customfield.List[types.String]                                            `tfsdk:"response_types" json:"response_types,computed"`

@@ -40,12 +40,6 @@ resource "cloudflare_pipeline_stream" "example_pipeline_stream" {
       required = true
       sql_name = "sql_name"
     }]
-    format = {
-      type = "json"
-      decimal_encoding = "number"
-      timestamp_format = "rfc3339"
-      unstructured = true
-    }
     inferred = true
   }
   worker_binding = {
@@ -64,9 +58,9 @@ resource "cloudflare_pipeline_stream" "example_pipeline_stream" {
 
 ### Optional
 
-- `format` (Attributes) (see [below for nested schema](#nestedatt--format))
+- `format` (Attributes) Defines the data format of the events. (see [below for nested schema](#nestedatt--format))
 - `http` (Attributes) (see [below for nested schema](#nestedatt--http))
-- `schema` (Attributes) (see [below for nested schema](#nestedatt--schema))
+- `schema` (Attributes) Defines the schema of the events in the data stream. (see [below for nested schema](#nestedatt--schema))
 - `worker_binding` (Attributes) (see [below for nested schema](#nestedatt--worker_binding))
 
 ### Read-Only
@@ -120,7 +114,6 @@ Optional:
 Optional:
 
 - `fields` (Attributes List) (see [below for nested schema](#nestedatt--schema--fields))
-- `format` (Attributes) (see [below for nested schema](#nestedatt--schema--format))
 - `inferred` (Boolean)
 
 <a id="nestedatt--schema--fields"></a>
@@ -137,22 +130,6 @@ Optional:
 - `required` (Boolean)
 - `sql_name` (String)
 - `unit` (String) Available values: "second", "millisecond", "microsecond", "nanosecond".
-
-
-<a id="nestedatt--schema--format"></a>
-### Nested Schema for `schema.format`
-
-Required:
-
-- `type` (String) Available values: "json", "parquet".
-
-Optional:
-
-- `compression` (String) Available values: "uncompressed", "snappy", "gzip", "zstd", "lz4".
-- `decimal_encoding` (String) Available values: "number", "string", "bytes".
-- `row_group_bytes` (Number)
-- `timestamp_format` (String) Available values: "rfc3339", "unix_millis".
-- `unstructured` (Boolean)
 
 
 

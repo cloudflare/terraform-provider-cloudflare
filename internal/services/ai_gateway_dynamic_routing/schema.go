@@ -156,8 +156,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified_at": schema.StringAttribute{
 				Computed:   true,
@@ -171,7 +172,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[AIGatewayDynamicRoutingDeploymentModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"created_at": schema.StringAttribute{
-						Computed: true,
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"deployment_id": schema.StringAttribute{
 						Computed: true,
@@ -192,15 +194,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"created_at": schema.StringAttribute{
-						Computed:   true,
-						CustomType: timetypes.RFC3339Type{},
+						Computed:      true,
+						CustomType:    timetypes.RFC3339Type{},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"deployment": schema.SingleNestedAttribute{
 						Computed:   true,
 						CustomType: customfield.NewNestedObjectType[AIGatewayDynamicRoutingRouteDeploymentModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"created_at": schema.StringAttribute{
-								Computed: true,
+								Computed:      true,
+								PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 							},
 							"deployment_id": schema.StringAttribute{
 								Computed: true,
@@ -349,7 +353,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"created_at": schema.StringAttribute{
-								Computed: true,
+								Computed:      true,
+								PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 							},
 							"data": schema.StringAttribute{
 								Computed: true,
@@ -376,7 +381,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"created_at": schema.StringAttribute{
-						Computed: true,
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"data": schema.StringAttribute{
 						Computed: true,

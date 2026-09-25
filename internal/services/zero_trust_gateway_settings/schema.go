@@ -11,6 +11,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -49,19 +51,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"enabled_download_phase": schema.BoolAttribute{
-								Description: "Specify whether to enable anti-virus scanning on downloads.",
-								Computed:    true,
-								Optional:    true,
+								Description:   "Specify whether to enable anti-virus scanning on downloads.",
+								Computed:      true,
+								Optional:      true,
+								PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 							},
 							"enabled_upload_phase": schema.BoolAttribute{
-								Description: "Specify whether to enable anti-virus scanning on uploads.",
-								Computed:    true,
-								Optional:    true,
+								Description:   "Specify whether to enable anti-virus scanning on uploads.",
+								Computed:      true,
+								Optional:      true,
+								PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 							},
 							"fail_closed": schema.BoolAttribute{
-								Description: "Specify whether to block requests for unscannable files.",
-								Computed:    true,
-								Optional:    true,
+								Description:   "Specify whether to block requests for unscannable files.",
+								Computed:      true,
+								Optional:      true,
+								PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 							},
 							"notification_settings": schema.SingleNestedAttribute{
 								Description: "Configure the message the user's device shows during an antivirus scan.",
@@ -86,6 +91,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Optional:    true,
 									},
 								},
+								PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 							},
 						},
 					},
@@ -329,8 +335,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"updated_at": schema.StringAttribute{
 				Computed:   true,

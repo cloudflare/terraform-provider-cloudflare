@@ -4,6 +4,7 @@ package dns_record
 
 import (
 	"context"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -14,7 +15,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -347,11 +350,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"tags": schema.SetAttribute{
-				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
-				Optional:    true,
-				Computed:    true,
-				CustomType:  customfield.NewSetType[types.String](ctx),
-				ElementType: types.StringType,
+				Description:   "Custom tags for the DNS record. This field has no effect on DNS responses.",
+				Optional:      true,
+				Computed:      true,
+				CustomType:    customfield.NewSetType[types.String](ctx),
+				ElementType:   types.StringType,
+				PlanModifiers: []planmodifier.Set{setplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "Settings for the DNS record.",
@@ -375,6 +379,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"comment_modified_on": schema.StringAttribute{
 				Description: "When the record comment was last modified. Omitted if there is no comment.",
@@ -382,9 +387,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"created_on": schema.StringAttribute{
-				Description: "When the record was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "When the record was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the record was last modified.",

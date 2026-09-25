@@ -96,9 +96,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default: stringdefault.StaticString("disabled"),
 			},
 			"created_on": schema.StringAttribute{
-				Description: "The timestamp of when the Page Rule was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "The timestamp of when the Page Rule was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "The timestamp of when the Page Rule was last modified.",

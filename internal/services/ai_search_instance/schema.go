@@ -15,7 +15,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -40,10 +39,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"source": schema.StringAttribute{
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"type": schema.StringAttribute{
 				Description: `Available values: "r2", "web-crawler".`,
 				Optional:    true,
@@ -61,156 +56,39 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:            booldefault.StaticBool(false),
 			},
 			"ai_gateway_id": schema.StringAttribute{
-				Computed:      true,
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Computed: true,
+				Optional: true,
 			},
 			"aisearch_model": schema.StringAttribute{
-				Description:   `Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "@cf/google/gemma-4-26b-a4b-it", "@cf/moonshotai/kimi-k2.5", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".`,
-				Computed:      true,
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"@cf/meta/llama-3.3-70b-instruct-fp8-fast",
-						"@cf/zai-org/glm-4.7-flash",
-						"@cf/meta/llama-3.1-8b-instruct-fast",
-						"@cf/meta/llama-3.1-8b-instruct-fp8",
-						"@cf/meta/llama-4-scout-17b-16e-instruct",
-						"@cf/qwen/qwen3-30b-a3b-fp8",
-						"@cf/deepseek-ai/deepseek-r1-distill-qwen-32b",
-						"@cf/moonshotai/kimi-k2-instruct",
-						"@cf/google/gemma-3-12b-it",
-						"@cf/google/gemma-4-26b-a4b-it",
-						"@cf/moonshotai/kimi-k2.5",
-						"anthropic/claude-3-7-sonnet",
-						"anthropic/claude-sonnet-4",
-						"anthropic/claude-opus-4",
-						"anthropic/claude-3-5-haiku",
-						"cerebras/qwen-3-235b-a22b-instruct",
-						"cerebras/qwen-3-235b-a22b-thinking",
-						"cerebras/llama-3.3-70b",
-						"cerebras/llama-4-maverick-17b-128e-instruct",
-						"cerebras/llama-4-scout-17b-16e-instruct",
-						"cerebras/gpt-oss-120b",
-						"google-ai-studio/gemini-2.5-flash",
-						"google-ai-studio/gemini-2.5-pro",
-						"grok/grok-4",
-						"groq/llama-3.3-70b-versatile",
-						"groq/llama-3.1-8b-instant",
-						"openai/gpt-5",
-						"openai/gpt-5-mini",
-						"openai/gpt-5-nano",
-						"",
-					),
+				Description: "A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"chunk_size": schema.Int64Attribute{
+				Computed: true,
+				Optional: true,
+				Validators: []validator.Int64{
+					int64validator.AtLeast(64),
 				},
 			},
 			"embedding_model": schema.StringAttribute{
-				Description:   `Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "google-ai-studio/gemini-embedding-2", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".`,
-				Computed:      true,
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"@cf/qwen/qwen3-embedding-0.6b",
-						"@cf/baai/bge-m3",
-						"@cf/baai/bge-large-en-v1.5",
-						"@cf/google/embeddinggemma-300m",
-						"google-ai-studio/gemini-embedding-001",
-						"google-ai-studio/gemini-embedding-2-preview",
-						"google-ai-studio/gemini-embedding-2",
-						"openai/text-embedding-3-small",
-						"openai/text-embedding-3-large",
-						"",
-					),
-				},
+				Computed: true,
+				Optional: true,
 			},
 			"reranking_model": schema.StringAttribute{
-				Description:   `Available values: "@cf/baai/bge-reranker-base", "".`,
-				Computed:      true,
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("@cf/baai/bge-reranker-base", ""),
-				},
+				Computed: true,
+				Optional: true,
 			},
 			"rewrite_model": schema.StringAttribute{
-				Description:   `Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "@cf/google/gemma-4-26b-a4b-it", "@cf/moonshotai/kimi-k2.5", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".`,
-				Computed:      true,
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"@cf/meta/llama-3.3-70b-instruct-fp8-fast",
-						"@cf/zai-org/glm-4.7-flash",
-						"@cf/meta/llama-3.1-8b-instruct-fast",
-						"@cf/meta/llama-3.1-8b-instruct-fp8",
-						"@cf/meta/llama-4-scout-17b-16e-instruct",
-						"@cf/qwen/qwen3-30b-a3b-fp8",
-						"@cf/deepseek-ai/deepseek-r1-distill-qwen-32b",
-						"@cf/moonshotai/kimi-k2-instruct",
-						"@cf/google/gemma-3-12b-it",
-						"@cf/google/gemma-4-26b-a4b-it",
-						"@cf/moonshotai/kimi-k2.5",
-						"anthropic/claude-3-7-sonnet",
-						"anthropic/claude-sonnet-4",
-						"anthropic/claude-opus-4",
-						"anthropic/claude-3-5-haiku",
-						"cerebras/qwen-3-235b-a22b-instruct",
-						"cerebras/qwen-3-235b-a22b-thinking",
-						"cerebras/llama-3.3-70b",
-						"cerebras/llama-4-maverick-17b-128e-instruct",
-						"cerebras/llama-4-scout-17b-16e-instruct",
-						"cerebras/gpt-oss-120b",
-						"google-ai-studio/gemini-2.5-flash",
-						"google-ai-studio/gemini-2.5-pro",
-						"grok/grok-4",
-						"groq/llama-3.3-70b-versatile",
-						"groq/llama-3.1-8b-instant",
-						"openai/gpt-5",
-						"openai/gpt-5-mini",
-						"openai/gpt-5-nano",
-						"",
-					),
-				},
+				Description: "A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"source": schema.StringAttribute{
+				Optional: true,
 			},
 			"summarization_model": schema.StringAttribute{
-				Description: `Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "@cf/google/gemma-4-26b-a4b-it", "@cf/moonshotai/kimi-k2.5", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".`,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"@cf/meta/llama-3.3-70b-instruct-fp8-fast",
-						"@cf/zai-org/glm-4.7-flash",
-						"@cf/meta/llama-3.1-8b-instruct-fast",
-						"@cf/meta/llama-3.1-8b-instruct-fp8",
-						"@cf/meta/llama-4-scout-17b-16e-instruct",
-						"@cf/qwen/qwen3-30b-a3b-fp8",
-						"@cf/deepseek-ai/deepseek-r1-distill-qwen-32b",
-						"@cf/moonshotai/kimi-k2-instruct",
-						"@cf/google/gemma-3-12b-it",
-						"@cf/google/gemma-4-26b-a4b-it",
-						"@cf/moonshotai/kimi-k2.5",
-						"anthropic/claude-3-7-sonnet",
-						"anthropic/claude-sonnet-4",
-						"anthropic/claude-opus-4",
-						"anthropic/claude-3-5-haiku",
-						"cerebras/qwen-3-235b-a22b-instruct",
-						"cerebras/qwen-3-235b-a22b-thinking",
-						"cerebras/llama-3.3-70b",
-						"cerebras/llama-4-maverick-17b-128e-instruct",
-						"cerebras/llama-4-scout-17b-16e-instruct",
-						"cerebras/gpt-oss-120b",
-						"google-ai-studio/gemini-2.5-flash",
-						"google-ai-studio/gemini-2.5-pro",
-						"grok/grok-4",
-						"groq/llama-3.3-70b-versatile",
-						"groq/llama-3.1-8b-instant",
-						"openai/gpt-5",
-						"openai/gpt-5-mini",
-						"openai/gpt-5-nano",
-						"",
-					),
-				},
+				Optional: true,
 			},
 			"system_prompt_aisearch": schema.StringAttribute{
 				Optional: true,
@@ -299,10 +177,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:  booldefault.StaticBool(true),
 			},
 			"cache_threshold": schema.StringAttribute{
-				Description:   `Available values: "super_strict_match", "close_enough", "flexible_friend", "anything_goes".`,
-				Computed:      true,
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{useStateForUnknownIncludingNullString()},
+				Description: `Available values: "super_strict_match", "close_enough", "flexible_friend", "anything_goes".`,
+				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"super_strict_match",
@@ -345,14 +222,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					int64validator.Between(0, 30),
 				},
 				Default: int64default.StaticInt64(10),
-			},
-			"chunk_size": schema.Int64Attribute{
-				Computed: true,
-				Optional: true,
-				Validators: []validator.Int64{
-					int64validator.AtLeast(64),
-				},
-				Default: int64default.StaticInt64(256),
 			},
 			"fusion_method": schema.StringAttribute{
 				Description: `Available values: "max", "rrf".`,
@@ -422,9 +291,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectType[AISearchInstanceIndexMethodModel](ctx),
-				PlanModifiers: []planmodifier.Object{
-					objectplanmodifier.UseStateForUnknown(),
-				},
 				Attributes: map[string]schema.Attribute{
 					"keyword": schema.BoolAttribute{
 						Description: "Enable keyword (BM25) storage backend.",
@@ -435,14 +301,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Required:    true,
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"indexing_options": schema.SingleNestedAttribute{
 				Computed:   true,
 				Optional:   true,
 				CustomType: customfield.NewNestedObjectType[AISearchInstanceIndexingOptionsModel](ctx),
-				PlanModifiers: []planmodifier.Object{
-					useStateForUnknownIncludingNullObject(),
-				},
 				Attributes: map[string]schema.Attribute{
 					"keyword_tokenizer": schema.StringAttribute{
 						Description: "Tokenizer used for keyword search indexing. porter provides word-level tokenization with Porter stemming (good for natural language queries). trigram enables character-level substring matching (good for partial matches, code, identifiers). Changing this triggers a full re-index. Defaults to porter.\nAvailable values: \"porter\", \"trigram\".",
@@ -454,12 +318,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("porter"),
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"public_endpoint_params": schema.SingleNestedAttribute{
-				Computed:      true,
-				Optional:      true,
-				CustomType:    customfield.NewNestedObjectType[AISearchInstancePublicEndpointParamsModel](ctx),
-				PlanModifiers: []planmodifier.Object{useStateForUnknownIncludingNullObject()},
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectType[AISearchInstancePublicEndpointParamsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"authorized_hosts": schema.ListAttribute{
 						Optional:    true,
@@ -477,6 +341,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(false),
 							},
 						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"custom_domains": schema.ListAttribute{
 						Description: "Custom domain hostnames that alias this public endpoint. GET and create responses return the current set; on update (PUT) this field is only echoed back when supplied in the request body, otherwise it is null (omit it to leave domains unchanged).",
@@ -511,6 +376,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(false),
 							},
 						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"rate_limit": schema.SingleNestedAttribute{
 						Optional: true,
@@ -548,15 +414,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:     booldefault.StaticBool(false),
 							},
 						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
-
 			"source_params": schema.SingleNestedAttribute{
-				Computed:      true,
-				Optional:      true,
-				CustomType:    customfield.NewNestedObjectType[AISearchInstanceSourceParamsModel](ctx),
-				PlanModifiers: []planmodifier.Object{useStateForUnknownIncludingNullObject()},
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"exclude_items": schema.ListAttribute{
 						Description: "List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.",
@@ -685,46 +551,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"sitemap",
-										"feed-rss",
-										"crawl",
-									),
+									stringvalidator.OneOfCaseInsensitive("sitemap", "discover"),
 								},
 								Default: stringdefault.StaticString("sitemap"),
 							},
-							"store_options": schema.SingleNestedAttribute{
-								Optional: true,
-								Attributes: map[string]schema.Attribute{
-									"storage_id": schema.StringAttribute{
-										Required: true,
-									},
-									"r2_jurisdiction": schema.StringAttribute{
-										Computed: true,
-										Optional: true,
-										Default:  stringdefault.StaticString("default"),
-									},
-									"storage_type": schema.StringAttribute{
-										Description: `Available values: "r2".`,
-										Optional:    true,
-										Validators: []validator.String{
-											stringvalidator.OneOfCaseInsensitive("r2"),
-										},
-									},
-								},
-							},
 						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"created_at": schema.StringAttribute{
 				Computed:      true,
 				CustomType:    timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"created_by": schema.StringAttribute{
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Computed: true,
 			},
 			"enable": schema.BoolAttribute{
 				Computed: true,
@@ -732,39 +575,28 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"engine_version": schema.Float64Attribute{
 				Computed: true,
-				PlanModifiers: []planmodifier.Float64{
-					float64planmodifier.UseStateForUnknown(),
-				},
+				Default:  float64default.StaticFloat64(3),
 			},
 			"last_activity": schema.StringAttribute{
-				Computed:      true,
-				CustomType:    timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{useStateForUnknownIncludingNullString()},
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"modified_at": schema.StringAttribute{
-				Computed:      true,
-				CustomType:    timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"modified_by": schema.StringAttribute{
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Computed: true,
 			},
 			"namespace": schema.StringAttribute{
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Computed: true,
 			},
 			"public_endpoint_id": schema.StringAttribute{
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{useStateForUnknownIncludingNullString()},
+				Computed: true,
 			},
 			"status": schema.StringAttribute{
 				Computed: true,
 				Default:  stringdefault.StaticString("waiting"),
-			},
-			"vectorize_name": schema.StringAttribute{
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{useStateForUnknownIncludingNullString()},
 			},
 		},
 	}

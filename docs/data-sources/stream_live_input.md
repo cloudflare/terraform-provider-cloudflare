@@ -38,6 +38,7 @@ data "cloudflare_stream_live_input" "example_stream_live_input" {
 - `keys_rotated_at` (String) The date and time the live input keys were last rotated. Omitted for live inputs that have never had their keys rotated.
 - `meta` (String) A user modifiable key-value store used to reference other systems of record for managing live inputs.
 - `modified` (String) The date and time the live input was last modified.
+- `playback` (Attributes) Details for playing a live input's broadcast using the HLS or DASH manifests. URLs reference the live input ID. (see [below for nested schema](#nestedatt--playback))
 - `prefer_low_latency` (Boolean) When enabled, the live stream is delivered using Low-Latency HLS (LL-HLS), reducing glass-to-glass latency for viewers at the cost of reduced player compatibility.
 - `recording` (Attributes) Records the input to a Cloudflare Stream video. Behavior depends on the mode. In most cases, the video will initially be viewable as a live video and transition to on-demand after a condition is satisfied. (see [below for nested schema](#nestedatt--recording))
 - `rtmps` (Attributes) Details for streaming to an live input using RTMPS. (see [below for nested schema](#nestedatt--rtmps))
@@ -49,6 +50,15 @@ Available values: "connected", "reconnected", "reconnecting", "client_disconnect
 - `uid` (String) A unique identifier for a live input.
 - `web_rtc` (Attributes) Details for streaming to a live input using WebRTC. (see [below for nested schema](#nestedatt--web_rtc))
 - `web_rtc_playback` (Attributes) Details for playback from a live input using WebRTC. (see [below for nested schema](#nestedatt--web_rtc_playback))
+
+<a id="nestedatt--playback"></a>
+### Nested Schema for `playback`
+
+Read-Only:
+
+- `dash` (String) The DASH manifest URL used to play live video, referencing the live input ID.
+- `hls` (String) The HLS manifest URL used to play live video, referencing the live input ID.
+
 
 <a id="nestedatt--recording"></a>
 ### Nested Schema for `recording`

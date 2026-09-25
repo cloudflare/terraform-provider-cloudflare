@@ -26,10 +26,10 @@ data "cloudflare_precursor" "example_precursor" {
 
 ### Read-Only
 
-- `default_mode` (String) The zone-level Precursor enforcement mode applied to requests that do
+- `default_mode` (String, Deprecated) The zone-level Precursor enforcement mode applied to requests that do
 not match a more specific enforcement rule.
 Available values: "off", "min-friction", "max-security".
-- `enforcement_rules` (Attributes List) The ordered list of enforcement rules for the zone. (see [below for nested schema](#nestedatt--enforcement_rules))
+- `enforcement_rules` (Attributes List, Deprecated) The ordered list of enforcement rules for the zone. (see [below for nested schema](#nestedatt--enforcement_rules))
 - `id` (String) Identifier.
 
 <a id="nestedatt--enforcement_rules"></a>

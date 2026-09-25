@@ -29,7 +29,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"resource_type": schema.StringAttribute{
-				Description: "Filter share resources by resource_type.\nAvailable values: \"custom-ruleset\", \"gateway-policy\", \"gateway-destination-ip\", \"gateway-block-page-settings\", \"gateway-extended-email-matching\", \"idp-federation-grant\".",
+				Description: "Filter share resources by resource_type.\nAvailable values: \"custom-ruleset\", \"gateway-policy\", \"gateway-destination-ip\", \"gateway-block-page-settings\", \"gateway-extended-email-matching\", \"idp-federation-grant\", \"trust-grant\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -39,6 +39,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"gateway-block-page-settings",
 						"gateway-extended-email-matching",
 						"idp-federation-grant",
+						"trust-grant",
 					),
 				},
 			},
@@ -94,7 +95,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"resource_type": schema.StringAttribute{
-							Description: "Resource Type.\nAvailable values: \"custom-ruleset\", \"gateway-policy\", \"gateway-destination-ip\", \"gateway-block-page-settings\", \"gateway-extended-email-matching\", \"idp-federation-grant\".",
+							Description: "Resource Type.\nAvailable values: \"custom-ruleset\", \"gateway-policy\", \"gateway-destination-ip\", \"gateway-block-page-settings\", \"gateway-extended-email-matching\", \"idp-federation-grant\", \"trust-grant\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -104,6 +105,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"gateway-block-page-settings",
 									"gateway-extended-email-matching",
 									"idp-federation-grant",
+									"trust-grant",
 								),
 							},
 						},

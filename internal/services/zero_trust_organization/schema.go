@@ -235,9 +235,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(false),
 			},
 			"ui_read_only_toggle_reason": schema.StringAttribute{
-				Description: "A description of the reason why the UI read only field is being toggled.",
-				Computed:    true,
-				Optional:    true,
+				Description:   "A description of the reason why the UI read only field is being toggled.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"warp_auth_non_browser_401": schema.BoolAttribute{
 				Description: "When enabled, unsuccessful WARP authentication requests with a non-HTML Accept header return a 401 response instead of redirecting to the login page.",

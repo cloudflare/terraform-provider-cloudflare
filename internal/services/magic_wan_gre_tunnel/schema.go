@@ -158,6 +158,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"type": schema.StringAttribute{
 						Description: "The type of healthcheck to run, reply or request. The default value is `reply`.\nAvailable values: \"reply\", \"request\".",
@@ -169,11 +170,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("reply"),
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"created_on": schema.StringAttribute{
-				Description: "The date and time the tunnel was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "The date and time the tunnel was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified": schema.BoolAttribute{
 				Computed: true,
@@ -326,9 +329,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"created_on": schema.StringAttribute{
-						Description: "The date and time the tunnel was created.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
+						Description:   "The date and time the tunnel was created.",
+						Computed:      true,
+						CustomType:    timetypes.RFC3339Type{},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"description": schema.StringAttribute{
 						Description: "An optional description of the GRE tunnel.",
@@ -507,9 +511,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"created_on": schema.StringAttribute{
-						Description: "The date and time the tunnel was created.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
+						Description:   "The date and time the tunnel was created.",
+						Computed:      true,
+						CustomType:    timetypes.RFC3339Type{},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"description": schema.StringAttribute{
 						Description: "An optional description of the GRE tunnel.",

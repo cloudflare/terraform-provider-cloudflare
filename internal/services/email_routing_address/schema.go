@@ -50,9 +50,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created": schema.StringAttribute{
-				Description: "The date and time the destination address has been created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "The date and time the destination address has been created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified": schema.StringAttribute{
 				Description: "The date and time the destination address was last modified.",

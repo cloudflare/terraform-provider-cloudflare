@@ -171,14 +171,28 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"format": schema.SingleNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectType[PipelineSinksFormatDataSourceModel](ctx),
+							Description: "Defines the output data format of a sink.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[PipelineSinksFormatDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"type": schema.StringAttribute{
 									Description: `Available values: "json", "parquet".`,
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("json", "parquet"),
+									},
+								},
+								"compression": schema.StringAttribute{
+									Description: "Specifies the compression applied to JSON sink output.\nAvailable values: \"uncompressed\", \"gzip\", \"snappy\", \"zstd\", \"lz4\".",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive(
+											"uncompressed",
+											"gzip",
+											"snappy",
+											"zstd",
+											"lz4",
+										),
 									},
 								},
 								"decimal_encoding": schema.StringAttribute{
@@ -202,19 +216,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"unstructured": schema.BoolAttribute{
 									Computed: true,
 								},
-								"compression": schema.StringAttribute{
-									Description: `Available values: "uncompressed", "snappy", "gzip", "zstd", "lz4".`,
-									Computed:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"uncompressed",
-											"snappy",
-											"gzip",
-											"zstd",
-											"lz4",
-										),
-									},
-								},
 								"row_group_bytes": schema.Int64Attribute{
 									Computed: true,
 									Validators: []validator.Int64{
@@ -224,8 +225,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"schema": schema.SingleNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectType[PipelineSinksSchemaDataSourceModel](ctx),
+							Description: "Defines the schema of the events in the data stream.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[PipelineSinksSchemaDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"fields": schema.ListNestedAttribute{
 									Computed:   true,
@@ -272,59 +274,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 														"nanosecond",
 													),
 												},
-											},
-										},
-									},
-								},
-								"format": schema.SingleNestedAttribute{
-									Computed:   true,
-									CustomType: customfield.NewNestedObjectType[PipelineSinksSchemaFormatDataSourceModel](ctx),
-									Attributes: map[string]schema.Attribute{
-										"type": schema.StringAttribute{
-											Description: `Available values: "json", "parquet".`,
-											Computed:    true,
-											Validators: []validator.String{
-												stringvalidator.OneOfCaseInsensitive("json", "parquet"),
-											},
-										},
-										"decimal_encoding": schema.StringAttribute{
-											Description: `Available values: "number", "string", "bytes".`,
-											Computed:    true,
-											Validators: []validator.String{
-												stringvalidator.OneOfCaseInsensitive(
-													"number",
-													"string",
-													"bytes",
-												),
-											},
-										},
-										"timestamp_format": schema.StringAttribute{
-											Description: `Available values: "rfc3339", "unix_millis".`,
-											Computed:    true,
-											Validators: []validator.String{
-												stringvalidator.OneOfCaseInsensitive("rfc3339", "unix_millis"),
-											},
-										},
-										"unstructured": schema.BoolAttribute{
-											Computed: true,
-										},
-										"compression": schema.StringAttribute{
-											Description: `Available values: "uncompressed", "snappy", "gzip", "zstd", "lz4".`,
-											Computed:    true,
-											Validators: []validator.String{
-												stringvalidator.OneOfCaseInsensitive(
-													"uncompressed",
-													"snappy",
-													"gzip",
-													"zstd",
-													"lz4",
-												),
-											},
-										},
-										"row_group_bytes": schema.Int64Attribute{
-											Computed: true,
-											Validators: []validator.Int64{
-												int64validator.AtLeast(0),
 											},
 										},
 									},

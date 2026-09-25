@@ -19,7 +19,7 @@ type MagicTransitConnectorResultDataSourceEnvelope struct {
 type MagicTransitConnectorDataSourceModel struct {
 	ID                           types.String                                                         `tfsdk:"id" path:"connector_id,computed"`
 	ConnectorID                  types.String                                                         `tfsdk:"connector_id" path:"connector_id,optional"`
-	AccountID                    types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
+	AccountID                    types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	Activated                    types.Bool                                                           `tfsdk:"activated" json:"activated,computed"`
 	InterruptWindowDurationHours types.Float64                                                        `tfsdk:"interrupt_window_duration_hours" json:"interrupt_window_duration_hours,computed"`
 	InterruptWindowHourOfDay     types.Float64                                                        `tfsdk:"interrupt_window_hour_of_day" json:"interrupt_window_hour_of_day,computed"`
@@ -28,6 +28,8 @@ type MagicTransitConnectorDataSourceModel struct {
 	LastUpdated                  types.String                                                         `tfsdk:"last_updated" json:"last_updated,computed"`
 	LicenseKey                   types.String                                                         `tfsdk:"license_key" json:"license_key,computed"`
 	Notes                        types.String                                                         `tfsdk:"notes" json:"notes,computed"`
+	Primary                      types.Bool                                                           `tfsdk:"primary" json:"primary,computed"`
+	SiteID                       types.String                                                         `tfsdk:"site_id" json:"site_id,computed"`
 	Timezone                     types.String                                                         `tfsdk:"timezone" json:"timezone,computed"`
 	InterruptWindowDaysOfWeek    customfield.List[types.String]                                       `tfsdk:"interrupt_window_days_of_week" json:"interrupt_window_days_of_week,computed"`
 	InterruptWindowEmbargoDates  customfield.List[types.String]                                       `tfsdk:"interrupt_window_embargo_dates" json:"interrupt_window_embargo_dates,computed"`

@@ -168,8 +168,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 							"dns_server": schema.StringAttribute{
-								Description: "A valid IPv4 address.",
-								Optional:    true,
+								Description:        "A valid IPv4 address.",
+								Optional:           true,
+								DeprecationMessage: "This attribute is deprecated.",
 							},
 							"dns_servers": schema.ListAttribute{
 								Optional:    true,

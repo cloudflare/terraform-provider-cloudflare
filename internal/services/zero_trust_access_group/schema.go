@@ -138,6 +138,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The ID of a device posture integration.",
 									Required:    true,
 								},
+								"account_id": schema.StringAttribute{
+									Description: "The ID of the account that owns the device posture integration.",
+									Optional:    true,
+								},
 							},
 						},
 						"email_domain": schema.SingleNestedAttribute{
@@ -433,6 +437,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The ID of a device posture integration.",
 									Required:    true,
 								},
+								"account_id": schema.StringAttribute{
+									Description: "The ID of the account that owns the device posture integration.",
+									Optional:    true,
+								},
 							},
 						},
 						"email_domain": schema.SingleNestedAttribute{
@@ -723,6 +731,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"integration_uid": schema.StringAttribute{
 									Description: "The ID of a device posture integration.",
 									Required:    true,
+								},
+								"account_id": schema.StringAttribute{
+									Description: "The ID of the account that owns the device posture integration.",
+									Optional:    true,
 								},
 							},
 						},

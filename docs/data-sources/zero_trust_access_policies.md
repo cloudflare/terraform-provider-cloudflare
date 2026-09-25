@@ -38,6 +38,7 @@ data "cloudflare_zero_trust_access_policies" "example_zero_trust_access_policies
 
 Read-Only:
 
+- `account_id` (String) Identifier.
 - `app_count` (Number) Number of access applications currently using this policy.
 - `approval_groups` (Attributes Set) Administrators who can approve a temporary authentication request. (see [below for nested schema](#nestedatt--result--approval_groups))
 - `approval_required` (Boolean) Requires the user to request access from an administrator at the start of each session.
@@ -173,6 +174,7 @@ Read-Only:
 
 Read-Only:
 
+- `account_id` (String) The ID of the account that owns the device posture integration.
 - `integration_uid` (String) The ID of a device posture integration.
 
 
@@ -414,6 +416,7 @@ Read-Only:
 
 Read-Only:
 
+- `account_id` (String) The ID of the account that owns the device posture integration.
 - `integration_uid` (String) The ID of a device posture integration.
 
 
@@ -665,6 +668,7 @@ Read-Only:
 
 Read-Only:
 
+- `account_id` (String) The ID of the account that owns the device posture integration.
 - `integration_uid` (String) The ID of a device posture integration.
 
 

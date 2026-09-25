@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*WorkflowsDataSource)(nil)
@@ -56,38 +57,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
 						},
-						"instances": schema.SingleNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectType[WorkflowsInstancesDataSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"complete": schema.Float64Attribute{
-									Computed: true,
-								},
-								"errored": schema.Float64Attribute{
-									Computed: true,
-								},
-								"paused": schema.Float64Attribute{
-									Computed: true,
-								},
-								"queued": schema.Float64Attribute{
-									Computed: true,
-								},
-								"rolling_back": schema.Float64Attribute{
-									Computed: true,
-								},
-								"running": schema.Float64Attribute{
-									Computed: true,
-								},
-								"terminated": schema.Float64Attribute{
-									Computed: true,
-								},
-								"waiting": schema.Float64Attribute{
-									Computed: true,
-								},
-								"waiting_for_pause": schema.Float64Attribute{
-									Computed: true,
-								},
-							},
+						"instances": schema.MapAttribute{
+							Computed:    true,
+							CustomType:  customfield.NewMapType[types.Float64](ctx),
+							ElementType: types.Float64Type,
 						},
 						"modified_on": schema.StringAttribute{
 							Computed:   true,

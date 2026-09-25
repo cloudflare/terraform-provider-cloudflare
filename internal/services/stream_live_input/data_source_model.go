@@ -29,6 +29,7 @@ type StreamLiveInputDataSourceModel struct {
 	PreferLowLatency         types.Bool                                                             `tfsdk:"prefer_low_latency" json:"preferLowLatency,computed"`
 	Status                   types.String                                                           `tfsdk:"status" json:"status,computed"`
 	UID                      types.String                                                           `tfsdk:"uid" json:"uid,computed"`
+	Playback                 customfield.NestedObject[StreamLiveInputPlaybackDataSourceModel]       `tfsdk:"playback" json:"playback,computed"`
 	Recording                customfield.NestedObject[StreamLiveInputRecordingDataSourceModel]      `tfsdk:"recording" json:"recording,computed"`
 	Rtmps                    customfield.NestedObject[StreamLiveInputRtmpsDataSourceModel]          `tfsdk:"rtmps" json:"rtmps,computed"`
 	RtmpsPlayback            customfield.NestedObject[StreamLiveInputRtmpsPlaybackDataSourceModel]  `tfsdk:"rtmps_playback" json:"rtmpsPlayback,computed"`
@@ -45,6 +46,11 @@ func (m *StreamLiveInputDataSourceModel) toReadParams(_ context.Context) (params
 	}
 
 	return
+}
+
+type StreamLiveInputPlaybackDataSourceModel struct {
+	Dash types.String `tfsdk:"dash" json:"dash,computed"`
+	Hls  types.String `tfsdk:"hls" json:"hls,computed"`
 }
 
 type StreamLiveInputRecordingDataSourceModel struct {

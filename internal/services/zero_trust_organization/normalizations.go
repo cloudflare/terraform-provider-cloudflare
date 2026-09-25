@@ -31,7 +31,10 @@ func normalizeFalseAndNullBool(data *basetypes.BoolValue, stateData basetypes.Bo
 	*data = stateData
 }
 
-func normalizeEmptyAndNullList(data **[]types.String, stateData *[]types.String) {
+// normalizeEmptyAndNullList laxes the equality between a null list and an empty
+// list. It is generic over the element type so it can be used for both
+// []types.String and []types.Int64 attributes.
+func normalizeEmptyAndNullList[T any](data **[]T, stateData *[]T) {
 	if (data != nil && *data != nil && len(**data) > 0) || (stateData != nil && len(*stateData) > 0) {
 		return
 	}
@@ -66,6 +69,14 @@ func normalizeReadZeroTrustOrganizationAPIData(_ context.Context, data, sourceDa
 	normalizeEmptyAndNullObject(&data.LoginDesign, sourceData.LoginDesign)
 	normalizeEmptyAndNullList(&data.DenyUnmatchedRequestsExemptedZoneNames, sourceData.DenyUnmatchedRequestsExemptedZoneNames)
 	normalizeEmptyAndNullString(&data.UIReadOnlyToggleReason, sourceData.UIReadOnlyToggleReason)
+
+	// The API serializes mfa_piv_key_requirements.ssh_key_type and .ssh_key_size with
+	// `omitempty`, so an explicitly configured empty list round-trips as an absent field
+	// and decodes back as null. Lax that equality to avoid a perpetual diff.
+	if data.MfaSSHPivKeyRequirements != nil && sourceData.MfaSSHPivKeyRequirements != nil {
+		normalizeEmptyAndNullList(&data.MfaSSHPivKeyRequirements.SSHKeyType, sourceData.MfaSSHPivKeyRequirements.SSHKeyType)
+		normalizeEmptyAndNullList(&data.MfaSSHPivKeyRequirements.SSHKeySize, sourceData.MfaSSHPivKeyRequirements.SSHKeySize)
+	}
 
 	return diags
 }

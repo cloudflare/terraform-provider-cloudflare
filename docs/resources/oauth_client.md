@@ -27,6 +27,7 @@ resource "cloudflare_oauth_client" "example_oauth_client" {
   allowed_cors_origins = ["https://example.com"]
   client_uri = "https://example.com"
   logo_uri = "https://example.com/logo.png"
+  optional_scopes = ["account.write"]
   policy_uri = "https://example.com/privacy"
   post_logout_redirect_uris = ["https://example.com/logout"]
   tos_uri = "https://example.com/tos"
@@ -53,6 +54,7 @@ Available values: "none", "client_secret_basic", "client_secret_post".
 - `client_uri` (String) URL of the home page of the client.
 - `logo_uri` (String) URL of the client's logo.
 - `oauth_client_id` (String) The unique identifier for an OAuth client.
+- `optional_scopes` (List of String) Scopes that the authorizing user may decline during consent. Each value must also appear in `scopes`. The scopes `openid`, `offline`, and `offline_access` cannot be optional.
 - `policy_uri` (String) URL that points to a privacy policy document.
 - `post_logout_redirect_uris` (List of String) Array of allowed post-logout redirect URIs.
 - `tos_uri` (String) URL that points to a terms of service document.

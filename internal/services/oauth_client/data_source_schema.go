@@ -112,6 +112,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
+			"optional_scopes": schema.ListAttribute{
+				Description: "Scopes that the authorizing user may decline during consent. Each value must also appear in `scopes`. The scopes `openid`, `offline`, and `offline_access` cannot be optional.",
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
+			},
 			"post_logout_redirect_uris": schema.ListAttribute{
 				Description: "Array of allowed post-logout redirect URIs.",
 				Computed:    true,

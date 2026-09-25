@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -163,6 +164,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"type": schema.StringAttribute{
 						Description: "The type of healthcheck to run, reply or request. The default value is `reply`.\nAvailable values: \"reply\", \"request\".",
@@ -174,15 +176,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("reply"),
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"allow_null_cipher": schema.BoolAttribute{
 				Description: "When `true`, the tunnel can use a null-cipher (`ENCR_NULL`) in the ESP tunnel (Phase 2).",
 				Computed:    true,
 			},
 			"created_on": schema.StringAttribute{
-				Description: "The date and time the tunnel was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "The date and time the tunnel was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified": schema.BoolAttribute{
 				Computed: true,
@@ -335,9 +339,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"created_on": schema.StringAttribute{
-						Description: "The date and time the tunnel was created.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
+						Description:   "The date and time the tunnel was created.",
+						Computed:      true,
+						CustomType:    timetypes.RFC3339Type{},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"custom_remote_identities": schema.SingleNestedAttribute{
 						Computed:   true,
@@ -537,9 +542,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"created_on": schema.StringAttribute{
-						Description: "The date and time the tunnel was created.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
+						Description:   "The date and time the tunnel was created.",
+						Computed:      true,
+						CustomType:    timetypes.RFC3339Type{},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"custom_remote_identities": schema.SingleNestedAttribute{
 						Computed:   true,

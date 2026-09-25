@@ -1627,6 +1627,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
+								"origin_range_requests": schema.SingleNestedAttribute{
+									Description: "Controls whether Cloudflare fetches a large asset from the origin as a series of range requests instead of one whole-body request.",
+									Optional:    true,
+									Validators: []validator.Object{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_cache_settings",
+										),
+									},
+									CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersOriginRangeRequestsModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"mode": schema.StringAttribute{
+											Description: "Whether to use range requests. `default` is the behaviour the zone gets without this rule.\nAvailable values: \"on\", \"off\", \"default\".",
+											Required:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOf("on", "off", "default"),
+											},
+										},
+									},
+								},
 								"strip_etags": schema.BoolAttribute{
 									Description: "Whether to strip the ETag header from the response.",
 									Optional:    true,

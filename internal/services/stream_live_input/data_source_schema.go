@@ -86,6 +86,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "A unique identifier for a live input.",
 				Computed:    true,
 			},
+			"playback": schema.SingleNestedAttribute{
+				Description: "Details for playing a live input's broadcast using the HLS or DASH manifests. URLs reference the live input ID.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[StreamLiveInputPlaybackDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"dash": schema.StringAttribute{
+						Description: "The DASH manifest URL used to play live video, referencing the live input ID.",
+						Computed:    true,
+					},
+					"hls": schema.StringAttribute{
+						Description: "The HLS manifest URL used to play live video, referencing the live input ID.",
+						Computed:    true,
+					},
+				},
+			},
 			"recording": schema.SingleNestedAttribute{
 				Description: "Records the input to a Cloudflare Stream video. Behavior depends on the mode. In most cases, the video will initially be viewable as a live video and transition to on-demand after a condition is satisfied.",
 				Computed:    true,

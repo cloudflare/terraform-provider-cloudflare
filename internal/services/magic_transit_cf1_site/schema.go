@@ -51,8 +51,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"created_on": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
+							Computed:      true,
+							CustomType:    timetypes.RFC3339Type{},
+							PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 						},
 						"description": schema.StringAttribute{
 							Description: "A human-provided description of the CF1 Site.",
@@ -109,8 +110,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_on": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified_on": schema.StringAttribute{
 				Computed:   true,

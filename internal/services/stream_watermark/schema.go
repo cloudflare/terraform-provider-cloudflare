@@ -90,9 +90,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:       float64default.StaticFloat64(0.15),
 			},
 			"created": schema.StringAttribute{
-				Description: "The date and a time a watermark profile was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "The date and a time a watermark profile was created.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"downloaded_from": schema.StringAttribute{
 				Description: "The source URL for a downloaded image. If the watermark profile was created via direct upload, this field is null.",

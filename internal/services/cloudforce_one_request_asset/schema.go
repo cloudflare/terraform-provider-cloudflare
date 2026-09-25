@@ -56,9 +56,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"created": schema.StringAttribute{
-				Description: "Defines the asset creation time.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
+				Description:   "Defines the asset creation time.",
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"description": schema.StringAttribute{
 				Description: "Asset description.",

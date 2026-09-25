@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 )
 
 func TestMain(m *testing.M) {
@@ -228,6 +229,52 @@ func TestAccCloudflareTurnstileWidget_NonInteractiveMode(t *testing.T) {
 			},
 		},
 	})
+}
+
+// TestAccCloudflareTurnstileWidget_DomainsOrderNoDrift verifies that a widget
+// whose domains are declared in a non-alphabetical order does NOT produce drift
+// on a no-op re-apply. The Turnstile API canonically returns domains sorted
+// alphabetically; without reordering the API response back to the planned
+// order, Terraform sees the reordered list as a change on every plan
+// (GitHub #7028).
+func TestAccCloudflareTurnstileWidget_DomainsOrderNoDrift(t *testing.T) {
+	t.Parallel()
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_turnstile_widget." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: create a widget with domains in non-alphabetical order.
+				Config: testAccCheckCloudflareTurnstileWidgetConfigDomainsOrder(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "domains.#", "3"),
+					// Planned (non-alphabetical) order must be preserved in state.
+					resource.TestCheckResourceAttr(name, "domains.0", "zebra.example.com"),
+					resource.TestCheckResourceAttr(name, "domains.1", "alpha.example.com"),
+					resource.TestCheckResourceAttr(name, "domains.2", "middle.example.com"),
+				),
+			},
+			{
+				// Step 2: re-apply identical config. Must be a no-op. Without
+				// the response reordering, this would plan an in-place update
+				// because the API returns domains sorted alphabetically.
+				Config: testAccCheckCloudflareTurnstileWidgetConfigDomainsOrder(rnd, accountID),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionNoop),
+					},
+				},
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareTurnstileWidgetConfigDomainsOrder(rnd, accountID string) string {
+	return acctest.LoadTestCase("turnstilewidgetconfigdomainsorder.tf", rnd, accountID)
 }
 
 func testAccCheckCloudflareTurnstileWidgetBasic(rnd, accountID string) string {

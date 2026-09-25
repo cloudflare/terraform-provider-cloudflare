@@ -148,13 +148,11 @@ type APIShieldOperationsFeaturesConfidenceIntervalsSuggestedThresholdConfidenceI
 
 type APIShieldOperationsFeaturesSchemaInfoDataSourceModel struct {
 	ActiveSchema     customfield.NestedObject[APIShieldOperationsFeaturesSchemaInfoActiveSchemaDataSourceModel] `tfsdk:"active_schema" json:"active_schema,computed"`
-	LearnedAvailable types.Bool                                                                                 `tfsdk:"learned_available" json:"learned_available,computed"`
 	MitigationAction types.String                                                                               `tfsdk:"mitigation_action" json:"mitigation_action,computed"`
 }
 
 type APIShieldOperationsFeaturesSchemaInfoActiveSchemaDataSourceModel struct {
 	ID        types.String      `tfsdk:"id" json:"id,computed"`
 	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	IsLearned types.Bool        `tfsdk:"is_learned" json:"is_learned,computed"`
 	Name      types.String      `tfsdk:"name" json:"name,computed"`
 }

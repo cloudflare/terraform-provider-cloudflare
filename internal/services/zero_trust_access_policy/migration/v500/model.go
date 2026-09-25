@@ -248,6 +248,7 @@ type TargetGeoModel struct {
 
 type TargetDevicePostureModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid"`
+	AccountID      types.String `tfsdk:"account_id"`
 }
 
 type TargetEmailDomainModel struct {

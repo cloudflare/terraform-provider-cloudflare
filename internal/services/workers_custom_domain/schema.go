@@ -55,13 +55,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "ID of the zone containing the domain hostname.",
 				Computed:      true,
 				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplaceIfConfigured()},
 			},
 			"zone_name": schema.StringAttribute{
 				Description:   "Name of the zone containing the domain hostname.",
 				Computed:      true,
 				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplaceIfConfigured()},
 			},
 			"cert_id": schema.StringAttribute{
 				Description: "ID of the TLS certificate issued for the domain.",

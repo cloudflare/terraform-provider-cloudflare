@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -65,6 +66,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"create_time": schema.StringAttribute{
 				Computed:   true,
@@ -89,6 +91,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  customfield.NewNestedObjectType[OrganizationMetaTenantFlagsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"account_creation": schema.StringAttribute{
+								Computed: true,
+							},
+							"account_creation_applies_tenant_defaults": schema.StringAttribute{
 								Computed: true,
 							},
 							"account_deletion": schema.StringAttribute{

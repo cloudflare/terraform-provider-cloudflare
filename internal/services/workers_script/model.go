@@ -4,6 +4,8 @@ package workers_script
 
 import (
 	"bytes"
+	"encoding/base64"
+	"fmt"
 	"mime/multipart"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
@@ -42,6 +44,7 @@ type WorkersScriptModel struct {
 	ContentFile      types.String                                                  `tfsdk:"content_file" json:"-"`
 	ContentSHA256    types.String                                                  `tfsdk:"content_sha256" json:"-"`
 	ContentType      types.String                                                  `tfsdk:"content_type" json:"-"`
+	Files            *map[string]WorkersScriptFileModel                            `tfsdk:"files" json:"-"`
 	CreatedOn        timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Etag             types.String                                                  `tfsdk:"etag" json:"etag,computed"`
 	HasAssets        types.Bool                                                    `tfsdk:"has_assets" json:"has_assets,computed"`
@@ -73,22 +76,43 @@ func (r WorkersScriptModel) MarshalMultipart() (data []byte, formDataContentType
 				contentType = "application/javascript+module"
 			}
 			mainModuleName := r.MainModule.ValueString()
-			writeFileBytes(mainModuleName, mainModuleName, contentType, workerBody, writer)
+			if err := writeFileBytes(mainModuleName, mainModuleName, contentType, workerBody, writer); err != nil {
+				return nil, "", err
+			}
 		} else {
 			if contentType == "" {
 				contentType = "application/javascript"
 			}
-			writeFileBytes("script", "script", contentType, workerBody, writer)
+			if err := writeFileBytes("script", "script", contentType, workerBody, writer); err != nil {
+				return nil, "", err
+			}
 			r.BodyPart = types.StringValue("script")
+		}
+	}
+
+	if r.Files != nil {
+		for name, file := range *r.Files {
+			content, err := base64.StdEncoding.DecodeString(file.ContentBase64.ValueString())
+			if err != nil {
+				return nil, "", fmt.Errorf("failed to decode file %q: %w", name, err)
+			}
+			if err := writeFileBytes(name, name, file.ContentType.ValueString(), bytes.NewReader(content), writer); err != nil {
+				return nil, "", err
+			}
 		}
 	}
 
 	topLevelMetadata := r.WorkersScriptMetadataModel
 	copier.Copy(&metadata, &topLevelMetadata)
 
-	payload, _ := apijson.Marshal(metadata)
+	payload, err := apijson.Marshal(metadata)
+	if err != nil {
+		return nil, "", err
+	}
 	metadataContent := bytes.NewReader(payload)
-	writeFileBytes("metadata", "", "application/json", metadataContent, writer)
+	if err := writeFileBytes("metadata", "", "application/json", metadataContent, writer); err != nil {
+		return nil, "", err
+	}
 
 	err = writer.Close()
 	if err != nil {
@@ -97,11 +121,18 @@ func (r WorkersScriptModel) MarshalMultipart() (data []byte, formDataContentType
 	return buf.Bytes(), writer.FormDataContentType(), nil
 }
 
+type WorkersScriptFileModel struct {
+	ContentBase64 types.String `tfsdk:"content_base64" json:"-"`
+	ContentFile   types.String `tfsdk:"content_file" json:"-"`
+	ContentSHA256 types.String `tfsdk:"content_sha256" json:"-"`
+	ContentType   types.String `tfsdk:"content_type" json:"-"`
+}
+
 type WorkersScriptMetadataModel struct {
 	Annotations         customfield.NestedObject[WorkersScriptMetadataAnnotationsModel           ] `tfsdk:"annotations" json:"annotations,computed_optional"`
 	Assets              *WorkersScriptMetadataAssetsModel                 `tfsdk:"assets" json:"assets,optional"`
 	Bindings            customfield.NestedObjectList[WorkersScriptMetadataBindingsModel           ] `tfsdk:"bindings" json:"bindings,computed_optional"`
-	BodyPart            types.String                                      `tfsdk:"body_part" json:"body_part,optional"`
+	BodyPart            types.String                                      `tfsdk:"body_part" json:"body_part,computed_optional"`
 	CacheOptions        *WorkersScriptMetadataCacheOptionsModel           `tfsdk:"cache_options" json:"cache_options,optional"`
 	CompatibilityDate   types.String                                      `tfsdk:"compatibility_date" json:"compatibility_date,computed_optional"`
 	CompatibilityFlags  customfield.Set[types.String]                     `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
@@ -264,10 +295,10 @@ type WorkersScriptMetadataMigrationsStepsTransferredClassesModel struct {
 }
 
 type WorkersScriptMetadataObservabilityModel struct {
-	Enabled          types.Bool                                     `tfsdk:"enabled" json:"enabled,required"`
-	HeadSamplingRate types.Float64                                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
-	Logs             *WorkersScriptMetadataObservabilityLogsModel   `tfsdk:"logs" json:"logs,optional"`
-	Traces           *WorkersScriptMetadataObservabilityTracesModel `tfsdk:"traces" json:"traces,optional"`
+	Enabled           types.Bool                                     `tfsdk:"enabled" json:"enabled,required"`
+	HeadSamplingRate  types.Float64                                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
+	Logs              *WorkersScriptMetadataObservabilityLogsModel   `tfsdk:"logs" json:"logs,optional"`
+	Traces            *WorkersScriptMetadataObservabilityTracesModel `tfsdk:"traces" json:"traces,optional"`
 }
 
 type WorkersScriptMetadataObservabilityLogsModel struct {
@@ -283,7 +314,7 @@ type WorkersScriptMetadataObservabilityTracesModel struct {
 	Enabled           types.Bool      `tfsdk:"enabled" json:"enabled,optional"`
 	HeadSamplingRate  types.Float64   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,optional"`
 	Persist           types.Bool      `tfsdk:"persist" json:"persist,computed_optional"`
-	PropagationPolicy types.String    `tfsdk:"propagation_policy" json:"propagation_policy,computed_optional"`
+	PropagationPolicy types.String    `tfsdk:"propagation_policy" json:"propagation_policy,optional"`
 }
 
 type WorkersScriptMetadataPackageDependenciesModel struct {
@@ -320,10 +351,10 @@ type WorkersScriptNamedHandlersModel struct {
 }
 
 type WorkersScriptObservabilityModel struct {
-	Enabled          types.Bool                                                      `tfsdk:"enabled" json:"enabled,computed"`
-	HeadSamplingRate types.Float64                                                   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
-	Logs             customfield.NestedObject[WorkersScriptObservabilityLogsModel]   `tfsdk:"logs" json:"logs,computed"`
-	Traces           customfield.NestedObject[WorkersScriptObservabilityTracesModel] `tfsdk:"traces" json:"traces,computed"`
+	Enabled           types.Bool                                                      `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate  types.Float64                                                   `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Logs              customfield.NestedObject[WorkersScriptObservabilityLogsModel]   `tfsdk:"logs" json:"logs,computed"`
+	Traces            customfield.NestedObject[WorkersScriptObservabilityTracesModel] `tfsdk:"traces" json:"traces,computed"`
 }
 
 type WorkersScriptObservabilityLogsModel struct {

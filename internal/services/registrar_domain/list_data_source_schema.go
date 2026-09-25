@@ -20,8 +20,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
+				Description: "Identifier.",
+				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -45,7 +45,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"can_register": schema.BoolAttribute{
-							Description: "Indicates if the domain can be registered as a new domain.",
+							Description: "Indicates eligibility to register the domain as a new domain.",
 							Computed:    true,
 						},
 						"created_at": schema.StringAttribute{
@@ -84,11 +84,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"first_name": schema.StringAttribute{
-									Description: "User's first name",
+									Description: "User's first name.",
 									Computed:    true,
 								},
 								"last_name": schema.StringAttribute{
-									Description: "User's last name",
+									Description: "User's last name.",
 									Computed:    true,
 								},
 								"organization": schema.StringAttribute{
@@ -96,7 +96,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"phone": schema.StringAttribute{
-									Description: "User's telephone number",
+									Description: "User's telephone number.",
 									Computed:    true,
 								},
 								"state": schema.StringAttribute{
@@ -126,11 +126,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"registry_statuses": schema.StringAttribute{
-							Description: "A comma-separated list of registry status codes. A full list of status codes can be found at [EPP Status Codes](https://www.icann.org/resources/pages/epp-status-codes-2014-06-16-en).",
+							Description: "A comma-separated list of registry status codes. Refer to [EPP Status Codes](https://www.icann.org/resources/pages/epp-status-codes-2014-06-16-en) for the full list.",
 							Computed:    true,
 						},
 						"supported_tld": schema.BoolAttribute{
-							Description: "Whether a particular TLD is currently supported by Cloudflare Registrar. Refer to [TLD Policies](https://www.cloudflare.com/tld-policies/) for a list of supported TLDs.",
+							Description: "Indicates whether Cloudflare Registrar currently supports a particular TLD. Refer to [TLD Policies](https://www.cloudflare.com/tld-policies/) for a list of supported TLDs.",
 							Computed:    true,
 						},
 						"transfer_in": schema.SingleNestedAttribute{
@@ -139,14 +139,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewNestedObjectType[RegistrarDomainsTransferInDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"accept_foa": schema.StringAttribute{
-									Description: "Form of authorization has been accepted by the registrant.\nAvailable values: \"needed\", \"ok\".",
+									Description: "Status of the registrant authorization step.\nAvailable values: \"needed\", \"ok\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("needed", "ok"),
 									},
 								},
 								"approve_transfer": schema.StringAttribute{
-									Description: "Shows transfer status with the registry.\nAvailable values: \"needed\", \"ok\", \"pending\", \"trying\", \"rejected\", \"unknown\".",
+									Description: "Status of the registry transfer-approval step.\nAvailable values: \"needed\", \"ok\", \"pending\", \"trying\", \"rejected\", \"unknown\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -164,7 +164,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"disable_privacy": schema.StringAttribute{
-									Description: "Privacy guards are disabled at the foreign registrar.\nAvailable values: \"needed\", \"ok\", \"unknown\".",
+									Description: "Status of the privacy-guard disabling step at the foreign registrar.\nAvailable values: \"needed\", \"ok\", \"unknown\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -175,7 +175,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"enter_auth_code": schema.StringAttribute{
-									Description: "Auth code has been entered and verified.\nAvailable values: \"needed\", \"ok\", \"pending\", \"trying\", \"rejected\".",
+									Description: "Status of the auth-code entry and verification step.\nAvailable values: \"needed\", \"ok\", \"pending\", \"trying\", \"rejected\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -188,7 +188,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"unlock_domain": schema.StringAttribute{
-									Description: "Domain is unlocked at the foreign registrar.\nAvailable values: \"needed\", \"ok\", \"pending\", \"trying\", \"unknown\".",
+									Description: "Status of the domain-unlock step at the foreign registrar.\nAvailable values: \"needed\", \"ok\", \"pending\", \"trying\", \"unknown\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(

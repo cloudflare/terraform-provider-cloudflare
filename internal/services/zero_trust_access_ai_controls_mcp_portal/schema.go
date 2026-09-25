@@ -69,12 +69,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Optional description of the MCP portal.",
 				Optional:    true,
 			},
-			"secure_web_gateway": schema.BoolAttribute{
-				Description: "Route outbound MCP traffic through Zero Trust Secure Web Gateway.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
 			"servers": schema.SetNestedAttribute{
 				Description: "MCP servers attached to the portal and their portal-specific settings.",
 				Computed:    true,
@@ -149,9 +143,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"secure_web_gateway": schema.BoolAttribute{
+				Description: "Route outbound MCP traffic through Zero Trust Secure Web Gateway.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
 			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+				Computed:      true,
+				CustomType:    timetypes.RFC3339Type{},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"created_by": schema.StringAttribute{
 				Computed: true,

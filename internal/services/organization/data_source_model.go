@@ -90,13 +90,14 @@ type OrganizationMetaDataSourceModel struct {
 }
 
 type OrganizationMetaTenantFlagsDataSourceModel struct {
-	AccountCreation      types.String `tfsdk:"account_creation" json:"account_creation,computed"`
-	AccountDeletion      types.String `tfsdk:"account_deletion" json:"account_deletion,computed"`
-	AccountMigration     types.String `tfsdk:"account_migration" json:"account_migration,computed"`
-	AccountMobility      types.String `tfsdk:"account_mobility" json:"account_mobility,computed"`
-	EnterpriseCapability types.String `tfsdk:"enterprise_capability" json:"enterprise_capability,computed"`
-	MemberManagement     types.String `tfsdk:"member_management" json:"member_management,computed"`
-	SubOrgCreation       types.String `tfsdk:"sub_org_creation" json:"sub_org_creation,computed"`
+	AccountCreation                      types.String `tfsdk:"account_creation" json:"account_creation,computed"`
+	AccountCreationAppliesTenantDefaults types.String `tfsdk:"account_creation_applies_tenant_defaults" json:"account_creation_applies_tenant_defaults,computed"`
+	AccountDeletion                      types.String `tfsdk:"account_deletion" json:"account_deletion,computed"`
+	AccountMigration                     types.String `tfsdk:"account_migration" json:"account_migration,computed"`
+	AccountMobility                      types.String `tfsdk:"account_mobility" json:"account_mobility,computed"`
+	EnterpriseCapability                 types.String `tfsdk:"enterprise_capability" json:"enterprise_capability,computed"`
+	MemberManagement                     types.String `tfsdk:"member_management" json:"member_management,computed"`
+	SubOrgCreation                       types.String `tfsdk:"sub_org_creation" json:"sub_org_creation,computed"`
 }
 
 type OrganizationParentDataSourceModel struct {

@@ -59,10 +59,12 @@ type ZeroTrustAccessIdentityProviderConfigModel struct {
 	Attributes               *[]types.String                                                `tfsdk:"attributes" json:"attributes,optional"`
 	EmailAttributeName       types.String                                                   `tfsdk:"email_attribute_name" json:"email_attribute_name,optional"`
 	EnableEncryption         types.Bool                                                     `tfsdk:"enable_encryption" json:"enable_encryption,computed_optional"`
+	ForceAuthn               types.Bool                                                     `tfsdk:"force_authn" json:"force_authn,optional"`
 	HeaderAttributes         *[]*ZeroTrustAccessIdentityProviderConfigHeaderAttributesModel `tfsdk:"header_attributes" json:"header_attributes,optional"`
 	IdPPublicCERTs           *[]types.String                                                `tfsdk:"idp_public_certs" json:"idp_public_certs,optional"`
 	IssuerURL                types.String                                                   `tfsdk:"issuer_url" json:"issuer_url,optional"`
 	SignRequest              types.Bool                                                     `tfsdk:"sign_request" json:"sign_request,optional"`
+	MaxSSOURLLength          types.Int64                                                    `tfsdk:"max_sso_url_length" json:"max_sso_url_length,optional"`
 	SSOTargetURL             types.String                                                   `tfsdk:"sso_target_url" json:"sso_target_url,optional"`
 	RedirectURL              types.String                                                   `tfsdk:"redirect_url" json:"redirect_url,computed"`
 	RestrictToAccountMembers types.Bool                                                     `tfsdk:"restrict_to_account_members" json:"restrict_to_account_members,computed_optional"`

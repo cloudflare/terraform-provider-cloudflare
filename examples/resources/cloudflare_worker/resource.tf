@@ -12,6 +12,7 @@ resource "cloudflare_worker" "example_worker" {
       invocation_logs = true
       persist = true
     }
+    redact_query_string = true
     traces = {
       destinations = ["string"]
       enabled = true

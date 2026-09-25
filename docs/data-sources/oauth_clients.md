@@ -49,6 +49,7 @@ Read-Only:
 - `grant_types` (List of String) Array of OAuth grant types the client is allowed to use. `authorization_code` is required; `refresh_token` may be included optionally.
 - `has_rotated_secret` (Boolean) Indicates whether the client has a rotated secret that has not yet been deleted.
 - `logo_uri` (String) URL of the client's logo.
+- `optional_scopes` (List of String) Scopes that the authorizing user may decline during consent. Each value must also appear in `scopes`. The scopes `openid`, `offline`, and `offline_access` cannot be optional.
 - `policy_uri` (String) URL that points to a privacy policy document.
 - `post_logout_redirect_uris` (List of String) Array of allowed post-logout redirect URIs.
 - `promoted_at` (String) Timestamp when the OAuth client was promoted to public visibility.

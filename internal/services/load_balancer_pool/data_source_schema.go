@@ -106,6 +106,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"SAS",
 							"SEAS",
 							"NEAS",
+							"CHINA",
 							"ALL_REGIONS",
 						),
 					),

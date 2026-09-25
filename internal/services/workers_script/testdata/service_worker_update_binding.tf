@@ -13,6 +13,13 @@ resource "cloudflare_workers_script" "%[1]s" {
   script_name    = "%[1]s"
   content = "%[2]s"
 
+  files = {
+    "module.wasm" = {
+      content_base64 = "%[3]s"
+      content_type   = "application/wasm"
+    }
+  }
+
   bindings = [
     {
       name = "MY_KV_NAMESPACE"
@@ -23,6 +30,11 @@ resource "cloudflare_workers_script" "%[1]s" {
       name         = "MY_QUEUE"
       type = "queue"
       queue_name = cloudflare_queue.%[1]s.queue_name
+    },
+    {
+      name = "ADD_WASM"
+      type = "wasm_module"
+      part = "module.wasm"
     }
   ]
 }

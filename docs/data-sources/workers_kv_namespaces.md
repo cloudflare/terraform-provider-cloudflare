@@ -45,6 +45,8 @@ Available values: "id", "title".
 Read-Only:
 
 - `id` (String) Namespace identifier tag.
+- `jurisdiction` (String) Specify the jurisdiction to restrict the KV namespace to durably store data within. Can only be set at namespace creation time.
+Available values: "eu", "fedramp", "us".
 - `supports_url_encoding` (Boolean) True if keys written on the URL will be URL-decoded before storing. For example, if set to "true", a key written on the URL as "%3F" will be stored as "?".
 - `title` (String) A human-readable string name for a Namespace.
 

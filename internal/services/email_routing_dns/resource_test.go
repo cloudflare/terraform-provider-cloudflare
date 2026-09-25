@@ -21,12 +21,12 @@ import (
 
 // EmailRoutingSettingsWithSubdomains represents the full API response including subdomains
 type EmailRoutingSettingsWithSubdomains struct {
-	ID         string                       `json:"id"`
-	Tag        string                       `json:"tag"`
-	Name       string                       `json:"name"`
-	Enabled    bool                         `json:"enabled"`
-	Status     string                       `json:"status"`
-	Subdomains []EmailRoutingDNSSubdomain   `json:"subdomains"`
+	ID         string                     `json:"id"`
+	Tag        string                     `json:"tag"`
+	Name       string                     `json:"name"`
+	Enabled    bool                       `json:"enabled"`
+	Status     string                     `json:"status"`
+	Subdomains []EmailRoutingDNSSubdomain `json:"subdomains"`
 }
 
 type EmailRoutingDNSSubdomain struct {
@@ -170,8 +170,8 @@ func init() {
 			})
 			if err != nil {
 				tflog.Info(ctx, fmt.Sprintf("Note: DNS delete returned error (might be expected): %v", err))
-			} else if deletedRecords != nil && deletedRecords.Result != nil {
-				tflog.Info(ctx, fmt.Sprintf("Deleted %d email routing DNS records", len(deletedRecords.Result)))
+			} else if deletedRecords != nil {
+				tflog.Info(ctx, fmt.Sprintf("Deleted email routing DNS records for zone: %s", deletedRecords.Name))
 			}
 
 			// Also disable main zone email routing if it's still enabled
@@ -317,28 +317,48 @@ func init() {
 	})
 }
 
-func testEmailRoutingDNSConfig(resourceID, zoneID string, subDomain string) string {
-	return acctest.LoadTestCase("emailroutingdnsconfig.tf", resourceID, zoneID, subDomain)
+// noRefreshFields lists fields that are set at create time but not returned by
+// the GET endpoint and therefore cannot round-trip through import.
+var noRefreshFields = []string{
+	"created",
+	"enabled",
+	"modified",
+	"name",
+	"skip_wizard",
+	"status",
+	"support_subaddress",
+	"tag",
 }
 
-func TestAccTestEmailRoutingDNS(t *testing.T) {
+func TestAccCloudflareEmailRoutingDNS_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_email_routing_dns." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	subDomain := fmt.Sprintf("%s.%s", rnd, domain)
+	resourceName := "cloudflare_email_routing_dns." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testEmailRoutingDNSConfig(rnd, zoneID, subDomain),
+				Config: testAccCloudflareEmailRoutingDNSBasic(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "enabled", "true"),
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
 				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: noRefreshFields,
 			},
 		},
 	})
+}
+
+func testAccCloudflareEmailRoutingDNSBasic(rnd, zoneID string) string {
+	return acctest.LoadTestCase("emailroutingdnsbasic.tf", rnd, zoneID)
 }
