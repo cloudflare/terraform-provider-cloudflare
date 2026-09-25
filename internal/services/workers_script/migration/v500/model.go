@@ -206,6 +206,7 @@ type TargetBindingsModel struct {
 	ServiceID                   types.String                  `tfsdk:"service_id"`
 	NetworkID                   types.String                  `tfsdk:"network_id"`
 	TunnelID                    types.String                  `tfsdk:"tunnel_id"`
+	Stream                      types.String                  `tfsdk:"stream"`
 }
 
 // TargetAnnotationsModel represents the annotations nested attribute in v5.
@@ -245,6 +246,7 @@ type TargetAssetsConfigModel struct {
 	NotFoundHandling types.String                       `tfsdk:"not_found_handling"`
 	RunWorkerFirst   customfield.NormalizedDynamicValue `tfsdk:"run_worker_first"`
 	ServeDirectly    types.Bool                         `tfsdk:"serve_directly"`
+	BasePath         types.String                       `tfsdk:"base_path"`
 }
 
 type TargetLimitsModel struct {
@@ -305,8 +307,13 @@ type TargetMigrationsStepsModel struct {
 type TargetObservabilityModel struct {
 	Enabled          types.Bool                      `tfsdk:"enabled"`
 	HeadSamplingRate types.Float64                   `tfsdk:"head_sampling_rate"`
+	Issues           *TargetObservabilityIssuesModel `tfsdk:"issues"`
 	Logs             *TargetObservabilityLogsModel   `tfsdk:"logs"`
 	Traces           *TargetObservabilityTracesModel `tfsdk:"traces"`
+}
+
+type TargetObservabilityIssuesModel struct {
+	Enabled types.Bool `tfsdk:"enabled"`
 }
 
 type TargetObservabilityLogsModel struct {
