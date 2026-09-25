@@ -261,6 +261,9 @@ func (r *SchemaValidationSchemasResource) ImportState(ctx context.Context, req r
 	}
 	data = &env.Result
 	data.ID = data.SchemaID
+	if data.OmitSource.IsNull() {
+		data.OmitSource = types.BoolValue(false)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
