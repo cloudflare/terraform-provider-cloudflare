@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/cloudflare-go/v7/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -304,12 +305,38 @@ func (r *WorkerResource) ModifyPlan(ctx context.Context, req resource.ModifyPlan
 	subdomainChanged := (!planSubdomainEnabled.IsUnknown() && !planSubdomainEnabled.Equal(stateSubdomainEnabled)) ||
 		(!planSubdomainPreviewsEnabled.IsUnknown() && !planSubdomainPreviewsEnabled.Equal(stateSubdomainPreviewsEnabled))
 
+	// Compare only the user-configurable observability attributes (enabled,
+	// head_sampling_rate, logs, traces). observability.issues is a
+	// computed-only field the API does not reliably echo, so a full
+	// plan.Observability.Equal check would return false even when the user
+	// changed nothing - which previously also broke the references/subdomain
+	// stabilization below via this same guard.
+	var planObsEnabled, stateObsEnabled types.Bool
+	var planObsHeadSamplingRate, stateObsHeadSamplingRate types.Float64
+	var planObsLogs, stateObsLogs customfield.NestedObject[WorkerObservabilityLogsModel]
+	var planObsTraces, stateObsTraces customfield.NestedObject[WorkerObservabilityTracesModel]
+	resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, path.Root("observability").AtName("enabled"), &planObsEnabled)...)
+	resp.Diagnostics.Append(req.State.GetAttribute(ctx, path.Root("observability").AtName("enabled"), &stateObsEnabled)...)
+	resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, path.Root("observability").AtName("head_sampling_rate"), &planObsHeadSamplingRate)...)
+	resp.Diagnostics.Append(req.State.GetAttribute(ctx, path.Root("observability").AtName("head_sampling_rate"), &stateObsHeadSamplingRate)...)
+	resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, path.Root("observability").AtName("logs"), &planObsLogs)...)
+	resp.Diagnostics.Append(req.State.GetAttribute(ctx, path.Root("observability").AtName("logs"), &stateObsLogs)...)
+	resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, path.Root("observability").AtName("traces"), &planObsTraces)...)
+	resp.Diagnostics.Append(req.State.GetAttribute(ctx, path.Root("observability").AtName("traces"), &stateObsTraces)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	observabilityChanged := (!planObsEnabled.IsUnknown() && !planObsEnabled.Equal(stateObsEnabled)) ||
+		(!planObsHeadSamplingRate.IsUnknown() && !planObsHeadSamplingRate.Equal(stateObsHeadSamplingRate)) ||
+		(!planObsLogs.IsUnknown() && !planObsLogs.Equal(stateObsLogs)) ||
+		(!planObsTraces.IsUnknown() && !planObsTraces.Equal(stateObsTraces))
+
 	// If there are any meaningful changes to user-configurable attributes, do
 	// nothing so that updated_on can legitimately change on update.
 	if (!plan.Name.IsUnknown() && !plan.Name.Equal(state.Name)) ||
 		(!plan.Logpush.IsUnknown() && !plan.Logpush.Equal(state.Logpush)) ||
 		(!plan.Tags.IsUnknown() && !plan.Tags.Equal(state.Tags)) ||
-		(!plan.Observability.IsUnknown() && !plan.Observability.Equal(state.Observability)) ||
+		observabilityChanged ||
 		subdomainChanged ||
 		(!plan.TailConsumers.IsUnknown() && !plan.TailConsumers.Equal(state.TailConsumers)) {
 		return
@@ -320,4 +347,6 @@ func (r *WorkerResource) ModifyPlan(ctx context.Context, req resource.ModifyPlan
 	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("updated_on"), state.UpdatedOn)...)
 	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("references"), state.References)...)
 	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("subdomain"), state.Subdomain)...)
+	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("observability"), state.Observability)...)
+	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("previews_base_config"), state.PreviewsBaseConfig)...)
 }

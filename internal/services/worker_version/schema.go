@@ -884,6 +884,148 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
+			"exports_reconciliation": schema.SingleNestedAttribute{
+				Description: "Summary of the declarative exports reconciliation that ran on this upload. Populated only when the uploaded metadata included an `exports` block. Durable Object entries drive reconciliation; `type: worker` entries do not contribute to this summary.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[WorkerVersionExportsReconciliationModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"created": schema.ListAttribute{
+						Description: "Class names for which a new namespace was provisioned.",
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
+					"deleted": schema.ListAttribute{
+						Description: "Class names whose namespace was deleted by a `deleted` tombstone.",
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
+					"info": schema.ListNestedAttribute{
+						Description: "Non-blocking info entries (stale tombstones, tombstone applied with class still in code). See `exports_reconciliation_info`.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectListType[WorkerVersionExportsReconciliationInfoModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"class": schema.StringAttribute{
+									Description: "The class name the info entry is about.",
+									Computed:    true,
+								},
+								"message": schema.StringAttribute{
+									Description: "Human-readable explanation.",
+									Computed:    true,
+								},
+								"scenario": schema.StringAttribute{
+									Description: "Stable, machine-readable tag identifying which reconciliation scenario produced an error, warning, or info entry. Clients may branch on this value instead of parsing `message`.",
+									Computed:    true,
+								},
+								"namespace_id": schema.StringAttribute{
+									Description: "The provisioned namespace the entry relates to, when applicable.",
+									Computed:    true,
+								},
+								"referencing_scripts": schema.ListAttribute{
+									Description: "Other Workers in the account that still bind to the affected class. Advisory: while non-empty the tombstone is not yet safe to remove — redeploy these Workers with bindings re-pointed first.",
+									Computed:    true,
+									CustomType:  customfield.NewListType[types.String](ctx),
+									ElementType: types.StringType,
+								},
+							},
+						},
+					},
+					"removable_entries": schema.ListAttribute{
+						Description: "Source class names whose tombstone entry is now stale and safe to delete from `exports` (no remaining referencing scripts).",
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
+					"renamed": schema.ListNestedAttribute{
+						Description: "Applied `renamed` tombstones.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectListType[WorkerVersionExportsReconciliationRenamedModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"from": schema.StringAttribute{
+									Description: "The original (source) class name.",
+									Computed:    true,
+								},
+								"to": schema.StringAttribute{
+									Description: "The new class name (`renamed_to`).",
+									Computed:    true,
+								},
+							},
+						},
+					},
+					"transfer_pending": schema.ListNestedAttribute{
+						Description: "Phase-1 transfer hints recorded on the target side.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectListType[WorkerVersionExportsReconciliationTransferPendingModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"class": schema.StringAttribute{
+									Description: "The target-side class name awaiting transfer.",
+									Computed:    true,
+								},
+								"from": schema.StringAttribute{
+									Description: "The source script the namespace will be transferred from.",
+									Computed:    true,
+								},
+							},
+						},
+					},
+					"transferred": schema.ListNestedAttribute{
+						Description: "Committed `transferred` tombstones (phase-2).",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectListType[WorkerVersionExportsReconciliationTransferredModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"class": schema.StringAttribute{
+									Description: "The source class name that was transferred.",
+									Computed:    true,
+								},
+								"phase": schema.StringAttribute{
+									Description: "The transfer phase. Currently always `committed`.",
+									Computed:    true,
+								},
+								"to": schema.StringAttribute{
+									Description: "The destination script that now owns the namespace.",
+									Computed:    true,
+								},
+							},
+						},
+					},
+					"updated": schema.ListAttribute{
+						Description: "Class names whose provisioned namespace was mutated in place.",
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
+					"warnings": schema.ListNestedAttribute{
+						Description: "Non-blocking warnings. See `exports_reconciliation_warning`.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectListType[WorkerVersionExportsReconciliationWarningsModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"class": schema.StringAttribute{
+									Description: "The class name the warning is about.",
+									Computed:    true,
+								},
+								"message": schema.StringAttribute{
+									Description: "Human-readable explanation of the warning.",
+									Computed:    true,
+								},
+								"scenario": schema.StringAttribute{
+									Description: "Stable, machine-readable tag identifying which reconciliation scenario produced an error, warning, or info entry. Clients may branch on this value instead of parsing `message`.",
+									Computed:    true,
+								},
+								"namespace_id": schema.StringAttribute{
+									Description: "The provisioned namespace the warning relates to, when applicable.",
+									Computed:    true,
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 	}
 }
