@@ -1,0 +1,19 @@
+CHANGELOG.md
+  s_3aeae8e14eb5ea::t_87e013b7d0bebe 3-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d27c0b85791215699d30d0b9e59980ce00668aa4",
+  "prompts": {},
+  "sessions": {
+    "s_3aeae8e14eb5ea": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f29fbf96affeBvID7IM4FHPx7X",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
