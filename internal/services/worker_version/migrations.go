@@ -117,6 +117,8 @@ type resourceModelV0 struct {
 	ID                  types.String                                             `tfsdk:"id" json:"id,computed"`
 	AccountID           types.String                                             `tfsdk:"account_id" path:"account_id,required"`
 	WorkerID            types.String                                             `tfsdk:"worker_id" path:"worker_id,required"`
+	Deploy              types.Bool                                               `tfsdk:"deploy" query:"deploy,optional"`
+	Include             types.String                                             `tfsdk:"include" query:"include,optional"`
 	CompatibilityDate   types.String                                             `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
 	MainModule          types.String                                             `tfsdk:"main_module" json:"main_module,optional"`
 	Migrations          *WorkerVersionMigrationsModel                            `tfsdk:"migrations" json:"migrations,optional"`
@@ -130,6 +132,8 @@ type resourceModelV0 struct {
 	Bindings            customfield.NestedObjectList[WorkerVersionBindingsModel] `tfsdk:"bindings" json:"bindings,optional"`
 	CacheOptions        customfield.NestedObject[WorkerVersionCacheOptionsModel] `tfsdk:"cache_options" json:"cache_options,computed_optional"`
 	Limits              customfield.NestedObject[WorkerVersionLimitsModel]       `tfsdk:"limits" json:"limits,computed_optional"`
+	AuthorEmail         types.String                                             `tfsdk:"author_email" json:"author_email,computed"`
+	AuthorID            types.String                                             `tfsdk:"author_id" json:"author_id,computed"`
 	CreatedOn           timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Number              types.Int64                                              `tfsdk:"number" json:"number,computed"`
 	Source              types.String                                             `tfsdk:"source" json:"source,computed"`
