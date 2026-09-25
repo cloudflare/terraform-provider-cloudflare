@@ -28,9 +28,9 @@ type SourceCloudflareNotificationPolicyModel struct {
 	AlertType            types.String `tfsdk:"alert_type"`
 	Description          types.String `tfsdk:"description"`
 	Enabled              types.Bool   `tfsdk:"enabled"`
-	Created              types.String `tfsdk:"created"`  // String in v4, RFC3339 in v5
-	Modified             types.String `tfsdk:"modified"` // String in v4, RFC3339 in v5
-	Filters              types.List   `tfsdk:"filters"`  // List of SourceFiltersModel (MaxItems:1, stored as array)
+	Created              types.String `tfsdk:"created"`               // String in v4, RFC3339 in v5
+	Modified             types.String `tfsdk:"modified"`              // String in v4, RFC3339 in v5
+	Filters              types.List   `tfsdk:"filters"`               // List of SourceFiltersModel (MaxItems:1, stored as array)
 	EmailIntegration     types.Set    `tfsdk:"email_integration"`     // Set of SourceIntegrationModel
 	WebhooksIntegration  types.Set    `tfsdk:"webhooks_integration"`  // Set of SourceIntegrationModel
 	PagerdutyIntegration types.Set    `tfsdk:"pagerduty_integration"` // Set of SourceIntegrationModel
@@ -40,40 +40,40 @@ type SourceCloudflareNotificationPolicyModel struct {
 // In v4, this was TypeList MaxItems:1, stored as array in state.
 // All fields are TypeSet in v4 schema.
 type SourceFiltersModel struct {
-	Actions                  types.Set `tfsdk:"actions"`
-	AirportCode              types.Set `tfsdk:"airport_code"`
-	AffectedComponents       types.Set `tfsdk:"affected_components"`
-	Status                   types.Set `tfsdk:"status"`
-	HealthCheckID            types.Set `tfsdk:"health_check_id"`
-	Zones                    types.Set `tfsdk:"zones"`
-	Services                 types.Set `tfsdk:"services"`
-	Product                  types.Set `tfsdk:"product"`
-	Limit                    types.Set `tfsdk:"limit"`
-	Enabled                  types.Set `tfsdk:"enabled"`
-	PoolID                   types.Set `tfsdk:"pool_id"`
-	Slo                      types.Set `tfsdk:"slo"`
-	Where                    types.Set `tfsdk:"where"`
-	GroupBy                  types.Set `tfsdk:"group_by"`
-	AlertTriggerPreferences  types.Set `tfsdk:"alert_trigger_preferences"`
-	RequestsPerSecond        types.Set `tfsdk:"requests_per_second"`
-	TargetZoneName           types.Set `tfsdk:"target_zone_name"`
-	TargetHostname           types.Set `tfsdk:"target_hostname"`
-	TargetIP                 types.Set `tfsdk:"target_ip"`
-	PacketsPerSecond         types.Set `tfsdk:"packets_per_second"`
-	Protocol                 types.Set `tfsdk:"protocol"`
-	ProjectID                types.Set `tfsdk:"project_id"`
-	Environment              types.Set `tfsdk:"environment"`
-	Event                    types.Set `tfsdk:"event"`
-	EventSource              types.Set `tfsdk:"event_source"`
-	NewHealth                types.Set `tfsdk:"new_health"`
-	InputID                  types.Set `tfsdk:"input_id"`
-	EventType                types.Set `tfsdk:"event_type"`
-	MegabitsPerSecond        types.Set `tfsdk:"megabits_per_second"`
-	IncidentImpact           types.Set `tfsdk:"incident_impact"`
-	NewStatus                types.Set `tfsdk:"new_status"`
-	Selectors                types.Set `tfsdk:"selectors"`
-	TunnelID                 types.Set `tfsdk:"tunnel_id"`
-	TunnelName               types.Set `tfsdk:"tunnel_name"`
+	Actions                 types.Set `tfsdk:"actions"`
+	AirportCode             types.Set `tfsdk:"airport_code"`
+	AffectedComponents      types.Set `tfsdk:"affected_components"`
+	Status                  types.Set `tfsdk:"status"`
+	HealthCheckID           types.Set `tfsdk:"health_check_id"`
+	Zones                   types.Set `tfsdk:"zones"`
+	Services                types.Set `tfsdk:"services"`
+	Product                 types.Set `tfsdk:"product"`
+	Limit                   types.Set `tfsdk:"limit"`
+	Enabled                 types.Set `tfsdk:"enabled"`
+	PoolID                  types.Set `tfsdk:"pool_id"`
+	Slo                     types.Set `tfsdk:"slo"`
+	Where                   types.Set `tfsdk:"where"`
+	GroupBy                 types.Set `tfsdk:"group_by"`
+	AlertTriggerPreferences types.Set `tfsdk:"alert_trigger_preferences"`
+	RequestsPerSecond       types.Set `tfsdk:"requests_per_second"`
+	TargetZoneName          types.Set `tfsdk:"target_zone_name"`
+	TargetHostname          types.Set `tfsdk:"target_hostname"`
+	TargetIP                types.Set `tfsdk:"target_ip"`
+	PacketsPerSecond        types.Set `tfsdk:"packets_per_second"`
+	Protocol                types.Set `tfsdk:"protocol"`
+	ProjectID               types.Set `tfsdk:"project_id"`
+	Environment             types.Set `tfsdk:"environment"`
+	Event                   types.Set `tfsdk:"event"`
+	EventSource             types.Set `tfsdk:"event_source"`
+	NewHealth               types.Set `tfsdk:"new_health"`
+	InputID                 types.Set `tfsdk:"input_id"`
+	EventType               types.Set `tfsdk:"event_type"`
+	MegabitsPerSecond       types.Set `tfsdk:"megabits_per_second"`
+	IncidentImpact          types.Set `tfsdk:"incident_impact"`
+	NewStatus               types.Set `tfsdk:"new_status"`
+	Selectors               types.Set `tfsdk:"selectors"`
+	TunnelID                types.Set `tfsdk:"tunnel_id"`
+	TunnelName              types.Set `tfsdk:"tunnel_name"`
 }
 
 // SourceIntegrationModel represents the integration structure from v4.x provider.
@@ -96,17 +96,17 @@ type SourceIntegrationModel struct {
 // Schema version: 500
 // Resource type: cloudflare_notification_policy
 type TargetNotificationPolicyModel struct {
-	ID            types.String                                `tfsdk:"id"`
-	AccountID     types.String                                `tfsdk:"account_id"`
-	AlertType     types.String                                `tfsdk:"alert_type"`
-	Name          types.String                                `tfsdk:"name"`
-	Mechanisms    *TargetNotificationPolicyMechanismsModel    `tfsdk:"mechanisms"` // New nested structure
-	AlertInterval types.String                                `tfsdk:"alert_interval"` // New in v5
-	Description   types.String                                `tfsdk:"description"`
-	Filters       *TargetNotificationPolicyFiltersModel       `tfsdk:"filters"` // SingleNestedAttribute in v5
-	Enabled       types.Bool                                  `tfsdk:"enabled"`
-	Created       timetypes.RFC3339                           `tfsdk:"created"`  // RFC3339 type in v5
-	Modified      timetypes.RFC3339                           `tfsdk:"modified"` // RFC3339 type in v5
+	ID            types.String                             `tfsdk:"id"`
+	AccountID     types.String                             `tfsdk:"account_id"`
+	AlertType     types.String                             `tfsdk:"alert_type"`
+	Name          types.String                             `tfsdk:"name"`
+	Mechanisms    *TargetNotificationPolicyMechanismsModel `tfsdk:"mechanisms"`     // New nested structure
+	AlertInterval types.String                             `tfsdk:"alert_interval"` // New in v5
+	Description   types.String                             `tfsdk:"description"`
+	Filters       *TargetNotificationPolicyFiltersModel    `tfsdk:"filters"` // SingleNestedAttribute in v5
+	Enabled       types.Bool                               `tfsdk:"enabled"`
+	Created       timetypes.RFC3339                        `tfsdk:"created"`  // RFC3339 type in v5
+	Modified      timetypes.RFC3339                        `tfsdk:"modified"` // RFC3339 type in v5
 }
 
 // TargetNotificationPolicyMechanismsModel represents the mechanisms structure from v5.x+ provider.
@@ -140,9 +140,9 @@ type TargetNotificationPolicyMechanismsWebhooksModel struct {
 // All fields are List (slices) in v5 instead of Set.
 type TargetNotificationPolicyFiltersModel struct {
 	Actions                      *[]types.String `tfsdk:"actions"`
-	AffectedASNs                 *[]types.String `tfsdk:"affected_asns"`                   // New in v5
+	AffectedASNs                 *[]types.String `tfsdk:"affected_asns"` // New in v5
 	AffectedComponents           *[]types.String `tfsdk:"affected_components"`
-	AffectedLocations            *[]types.String `tfsdk:"affected_locations"`              // New in v5
+	AffectedLocations            *[]types.String `tfsdk:"affected_locations"` // New in v5
 	AirportCode                  *[]types.String `tfsdk:"airport_code"`
 	AlertTriggerPreferences      *[]types.String `tfsdk:"alert_trigger_preferences"`
 	AlertTriggerPreferencesValue *[]types.String `tfsdk:"alert_trigger_preferences_value"` // New in v5
@@ -157,17 +157,17 @@ type TargetNotificationPolicyFiltersModel struct {
 	InputID                      *[]types.String `tfsdk:"input_id"`
 	InsightClass                 *[]types.String `tfsdk:"insight_class"` // New in v5
 	Limit                        *[]types.String `tfsdk:"limit"`
-	LogoTag                      *[]types.String `tfsdk:"logo_tag"`              // New in v5
+	LogoTag                      *[]types.String `tfsdk:"logo_tag"` // New in v5
 	MegabitsPerSecond            *[]types.String `tfsdk:"megabits_per_second"`
 	NewHealth                    *[]types.String `tfsdk:"new_health"`
 	NewStatus                    *[]types.String `tfsdk:"new_status"`
 	PacketsPerSecond             *[]types.String `tfsdk:"packets_per_second"`
 	PoolID                       *[]types.String `tfsdk:"pool_id"`
-	POPNames                     *[]types.String `tfsdk:"pop_names"`     // New in v5
+	POPNames                     *[]types.String `tfsdk:"pop_names"` // New in v5
 	Product                      *[]types.String `tfsdk:"product"`
 	ProjectID                    *[]types.String `tfsdk:"project_id"`
 	Protocol                     *[]types.String `tfsdk:"protocol"`
-	QueryTag                     *[]types.String `tfsdk:"query_tag"`     // New in v5
+	QueryTag                     *[]types.String `tfsdk:"query_tag"` // New in v5
 	RequestsPerSecond            *[]types.String `tfsdk:"requests_per_second"`
 	Selectors                    *[]types.String `tfsdk:"selectors"`
 	Services                     *[]types.String `tfsdk:"services"`
@@ -176,10 +176,11 @@ type TargetNotificationPolicyFiltersModel struct {
 	TargetHostname               *[]types.String `tfsdk:"target_hostname"`
 	TargetIP                     *[]types.String `tfsdk:"target_ip"`
 	TargetZoneName               *[]types.String `tfsdk:"target_zone_name"`
+	TokenID                      *[]types.String `tfsdk:"token_id"`           // New in v5
 	TrafficExclusions            *[]types.String `tfsdk:"traffic_exclusions"` // New in v5
 	TunnelID                     *[]types.String `tfsdk:"tunnel_id"`
 	TunnelName                   *[]types.String `tfsdk:"tunnel_name"`
-	Type                         *[]types.String `tfsdk:"type"`  // New in v5
+	Type                         *[]types.String `tfsdk:"type"` // New in v5
 	Where                        *[]types.String `tfsdk:"where"`
 	Zones                        *[]types.String `tfsdk:"zones"`
 }
