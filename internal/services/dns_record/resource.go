@@ -294,6 +294,7 @@ func (r *DNSRecordResource) ImportState(ctx context.Context, req resource.Import
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	normalizeIncludeShadowMetadata(data)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
