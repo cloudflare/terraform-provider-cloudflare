@@ -604,7 +604,13 @@ func TestAccCloudflareAccessOrganization_ImportVerifyAll(t *testing.T) {
 				// false and null when prior state exists, but on import there is no prior
 				// state so the raw API value comes through. This is a known gap in
 				// normalizeImportZeroTrustOrganizationAPIData.
-				ImportStateVerifyIgnore: []string{"deny_unmatched_requests"},
+				//
+				// mfa_configuration_allowed and service_token_inactivity hit the same
+				// gap: mfa_configuration_allowed is entitlement-gated and often absent
+				// from the API entirely (no reliable default to normalize to), and
+				// service_token_inactivity can come back with enabled=false alongside
+				// null/empty sub-fields with no prior state to collapse against.
+				ImportStateVerifyIgnore: []string{"deny_unmatched_requests", "mfa_configuration_allowed", "service_token_inactivity"},
 			},
 		},
 	})
