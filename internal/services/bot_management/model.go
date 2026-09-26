@@ -16,6 +16,7 @@ type BotManagementResultEnvelope struct {
 
 // BotManagementAPIModel represents the API response/request model with pointers for problematic boolean fields
 type BotManagementAPIModel struct {
+	AIBotsMigrationOptOut        *bool                                        `json:"ai_bots_migration_opt_out,omitempty"`
 	AIBotsProtection             *string                                      `json:"ai_bots_protection,omitempty"`
 	AISearch                     *string                                      `json:"ai_search,omitempty"`
 	AITraining                   *string                                      `json:"ai_training,omitempty"`
@@ -97,6 +98,7 @@ func (m BotManagementModel) ToAPIModel() BotManagementAPIModel {
 	api := BotManagementAPIModel{}
 
 	// Convert boolean fields to pointers
+	setBoolField(m.AIBotsMigrationOptOut, &api.AIBotsMigrationOptOut)
 	setBoolField(m.AutoUpdateModel, &api.AutoUpdateModel)
 	setBoolField(m.BmCookieEnabled, &api.BmCookieEnabled)
 	setBoolField(m.EnableJS, &api.EnableJS)
@@ -170,6 +172,7 @@ func updateStaleZoneConfig(staleConfig *BotManagementStaleZoneConfigurationModel
 // UpdateFromAPIModel updates the Terraform state model from API response, preserving existing values for missing fields
 func (m *BotManagementModel) UpdateFromAPIModel(api BotManagementAPIModel) {
 	// Update boolean fields
+	updateBoolField(&m.AIBotsMigrationOptOut, api.AIBotsMigrationOptOut)
 	updateBoolField(&m.AutoUpdateModel, api.AutoUpdateModel)
 	updateBoolField(&m.BmCookieEnabled, api.BmCookieEnabled)
 	updateBoolField(&m.EnableJS, api.EnableJS)
