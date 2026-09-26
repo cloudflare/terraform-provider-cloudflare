@@ -1,9 +1,6 @@
 resource "cloudflare_bot_management" "%[1]s" {
 	zone_id = "%[2]s"
 
-	enable_js = %[3]t
-
-	lifecycle {
-		ignore_changes = [ai_bots_protection]
-	}
+	enable_js          = %[3]t
+	ai_bots_protection = "disabled"
 }
