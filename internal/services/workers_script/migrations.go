@@ -220,6 +220,7 @@ type resourceModelV0 struct {
 			NotFoundHandling types.String `tfsdk:"not_found_handling" json:"not_found_handling,optional"`
 			RunWorkerFirst   types.Bool   `tfsdk:"run_worker_first" json:"run_worker_first,optional"`
 			ServeDirectly    types.Bool   `tfsdk:"serve_directly" json:"serve_directly,optional"`
+			BasePath         types.String `tfsdk:"base_path" json:"-,optional"`
 		} `tfsdk:"config" json:"config,optional"`
 		JWT                 types.String `tfsdk:"jwt" json:"jwt,optional"`
 		Directory           types.String `tfsdk:"directory" json:"-,optional"`
