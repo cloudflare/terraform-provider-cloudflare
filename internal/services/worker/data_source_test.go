@@ -66,6 +66,7 @@ func TestAccCloudflareWorkerDataSource_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("observability"), knownvalue.ObjectExact(map[string]knownvalue.Check{
 						"enabled":            knownvalue.Bool(false),
 						"head_sampling_rate": knownvalue.Float64Exact(1),
+						"issues": knownvalue.Null(),
 						"logs": knownvalue.ObjectExact(map[string]knownvalue.Check{
 							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
 							"enabled":            knownvalue.Bool(false),

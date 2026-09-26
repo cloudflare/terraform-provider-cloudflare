@@ -19,8 +19,8 @@ import (
 //   - Nested fields (type, name) are Optional (v5: Required)
 //   - Stores auth_id_characteristics as array in state (same as v5)
 type SourceAPIShieldModel struct {
-	ID                    types.String                             `tfsdk:"id"`
-	ZoneID                types.String                             `tfsdk:"zone_id"`
+	ID                    types.String                         `tfsdk:"id"`
+	ZoneID                types.String                         `tfsdk:"zone_id"`
 	AuthIDCharacteristics *[]*SourceAuthIDCharacteristicsModel `tfsdk:"auth_id_characteristics"`
 }
 
@@ -51,8 +51,9 @@ type SourceAuthIDCharacteristicsModel struct {
 //   - Nested fields (type, name) are Required (v4: Optional)
 //   - Supports additional type value "jwt" (backward compatible)
 type TargetAPIShieldModel struct {
-	ID                    types.String                             `tfsdk:"id"`
-	ZoneID                types.String                             `tfsdk:"zone_id"`
+	ID                    types.String                         `tfsdk:"id"`
+	ZoneID                types.String                         `tfsdk:"zone_id"`
+	Normalize             types.Bool                           `tfsdk:"normalize"`
 	AuthIDCharacteristics *[]*TargetAuthIDCharacteristicsModel `tfsdk:"auth_id_characteristics"`
 }
 

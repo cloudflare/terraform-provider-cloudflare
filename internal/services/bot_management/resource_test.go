@@ -690,6 +690,7 @@ func TestAccCloudflareBotManagement_EnableJSAutoUpdateSuppression(t *testing.T) 
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
 					"ai_bots_protection",
+					"ai_training",
 					"crawler_protection",
 					"stale_zone_configuration",
 				},

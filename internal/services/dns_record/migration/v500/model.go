@@ -93,22 +93,23 @@ type SourceDataModel struct {
 
 // TargetDNSRecordModel represents the target cloudflare_dns_record state structure (v500).
 type TargetDNSRecordModel struct {
-	ID                types.String                  `tfsdk:"id"`
-	ZoneID            types.String                  `tfsdk:"zone_id"`
-	Name              types.String                  `tfsdk:"name"`
-	Type              types.String                  `tfsdk:"type"`
-	Content           types.String                  `tfsdk:"content"`
-	TTL               types.Float64                 `tfsdk:"ttl"`
-	Priority          types.Float64                 `tfsdk:"priority"`
-	Proxied           types.Bool                    `tfsdk:"proxied"`
-	PrivateRouting    types.Bool                    `tfsdk:"private_routing"`
-	Comment           types.String                  `tfsdk:"comment"`
-	Tags              customfield.Set[types.String] `tfsdk:"tags"`
-	Data              *TargetDNSRecordDataModel     `tfsdk:"data"`
-	CreatedOn         timetypes.RFC3339             `tfsdk:"created_on"`
-	ModifiedOn        timetypes.RFC3339             `tfsdk:"modified_on"`
-	CommentModifiedOn timetypes.RFC3339             `tfsdk:"comment_modified_on"`
-	TagsModifiedOn    timetypes.RFC3339             `tfsdk:"tags_modified_on"`
+	ID                    types.String                  `tfsdk:"id"`
+	ZoneID                types.String                  `tfsdk:"zone_id"`
+	IncludeShadowMetadata types.Bool                    `tfsdk:"include_shadow_metadata"`
+	Name                  types.String                  `tfsdk:"name"`
+	Type                  types.String                  `tfsdk:"type"`
+	Content               types.String                  `tfsdk:"content"`
+	TTL                   types.Float64                 `tfsdk:"ttl"`
+	Priority              types.Float64                 `tfsdk:"priority"`
+	Proxied               types.Bool                    `tfsdk:"proxied"`
+	PrivateRouting        types.Bool                    `tfsdk:"private_routing"`
+	Comment               types.String                  `tfsdk:"comment"`
+	Tags                  customfield.Set[types.String] `tfsdk:"tags"`
+	Data                  *TargetDNSRecordDataModel     `tfsdk:"data"`
+	CreatedOn             timetypes.RFC3339             `tfsdk:"created_on"`
+	ModifiedOn            timetypes.RFC3339             `tfsdk:"modified_on"`
+	CommentModifiedOn     timetypes.RFC3339             `tfsdk:"comment_modified_on"`
+	TagsModifiedOn        timetypes.RFC3339             `tfsdk:"tags_modified_on"`
 	// Computed fields (not migrated, will be refreshed from API)
 	Proxiable types.Bool                                             `tfsdk:"proxiable"`
 	Meta      jsontypes.Normalized                                   `tfsdk:"meta"`

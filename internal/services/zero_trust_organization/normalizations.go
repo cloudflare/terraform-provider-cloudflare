@@ -3,9 +3,12 @@ package zero_trust_organization
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 func normalizeEmptyAndNullObject[T comparable](data **T, stateData *T) {
@@ -41,6 +44,18 @@ func normalizeEmptyAndNullList[T any](data **[]T, stateData *[]T) {
 	*data = stateData
 }
 
+// normalizeUnknownCustomList preserves the prior state value for a
+// customfield.List-typed attribute when the freshly decoded API data resolves
+// to null or unknown, unless the prior state is itself unknown (e.g. on
+// Create, where there is no prior state to fall back on).
+func normalizeUnknownCustomList[T attr.Value](data *customfield.List[T], stateData customfield.List[T]) {
+	if data.IsNull() || data.IsUnknown() {
+		if !stateData.IsUnknown() {
+			*data = stateData
+		}
+	}
+}
+
 func normalizeEmptyAndNullString(data *basetypes.StringValue, stateData basetypes.StringValue) {
 	// If data is unknown or null/empty, preserve state value (unless state is also unknown)
 	if data.IsUnknown() || data.IsNull() || data.ValueString() == "" {
@@ -66,7 +81,18 @@ func normalizeReadZeroTrustOrganizationAPIData(_ context.Context, data, sourceDa
 	normalizeFalseAndNullBool(&data.IsUIReadOnly, sourceData.IsUIReadOnly)
 	normalizeFalseAndNullBool(&data.DenyUnmatchedRequests, sourceData.DenyUnmatchedRequests)
 	normalizeFalseAndNullBool(&data.MfaRequiredForAllApps, sourceData.MfaRequiredForAllApps)
+	normalizeFalseAndNullBool(&data.MfaConfigurationAllowed, sourceData.MfaConfigurationAllowed)
 	normalizeEmptyAndNullObject(&data.LoginDesign, sourceData.LoginDesign)
+	// service_token_inactivity is not Computed, but the API can populate
+	// action/inactivity_threshold_days with server-side defaults even when
+	// enabled=false, so the generic all-fields-zero check in
+	// normalizeEmptyAndNullObject never collapses it. Treat enabled=false as
+	// the disabled/null signal instead.
+	if data.ServiceTokenInactivity != nil && !data.ServiceTokenInactivity.Enabled.ValueBool() &&
+		(sourceData.ServiceTokenInactivity == nil || !sourceData.ServiceTokenInactivity.Enabled.ValueBool()) {
+		data.ServiceTokenInactivity = sourceData.ServiceTokenInactivity
+	}
+	normalizeUnknownCustomList(&data.TrustedAccounts, sourceData.TrustedAccounts)
 	normalizeEmptyAndNullList(&data.DenyUnmatchedRequestsExemptedZoneNames, sourceData.DenyUnmatchedRequestsExemptedZoneNames)
 	normalizeEmptyAndNullString(&data.UIReadOnlyToggleReason, sourceData.UIReadOnlyToggleReason)
 

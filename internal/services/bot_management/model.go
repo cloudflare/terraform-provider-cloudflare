@@ -16,7 +16,11 @@ type BotManagementResultEnvelope struct {
 
 // BotManagementAPIModel represents the API response/request model with pointers for problematic boolean fields
 type BotManagementAPIModel struct {
+	AIBotsMigrationOptOut        *bool                                        `json:"ai_bots_migration_opt_out,omitempty"`
 	AIBotsProtection             *string                                      `json:"ai_bots_protection,omitempty"`
+	AISearch                     *string                                      `json:"ai_search,omitempty"`
+	AITraining                   *string                                      `json:"ai_training,omitempty"`
+	AIUser                       *string                                      `json:"ai_user,omitempty"`
 	AutoUpdateModel              *bool                                        `json:"auto_update_model,omitempty"`
 	BmCookieEnabled              *bool                                        `json:"bm_cookie_enabled,omitempty"`
 	ContentBotsProtection        *string                                      `json:"content_bots_protection,omitempty"`
@@ -24,6 +28,7 @@ type BotManagementAPIModel struct {
 	EnableJS                     *bool                                        `json:"enable_js,omitempty"`
 	FightMode                    *bool                                        `json:"fight_mode,omitempty"`
 	IsRobotsTXTManaged           *bool                                        `json:"is_robots_txt_managed,omitempty"`
+	JsdAPIResultsEnabled         *bool                                        `json:"jsd_api_results_enabled,omitempty"`
 	OptimizeWordpress            *bool                                        `json:"optimize_wordpress,omitempty"`
 	SBFMDefinitelyAutomated      *string                                      `json:"sbfm_definitely_automated,omitempty"`
 	SBFMLikelyAutomated          *string                                      `json:"sbfm_likely_automated,omitempty"`
@@ -93,11 +98,13 @@ func (m BotManagementModel) ToAPIModel() BotManagementAPIModel {
 	api := BotManagementAPIModel{}
 
 	// Convert boolean fields to pointers
+	setBoolField(m.AIBotsMigrationOptOut, &api.AIBotsMigrationOptOut)
 	setBoolField(m.AutoUpdateModel, &api.AutoUpdateModel)
 	setBoolField(m.BmCookieEnabled, &api.BmCookieEnabled)
 	setBoolField(m.EnableJS, &api.EnableJS)
 	setBoolField(m.FightMode, &api.FightMode)
 	setBoolField(m.IsRobotsTXTManaged, &api.IsRobotsTXTManaged)
+	setBoolField(m.JsdAPIResultsEnabled, &api.JsdAPIResultsEnabled)
 	setBoolField(m.OptimizeWordpress, &api.OptimizeWordpress)
 	setBoolField(m.SBFMStaticResourceProtection, &api.SBFMStaticResourceProtection)
 	setBoolField(m.SuppressSessionScore, &api.SuppressSessionScore)
@@ -105,6 +112,9 @@ func (m BotManagementModel) ToAPIModel() BotManagementAPIModel {
 
 	// Convert string fields to pointers
 	setStringField(m.AIBotsProtection, &api.AIBotsProtection)
+	setStringField(m.AITraining, &api.AITraining)
+	setStringField(m.AIUser, &api.AIUser)
+	setStringField(m.AISearch, &api.AISearch)
 	setStringField(m.CrawlerProtection, &api.CrawlerProtection)
 	setStringField(m.SBFMDefinitelyAutomated, &api.SBFMDefinitelyAutomated)
 	setStringField(m.SBFMLikelyAutomated, &api.SBFMLikelyAutomated)
@@ -162,11 +172,13 @@ func updateStaleZoneConfig(staleConfig *BotManagementStaleZoneConfigurationModel
 // UpdateFromAPIModel updates the Terraform state model from API response, preserving existing values for missing fields
 func (m *BotManagementModel) UpdateFromAPIModel(api BotManagementAPIModel) {
 	// Update boolean fields
+	updateBoolField(&m.AIBotsMigrationOptOut, api.AIBotsMigrationOptOut)
 	updateBoolField(&m.AutoUpdateModel, api.AutoUpdateModel)
 	updateBoolField(&m.BmCookieEnabled, api.BmCookieEnabled)
 	updateBoolField(&m.EnableJS, api.EnableJS)
 	updateBoolField(&m.FightMode, api.FightMode)
 	updateBoolField(&m.IsRobotsTXTManaged, api.IsRobotsTXTManaged)
+	updateBoolField(&m.JsdAPIResultsEnabled, api.JsdAPIResultsEnabled)
 	updateBoolField(&m.OptimizeWordpress, api.OptimizeWordpress)
 	updateBoolField(&m.SBFMStaticResourceProtection, api.SBFMStaticResourceProtection)
 	updateBoolField(&m.SuppressSessionScore, api.SuppressSessionScore)
@@ -174,6 +186,9 @@ func (m *BotManagementModel) UpdateFromAPIModel(api BotManagementAPIModel) {
 
 	// Update string fields
 	updateStringField(&m.AIBotsProtection, api.AIBotsProtection)
+	updateStringField(&m.AITraining, api.AITraining)
+	updateStringField(&m.AIUser, api.AIUser)
+	updateStringField(&m.AISearch, api.AISearch)
 	updateStringField(&m.ContentBotsProtection, api.ContentBotsProtection)
 	updateStringField(&m.CrawlerProtection, api.CrawlerProtection)
 	updateStringField(&m.SBFMDefinitelyAutomated, api.SBFMDefinitelyAutomated)

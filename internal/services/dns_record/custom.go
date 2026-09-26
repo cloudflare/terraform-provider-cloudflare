@@ -452,6 +452,19 @@ func normalizeSettings(ctx context.Context, data *DNSRecordModel, diags *diag.Di
 	}
 }
 
+// normalizeIncludeShadowMetadata defaults include_shadow_metadata to false when
+// null. It is a query-only parameter (no `json` tag), so the API response never
+// populates it and apijson.Unmarshal silently skips it. Read/Create/Update are
+// unaffected because Terraform resolves the schema's static default before
+// those handlers run, but ImportState builds its model from a zero value with
+// no plan phase involved, so the field is left null after import. This mirrors
+// the schema's Default: booldefault.StaticBool(false).
+func normalizeIncludeShadowMetadata(data *DNSRecordModel) {
+	if data.IncludeShadowMetadata.IsNull() {
+		data.IncludeShadowMetadata = types.BoolValue(false)
+	}
+}
+
 // ---------------------------------------------------------------------------
 // DNSRecordDataModel.Equal – semantic equality for the data sub-object.
 // ---------------------------------------------------------------------------

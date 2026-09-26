@@ -172,6 +172,7 @@ type resourceModelV0 struct {
 	ID               types.String                                                  `tfsdk:"id" json:"-,computed"`
 	ScriptName       types.String                                                  `tfsdk:"script_name" path:"script_name,required"`
 	AccountID        types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
+	Force            types.Bool                                                    `tfsdk:"force" query:"force,optional"`
 	Content          types.String                                                  `tfsdk:"content" json:"-"`
 	ContentFile      types.String                                                  `tfsdk:"content_file" json:"-"`
 	ContentSHA256    types.String                                                  `tfsdk:"content_sha256" json:"-"`
@@ -219,6 +220,7 @@ type resourceModelV0 struct {
 			NotFoundHandling types.String `tfsdk:"not_found_handling" json:"not_found_handling,optional"`
 			RunWorkerFirst   types.Bool   `tfsdk:"run_worker_first" json:"run_worker_first,optional"`
 			ServeDirectly    types.Bool   `tfsdk:"serve_directly" json:"serve_directly,optional"`
+			BasePath         types.String `tfsdk:"base_path" json:"-,optional"`
 		} `tfsdk:"config" json:"config,optional"`
 		JWT                 types.String `tfsdk:"jwt" json:"jwt,optional"`
 		Directory           types.String `tfsdk:"directory" json:"-,optional"`
