@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -19,7 +20,15 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
+				Optional: true,
+			},
+			"profile_type": schema.StringAttribute{
+				Description: "Filter profiles by client type. When omitted, only WARP profiles are returned.\nAvailable values: \"warp\", \"browser_extension\".",
+				Computed:    true,
 				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("warp", "browser_extension"),
+				},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -53,12 +62,30 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The amount of time in seconds to reconnect after having been disabled.",
 							Computed:    true,
 						},
+						"browser_extension_config": schema.SingleNestedAttribute{
+							Description: "Browser extension proxy settings. Required when profile_type is browser_extension and invalid for WARP profiles.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[ZeroTrustDeviceCustomProfilesBrowserExtensionConfigDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"proxy_control": schema.StringAttribute{
+									Description: "Whether the user may disable the browser extension proxy.\nAvailable values: \"unlocked\", \"locked\".",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("unlocked", "locked"),
+									},
+								},
+								"proxy_enabled": schema.BoolAttribute{
+									Description: "Whether the browser extension proxy is active.",
+									Computed:    true,
+								},
+							},
+						},
 						"captive_portal": schema.Float64Attribute{
 							Description: "Turn on the captive portal after the specified amount of time.",
 							Computed:    true,
 						},
 						"default": schema.BoolAttribute{
-							Description: "Whether the policy is the default policy for an account.",
+							Description: "Whether the policy is the account default. WARP group profiles cannot set this field.",
 							Computed:    true,
 						},
 						"description": schema.StringAttribute{
@@ -184,6 +211,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.",
 							Computed:    true,
 						},
+						"profile_type": schema.StringAttribute{
+							Description: "The client type to which the device settings profile applies.\nAvailable values: \"warp\", \"browser_extension\".",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("warp", "browser_extension"),
+							},
+						},
 						"register_interface_ip_with_dns": schema.BoolAttribute{
 							Description: "Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.",
 							Computed:    true,
@@ -232,6 +266,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"tunnel_protocol": schema.StringAttribute{
 							Description: "Determines which tunnel protocol to use.",
+							Computed:    true,
+						},
+						"uninstall_protection": schema.BoolAttribute{
+							Description: "Determines whether uninstalling the WARP client requires an override code. (Windows only).",
 							Computed:    true,
 						},
 						"virtual_networks": schema.SingleNestedAttribute{

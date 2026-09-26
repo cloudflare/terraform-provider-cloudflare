@@ -20,13 +20,13 @@ var _ resource.ResourceWithConfigValidators = (*R2DataCatalogResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers R2 Data Catalog Read",
 				"Workers R2 Data Catalog Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Use this to uniquely identify the activated catalog.",
@@ -95,6 +95,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+					},
+					"interval": schema.StringAttribute{
+						Description: "Scheduling interval between normal table maintenance runs.",
+						Computed:    true,
 					},
 					"snapshot_expiration": schema.SingleNestedAttribute{
 						Description: "Configures snapshot expiration settings.",

@@ -24,7 +24,6 @@ func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
 
-
 func init() {
 	resource.AddTestSweepers("cloudflare_snippet_rules", &resource.Sweeper{
 		Name: "cloudflare_snippet_rules",
@@ -110,7 +109,7 @@ func testAccCheckCloudflareSnippetRulesDestroy(s *terraform.State) error {
 
 		// Check if any rules still exist
 		if rules != nil {
-			if rulesList, ok := (*rules).([]interface{}); ok && len(rulesList) > 0 {
+			if len(rules.Result) > 0 {
 				return fmt.Errorf("snippet rules still exist")
 			}
 		}

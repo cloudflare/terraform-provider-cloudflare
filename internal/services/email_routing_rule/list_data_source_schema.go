@@ -70,6 +70,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"value": schema.ListAttribute{
+										Description: "List of values for the action. Currently limited to a single value.",
 										Computed:    true,
 										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,

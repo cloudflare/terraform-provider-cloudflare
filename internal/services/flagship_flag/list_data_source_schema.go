@@ -52,6 +52,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[FlagshipFlagsResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "Unique identifier for the flag within an app. Used in all evaluation and SDK calls.",
+							Computed:    true,
+						},
 						"default_variation": schema.StringAttribute{
 							Description: "Variation served when no rule matches or the flag is disabled. Must be a key in `variations`.",
 							Computed:    true,
@@ -359,17 +363,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"variations": schema.MapAttribute{
-							Description: "Map of variation name to value. All values must be the same type (boolean, string, number, or JSON object/array). Each serialized value must be 10KB or smaller.",
-							Computed:    true,
-							CustomType:  customfield.NewMapType[types.String](ctx),
-							ElementType: types.StringType,
-						},
-						"description": schema.StringAttribute{
-							Computed: true,
-						},
 						"type": schema.StringAttribute{
-							Description: "Value type of the flag's variations. Inferred from the variation values on write, so it may be omitted in requests.\nAvailable values: \"boolean\", \"string\", \"number\", \"json\".",
+							Description: "Server-inferred value type shared by all of the flag's variations.\nAvailable values: \"boolean\", \"string\", \"number\", \"json\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -379,6 +374,15 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"json",
 								),
 							},
+						},
+						"variations": schema.MapAttribute{
+							Description: "Map of variation name to value. All values share the same type (boolean, string, number, or JSON object/array), and each serialized value stays within 10KB.",
+							Computed:    true,
+							CustomType:  customfield.NewMapType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+						"description": schema.StringAttribute{
+							Computed: true,
 						},
 						"updated_at": schema.StringAttribute{
 							Computed: true,

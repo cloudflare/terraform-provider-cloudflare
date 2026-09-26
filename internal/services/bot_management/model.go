@@ -16,7 +16,11 @@ type BotManagementResultEnvelope struct {
 
 // BotManagementAPIModel represents the API response/request model with pointers for problematic boolean fields
 type BotManagementAPIModel struct {
+	AIBotsMigrationOptOut        *bool                                        `json:"ai_bots_migration_opt_out,omitempty"`
 	AIBotsProtection             *string                                      `json:"ai_bots_protection,omitempty"`
+	AISearch                     *string                                      `json:"ai_search,omitempty"`
+	AITraining                   *string                                      `json:"ai_training,omitempty"`
+	AIUser                       *string                                      `json:"ai_user,omitempty"`
 	AutoUpdateModel              *bool                                        `json:"auto_update_model,omitempty"`
 	BmCookieEnabled              *bool                                        `json:"bm_cookie_enabled,omitempty"`
 	ContentBotsProtection        *string                                      `json:"content_bots_protection,omitempty"`
@@ -24,6 +28,7 @@ type BotManagementAPIModel struct {
 	EnableJS                     *bool                                        `json:"enable_js,omitempty"`
 	FightMode                    *bool                                        `json:"fight_mode,omitempty"`
 	IsRobotsTXTManaged           *bool                                        `json:"is_robots_txt_managed,omitempty"`
+	JsdAPIResultsEnabled         *bool                                        `json:"jsd_api_results_enabled,omitempty"`
 	OptimizeWordpress            *bool                                        `json:"optimize_wordpress,omitempty"`
 	SBFMDefinitelyAutomated      *string                                      `json:"sbfm_definitely_automated,omitempty"`
 	SBFMLikelyAutomated          *string                                      `json:"sbfm_likely_automated,omitempty"`
@@ -48,7 +53,11 @@ type BotManagementStaleZoneConfigurationAPIModel struct {
 type BotManagementModel struct {
 	ID                           types.String                                                       `tfsdk:"id" json:"-,computed"`
 	ZoneID                       types.String                                                       `tfsdk:"zone_id" path:"zone_id,required"`
+	AIBotsMigrationOptOut        types.Bool                                                         `tfsdk:"ai_bots_migration_opt_out" json:"ai_bots_migration_opt_out,computed_optional"`
 	AIBotsProtection             types.String                                                       `tfsdk:"ai_bots_protection" json:"ai_bots_protection,computed_optional"`
+	AITraining                   types.String                                                       `tfsdk:"ai_training" json:"ai_training,computed_optional"`
+	AIUser                       types.String                                                       `tfsdk:"ai_user" json:"ai_user,computed_optional"`
+	AISearch                     types.String                                                       `tfsdk:"aisearch" json:"ai_search,computed_optional"`
 	AutoUpdateModel              types.Bool                                                         `tfsdk:"auto_update_model" json:"auto_update_model,computed_optional"`
 	BmCookieEnabled              types.Bool                                                         `tfsdk:"bm_cookie_enabled" json:"bm_cookie_enabled,computed_optional"`
 	BotPreferenceSyncEnabled     types.Bool                                                         `tfsdk:"bot_preference_sync_enabled" json:"bot_preference_sync_enabled,optional"`
@@ -58,6 +67,7 @@ type BotManagementModel struct {
 	EnableJS                     types.Bool                                                         `tfsdk:"enable_js" json:"enable_js,computed_optional"`
 	FightMode                    types.Bool                                                         `tfsdk:"fight_mode" json:"fight_mode,computed_optional"`
 	IsRobotsTXTManaged           types.Bool                                                         `tfsdk:"is_robots_txt_managed" json:"is_robots_txt_managed,computed_optional"`
+	JsdAPIResultsEnabled         types.Bool                                                         `tfsdk:"jsd_api_results_enabled" json:"jsd_api_results_enabled,computed_optional"`
 	OptimizeWordpress            types.Bool                                                         `tfsdk:"optimize_wordpress" json:"optimize_wordpress,computed_optional"`
 	SBFMDefinitelyAutomated      types.String                                                       `tfsdk:"sbfm_definitely_automated" json:"sbfm_definitely_automated,computed_optional"`
 	SBFMLikelyAutomated          types.String                                                       `tfsdk:"sbfm_likely_automated" json:"sbfm_likely_automated,computed_optional"`
@@ -88,11 +98,13 @@ func (m BotManagementModel) ToAPIModel() BotManagementAPIModel {
 	api := BotManagementAPIModel{}
 
 	// Convert boolean fields to pointers
+	setBoolField(m.AIBotsMigrationOptOut, &api.AIBotsMigrationOptOut)
 	setBoolField(m.AutoUpdateModel, &api.AutoUpdateModel)
 	setBoolField(m.BmCookieEnabled, &api.BmCookieEnabled)
 	setBoolField(m.EnableJS, &api.EnableJS)
 	setBoolField(m.FightMode, &api.FightMode)
 	setBoolField(m.IsRobotsTXTManaged, &api.IsRobotsTXTManaged)
+	setBoolField(m.JsdAPIResultsEnabled, &api.JsdAPIResultsEnabled)
 	setBoolField(m.OptimizeWordpress, &api.OptimizeWordpress)
 	setBoolField(m.SBFMStaticResourceProtection, &api.SBFMStaticResourceProtection)
 	setBoolField(m.SuppressSessionScore, &api.SuppressSessionScore)
@@ -100,6 +112,9 @@ func (m BotManagementModel) ToAPIModel() BotManagementAPIModel {
 
 	// Convert string fields to pointers
 	setStringField(m.AIBotsProtection, &api.AIBotsProtection)
+	setStringField(m.AITraining, &api.AITraining)
+	setStringField(m.AIUser, &api.AIUser)
+	setStringField(m.AISearch, &api.AISearch)
 	setStringField(m.CrawlerProtection, &api.CrawlerProtection)
 	setStringField(m.SBFMDefinitelyAutomated, &api.SBFMDefinitelyAutomated)
 	setStringField(m.SBFMLikelyAutomated, &api.SBFMLikelyAutomated)
@@ -157,11 +172,13 @@ func updateStaleZoneConfig(staleConfig *BotManagementStaleZoneConfigurationModel
 // UpdateFromAPIModel updates the Terraform state model from API response, preserving existing values for missing fields
 func (m *BotManagementModel) UpdateFromAPIModel(api BotManagementAPIModel) {
 	// Update boolean fields
+	updateBoolField(&m.AIBotsMigrationOptOut, api.AIBotsMigrationOptOut)
 	updateBoolField(&m.AutoUpdateModel, api.AutoUpdateModel)
 	updateBoolField(&m.BmCookieEnabled, api.BmCookieEnabled)
 	updateBoolField(&m.EnableJS, api.EnableJS)
 	updateBoolField(&m.FightMode, api.FightMode)
 	updateBoolField(&m.IsRobotsTXTManaged, api.IsRobotsTXTManaged)
+	updateBoolField(&m.JsdAPIResultsEnabled, api.JsdAPIResultsEnabled)
 	updateBoolField(&m.OptimizeWordpress, api.OptimizeWordpress)
 	updateBoolField(&m.SBFMStaticResourceProtection, api.SBFMStaticResourceProtection)
 	updateBoolField(&m.SuppressSessionScore, api.SuppressSessionScore)
@@ -169,6 +186,9 @@ func (m *BotManagementModel) UpdateFromAPIModel(api BotManagementAPIModel) {
 
 	// Update string fields
 	updateStringField(&m.AIBotsProtection, api.AIBotsProtection)
+	updateStringField(&m.AITraining, api.AITraining)
+	updateStringField(&m.AIUser, api.AIUser)
+	updateStringField(&m.AISearch, api.AISearch)
 	updateStringField(&m.ContentBotsProtection, api.ContentBotsProtection)
 	updateStringField(&m.CrawlerProtection, api.CrawlerProtection)
 	updateStringField(&m.SBFMDefinitelyAutomated, api.SBFMDefinitelyAutomated)

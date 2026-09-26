@@ -155,14 +155,20 @@ func (r *SchemaValidationSchemasResource) Read(ctx context.Context, req resource
 		return
 	}
 
+	params := schema_validation.SchemaGetParams{
+		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	}
+
+	if !data.OmitSource.IsNull() && !data.OmitSource.IsUnknown() {
+		params.OmitSource = cloudflare.F(data.OmitSource.ValueBool())
+	}
+
 	res := new(http.Response)
 	env := SchemaValidationSchemasResultEnvelope{*data}
 	_, err := r.client.SchemaValidation.Schemas.Get(
 		ctx,
 		data.SchemaID.ValueString(),
-		schema_validation.SchemaGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -255,6 +261,9 @@ func (r *SchemaValidationSchemasResource) ImportState(ctx context.Context, req r
 	}
 	data = &env.Result
 	data.ID = data.SchemaID
+	if data.OmitSource.IsNull() {
+		data.OmitSource = types.BoolValue(false)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

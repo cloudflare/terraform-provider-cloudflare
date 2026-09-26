@@ -25,6 +25,7 @@ type SpectrumApplicationDataSourceModel struct {
 	CreatedOn        timetypes.RFC3339                                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	IPFirewall       types.Bool                                                            `tfsdk:"ip_firewall" json:"ip_firewall,computed"`
 	ModifiedOn       timetypes.RFC3339                                                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	OriginWorkerID   types.String                                                          `tfsdk:"origin_worker_id" json:"origin_worker_id,computed"`
 	Protocol         types.String                                                          `tfsdk:"protocol" json:"protocol,computed"`
 	ProxyProtocol    types.String                                                          `tfsdk:"proxy_protocol" json:"proxy_protocol,computed"`
 	TLS              types.String                                                          `tfsdk:"tls" json:"tls,computed"`

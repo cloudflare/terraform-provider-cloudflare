@@ -23,7 +23,6 @@ var _ resource.ResourceWithConfigValidators = (*WorkflowResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers Scripts Read",
@@ -31,6 +30,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Workers Tail Read",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
@@ -122,6 +122,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"modified_on": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
+			},
+			"script_deleted": schema.BoolAttribute{
+				Description: "Whether the bound Worker was deleted, leaving this Workflow inactive.",
+				Computed:    true,
 			},
 			"terminator_running": schema.Float64Attribute{
 				Computed: true,

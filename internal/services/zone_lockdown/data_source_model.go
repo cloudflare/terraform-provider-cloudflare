@@ -25,7 +25,7 @@ type ZoneLockdownDataSourceModel struct {
 	Description    types.String                                                            `tfsdk:"description" json:"description,computed"`
 	ModifiedOn     timetypes.RFC3339                                                       `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Paused         types.Bool                                                              `tfsdk:"paused" json:"paused,computed"`
-	URLs           customfield.List[types.String]                                          `tfsdk:"urls" json:"urls,computed"`
+	URLs           customfield.Set[types.String]                                           `tfsdk:"urls" json:"urls,computed"`
 	Configurations customfield.NestedObjectList[ZoneLockdownConfigurationsDataSourceModel] `tfsdk:"configurations" json:"configurations,computed"`
 	Filter         *ZoneLockdownFindOneByDataSourceModel                                   `tfsdk:"filter"`
 }

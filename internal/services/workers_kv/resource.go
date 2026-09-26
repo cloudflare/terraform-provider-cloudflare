@@ -66,22 +66,31 @@ func (r *WorkersKVResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	multipartData, contentType, err := data.MarshalMultipart()
+	params := kv.NamespaceValueUpdateParams{
+		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	}
+
+	if !data.Expiration.IsNull() && !data.Expiration.IsUnknown() {
+		params.Expiration = cloudflare.F(data.Expiration.ValueFloat64())
+	}
+
+	if !data.ExpirationTTL.IsNull() && !data.ExpirationTTL.IsUnknown() {
+		params.ExpirationTTL = cloudflare.F(data.ExpirationTTL.ValueFloat64())
+	}
+
+	dataBytes, contentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to marshal multipart request", err.Error())
 		return
 	}
-
 	res := new(http.Response)
 	env := WorkersKVResultEnvelope{*data}
 	_, err = r.client.KV.Namespaces.Values.Update(
 		ctx,
 		data.NamespaceID.ValueString(),
 		url.PathEscape(data.KeyName.ValueString()),
-		kv.NamespaceValueUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithRequestBody(contentType, multipartData),
+		params,
+		option.WithRequestBody(contentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -118,7 +127,19 @@ func (r *WorkersKVResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	multipartData, contentType, err := data.MarshalMultipart()
+	params := kv.NamespaceValueUpdateParams{
+		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	}
+
+	if !data.Expiration.IsNull() && !data.Expiration.IsUnknown() {
+		params.Expiration = cloudflare.F(data.Expiration.ValueFloat64())
+	}
+
+	if !data.ExpirationTTL.IsNull() && !data.ExpirationTTL.IsUnknown() {
+		params.ExpirationTTL = cloudflare.F(data.ExpirationTTL.ValueFloat64())
+	}
+
+	dataBytes, contentType, err := data.MarshalMultipart()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to marshal multipart request", err.Error())
 		return
@@ -130,10 +151,8 @@ func (r *WorkersKVResource) Update(ctx context.Context, req resource.UpdateReque
 		ctx,
 		data.NamespaceID.ValueString(),
 		url.PathEscape(data.KeyName.ValueString()),
-		kv.NamespaceValueUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithRequestBody(contentType, multipartData),
+		params,
+		option.WithRequestBody(contentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -308,7 +327,6 @@ func (r *WorkersKVResource) ImportState(ctx context.Context, req resource.Import
 			}
 		}
 	}
-
 	data.ID = data.KeyName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

@@ -39,6 +39,8 @@ resource "cloudflare_workers_kv" "example_workers_kv" {
 
 ### Optional
 
+- `expiration` (Number) Expires the key at a certain time, measured in number of seconds since the UNIX epoch.
+- `expiration_ttl` (Number) Expires the key after a number of seconds. Must be at least 60.
 - `metadata` (String) Associates arbitrary JSON data with a key/value pair.
 
 ### Read-Only

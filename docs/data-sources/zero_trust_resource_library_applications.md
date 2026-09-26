@@ -85,7 +85,7 @@ Read-Only:
 - `hostnames` (Set of String) Hostnames matched by the application.
 - `human_id` (String) Returns the human readable ID.
 - `id` (Number) Returns the application ID.
-- `ip_subnets` (Set of String) IP subnets matched by the application.
+- `ip_subnets` (Set of String) IP subnets for this application. Custom application create and update requests accept IPv4 prefix lengths /8 through /32 and IPv6 prefix lengths /32 through /128.
 - `name` (String) Returns the application name.
 - `port_protocols` (Set of String) Port and protocol pairs matched by the application.
 - `review_status` (String) The account-specific Gateway review status. Applications with no assigned review status are returned as `unreviewed`.

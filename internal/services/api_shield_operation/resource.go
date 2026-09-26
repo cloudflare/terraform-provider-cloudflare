@@ -109,14 +109,32 @@ func (r *APIShieldOperationResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 
+	dataFeature := []api_gateway.OperationGetParamsFeature{}
+
+	if data.Feature != nil {
+		for _, item := range *data.Feature {
+			dataFeature = append(dataFeature, api_gateway.OperationGetParamsFeature(item.ValueString()))
+		}
+	}
+
+	params := api_gateway.OperationGetParams{
+		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	}
+
+	if data.Feature != nil {
+		params.Feature = cloudflare.F(dataFeature)
+	}
+
+	if !data.WithSchemas.IsNull() && !data.WithSchemas.IsUnknown() {
+		params.WithSchemas = cloudflare.F(data.WithSchemas.ValueBool())
+	}
+
 	res := new(http.Response)
 	env := APIShieldOperationResultEnvelope{*data}
 	_, err := r.client.APIGateway.Operations.Get(
 		ctx,
 		data.OperationID.ValueString(),
-		api_gateway.OperationGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -209,6 +227,9 @@ func (r *APIShieldOperationResource) ImportState(ctx context.Context, req resour
 	}
 	data = &env.Result
 	data.ID = data.OperationID
+	if data.WithSchemas.IsNull() {
+		data.WithSchemas = types.BoolValue(false)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

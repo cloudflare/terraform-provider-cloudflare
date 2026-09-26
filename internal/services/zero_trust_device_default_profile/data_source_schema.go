@@ -6,8 +6,10 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -64,6 +66,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"policy_id": schema.StringAttribute{
 				Computed: true,
 			},
+			"profile_type": schema.StringAttribute{
+				Description: "The client type to which the device settings profile applies.\nAvailable values: \"warp\", \"browser_extension\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("warp", "browser_extension"),
+				},
+			},
 			"register_interface_ip_with_dns": schema.BoolAttribute{
 				Description: "Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.",
 				Computed:    true,
@@ -82,6 +91,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"tunnel_protocol": schema.StringAttribute{
 				Description: "Determines which tunnel protocol to use.",
+				Computed:    true,
+			},
+			"uninstall_protection": schema.BoolAttribute{
+				Description: "Determines whether uninstalling the WARP client requires an override code. (Windows only).",
 				Computed:    true,
 			},
 			"dns_search_suffixes": schema.ListNestedAttribute{

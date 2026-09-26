@@ -6,12 +6,12 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -21,13 +21,13 @@ var _ resource.ResourceWithConfigValidators = (*HyperdriveConfigResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Hyperdrive Read",
 				"Hyperdrive Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Define configurations using a unique string identifier.",
@@ -39,19 +39,63 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"integration": schema.StringAttribute{
+				Optional:   true,
+				CustomType: jsontypes.NormalizedType{},
+			},
 			"name": schema.StringAttribute{
 				Description: "The name of the Hyperdrive configuration. Used to identify the configuration in the Cloudflare dashboard and API.",
 				Required:    true,
 			},
+			"origin_connection_limit": schema.Int64Attribute{
+				Description: "The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.\n\nMaximum allowed: 20 for free tier accounts, 100 for paid tier accounts.\nIf not specified, defaults to 20 for free tier and 60 for paid tier.\nCertain Cloudflare-managed origins may be permitted a higher limit.\nContact Cloudflare if you need a higher limit.",
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.AtLeast(5),
+				},
+			},
+			"caching": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"disabled": schema.BoolAttribute{
+						Optional: true,
+					},
+					"max_age": schema.Int64Attribute{
+						Optional: true,
+					},
+					"stale_while_revalidate": schema.Int64Attribute{
+						Optional: true,
+					},
+				},
+			},
+			"mtls": schema.SingleNestedAttribute{
+				Description: "mTLS configuration for the origin connection. Cannot be used with VPC Service origins; TLS must be managed on the VPC Service.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"ca_certificate_id": schema.StringAttribute{
+						Description: "Define CA certificate ID obtained after uploading CA cert.",
+						Optional:    true,
+					},
+					"mtls_certificate_id": schema.StringAttribute{
+						Description: "Define mTLS certificate ID obtained after uploading client cert.",
+						Optional:    true,
+					},
+					"sslmode": schema.StringAttribute{
+						Description: "PostgreSQL accepts `require`, `verify-ca`, and `verify-full`. MySQL accepts `REQUIRED`, `VERIFY_CA`, and `VERIFY_IDENTITY`. The verify modes require a CA certificate; the require modes cannot be used with a CA certificate.",
+						Optional:    true,
+					},
+				},
+			},
 			"origin": schema.SingleNestedAttribute{
-				Required: true,
+				Description: "Combines database connection fields with exactly one supported network location.",
+				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"database": schema.StringAttribute{
 						Description: "Set the name of your origin database.",
 						Required:    true,
 					},
 					"host": schema.StringAttribute{
-						Description: "Defines the host (hostname or IP) of your origin database.",
+						Description: "Defines the publicly reachable hostname or IP of your origin database. Private, loopback, and link-local IP addresses are not allowed.",
 						Optional:    true,
 					},
 					"password": schema.StringAttribute{
@@ -62,6 +106,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"port": schema.Int64Attribute{
 						Description: "Defines the port of your origin database. Defaults to 5432 for PostgreSQL or 3306 for MySQL if not specified.",
 						Optional:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(1, 65535),
+						},
 					},
 					"scheme": schema.StringAttribute{
 						Description: "Specifies the URL scheme used to connect to your origin database.\nAvailable values: \"postgres\", \"postgresql\", \"mysql\".",
@@ -89,50 +136,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"service_id": schema.StringAttribute{
 						Description: "The identifier of the Workers VPC Service to connect through. Hyperdrive will egress through the specified VPC Service to reach the origin database.",
-						Optional:    true,
-					},
-				},
-			},
-			"origin_connection_limit": schema.Int64Attribute{
-				Description: "The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.\n\nMaximum allowed: 20 for free tier accounts, 100 for paid tier accounts.\nIf not specified, defaults to 20 for free tier and 60 for paid tier.\nCertain Cloudflare-managed origins may be permitted a higher limit.\nContact Cloudflare if you need a higher limit.",
-				Optional:    true,
-				Validators: []validator.Int64{
-					int64validator.AtLeast(5),
-				},
-			},
-			"caching": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"disabled": schema.BoolAttribute{
-						Description: "Set to true to disable caching of SQL responses. Default is false.",
-						Optional:    true,
-						Computed:    true,
-						Default:     booldefault.StaticBool(false),
-					},
-					"max_age": schema.Int64Attribute{
-						Description: "Specify the maximum duration (in seconds) items should persist in the cache. Defaults to 60 seconds if not specified.",
-						Optional:    true,
-					},
-					"stale_while_revalidate": schema.Int64Attribute{
-						Description: "Specify the number of seconds the cache may serve a stale response. Defaults to 15 seconds if not specified.",
-						Optional:    true,
-					},
-				},
-			},
-			"mtls": schema.SingleNestedAttribute{
-				Description: "mTLS configuration for the origin connection. Cannot be used with VPC Service origins; TLS must be managed on the VPC Service.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"ca_certificate_id": schema.StringAttribute{
-						Description: "Define CA certificate ID obtained after uploading CA cert.",
-						Optional:    true,
-					},
-					"mtls_certificate_id": schema.StringAttribute{
-						Description: "Define mTLS certificate ID obtained after uploading client cert.",
-						Optional:    true,
-					},
-					"sslmode": schema.StringAttribute{
-						Description: "Set SSL mode to 'require', 'verify-ca', or 'verify-full' to verify the CA.",
 						Optional:    true,
 					},
 				},

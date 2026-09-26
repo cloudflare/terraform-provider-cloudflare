@@ -201,6 +201,7 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/email_routing_rule"
     "resource=./internal/services/email_security_impersonation_registry"
     "resource=./internal/services/email_security_trusted_domains"
+    "resource=./internal/services/field_extractor"
     "resource=./internal/services/healthcheck"
     "resource=./internal/services/ip_ranges"
     "resource=./internal/services/leaked_credential_check"

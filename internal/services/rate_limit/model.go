@@ -4,24 +4,16 @@ package rate_limit
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type RateLimitResultEnvelope struct {
-	Result RateLimitModel `json:"result"`
-}
-
 type RateLimitModel struct {
-	ID          types.String                                       `tfsdk:"id" json:"id,computed"`
-	ZoneID      types.String                                       `tfsdk:"zone_id" path:"zone_id,required"`
-	Period      types.Float64                                      `tfsdk:"period" json:"period,required"`
-	Threshold   types.Float64                                      `tfsdk:"threshold" json:"threshold,required"`
-	Action      *RateLimitActionModel                              `tfsdk:"action" json:"action,required"`
-	Match       *RateLimitMatchModel                               `tfsdk:"match" json:"match,required"`
-	Description types.String                                       `tfsdk:"description" json:"description,computed"`
-	Disabled    types.Bool                                         `tfsdk:"disabled" json:"disabled,computed"`
-	Bypass      customfield.NestedObjectList[RateLimitBypassModel] `tfsdk:"bypass" json:"bypass,computed"`
+	ZoneID      types.String          `tfsdk:"zone_id" path:"zone_id,required"`
+	RateLimitID types.String          `tfsdk:"rate_limit_id" path:"rate_limit_id,optional"`
+	Period      types.Float64         `tfsdk:"period" json:"period,required,no_refresh"`
+	Threshold   types.Float64         `tfsdk:"threshold" json:"threshold,required,no_refresh"`
+	Action      *RateLimitActionModel `tfsdk:"action" json:"action,required,no_refresh"`
+	Match       *RateLimitMatchModel  `tfsdk:"match" json:"match,required,no_refresh"`
 }
 
 func (m RateLimitModel) MarshalJSON() (data []byte, err error) {
@@ -63,9 +55,4 @@ type RateLimitMatchRequestModel struct {
 
 type RateLimitMatchResponseModel struct {
 	OriginTraffic types.Bool `tfsdk:"origin_traffic" json:"origin_traffic,optional"`
-}
-
-type RateLimitBypassModel struct {
-	Name  types.String `tfsdk:"name" json:"name,computed"`
-	Value types.String `tfsdk:"value" json:"value,computed"`
 }

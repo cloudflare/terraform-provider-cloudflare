@@ -40,6 +40,7 @@ data "cloudflare_worker" "example_worker" {
 - `logpush` (Boolean) Whether logpush is enabled for the Worker.
 - `name` (String) Name of the Worker.
 - `observability` (Attributes) Observability settings for the Worker. (see [below for nested schema](#nestedatt--observability))
+- `previews_base_config` (Attributes) Template configuration used when creating new Previews for this Worker. (see [below for nested schema](#nestedatt--previews_base_config))
 - `references` (Attributes) Other resources that reference the Worker and depend on it existing. (see [below for nested schema](#nestedatt--references))
 - `subdomain` (Attributes) Subdomain settings for the Worker. (see [below for nested schema](#nestedatt--subdomain))
 - `tags` (Set of String) Tags associated with the Worker.
@@ -64,9 +65,17 @@ Read-Only:
 
 - `enabled` (Boolean) Whether observability is enabled for the Worker.
 - `head_sampling_rate` (Number) The sampling rate for observability. From 0 to 1 (1 = 100%, 0.1 = 10%).
+- `issues` (Attributes) Real-time Issues settings for the Worker. (see [below for nested schema](#nestedatt--observability--issues))
 - `logs` (Attributes) Log settings for the Worker. (see [below for nested schema](#nestedatt--observability--logs))
-- `redact_query_string` (Boolean) Whether query strings are removed from request URLs in logs and traces.
 - `traces` (Attributes) Trace settings for the Worker. (see [below for nested schema](#nestedatt--observability--traces))
+
+<a id="nestedatt--observability--issues"></a>
+### Nested Schema for `observability.issues`
+
+Read-Only:
+
+- `enabled` (Boolean) Whether real-time Issues are enabled for the Worker.
+
 
 <a id="nestedatt--observability--logs"></a>
 ### Nested Schema for `observability.logs`
@@ -91,6 +100,126 @@ Read-Only:
 - `persist` (Boolean) Whether trace persistence is enabled for the Worker.
 - `propagation_policy` (String) Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. "authenticated" honors inbound trace context only when accompanied by a valid trace auth token. "accept" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled. Returns null when the trace propagation feature is not enabled for the account.
 Available values: "authenticated", "accept".
+
+
+
+<a id="nestedatt--previews_base_config"></a>
+### Nested Schema for `previews_base_config`
+
+Read-Only:
+
+- `cache_options` (Attributes) Cache options used when creating new Previews. (see [below for nested schema](#nestedatt--previews_base_config--cache_options))
+- `env` (Attributes Map) Bindings used when creating new Previews, keyed by binding name. (see [below for nested schema](#nestedatt--previews_base_config--env))
+- `limits` (Attributes) Resource limits enforced at runtime for newly created Previews. (see [below for nested schema](#nestedatt--previews_base_config--limits))
+- `logpush` (Boolean) Whether logpush is enabled when creating new Previews.
+- `observability` (Attributes) Observability settings used when creating new Previews. (see [below for nested schema](#nestedatt--previews_base_config--observability))
+- `placement` (Attributes) Placement configuration used when creating new Previews. (see [below for nested schema](#nestedatt--previews_base_config--placement))
+- `tail_consumers` (Attributes Set) Other Workers that should consume logs from newly created Previews. (see [below for nested schema](#nestedatt--previews_base_config--tail_consumers))
+
+<a id="nestedatt--previews_base_config--cache_options"></a>
+### Nested Schema for `previews_base_config.cache_options`
+
+Read-Only:
+
+- `cross_version_cache` (Boolean) Whether cached responses are shared across Worker version
+uploads. This is independent of `enabled`. It can stay true
+while caching is off, so the preference survives turning
+caching off and back on.
+- `enabled` (Boolean) Whether caching is enabled for this Worker.
+
+
+<a id="nestedatt--previews_base_config--env"></a>
+### Nested Schema for `previews_base_config.env`
+
+Read-Only:
+
+- `type` (String) The kind of resource that the binding provides.
+
+
+<a id="nestedatt--previews_base_config--limits"></a>
+### Nested Schema for `previews_base_config.limits`
+
+Read-Only:
+
+- `cpu_ms` (Number) The amount of CPU time this Worker can use in milliseconds.
+- `subrequests` (Number) The number of subrequests this Worker can make per request.
+
+
+<a id="nestedatt--previews_base_config--observability"></a>
+### Nested Schema for `previews_base_config.observability`
+
+Read-Only:
+
+- `enabled` (Boolean) Whether observability is enabled for the Worker.
+- `head_sampling_rate` (Number) The sampling rate for observability. From 0 to 1 (1 = 100%, 0.1 = 10%).
+- `issues` (Attributes) Real-time Issues settings for the Worker. (see [below for nested schema](#nestedatt--previews_base_config--observability--issues))
+- `logs` (Attributes) Log settings for the Worker. (see [below for nested schema](#nestedatt--previews_base_config--observability--logs))
+- `redact_query_string` (Boolean) Whether query strings are removed from request URLs in logs and traces.
+- `traces` (Attributes) Trace settings for the Worker. (see [below for nested schema](#nestedatt--previews_base_config--observability--traces))
+
+<a id="nestedatt--previews_base_config--observability--issues"></a>
+### Nested Schema for `previews_base_config.observability.issues`
+
+Read-Only:
+
+- `enabled` (Boolean) Whether real-time Issues are enabled for the Worker.
+
+
+<a id="nestedatt--previews_base_config--observability--logs"></a>
+### Nested Schema for `previews_base_config.observability.logs`
+
+Read-Only:
+
+- `destinations` (List of String) A list of destinations where logs will be exported to.
+- `enabled` (Boolean) Whether logs are enabled for the Worker.
+- `head_sampling_rate` (Number) The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%).
+- `invocation_logs` (Boolean) Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.
+- `persist` (Boolean) Whether log persistence is enabled for the Worker.
+
+
+<a id="nestedatt--previews_base_config--observability--traces"></a>
+### Nested Schema for `previews_base_config.observability.traces`
+
+Read-Only:
+
+- `destinations` (List of String) A list of destinations where traces will be exported to.
+- `enabled` (Boolean) Whether traces are enabled for the Worker.
+- `head_sampling_rate` (Number) The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%).
+- `persist` (Boolean) Whether trace persistence is enabled for the Worker.
+- `propagation_policy` (String) Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. "authenticated" honors inbound trace context only when accompanied by a valid trace auth token. "accept" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled. Returns null when the trace propagation feature is not enabled for the account.
+Available values: "authenticated", "accept".
+
+
+
+<a id="nestedatt--previews_base_config--placement"></a>
+### Nested Schema for `previews_base_config.placement`
+
+Read-Only:
+
+- `host` (String) TCP host and port for targeted placement.
+- `hostname` (String) HTTP hostname for targeted placement.
+- `mode` (String) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+Available values: "smart", "targeted".
+- `region` (String) Cloud region for targeted placement in format 'provider:region'.
+- `target` (Attributes List) Array of placement targets (currently limited to single target). (see [below for nested schema](#nestedatt--previews_base_config--placement--target))
+
+<a id="nestedatt--previews_base_config--placement--target"></a>
+### Nested Schema for `previews_base_config.placement.target`
+
+Read-Only:
+
+- `host` (String) TCP host:port for targeted placement.
+- `hostname` (String) HTTP hostname for targeted placement.
+- `region` (String) Cloud region in format 'provider:region'.
+
+
+
+<a id="nestedatt--previews_base_config--tail_consumers"></a>
+### Nested Schema for `previews_base_config.tail_consumers`
+
+Read-Only:
+
+- `name` (String) Name of the consumer Worker.
 
 
 

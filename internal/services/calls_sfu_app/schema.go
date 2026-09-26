@@ -18,13 +18,13 @@ var _ resource.ResourceWithConfigValidators = (*CallsSFUAppResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Calls Read",
 				"Calls Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "The account identifier tag.",
@@ -37,7 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description: "A short description of Calls app, not shown to end users.",
+				Description: "A short description of a Realtime SFU app, not shown to end users.",
 				Computed:    true,
 				Optional:    true,
 				Default:     stringdefault.StaticString(""),

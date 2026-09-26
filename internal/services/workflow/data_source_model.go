@@ -18,18 +18,19 @@ type WorkflowResultDataSourceEnvelope struct {
 }
 
 type WorkflowDataSourceModel struct {
-	ID           types.String                                                   `tfsdk:"id" path:"workflow_name,computed"`
-	WorkflowName types.String                                                   `tfsdk:"workflow_name" path:"workflow_name,optional"`
-	AccountID    types.String                                                   `tfsdk:"account_id" path:"account_id,optional"`
-	ClassName    types.String                                                   `tfsdk:"class_name" json:"class_name,computed"`
-	CreatedOn    timetypes.RFC3339                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ModifiedOn   timetypes.RFC3339                                              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Name         types.String                                                   `tfsdk:"name" json:"name,computed"`
-	ScriptName   types.String                                                   `tfsdk:"script_name" json:"script_name,computed"`
-	TriggeredOn  timetypes.RFC3339                                              `tfsdk:"triggered_on" json:"triggered_on,computed" format:"date-time"`
-	Instances    customfield.Map[types.Float64]                                 `tfsdk:"instances" json:"instances,computed"`
-	Schedules    customfield.NestedObjectList[WorkflowSchedulesDataSourceModel] `tfsdk:"schedules" json:"schedules,computed"`
-	Filter       *WorkflowFindOneByDataSourceModel                              `tfsdk:"filter"`
+	ID            types.String                                                   `tfsdk:"id" path:"workflow_name,computed"`
+	WorkflowName  types.String                                                   `tfsdk:"workflow_name" path:"workflow_name,optional"`
+	AccountID     types.String                                                   `tfsdk:"account_id" path:"account_id,optional"`
+	ClassName     types.String                                                   `tfsdk:"class_name" json:"class_name,computed"`
+	CreatedOn     timetypes.RFC3339                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn    timetypes.RFC3339                                              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name          types.String                                                   `tfsdk:"name" json:"name,computed"`
+	ScriptDeleted types.Bool                                                     `tfsdk:"script_deleted" json:"script_deleted,computed"`
+	ScriptName    types.String                                                   `tfsdk:"script_name" json:"script_name,computed"`
+	TriggeredOn   timetypes.RFC3339                                              `tfsdk:"triggered_on" json:"triggered_on,computed" format:"date-time"`
+	Instances     customfield.Map[types.Float64]                                 `tfsdk:"instances" json:"instances,computed"`
+	Schedules     customfield.NestedObjectList[WorkflowSchedulesDataSourceModel] `tfsdk:"schedules" json:"schedules,computed"`
+	Filter        *WorkflowFindOneByDataSourceModel                              `tfsdk:"filter"`
 }
 
 func (m *WorkflowDataSourceModel) toReadParams(_ context.Context) (params workflows.WorkflowGetParams, diags diag.Diagnostics) {

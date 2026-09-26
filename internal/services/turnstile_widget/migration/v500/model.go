@@ -65,4 +65,9 @@ type TargetTurnstileWidgetModel struct {
 	Secret          types.String      `tfsdk:"secret"`
 	DeployedVia     types.String      `tfsdk:"deployed_via"`
 	LastModifiedVia types.String      `tfsdk:"last_modified_via"`
+	Direction       types.String      `tfsdk:"direction"`
+	Filter          types.String      `tfsdk:"filter"`
+	Order           types.String      `tfsdk:"order"`
+	Page            types.Float64     `tfsdk:"page"`
+	PerPage         types.Float64     `tfsdk:"per_page"`
 }

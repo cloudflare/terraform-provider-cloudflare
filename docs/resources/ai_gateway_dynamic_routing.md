@@ -28,7 +28,7 @@ resource "cloudflare_ai_gateway_dynamic_routing" "example_ai_gateway_dynamic_rou
     }
     type = "start"
   }]
-  name = "name"
+  name = "x"
 }
 ```
 

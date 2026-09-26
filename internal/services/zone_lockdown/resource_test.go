@@ -87,6 +87,83 @@ func TestAccCloudflareZoneLockdown(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "configurations.#", "1"),
 				),
 			},
+			// Mutate only `urls`, which is the one configurable attribute that is
+			// not RequiresReplace, so this exercises Update in-place rather than a
+			// destroy/create. This is the path that surfaces the `created_on`
+			// plan-vs-apply inconsistency.
+			{
+				Config: testCloudflareZoneLockdownConfig(rnd, zoneID, "false", "1", "this is notes", rnd+"."+zoneName+"/updated/*", "ip", "198.51.100.4"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+					},
+				},
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(name, "urls.#", "1"),
+					// `urls` is a set, so elements are hash-indexed rather than
+					// positional; `urls.0` is not a valid key.
+					resource.TestCheckTypeSetElemAttr(name, "urls.*", rnd+"."+zoneName+"/updated/*"),
+					resource.TestCheckResourceAttr(name, "configurations.#", "1"),
+					resource.TestCheckResourceAttrSet(name, "created_on"),
+				),
+			},
+		},
+	})
+}
+
+// Regression test for ESCALATION-10665 / upstream GH #7097.
+//
+// `urls` used to be modelled as an ordered list while the API returns the array
+// in a server-assigned order. Apply left state in config order, refresh
+// overwrote it with the API order, and the next plan diffed the two — a
+// permanent in-place update on every apply. That update is also the path that
+// surfaced the `created_on` post-apply consistency error.
+//
+// `urls` is now a set, so membership alone determines equality. Both steps
+// below fail if it is ever changed back to a list.
+func TestAccCloudflareZoneLockdown_URLsOrderInsensitive(t *testing.T) {
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_zone_lockdown." + rnd
+
+	alpha := rnd + "." + zoneName + "/alpha/*"
+	bravo := rnd + "." + zoneName + "/bravo/*"
+	charlie := rnd + "." + zoneName + "/charlie/*"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareZoneLockdownMultiURLConfig(rnd, zoneID, alpha, bravo, charlie),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(name, "urls.#", "3"),
+					resource.TestCheckTypeSetElemAttr(name, "urls.*", alpha),
+					resource.TestCheckTypeSetElemAttr(name, "urls.*", bravo),
+					resource.TestCheckTypeSetElemAttr(name, "urls.*", charlie),
+				),
+			},
+			// Refresh against the live API and re-plan. This is the step that
+			// caught the original drift: Read adopts whatever order the API
+			// returns, which for a list disagreed with the stored order.
+			{
+				RefreshState: true,
+				RefreshPlanChecks: resource.RefreshPlanChecks{
+					PostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			// Same membership, different order in config. For a set this is not a
+			// change at all, so the plan must be empty. As a list it planned an
+			// in-place update.
+			{
+				Config:   testCloudflareZoneLockdownMultiURLConfig(rnd, zoneID, charlie, alpha, bravo),
+				PlanOnly: true,
+			},
 		},
 	})
 }
@@ -139,6 +216,10 @@ func TestAccCloudflareZoneLockdown_Import(t *testing.T) {
 
 func testCloudflareZoneLockdownConfig(resourceID, zoneID, paused, priority, description, url, target, value string) string {
 	return acctest.LoadTestCase("cloudflarezonelockdownconfig.tf", resourceID, zoneID, paused, priority, description, url, target, value)
+}
+
+func testCloudflareZoneLockdownMultiURLConfig(resourceID, zoneID, url1, url2, url3 string) string {
+	return acctest.LoadTestCase("cloudflarezonelockdownmultiurl.tf", resourceID, zoneID, url1, url2, url3)
 }
 
 func TestAccUpgradeZoneLockdown_FromPublishedV5(t *testing.T) {

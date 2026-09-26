@@ -30,6 +30,7 @@ data "cloudflare_zero_trust_access_infrastructure_targets" "example_zero_trust_a
   modified_after = "2019-12-27T18:11:19.117Z"
   modified_before = "2019-12-27T18:11:19.117Z"
   order = "hostname"
+  tag = ["string"]
   target_ids = ["182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"]
   virtual_network_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
 }
@@ -66,6 +67,9 @@ Supports `*` as a wildcard character
 - `modified_before` (String) Date and time at which the target was modified before (inclusive)
 - `order` (String) The field to sort by.
 Available values: "hostname", "created_at".
+- `tag` (List of String) Filter by tag key:value pairs. Multiple `tag` params are AND'd.
+Format: `tag=key:value` (e.g., `tag=environment:production`).
+Key and value must both be non-empty; `tag=:value` and `tag=key:` return 400.
 - `target_ids` (List of String) Filters for targets that have any of the following UUIDs. Specify
 `target_ids` multiple times in query parameter to build list of
 candidates.
@@ -85,6 +89,7 @@ Read-Only:
 - `id` (String) Target identifier
 - `ip` (Attributes) The IPv4/IPv6 address that identifies where to reach a target (see [below for nested schema](#nestedatt--result--ip))
 - `modified_at` (String) Date and time at which the target was modified
+- `tags` (Map of String) Tags assigned to the target. Empty when no tags are assigned.
 
 <a id="nestedatt--result--ip"></a>
 ### Nested Schema for `result.ip`

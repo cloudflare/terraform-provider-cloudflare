@@ -1,5 +1,51 @@
 # Changelog
 
+## 5.26.0 (2026-09-24)
+
+Full Changelog: [v5.25.0...v5.26.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.25.0...v5.26.0)
+
+### Features
+
+#### New Resources
+
+- **cloudflare_field_extractor**: Field Extractor
+- **cloudflare_magic_wan_bgp_filter_profile**: Magic WAN BGP Filter Profile
+- **cloudflare_zero_trust_casb_policy**: Zero Trust CASB Policy
+- **cloudflare_zero_trust_casb_webhook**: Zero Trust CASB Webhook
+- **cloudflare_zero_trust_connectivity_settings**: Zero Trust Connectivity Settings
+- **cloudflare_zone_tracing**: Zone Tracing
+- **cloudflare_zone_tracing_rules**: Zone Tracing Rules
+
+#### New Data Sources
+
+- **cloudflare_field_extractor**: Field Extractor
+- **cloudflare_magic_wan_bgp_filter_profile**: Magic WAN BGP Filter Profile
+- **cloudflare_magic_wan_bgp_filter_profiles**: Magic WAN BGP Filter Profiles (list)
+- **cloudflare_zero_trust_casb_policy**: Zero Trust CASB Policy
+- **cloudflare_zero_trust_casb_policies**: Zero Trust CASB Policies (list)
+- **cloudflare_zero_trust_casb_webhook**: Zero Trust CASB Webhook
+- **cloudflare_zero_trust_casb_webhooks**: Zero Trust CASB Webhooks (list)
+- **cloudflare_zero_trust_connectivity_settings**: Zero Trust Connectivity Settings
+- **cloudflare_zone_tracing**: Zone Tracing
+- **cloudflare_zone_tracing_rules**: Zone Tracing Rules
+
+#### New Attributes
+
+- cloudflare_magic_wan_gre_tunnel, cloudflare_magic_wan_ipsec_tunnel
+  - **bgp.import_filter_id**: ID of the BGP filter profile applied to routes received from the customer
+  - **bgp.export_filter_id**: ID of the BGP filter profile applied to routes advertised to the customer
+
+### Bug Fixes
+
+- **custom_ssl**: mark `private_key` optional to unblock setting `custom_csr_id`
+- **email_routing_settings**: add missing `support_subaddress` to resource schema
+- **load_balancer_monitor**: correctly resolve ambiguous version-zero state during v4 to v5 migration
+- **page_rule**: raise `edge_cache_ttl` maximum to allow one-year values
+- **provider**: send `user_agent_operator_suffix` unquoted and read fallback from environment variable
+- **ruleset**: normalize legacy query string wildcards during v4 to v5 migration
+- **zone_lockdown**: drop `UseNonNullStateForUnknown` on `created_on` to prevent perpetual diff
+
+
 ## 5.25.0 (2026-09-10)
 
 Full Changelog: [v5.24.0...v5.25.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.24.0...v5.25.0)

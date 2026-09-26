@@ -41,7 +41,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"name": schema.StringAttribute{
-				Description: "A short description of Calls app, not shown to end users.",
+				Description: "A short description of a Realtime SFU app, not shown to end users.",
 				Computed:    true,
 			},
 			"uid": schema.StringAttribute{

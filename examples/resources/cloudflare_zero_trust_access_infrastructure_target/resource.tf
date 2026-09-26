@@ -11,4 +11,7 @@ resource "cloudflare_zero_trust_access_infrastructure_target" "example_zero_trus
       virtual_network_id = "c77b744e-acc8-428f-9257-6878c046ed55"
     }
   }
+  tags = {
+    foo = "string"
+  }
 }

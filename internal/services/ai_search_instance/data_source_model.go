@@ -102,6 +102,7 @@ type AISearchInstanceIndexMethodDataSourceModel struct {
 
 type AISearchInstanceIndexingOptionsDataSourceModel struct {
 	KeywordTokenizer types.String `tfsdk:"keyword_tokenizer" json:"keyword_tokenizer,computed"`
+	UseOCR           types.Bool   `tfsdk:"use_ocr" json:"use_ocr,computed"`
 }
 
 type AISearchInstanceMetadataDataSourceModel struct {

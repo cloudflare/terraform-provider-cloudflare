@@ -23,6 +23,7 @@ type QueueDataSourceModel struct {
 	AccountID           types.String                                                `tfsdk:"account_id" path:"account_id,optional"`
 	ConsumersTotalCount types.Float64                                               `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
 	CreatedOn           types.String                                                `tfsdk:"created_on" json:"created_on,computed"`
+	Jurisdiction        types.String                                                `tfsdk:"jurisdiction" json:"jurisdiction,computed"`
 	ModifiedOn          types.String                                                `tfsdk:"modified_on" json:"modified_on,computed"`
 	ProducersTotalCount types.Float64                                               `tfsdk:"producers_total_count" json:"producers_total_count,computed"`
 	QueueName           types.String                                                `tfsdk:"queue_name" json:"queue_name,computed"`
@@ -50,12 +51,27 @@ type QueueConsumersDataSourceModel struct {
 }
 
 type QueueConsumersSettingsDataSourceModel struct {
-	BatchSize           types.Float64 `tfsdk:"batch_size" json:"batch_size,computed"`
-	MaxConcurrency      types.Float64 `tfsdk:"max_concurrency" json:"max_concurrency,computed"`
-	MaxRetries          types.Float64 `tfsdk:"max_retries" json:"max_retries,computed"`
-	MaxWaitTimeMs       types.Float64 `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms,computed"`
-	RetryDelay          types.Float64 `tfsdk:"retry_delay" json:"retry_delay,computed"`
-	VisibilityTimeoutMs types.Float64 `tfsdk:"visibility_timeout_ms" json:"visibility_timeout_ms,computed"`
+	BatchSize           types.Float64                                                                `tfsdk:"batch_size" json:"batch_size,computed"`
+	MaxConcurrency      types.Float64                                                                `tfsdk:"max_concurrency" json:"max_concurrency,computed"`
+	MaxRetries          types.Float64                                                                `tfsdk:"max_retries" json:"max_retries,computed"`
+	MaxWaitTimeMs       types.Float64                                                                `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms,computed"`
+	RetryDelay          types.Float64                                                                `tfsdk:"retry_delay" json:"retry_delay,computed"`
+	VisibilityTimeoutMs types.Float64                                                                `tfsdk:"visibility_timeout_ms" json:"visibility_timeout_ms,computed"`
+	Email               customfield.NestedObjectList[QueueConsumersSettingsEmailDataSourceModel]     `tfsdk:"email" json:"email,computed"`
+	Pagerduty           customfield.NestedObjectList[QueueConsumersSettingsPagerdutyDataSourceModel] `tfsdk:"pagerduty" json:"pagerduty,computed"`
+	Webhooks            customfield.NestedObjectList[QueueConsumersSettingsWebhooksDataSourceModel]  `tfsdk:"webhooks" json:"webhooks,computed"`
+}
+
+type QueueConsumersSettingsEmailDataSourceModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed"`
+}
+
+type QueueConsumersSettingsPagerdutyDataSourceModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed"`
+}
+
+type QueueConsumersSettingsWebhooksDataSourceModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
 type QueueProducersDataSourceModel struct {

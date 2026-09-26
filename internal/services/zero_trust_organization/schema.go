@@ -5,6 +5,7 @@ package zero_trust_organization
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -12,6 +13,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -22,7 +25,6 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustOrganizationResource)(n
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Access: Organizations, Identity Providers, and Groups Read",
@@ -30,6 +32,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Access: Organizations, Identity Providers, and Groups Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
@@ -205,6 +208,30 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"service_token_inactivity": schema.SingleNestedAttribute{
+				Description: "Configures automatic enforcement for inactive service tokens. A service token is inactive if no policy references it, and it has not successfully authenticated with an Access application during the selected inactivity period. This setting applies to every service token in your Zero Trust account.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"action": schema.StringAttribute{
+						Description: "The action applied to an inactive service token.\nAvailable values: \"disable\", \"delete\".",
+						Required:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("disable", "delete"),
+						},
+					},
+					"enabled": schema.BoolAttribute{
+						Description: "Whether automatic enforcement for inactive service tokens is enabled.",
+						Required:    true,
+					},
+					"inactivity_threshold_days": schema.Int64Attribute{
+						Description: "The number of days a service token must be inactive before the configured action is applied.",
+						Required:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(30, 365),
+						},
+					},
+				},
+			},
 			"allow_authenticate_via_warp": schema.BoolAttribute{
 				Description: "When set to true, users can authenticate via WARP for any application in your organization. Application settings will take precedence over this value.",
 				Computed:    true,
@@ -224,9 +251,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(false),
 			},
 			"mfa_configuration_allowed": schema.BoolAttribute{
-				Description: "Indicates if this organization can enforce multi-factor authentication (MFA) requirements at the application and policy level.",
-				Computed:    true,
-				Optional:    true,
+				Description:   "Indicates if this organization can enforce multi-factor authentication (MFA) requirements at the application and policy level.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"mfa_required_for_all_apps": schema.BoolAttribute{
 				Description: "Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured. Note: 'allowed_authenticators' cannot contain only the infrastructure SSH authenticators ('piv_key' and 'ssh_fido2_key') if the organization has any non-infrastructure applications.",
@@ -238,13 +266,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "A description of the reason why the UI read only field is being toggled.",
 				Computed:      true,
 				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"warp_auth_non_browser_401": schema.BoolAttribute{
 				Description: "When enabled, unsuccessful WARP authentication requests with a non-HTML Accept header return a 401 response instead of redirecting to the login page.",
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
+			},
+			"trusted_accounts": schema.ListAttribute{
+				Description:   "The account tags of organizations trusted by this organization for policy and device posture sharing.",
+				Computed:      true,
+				CustomType:    customfield.NewListType[types.String](ctx),
+				ElementType:   types.StringType,
+				PlanModifiers: []planmodifier.List{listplanmodifier.UseStateForUnknown()},
 			},
 		},
 	}

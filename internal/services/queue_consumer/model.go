@@ -35,10 +35,25 @@ func (m QueueConsumerModel) MarshalJSONForUpdate(state QueueConsumerModel) (data
 }
 
 type QueueConsumerSettingsModel struct {
-	BatchSize           types.Float64 `tfsdk:"batch_size" json:"batch_size,computed_optional"`
-	MaxConcurrency      types.Float64 `tfsdk:"max_concurrency" json:"max_concurrency,computed_optional"`
-	MaxRetries          types.Float64 `tfsdk:"max_retries" json:"max_retries,computed_optional"`
-	MaxWaitTimeMs       types.Float64 `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms,computed_optional"`
-	RetryDelay          types.Float64 `tfsdk:"retry_delay" json:"retry_delay,computed_optional"`
-	VisibilityTimeoutMs types.Float64 `tfsdk:"visibility_timeout_ms" json:"visibility_timeout_ms,computed_optional"`
+	BatchSize           types.Float64                           `tfsdk:"batch_size" json:"batch_size,computed_optional"`
+	MaxConcurrency      types.Float64                           `tfsdk:"max_concurrency" json:"max_concurrency,computed_optional"`
+	MaxRetries          types.Float64                           `tfsdk:"max_retries" json:"max_retries,computed_optional"`
+	MaxWaitTimeMs       types.Float64                           `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms,computed_optional"`
+	RetryDelay          types.Float64                           `tfsdk:"retry_delay" json:"retry_delay,computed_optional"`
+	VisibilityTimeoutMs types.Float64                           `tfsdk:"visibility_timeout_ms" json:"visibility_timeout_ms,computed_optional"`
+	Email               *[]*QueueConsumerSettingsEmailModel     `tfsdk:"email" json:"email,optional"`
+	Pagerduty           *[]*QueueConsumerSettingsPagerdutyModel `tfsdk:"pagerduty" json:"pagerduty,optional"`
+	Webhooks            *[]*QueueConsumerSettingsWebhooksModel  `tfsdk:"webhooks" json:"webhooks,optional"`
+}
+
+type QueueConsumerSettingsEmailModel struct {
+	ID types.String `tfsdk:"id" json:"id,required"`
+}
+
+type QueueConsumerSettingsPagerdutyModel struct {
+	ID types.String `tfsdk:"id" json:"id,required"`
+}
+
+type QueueConsumerSettingsWebhooksModel struct {
+	ID types.String `tfsdk:"id" json:"id,required"`
 }

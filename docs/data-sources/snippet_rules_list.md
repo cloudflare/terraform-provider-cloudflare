@@ -2,12 +2,16 @@
 page_title: "cloudflare_snippet_rules_list Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Snippets ReadSnippets Write
 ---
 
 # cloudflare_snippet_rules_list (Data Source)
 
+Accepted Permissions
 
+- `Snippets Read`
+- `Snippets Write`
 
 
 
@@ -16,7 +20,7 @@ description: |-
 
 ### Required
 
-- `zone_id` (String) The unique ID of the zone.
+- `zone_id` (String) Use this field to specify the unique ID of the zone.
 
 ### Optional
 
@@ -31,11 +35,11 @@ description: |-
 
 Read-Only:
 
-- `description` (String) An informative description of the rule.
-- `enabled` (Boolean) Whether the rule should be executed.
-- `expression` (String) The expression defining which traffic will match the rule.
-- `id` (String) The unique ID of the rule.
-- `last_updated` (String) The timestamp of when the rule was last modified.
-- `snippet_name` (String) The identifying name of the snippet.
+- `description` (String) Provide an informative description of the rule.
+- `enabled` (Boolean) Indicate whether to execute the rule.
+- `expression` (String) Define the expression that determines which traffic matches the rule.
+- `id` (String) Specify the unique ID of the rule.
+- `last_updated` (String) Specify the timestamp of when the rule was last modified.
+- `snippet_name` (String) Identify the snippet.
 
 

@@ -63,8 +63,9 @@ resource "cloudflare_account" "example_account" {
 
 - `managed_by` (Attributes) Parent container details (see [below for nested schema](#nestedatt--managed_by))
 - `settings` (Attributes) Account settings (see [below for nested schema](#nestedatt--settings))
+- `standalone` (Boolean) Set to `true` and omit `unit` to create a standalone Free Account. If provided, this field must be `true`.
 - `type` (String, Deprecated) Available values: "standard", "enterprise".
-- `unit` (Attributes) information related to the tenant unit, and optionally, an id of the unit to create the account on. see https://developers.cloudflare.com/tenant/how-to/manage-accounts/ (see [below for nested schema](#nestedatt--unit))
+- `unit` (Attributes) Information related to the tenant unit. Provide its ID and omit `standalone` to create the Account within an Organization. See https://developers.cloudflare.com/tenant/how-to/manage-accounts/. (see [below for nested schema](#nestedatt--unit))
 
 ### Read-Only
 

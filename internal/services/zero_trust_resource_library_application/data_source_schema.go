@@ -86,7 +86,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"ip_subnets": schema.SetAttribute{
-				Description: "IP subnets matched by the application.",
+				Description: "IP subnets for this application. Custom application create and update requests accept IPv4 prefix lengths /8 through /32 and IPv6 prefix lengths /32 through /128.",
 				Computed:    true,
 				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,

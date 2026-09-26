@@ -16,7 +16,6 @@ var _ resource.ResourceWithConfigValidators = (*GoogleTagGatewayResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Zaraz Admin",
@@ -24,6 +23,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Zaraz Read",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",

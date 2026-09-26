@@ -28,7 +28,6 @@ var _ resource.ResourceWithConfigValidators = (*WorkerResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers Scripts Read",
@@ -36,6 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Workers Tail Read",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Immutable ID of the Worker.",
@@ -46,6 +46,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"force": schema.BoolAttribute{
+				Description: "If true, delete the Worker even when other Workers still reference it. Service bindings in those Workers may be left broken. Durable Object namespaces implemented by the deleted Worker are deleted even if other Workers reference them.",
+				Optional:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Name of the Worker.",
@@ -88,6 +92,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						PlanModifiers: []planmodifier.Float64{
 							NormalizeFloat64(),
 						},
+					},
+					"issues": schema.SingleNestedAttribute{
+						Description: "Real-time Issues settings for the Worker.",
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[WorkerObservabilityIssuesModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Whether real-time Issues are enabled for the Worker.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(false),
+							},
+						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"logs": schema.SingleNestedAttribute{
 						Description: "Log settings for the Worker.",
@@ -212,6 +231,252 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Destinations:     customfield.NewListMust[types.String](ctx, nil),
 					}),
 				}).ObjectValue),
+			},
+			"previews_base_config": schema.SingleNestedAttribute{
+				Description: "Template configuration used when creating new Previews for this Worker.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[WorkerPreviewsBaseConfigModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"cache_options": schema.SingleNestedAttribute{
+						Description: "Cache options used when creating new Previews.",
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[WorkerPreviewsBaseConfigCacheOptionsModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Whether caching is enabled for this Worker.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(false),
+							},
+							"cross_version_cache": schema.BoolAttribute{
+								Description: "Whether cached responses are shared across Worker version\nuploads. This is independent of `enabled`. It can stay true\nwhile caching is off, so the preference survives turning\ncaching off and back on.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(false),
+							},
+						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
+					},
+					"env": schema.MapNestedAttribute{
+						Description: "Bindings used when creating new Previews, keyed by binding name.",
+						Optional:    true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"type": schema.StringAttribute{
+									Description: "The kind of resource that the binding provides.",
+									Required:    true,
+								},
+							},
+						},
+					},
+					"limits": schema.SingleNestedAttribute{
+						Description: "Resource limits enforced at runtime for newly created Previews.",
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[WorkerPreviewsBaseConfigLimitsModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"cpu_ms": schema.Int64Attribute{
+								Description: "The amount of CPU time this Worker can use in milliseconds.",
+								Optional:    true,
+							},
+							"subrequests": schema.Int64Attribute{
+								Description: "The number of subrequests this Worker can make per request.",
+								Optional:    true,
+							},
+						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
+					},
+					"logpush": schema.BoolAttribute{
+						Description: "Whether logpush is enabled when creating new Previews.",
+						Optional:    true,
+					},
+					"observability": schema.SingleNestedAttribute{
+						Description: "Observability settings used when creating new Previews.",
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[WorkerPreviewsBaseConfigObservabilityModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Whether observability is enabled for the Worker.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(false),
+							},
+							"head_sampling_rate": schema.Float64Attribute{
+								Description: "The sampling rate for observability. From 0 to 1 (1 = 100%, 0.1 = 10%).",
+								Computed:    true,
+								Optional:    true,
+								Default:     float64default.StaticFloat64(1),
+							},
+							"issues": schema.SingleNestedAttribute{
+								Description: "Real-time Issues settings for the Worker.",
+								Computed:    true,
+								Optional:    true,
+								CustomType:  customfield.NewNestedObjectType[WorkerPreviewsBaseConfigObservabilityIssuesModel](ctx),
+								Attributes: map[string]schema.Attribute{
+									"enabled": schema.BoolAttribute{
+										Description: "Whether real-time Issues are enabled for the Worker.",
+										Computed:    true,
+										Optional:    true,
+										Default:     booldefault.StaticBool(false),
+									},
+								},
+								PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
+							},
+							"logs": schema.SingleNestedAttribute{
+								Description: "Log settings for the Worker.",
+								Computed:    true,
+								Optional:    true,
+								CustomType:  customfield.NewNestedObjectType[WorkerPreviewsBaseConfigObservabilityLogsModel](ctx),
+								Attributes: map[string]schema.Attribute{
+									"destinations": schema.ListAttribute{
+										Description:   "A list of destinations where logs will be exported to.",
+										Computed:      true,
+										Optional:      true,
+										CustomType:    customfield.NewListType[types.String](ctx),
+										ElementType:   types.StringType,
+										PlanModifiers: []planmodifier.List{listplanmodifier.UseNonNullStateForUnknown()},
+									},
+									"enabled": schema.BoolAttribute{
+										Description: "Whether logs are enabled for the Worker.",
+										Computed:    true,
+										Optional:    true,
+										Default:     booldefault.StaticBool(false),
+									},
+									"head_sampling_rate": schema.Float64Attribute{
+										Description: "The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%).",
+										Computed:    true,
+										Optional:    true,
+										Default:     float64default.StaticFloat64(1),
+									},
+									"invocation_logs": schema.BoolAttribute{
+										Description: "Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.",
+										Computed:    true,
+										Optional:    true,
+										Default:     booldefault.StaticBool(true),
+									},
+									"persist": schema.BoolAttribute{
+										Description: "Whether log persistence is enabled for the Worker.",
+										Computed:    true,
+										Optional:    true,
+										Default:     booldefault.StaticBool(true),
+									},
+								},
+								PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
+							},
+							"redact_query_string": schema.BoolAttribute{
+								Description: "Whether query strings are removed from request URLs in logs and traces.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(false),
+							},
+							"traces": schema.SingleNestedAttribute{
+								Description: "Trace settings for the Worker.",
+								Computed:    true,
+								Optional:    true,
+								CustomType:  customfield.NewNestedObjectType[WorkerPreviewsBaseConfigObservabilityTracesModel](ctx),
+								Attributes: map[string]schema.Attribute{
+									"destinations": schema.ListAttribute{
+										Description:   "A list of destinations where traces will be exported to.",
+										Computed:      true,
+										Optional:      true,
+										CustomType:    customfield.NewListType[types.String](ctx),
+										ElementType:   types.StringType,
+										PlanModifiers: []planmodifier.List{listplanmodifier.UseNonNullStateForUnknown()},
+									},
+									"enabled": schema.BoolAttribute{
+										Description: "Whether traces are enabled for the Worker.",
+										Computed:    true,
+										Optional:    true,
+										Default:     booldefault.StaticBool(false),
+									},
+									"head_sampling_rate": schema.Float64Attribute{
+										Description: "The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%).",
+										Computed:    true,
+										Optional:    true,
+										Default:     float64default.StaticFloat64(1),
+									},
+									"persist": schema.BoolAttribute{
+										Description: "Whether trace persistence is enabled for the Worker.",
+										Computed:    true,
+										Optional:    true,
+										Default:     booldefault.StaticBool(true),
+									},
+									"propagation_policy": schema.StringAttribute{
+										Description: "Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. \"authenticated\" honors inbound trace context only when accompanied by a valid trace auth token. \"accept\" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled. Returns null when the trace propagation feature is not enabled for the account.\nAvailable values: \"authenticated\", \"accept\".",
+										Optional:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive("authenticated", "accept"),
+										},
+									},
+								},
+								PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
+							},
+						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
+					},
+					"placement": schema.SingleNestedAttribute{
+						Description: "Placement configuration used when creating new Previews.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"mode": schema.StringAttribute{
+								Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\", \"targeted\".",
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("smart", "targeted"),
+								},
+							},
+							"region": schema.StringAttribute{
+								Description: "Cloud region for targeted placement in format 'provider:region'.",
+								Optional:    true,
+							},
+							"hostname": schema.StringAttribute{
+								Description: "HTTP hostname for targeted placement.",
+								Optional:    true,
+							},
+							"host": schema.StringAttribute{
+								Description: "TCP host and port for targeted placement.",
+								Optional:    true,
+							},
+							"target": schema.ListNestedAttribute{
+								Description: "Array of placement targets (currently limited to single target).",
+								Optional:    true,
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"region": schema.StringAttribute{
+											Description: "Cloud region in format 'provider:region'.",
+											Optional:    true,
+										},
+										"hostname": schema.StringAttribute{
+											Description: "HTTP hostname for targeted placement.",
+											Optional:    true,
+										},
+										"host": schema.StringAttribute{
+											Description: "TCP host:port for targeted placement.",
+											Optional:    true,
+										},
+									},
+								},
+							},
+						},
+					},
+					"tail_consumers": schema.SetNestedAttribute{
+						Description: "Other Workers that should consume logs from newly created Previews.",
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectSetType[WorkerPreviewsBaseConfigTailConsumersModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"name": schema.StringAttribute{
+									Description: "Name of the consumer Worker.",
+									Required:    true,
+								},
+							},
+						},
+					},
+				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"subdomain": schema.SingleNestedAttribute{
 				Description: "Subdomain settings for the Worker.",

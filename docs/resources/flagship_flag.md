@@ -61,12 +61,12 @@ resource "cloudflare_flagship_flag" "example_flagship_flag" {
 ### Optional
 
 - `description` (String)
-- `flag_key` (String) Flag key (slug).
-- `type` (String) Value type of the flag's variations. Inferred from the variation values on write, so it may be omitted in requests.
+- `type` (String, Deprecated) Deprecated compatibility field. Omit it; the API ignores this value and infers the type from the flag's variations.
 Available values: "boolean", "string", "number", "json".
 
 ### Read-Only
 
+- `id` (String) Unique identifier for the flag within an app. Used in all evaluation and SDK calls.
 - `updated_at` (String)
 - `updated_by` (String)
 
@@ -168,5 +168,10 @@ Optional:
 
 ## Import
 
+Import is supported using the following syntax:
 
-~> This resource does not currently support `terraform import`.
+```shell
+$ terraform import cloudflare_flagship_flag.example '<account_id>/<app_id>/<flag_key>'
+```
+
+

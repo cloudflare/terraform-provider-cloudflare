@@ -69,6 +69,13 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
+	params := workers.BetaWorkerVersionNewParams{
+		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	}
+
+	if !data.Deploy.IsNull() && !data.Deploy.IsUnknown() {
+		params.Deploy = cloudflare.F(data.Deploy.ValueBool())
+	}
 	var assets *WorkerVersionAssetsModel
 	if !data.Assets.IsNull() && !data.Assets.IsUnknown() {
 		planAssets, diags := data.Assets.Value(ctx)
@@ -136,9 +143,7 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 	_, err = r.client.Workers.Beta.Workers.Versions.New(
 		ctx,
 		data.WorkerID.ValueString(),
-		workers.BetaWorkerVersionNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -159,6 +164,33 @@ func (r *WorkerVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	data = &env.Result
+
+	// The version creation response does not reliably include
+	// author_email/author_id (a known API inconsistency vs. the GET
+	// response). If either is missing, do a follow-up GET to backfill them so
+	// state matches what a subsequent Read()/ImportState() would produce.
+	if data.AuthorEmail.IsNull() || data.AuthorID.IsNull() {
+		getRes := new(http.Response)
+		getEnv := WorkerVersionResultEnvelope{*data}
+		_, getErr := r.client.Workers.Beta.Workers.Versions.Get(
+			ctx,
+			data.WorkerID.ValueString(),
+			data.ID.ValueString(),
+			workers.BetaWorkerVersionGetParams{
+				AccountID: cloudflare.F(data.AccountID.ValueString()),
+			},
+			option.WithResponseBodyInto(&getRes),
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if getErr == nil {
+			getBytes, _ := io.ReadAll(getRes.Body)
+			if unmarshalErr := apijson.Unmarshal(getBytes, &getEnv); unmarshalErr == nil {
+				data.AuthorEmail = getEnv.Result.AuthorEmail
+				data.AuthorID = getEnv.Result.AuthorID
+			}
+		}
+		// If the GET fails or is also missing the fields, fall back to what we have.
+	}
 
 	// The API returns database_id for D1 bindings but not for other types.
 	// Null out unknown database_id values to prevent "unknown after apply" errors.

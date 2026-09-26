@@ -236,6 +236,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							stringvalidator.OneOfCaseInsensitive("porter", "trigram"),
 						},
 					},
+					"use_ocr": schema.BoolAttribute{
+						Description: "Enables OCR ingestion for PDFs and images. Changing this triggers a full re-index. Defaults to false.",
+						Computed:    true,
+					},
 				},
 			},
 			"metadata": schema.SingleNestedAttribute{

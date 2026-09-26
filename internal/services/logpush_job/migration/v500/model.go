@@ -62,6 +62,7 @@ type TargetLogpushJobModel struct {
 	Dataset                  types.String                        `tfsdk:"dataset"`
 	DestinationConf          types.String                        `tfsdk:"destination_conf"`
 	Filter                   types.String                        `tfsdk:"filter"`
+	FilterAttackTraffic      types.Bool                          `tfsdk:"filter_attack_traffic"`
 	LogpullOptions           types.String                        `tfsdk:"logpull_options"`
 	MaxUploadBytes           types.Int64                         `tfsdk:"max_upload_bytes"`
 	MaxUploadIntervalSeconds types.Int64                         `tfsdk:"max_upload_interval_seconds"`

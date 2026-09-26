@@ -27,7 +27,6 @@ var _ resource.ResourceWithConfigValidators = (*WorkersScriptResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Workers Scripts Read",
@@ -35,6 +34,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Workers Tail Read",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Name of the script, used in URLs and route configuration.",
@@ -50,6 +50,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"force": schema.BoolAttribute{
+				Description: "If true, delete the Worker even when other Workers still reference it. Service bindings in those Workers may be left broken. Durable Object namespaces implemented by the deleted Worker are deleted even if other Workers reference them.",
+				Optional:    true,
 			},
 			"content": schema.StringAttribute{
 				Description: "Module or Service Worker contents of the Worker. Conflicts with `content_file`.",
@@ -178,6 +182,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description:        "When true and the incoming request matches an asset, that will be served instead of invoking the Worker script. When false, requests will always invoke the Worker script.",
 								Optional:           true,
 								DeprecationMessage: "This attribute is deprecated.",
+							},
+							"base_path": schema.StringAttribute{
+								Description: "The public URL path prefix under which assets are served. A null request value resets it to `/`; responses represent the root as `/`. All versions in a gradual deployment must use the same canonical value. To change it, first deploy the version containing the change at 100%.",
+								Computed:    true,
+								Optional:    true,
+								Default:     stringdefault.StaticString("/"),
 							},
 						},
 					},
@@ -333,6 +343,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"pipeline": schema.StringAttribute{
 							Description: "Name of the Pipeline to bind to.",
+							Optional:    true,
+						},
+						"stream": schema.StringAttribute{
+							Description: "ID of a K2 stream owned by the account deploying the Worker.",
 							Optional:    true,
 						},
 						"queue_name": schema.StringAttribute{
@@ -703,6 +717,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"head_sampling_rate": schema.Float64Attribute{
 						Description: "The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
 						Optional:    true,
+					},
+					"issues": schema.SingleNestedAttribute{
+						Description: "Real-time Issues settings for the Worker.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Whether real-time Issues are enabled for the Worker.",
+								Optional:    true,
+							},
+						},
 					},
 					"logs": schema.SingleNestedAttribute{
 						Description: "Log settings for the Worker.",

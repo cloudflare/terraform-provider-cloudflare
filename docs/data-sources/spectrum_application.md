@@ -46,13 +46,14 @@ Notes: Only available for TCP applications.
 - `origin_dns` (Attributes) The name and type of DNS record for the Spectrum application. (see [below for nested schema](#nestedatt--origin_dns))
 - `origin_port` (Dynamic) The destination port at the origin. Only specified in conjunction with origin_dns. May use an integer to specify a single origin port, for example `1000`, or a string to specify a range of origin ports, for example `"1000-2000"`.
 Notes: If specifying a port range, the number of ports in the range must match the number of ports specified in the "protocol" field.
+- `origin_worker_id` (String) Optional Worker script tag (worker ID) to use as the application's origin. Only supported for TCP applications with traffic_type "worker"; mutually exclusive with origin_direct, origin_dns, origin_port, proxy_protocol, and argo_smart_routing. tls may only be "off" or "flexible".
 - `protocol` (String) The port configuration at Cloudflare's edge. May specify a single port, for example `"tcp/1000"`, or a range of ports, for example `"tcp/1000-2000"`.
 - `proxy_protocol` (String) Enables Proxy Protocol to the origin. Refer to [Enable Proxy protocol](https://developers.cloudflare.com/spectrum/getting-started/proxy-protocol/) for implementation details on PROXY Protocol V1, PROXY Protocol V2, and Simple Proxy Protocol.
 Available values: "off", "v1", "v2", "simple".
 - `tls` (String) The type of TLS termination associated with the application.
 Available values: "off", "flexible", "full", "strict".
-- `traffic_type` (String) Determines how data travels from the edge to your origin. When set to "direct", Spectrum will send traffic directly to your origin, and the application's type is derived from the `protocol`. When set to "http" or "https", Spectrum will apply Cloudflare's HTTP/HTTPS features as it sends traffic to your origin, and the application type matches this property exactly.
-Available values: "direct", "http", "https".
+- `traffic_type` (String) Determines how data travels from the edge to your origin. When set to "direct", Spectrum will send traffic directly to your origin, and the application's type is derived from the `protocol`. When set to "http" or "https", Spectrum will apply Cloudflare's HTTP/HTTPS features as it sends traffic to your origin, and the application type matches this property exactly. When set to "worker", traffic is sent to the Worker specified by `origin_worker_id`.
+Available values: "direct", "http", "https", "worker".
 - `virtual_network_id` (String) Optional UUID of a virtual network for routing origin traffic through tunnel virtual networks.
 
 <a id="nestedatt--filter"></a>

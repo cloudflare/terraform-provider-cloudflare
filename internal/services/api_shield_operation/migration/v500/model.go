@@ -31,15 +31,17 @@ type SourceCloudflareAPIShieldOperationModel struct {
 // TargetAPIShieldOperationModel represents the target cloudflare_api_shield_operation state structure (v500).
 // This matches the structure in the parent package's model.go file.
 type TargetAPIShieldOperationModel struct {
-	ID          types.String                                                          `tfsdk:"id"`
-	OperationID types.String                                                          `tfsdk:"operation_id"`
-	ZoneID      types.String                                                          `tfsdk:"zone_id"`
-	Endpoint    types.String                                                          `tfsdk:"endpoint"`
-	Host        types.String                                                          `tfsdk:"host"`
-	Method      types.String                                                          `tfsdk:"method"`
-	LastUpdated timetypes.RFC3339                                                     `tfsdk:"last_updated"`
-	Schemas     customfield.NestedObject[TargetAPIShieldOperationSchemasModel]        `tfsdk:"schemas"`
-	Features    customfield.NestedObject[TargetAPIShieldOperationFeaturesModel]       `tfsdk:"features"`
+	ID          types.String                                                    `tfsdk:"id"`
+	OperationID types.String                                                    `tfsdk:"operation_id"`
+	ZoneID      types.String                                                    `tfsdk:"zone_id"`
+	Feature     *[]types.String                                                 `tfsdk:"feature"`
+	WithSchemas types.Bool                                                      `tfsdk:"with_schemas"`
+	Endpoint    types.String                                                    `tfsdk:"endpoint"`
+	Host        types.String                                                    `tfsdk:"host"`
+	Method      types.String                                                    `tfsdk:"method"`
+	LastUpdated timetypes.RFC3339                                               `tfsdk:"last_updated"`
+	Schemas     customfield.NestedObject[TargetAPIShieldOperationSchemasModel]  `tfsdk:"schemas"`
+	Features    customfield.NestedObject[TargetAPIShieldOperationFeaturesModel] `tfsdk:"features"`
 }
 
 // TargetAPIShieldOperationSchemasModel mirrors APIShieldOperationSchemasModel from the
@@ -82,8 +84,8 @@ type TargetAPIShieldOperationFeaturesThresholdsModel struct {
 }
 
 type TargetAPIShieldOperationFeaturesParameterSchemasModel struct {
-	LastUpdated      timetypes.RFC3339                                                                                     `tfsdk:"last_updated"`
-	ParameterSchemas customfield.NestedObject[TargetAPIShieldOperationFeaturesParameterSchemasParameterSchemasModel]       `tfsdk:"parameter_schemas"`
+	LastUpdated      timetypes.RFC3339                                                                               `tfsdk:"last_updated"`
+	ParameterSchemas customfield.NestedObject[TargetAPIShieldOperationFeaturesParameterSchemasParameterSchemasModel] `tfsdk:"parameter_schemas"`
 }
 
 type TargetAPIShieldOperationFeaturesParameterSchemasParameterSchemasModel struct {
@@ -97,13 +99,13 @@ type TargetAPIShieldOperationFeaturesAPIRoutingModel struct {
 }
 
 type TargetAPIShieldOperationFeaturesConfidenceIntervalsModel struct {
-	LastUpdated        timetypes.RFC3339                                                                                          `tfsdk:"last_updated"`
-	SuggestedThreshold customfield.NestedObject[TargetAPIShieldOperationFeaturesConfidenceIntervalsSuggestedThresholdModel]      `tfsdk:"suggested_threshold"`
+	LastUpdated        timetypes.RFC3339                                                                                    `tfsdk:"last_updated"`
+	SuggestedThreshold customfield.NestedObject[TargetAPIShieldOperationFeaturesConfidenceIntervalsSuggestedThresholdModel] `tfsdk:"suggested_threshold"`
 }
 
 type TargetAPIShieldOperationFeaturesConfidenceIntervalsSuggestedThresholdModel struct {
 	ConfidenceIntervals customfield.NestedObject[TargetAPIShieldOperationFeaturesConfidenceIntervalsSuggestedThresholdConfidenceIntervalsModel] `tfsdk:"confidence_intervals"`
-	Mean                types.Float64                                                                                                            `tfsdk:"mean"`
+	Mean                types.Float64                                                                                                           `tfsdk:"mean"`
 }
 
 type TargetAPIShieldOperationFeaturesConfidenceIntervalsSuggestedThresholdConfidenceIntervalsModel struct {

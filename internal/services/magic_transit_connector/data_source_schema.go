@@ -65,12 +65,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"notes": schema.StringAttribute{
 				Computed: true,
 			},
-			"primary": schema.BoolAttribute{
-				Computed: true,
-			},
-			"site_id": schema.StringAttribute{
-				Computed: true,
-			},
 			"timezone": schema.StringAttribute{
 				Computed: true,
 			},

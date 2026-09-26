@@ -19,7 +19,11 @@ type BotManagementResultDataSourceEnvelope struct {
 type BotManagementDataSourceModel struct {
 	ID                           types.String                                                                 `tfsdk:"id" path:"zone_id,computed"`
 	ZoneID                       types.String                                                                 `tfsdk:"zone_id" path:"zone_id,optional"`
+	AIBotsMigrationOptOut        types.Bool                                                                   `tfsdk:"ai_bots_migration_opt_out" json:"ai_bots_migration_opt_out,computed"`
 	AIBotsProtection             types.String                                                                 `tfsdk:"ai_bots_protection" json:"ai_bots_protection,computed"`
+	AITraining                   types.String                                                                 `tfsdk:"ai_training" json:"ai_training,computed"`
+	AIUser                       types.String                                                                 `tfsdk:"ai_user" json:"ai_user,computed"`
+	AISearch                     types.String                                                                 `tfsdk:"aisearch" json:"ai_search,computed"`
 	AutoUpdateModel              types.Bool                                                                   `tfsdk:"auto_update_model" json:"auto_update_model,computed"`
 	BmCookieEnabled              types.Bool                                                                   `tfsdk:"bm_cookie_enabled" json:"bm_cookie_enabled,computed"`
 	BotPreferenceSyncEnabled     types.Bool                                                                   `tfsdk:"bot_preference_sync_enabled" json:"bot_preference_sync_enabled,computed"`
@@ -29,6 +33,7 @@ type BotManagementDataSourceModel struct {
 	EnableJS                     types.Bool                                                                   `tfsdk:"enable_js" json:"enable_js,computed"`
 	FightMode                    types.Bool                                                                   `tfsdk:"fight_mode" json:"fight_mode,computed"`
 	IsRobotsTXTManaged           types.Bool                                                                   `tfsdk:"is_robots_txt_managed" json:"is_robots_txt_managed,computed"`
+	JsdAPIResultsEnabled         types.Bool                                                                   `tfsdk:"jsd_api_results_enabled" json:"jsd_api_results_enabled,computed"`
 	OptimizeWordpress            types.Bool                                                                   `tfsdk:"optimize_wordpress" json:"optimize_wordpress,computed"`
 	SBFMDefinitelyAutomated      types.String                                                                 `tfsdk:"sbfm_definitely_automated" json:"sbfm_definitely_automated,computed"`
 	SBFMLikelyAutomated          types.String                                                                 `tfsdk:"sbfm_likely_automated" json:"sbfm_likely_automated,computed"`

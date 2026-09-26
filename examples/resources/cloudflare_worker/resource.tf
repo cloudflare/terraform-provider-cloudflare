@@ -5,6 +5,9 @@ resource "cloudflare_worker" "example_worker" {
   observability = {
     enabled = true
     head_sampling_rate = 1
+    issues = {
+      enabled = true
+    }
     logs = {
       destinations = ["string"]
       enabled = true

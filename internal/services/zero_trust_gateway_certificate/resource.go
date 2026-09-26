@@ -101,7 +101,6 @@ func (r *ZeroTrustGatewayCertificateResource) Create(ctx context.Context, req re
 			data.ID.ValueString(),
 			zero_trust.GatewayCertificateActivateParams{
 				AccountID: cloudflare.F(data.AccountID.ValueString()),
-				Body:      struct{}{},
 			},
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -184,7 +183,6 @@ func (r *ZeroTrustGatewayCertificateResource) Update(ctx context.Context, req re
 				state.ID.ValueString(),
 				zero_trust.GatewayCertificateActivateParams{
 					AccountID: cloudflare.F(state.AccountID.ValueString()),
-					Body:      struct{}{}, // Empty body as required by the API
 				},
 				option.WithMiddleware(logging.Middleware(ctx)),
 			)
@@ -199,7 +197,6 @@ func (r *ZeroTrustGatewayCertificateResource) Update(ctx context.Context, req re
 				state.ID.ValueString(),
 				zero_trust.GatewayCertificateDeactivateParams{
 					AccountID: cloudflare.F(state.AccountID.ValueString()),
-					Body:      struct{}{}, // Empty body as required by the API
 				},
 				option.WithMiddleware(logging.Middleware(ctx)),
 			)

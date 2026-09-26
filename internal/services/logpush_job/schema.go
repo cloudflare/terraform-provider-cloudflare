@@ -26,12 +26,12 @@ var _ resource.ResourceWithConfigValidators = (*LogpushJobResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Logs Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Description: "Unique id of the job.",
@@ -219,7 +219,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"sample_rate": schema.Float64Attribute{
-						Description: "Floating number to specify sampling rate. Sampling is applied on top of filtering, and regardless of the current `sample_interval` of the data.",
+						Description: "Specifies the sampling rate as a floating number greater than 0 and at most 1. Sampling is applied on top of filtering, and regardless of the current `sample_interval` of the data.",
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 1),
@@ -242,6 +242,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Flag that indicates if the job is enabled.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"filter_attack_traffic": schema.BoolAttribute{
+				Description: "When true, excludes DDoS attack traffic from logs. This option is supported for the `http_requests`, `firewall_events`, and `network_analytics_logs` datasets.",
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),

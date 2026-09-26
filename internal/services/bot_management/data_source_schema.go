@@ -32,6 +32,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier.",
 				Optional:    true,
 			},
+		"ai_bots_migration_opt_out": schema.BoolAttribute{
+			Description: "Temporary migration flag tracking zones opted out of AI bots managed-rule updates.",
+			Computed:    true,
+		},
 			"ai_bots_protection": schema.StringAttribute{
 				Description: "Enable rule to block AI Scrapers and Crawlers.\nAvailable values: \"block\", \"disabled\", \"only_on_ad_pages\".",
 				Computed:    true,
@@ -39,6 +43,40 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive(
 						"block",
 						"disabled",
+						"only_on_ad_pages",
+					),
+				},
+			},
+			"ai_training": schema.StringAttribute{
+				Description: "Configure robots.txt policy for AI model training bots.\nAvailable values: \"disabled\", \"disallow\", \"block\", \"only_on_ad_pages\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"disabled",
+						"disallow",
+						"block",
+						"only_on_ad_pages",
+					),
+				},
+			},
+			"ai_user": schema.StringAttribute{
+				Description: "Configure robots.txt policy for AI assistant and agent bots.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"disabled",
+						"block",
+						"only_on_ad_pages",
+					),
+				},
+			},
+			"aisearch": schema.StringAttribute{
+				Description: "Configure robots.txt policy for AI search bots.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"disabled",
+						"block",
 						"only_on_ad_pages",
 					),
 				},
@@ -86,6 +124,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"is_robots_txt_managed": schema.BoolAttribute{
 				Description: "Enable cloudflare managed robots.txt. If an existing robots.txt is detected, then managed robots.txt will be prepended to the existing robots.txt.",
+				Computed:    true,
+			},
+			"jsd_api_results_enabled": schema.BoolAttribute{
+				Description: "Whether to use JavaScript Detection results submitted through the API for this zone.",
 				Computed:    true,
 			},
 			"optimize_wordpress": schema.BoolAttribute{

@@ -48,8 +48,6 @@ data "cloudflare_magic_transit_connector" "example_magic_transit_connector" {
 - `last_updated` (String)
 - `license_key` (String)
 - `notes` (String)
-- `primary` (Boolean)
-- `site_id` (String)
 - `timezone` (String)
 
 <a id="nestedatt--filter"></a>

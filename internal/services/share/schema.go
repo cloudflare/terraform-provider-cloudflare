@@ -84,6 +84,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
+			"include_recipient_counts": schema.BoolAttribute{
+				Description: "Include recipient counts in the response.",
+				Optional:    true,
+			},
+			"include_resources": schema.BoolAttribute{
+				Description: "Include resources in the response.",
+				Optional:    true,
+			},
 			"name": schema.StringAttribute{
 				Description: "The name of the share.",
 				Required:    true,

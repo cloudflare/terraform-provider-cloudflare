@@ -21,13 +21,13 @@ var _ resource.ResourceWithConfigValidators = (*EmailRoutingCatchAllResource)(ni
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Email Routing Rules Read",
 				"Email Routing Rules Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -56,6 +56,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"value": schema.ListAttribute{
+							Description: "List of values for the action. Currently limited to a single value.",
 							Optional:    true,
 							ElementType: types.StringType,
 						},

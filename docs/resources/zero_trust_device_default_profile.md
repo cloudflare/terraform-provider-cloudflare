@@ -74,6 +74,7 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
 - `support_url` (String) The URL to launch when the Send Feedback button is clicked.
 - `switch_locked` (Boolean) Whether to allow the user to turn off the WARP switch and disconnect the client.
 - `tunnel_protocol` (String) Determines which tunnel protocol to use.
+- `uninstall_protection` (Boolean) Determines whether uninstalling the WARP client requires an override code. (Windows only).
 - `virtual_networks` (Attributes) Virtual network access settings for the device. (see [below for nested schema](#nestedatt--virtual_networks))
 
 ### Read-Only
@@ -84,6 +85,8 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
 - `gateway_unique_id` (String)
 - `id` (String) The ID of this resource.
 - `policy_id` (String)
+- `profile_type` (String) The client type to which the device settings profile applies.
+Available values: "warp", "browser_extension".
 
 <a id="nestedatt--dns_search_suffixes"></a>
 ### Nested Schema for `dns_search_suffixes`

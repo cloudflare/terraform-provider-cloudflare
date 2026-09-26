@@ -18,7 +18,7 @@ type SourceCloudflareWorkersKVModel struct {
 	ID          types.String `tfsdk:"id"`
 	AccountID   types.String `tfsdk:"account_id"`
 	NamespaceID types.String `tfsdk:"namespace_id"`
-	Key         types.String `tfsdk:"key"`   // v4 field name (renamed to key_name in v5)
+	Key         types.String `tfsdk:"key"` // v4 field name (renamed to key_name in v5)
 	Value       types.String `tfsdk:"value"`
 }
 
@@ -33,10 +33,12 @@ type SourceCloudflareWorkersKVModel struct {
 // This matches the v5 Plugin Framework schema with "key_name" and optional "metadata".
 // Note: This should match WorkersKVModel in the parent package's model.go file.
 type TargetWorkersKVModel struct {
-	ID          types.String         `tfsdk:"id"`
-	KeyName     types.String         `tfsdk:"key_name"`   // Renamed from "key" in v4
-	AccountID   types.String         `tfsdk:"account_id"`
-	NamespaceID types.String         `tfsdk:"namespace_id"`
-	Value       types.String         `tfsdk:"value"`
-	Metadata    jsontypes.Normalized `tfsdk:"metadata"`   // New in v5, optional
+	ID            types.String         `tfsdk:"id"`
+	KeyName       types.String         `tfsdk:"key_name"` // Renamed from "key" in v4
+	AccountID     types.String         `tfsdk:"account_id"`
+	NamespaceID   types.String         `tfsdk:"namespace_id"`
+	Value         types.String         `tfsdk:"value"`
+	Metadata      jsontypes.Normalized `tfsdk:"metadata"` // New in v5, optional
+	Expiration    types.Float64        `tfsdk:"expiration"`
+	ExpirationTTL types.Float64        `tfsdk:"expiration_ttl"`
 }

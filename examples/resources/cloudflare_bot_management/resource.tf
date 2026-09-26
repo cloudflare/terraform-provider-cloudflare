@@ -1,6 +1,10 @@
 resource "cloudflare_bot_management" "example_bot_management" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  ai_bots_migration_opt_out = false
   ai_bots_protection = "block"
+  aisearch = "block"
+  ai_training = "disallow"
+  ai_user = "only_on_ad_pages"
   bot_preference_sync_enabled = true
   cf_robots_variant = "policy_only"
   content_bots_protection = "disabled"

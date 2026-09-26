@@ -36,6 +36,7 @@ type ZeroTrustAccessInfrastructureTargetsDataSourceModel struct {
 	Order            types.String                                                                            `tfsdk:"order" query:"order,optional"`
 	VirtualNetworkID types.String                                                                            `tfsdk:"virtual_network_id" query:"virtual_network_id,optional"`
 	IPs              *[]types.String                                                                         `tfsdk:"ips" query:"ips,optional"`
+	Tag              *[]types.String                                                                         `tfsdk:"tag" query:"tag,optional"`
 	TargetIDs        *[]types.String                                                                         `tfsdk:"target_ids" query:"target_ids,optional"`
 	MaxItems         types.Int64                                                                             `tfsdk:"max_items"`
 	Result           customfield.NestedObjectList[ZeroTrustAccessInfrastructureTargetsResultDataSourceModel] `tfsdk:"result"`
@@ -46,6 +47,12 @@ func (m *ZeroTrustAccessInfrastructureTargetsDataSourceModel) toListParams(_ con
 	if m.IPs != nil {
 		for _, item := range *m.IPs {
 			mIPs = append(mIPs, item.ValueString())
+		}
+	}
+	mTag := []string{}
+	if m.Tag != nil {
+		for _, item := range *m.Tag {
+			mTag = append(mTag, item.ValueString())
 		}
 	}
 	mTargetIDs := []string{}
@@ -66,6 +73,7 @@ func (m *ZeroTrustAccessInfrastructureTargetsDataSourceModel) toListParams(_ con
 	params = zero_trust.AccessInfrastructureTargetListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 		IPs:       cloudflare.F(mIPs),
+		Tag:       cloudflare.F(mTag),
 		TargetIDs: cloudflare.F(mTargetIDs),
 	}
 
@@ -127,6 +135,7 @@ type ZeroTrustAccessInfrastructureTargetsResultDataSourceModel struct {
 	Hostname   types.String                                                                    `tfsdk:"hostname" json:"hostname,computed"`
 	IP         customfield.NestedObject[ZeroTrustAccessInfrastructureTargetsIPDataSourceModel] `tfsdk:"ip" json:"ip,computed"`
 	ModifiedAt timetypes.RFC3339                                                               `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
+	Tags       customfield.Map[types.String]                                                   `tfsdk:"tags" json:"tags,computed"`
 }
 
 type ZeroTrustAccessInfrastructureTargetsIPDataSourceModel struct {

@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -21,7 +22,6 @@ var _ resource.ResourceWithConfigValidators = (*APIShieldSchemaResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version:            500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Account API Gateway",
@@ -30,6 +30,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Domain API Gateway Read",
 			},
 		}.String(),
+		Version: 500,
 		DeprecationMessage: "Please use the `cloudflare_schema_validation_schemas` resource instead",
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
@@ -58,6 +59,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "Name of the schema",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"omit_source": schema.BoolAttribute{
+				Description: "Omit the source-files of schemas and only retrieve their meta-data.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"validation_enabled": schema.StringAttribute{
 				Description: "Flag whether schema is enabled for validation.\nAvailable values: \"true\", \"false\".",

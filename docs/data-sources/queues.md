@@ -44,6 +44,7 @@ Read-Only:
 - `consumers_total_count` (Number)
 - `created_on` (String)
 - `id` (String)
+- `jurisdiction` (String) Available values: "eu", "us", "fedramp".
 - `modified_on` (String)
 - `producers` (Attributes List) (see [below for nested schema](#nestedatt--result--producers))
 - `producers_total_count` (Number)
@@ -62,7 +63,7 @@ Read-Only:
 - `queue_name` (String)
 - `script_name` (String) Name of a Worker
 - `settings` (Attributes) (see [below for nested schema](#nestedatt--result--consumers--settings))
-- `type` (String) Available values: "worker", "http_pull".
+- `type` (String) Available values: "worker", "http_pull", "notification".
 
 <a id="nestedatt--result--consumers--settings"></a>
 ### Nested Schema for `result.consumers.settings`
@@ -70,11 +71,38 @@ Read-Only:
 Read-Only:
 
 - `batch_size` (Number) The maximum number of messages to include in a batch.
+- `email` (Attributes List) (see [below for nested schema](#nestedatt--result--consumers--settings--email))
 - `max_concurrency` (Number) Maximum number of concurrent consumers that may consume from this Queue. Set to `null` to automatically opt in to the platform's maximum (recommended).
 - `max_retries` (Number) The maximum number of retries
 - `max_wait_time_ms` (Number) The number of milliseconds to wait for a batch to fill up before attempting to deliver it
+- `pagerduty` (Attributes List) PagerDuty notification destinations. (see [below for nested schema](#nestedatt--result--consumers--settings--pagerduty))
 - `retry_delay` (Number) The number of seconds to delay before making the message available for another attempt.
 - `visibility_timeout_ms` (Number) The number of milliseconds that a message is exclusively leased. After the timeout, the message becomes available for another attempt.
+- `webhooks` (Attributes List) Webhook notification destinations. (see [below for nested schema](#nestedatt--result--consumers--settings--webhooks))
+
+<a id="nestedatt--result--consumers--settings--email"></a>
+### Nested Schema for `result.consumers.settings.email`
+
+Read-Only:
+
+- `id` (String) The email address.
+
+
+<a id="nestedatt--result--consumers--settings--pagerduty"></a>
+### Nested Schema for `result.consumers.settings.pagerduty`
+
+Read-Only:
+
+- `id` (String) UUID.
+
+
+<a id="nestedatt--result--consumers--settings--webhooks"></a>
+### Nested Schema for `result.consumers.settings.webhooks`
+
+Read-Only:
+
+- `id` (String) UUID.
+
 
 
 

@@ -6,17 +6,21 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ resource.ResourceWithConfigValidators = (*UserGroupMembersResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Account Settings Read",
@@ -24,6 +28,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"SCIM Provisioning",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "User Group identifier tag.",
@@ -39,6 +44,37 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "Account identifier tag.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"fuzzy_email": schema.StringAttribute{
+				Description: "A string used for filtering members by partial email match.",
+				Optional:    true,
+			},
+			"direction": schema.StringAttribute{
+				Description: "The sort order of returned user group members by email.\nAvailable values: \"asc\", \"desc\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+				},
+				Default: stringdefault.StaticString("asc"),
+			},
+			"page": schema.Float64Attribute{
+				Description: "Page number of paginated results.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.AtLeast(1),
+				},
+				Default: float64default.StaticFloat64(1),
+			},
+			"per_page": schema.Float64Attribute{
+				Description: "Maximum number of results per page.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(1, 500),
+				},
+				Default: float64default.StaticFloat64(100),
 			},
 			"members": schema.ListNestedAttribute{
 				Required: true,

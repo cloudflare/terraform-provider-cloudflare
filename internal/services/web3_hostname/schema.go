@@ -19,13 +19,13 @@ var _ resource.ResourceWithConfigValidators = (*Web3HostnameResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Web3 Hostnames Read",
 				"Web3 Hostnames Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Specify the identifier of the hostname.",

@@ -20,7 +20,6 @@ var _ resource.ResourceWithConfigValidators = (*QueueResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Queues Read",
@@ -29,6 +28,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Workers Scripts Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
@@ -45,6 +45,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"queue_name": schema.StringAttribute{
 				Required: true,
+			},
+			"jurisdiction": schema.StringAttribute{
+				Description: `Available values: "eu", "us", "fedramp".`,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"eu",
+						"us",
+						"fedramp",
+					),
+				},
 			},
 			"settings": schema.SingleNestedAttribute{
 				Optional:   true,
@@ -134,13 +145,55 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The number of milliseconds that a message is exclusively leased. After the timeout, the message becomes available for another attempt.",
 									Computed:    true,
 								},
+								"email": schema.ListNestedAttribute{
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectListType[QueueConsumersSettingsEmailModel](ctx),
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The email address.",
+												Computed:    true,
+											},
+										},
+									},
+								},
+								"pagerduty": schema.ListNestedAttribute{
+									Description: "PagerDuty notification destinations.",
+									Computed:    true,
+									CustomType:  customfield.NewNestedObjectListType[QueueConsumersSettingsPagerdutyModel](ctx),
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "UUID.",
+												Computed:    true,
+											},
+										},
+									},
+								},
+								"webhooks": schema.ListNestedAttribute{
+									Description: "Webhook notification destinations.",
+									Computed:    true,
+									CustomType:  customfield.NewNestedObjectListType[QueueConsumersSettingsWebhooksModel](ctx),
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "UUID.",
+												Computed:    true,
+											},
+										},
+									},
+								},
 							},
 						},
 						"type": schema.StringAttribute{
-							Description: `Available values: "worker", "http_pull".`,
+							Description: `Available values: "worker", "http_pull", "notification".`,
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("worker", "http_pull"),
+								stringvalidator.OneOfCaseInsensitive(
+									"worker",
+									"http_pull",
+									"notification",
+								),
 							},
 						},
 					},

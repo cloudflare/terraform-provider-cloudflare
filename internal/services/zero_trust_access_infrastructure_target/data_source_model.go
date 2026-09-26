@@ -24,6 +24,7 @@ type ZeroTrustAccessInfrastructureTargetDataSourceModel struct {
 	CreatedAt  timetypes.RFC3339                                                              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Hostname   types.String                                                                   `tfsdk:"hostname" json:"hostname,computed"`
 	ModifiedAt timetypes.RFC3339                                                              `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
+	Tags       customfield.Map[types.String]                                                  `tfsdk:"tags" json:"tags,computed"`
 	IP         customfield.NestedObject[ZeroTrustAccessInfrastructureTargetIPDataSourceModel] `tfsdk:"ip" json:"ip,computed"`
 	Filter     *ZeroTrustAccessInfrastructureTargetFindOneByDataSourceModel                   `tfsdk:"filter"`
 }
@@ -41,6 +42,12 @@ func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toListParams(_ cont
 	if m.Filter.IPs != nil {
 		for _, item := range *m.Filter.IPs {
 			mFilterIPs = append(mFilterIPs, item.ValueString())
+		}
+	}
+	mFilterTag := []string{}
+	if m.Filter.Tag != nil {
+		for _, item := range *m.Filter.Tag {
+			mFilterTag = append(mFilterTag, item.ValueString())
 		}
 	}
 	mFilterTargetIDs := []string{}
@@ -61,6 +68,7 @@ func (m *ZeroTrustAccessInfrastructureTargetDataSourceModel) toListParams(_ cont
 	params = zero_trust.AccessInfrastructureTargetListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 		IPs:       cloudflare.F(mFilterIPs),
+		Tag:       cloudflare.F(mFilterTag),
 		TargetIDs: cloudflare.F(mFilterTargetIDs),
 	}
 
@@ -148,6 +156,7 @@ type ZeroTrustAccessInfrastructureTargetFindOneByDataSourceModel struct {
 	ModifiedAfter    timetypes.RFC3339 `tfsdk:"modified_after" query:"modified_after,optional" format:"date-time"`
 	ModifiedBefore   timetypes.RFC3339 `tfsdk:"modified_before" query:"modified_before,optional" format:"date-time"`
 	Order            types.String      `tfsdk:"order" query:"order,optional"`
+	Tag              *[]types.String   `tfsdk:"tag" query:"tag,optional"`
 	TargetIDs        *[]types.String   `tfsdk:"target_ids" query:"target_ids,optional"`
 	VirtualNetworkID types.String      `tfsdk:"virtual_network_id" query:"virtual_network_id,optional"`
 }

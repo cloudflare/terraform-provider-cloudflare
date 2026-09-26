@@ -98,6 +98,7 @@ type TargetConfigModel struct {
 	ConditionalAccessEnabled types.Bool                      `tfsdk:"conditional_access_enabled"`
 	DirectoryID              types.String                    `tfsdk:"directory_id"`
 	EmailClaimName           types.String                    `tfsdk:"email_claim_name"`
+	UseLoginHint             types.Bool                      `tfsdk:"use_login_hint"`
 	Prompt                   types.String                    `tfsdk:"prompt"`
 	SupportGroups            types.Bool                      `tfsdk:"support_groups"`
 	CentrifyAccount          types.String                    `tfsdk:"centrify_account"`

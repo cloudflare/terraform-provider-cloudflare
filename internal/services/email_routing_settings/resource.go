@@ -64,19 +64,13 @@ func (r *EmailRoutingSettingsResource) Create(ctx context.Context, req resource.
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
 	res := new(http.Response)
 	env := EmailRoutingSettingsResultEnvelope{*data}
-	_, err = r.client.EmailRouting.Enable(
+	_, err := r.client.EmailRouting.Enable(
 		ctx,
 		email_routing.EmailRoutingEnableParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
-		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

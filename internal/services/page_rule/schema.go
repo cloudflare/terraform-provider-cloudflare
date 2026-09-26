@@ -28,7 +28,6 @@ var _ resource.ResourceWithConfigValidators = (*PageRuleResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Access: Apps and Policies Read",
@@ -69,6 +68,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Zone Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -273,7 +273,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional: true,
 						Validators: []validator.Int64{
 							int64validator.AtLeast(0),
-							int64validator.AtMost(2419200),
+							int64validator.AtMost(31536000),
 						},
 					},
 					"email_obfuscation": schema.StringAttribute{

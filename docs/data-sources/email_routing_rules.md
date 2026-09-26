@@ -55,7 +55,7 @@ Read-Only:
 
 - `type` (String) Type of supported action.
 Available values: "drop", "forward", "worker".
-- `value` (List of String)
+- `value` (List of String) List of values for the action. Currently limited to a single value.
 
 
 <a id="nestedatt--result--matchers"></a>

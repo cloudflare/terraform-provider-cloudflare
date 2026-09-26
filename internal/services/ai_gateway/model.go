@@ -21,22 +21,23 @@ type AIGatewayModel struct {
 	CollectLogs             types.Bool                                          `tfsdk:"collect_logs" json:"collect_logs,required"`
 	RateLimitingInterval    types.Int64                                         `tfsdk:"rate_limiting_interval" json:"rate_limiting_interval,required"`
 	RateLimitingLimit       types.Int64                                         `tfsdk:"rate_limiting_limit" json:"rate_limiting_limit,required"`
-	Authentication          types.Bool                                          `tfsdk:"authentication" json:"authentication,optional"`
-	LogClassification       types.Bool                                          `tfsdk:"log_classification" json:"log_classification,optional"`
-	LogManagement           types.Int64                                         `tfsdk:"log_management" json:"log_management,optional"`
-	LogManagementStrategy   types.String                                        `tfsdk:"log_management_strategy" json:"log_management_strategy,optional"`
-	Logpush                 types.Bool                                          `tfsdk:"logpush" json:"logpush,optional"`
 	LogpushPublicKey        types.String                                        `tfsdk:"logpush_public_key" json:"logpush_public_key,optional"`
 	RateLimitingTechnique   types.String                                        `tfsdk:"rate_limiting_technique" json:"rate_limiting_technique,optional"`
 	RetryBackoff            types.String                                        `tfsdk:"retry_backoff" json:"retry_backoff,optional"`
 	RetryDelay              types.Int64                                         `tfsdk:"retry_delay" json:"retry_delay,optional"`
 	RetryMaxAttempts        types.Int64                                         `tfsdk:"retry_max_attempts" json:"retry_max_attempts,optional"`
-	StoreID                 types.String                                        `tfsdk:"store_id" json:"store_id,optional"`
-	Zdr                     types.Bool                                          `tfsdk:"zdr" json:"zdr,optional"`
 	DLP                     *AIGatewayDLPModel                                  `tfsdk:"dlp" json:"dlp,optional"`
 	Guardrails              *AIGatewayGuardrailsModel                           `tfsdk:"guardrails" json:"guardrails,optional"`
 	Stripe                  *AIGatewayStripeModel                               `tfsdk:"stripe" json:"stripe,optional"`
+	Authentication          types.Bool                                          `tfsdk:"authentication" json:"authentication,computed_optional"`
+	ByokOnly                types.Bool                                          `tfsdk:"byok_only" json:"byok_only,computed_optional"`
+	LogClassification       types.Bool                                          `tfsdk:"log_classification" json:"log_classification,computed_optional"`
+	LogManagement           types.Int64                                         `tfsdk:"log_management" json:"log_management,computed_optional"`
+	LogManagementStrategy   types.String                                        `tfsdk:"log_management_strategy" json:"log_management_strategy,computed_optional"`
+	Logpush                 types.Bool                                          `tfsdk:"logpush" json:"logpush,computed_optional"`
+	StoreID                 types.String                                        `tfsdk:"store_id" json:"store_id,computed_optional"`
 	WorkersAIBillingMode    types.String                                        `tfsdk:"workers_ai_billing_mode" json:"workers_ai_billing_mode,computed_optional"`
+	Zdr                     types.Bool                                          `tfsdk:"zdr" json:"zdr,computed_optional"`
 	Otel                    customfield.NestedObjectList[AIGatewayOtelModel]    `tfsdk:"otel" json:"otel,computed_optional"`
 	SpendLimits             customfield.NestedObject[AIGatewaySpendLimitsModel] `tfsdk:"spend_limits" json:"spend_limits,computed_optional"`
 	CreatedAt               timetypes.RFC3339                                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

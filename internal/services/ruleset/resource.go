@@ -402,10 +402,9 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
 }
 
-// transformQueryStringJSON transforms query_string.include from API format to schema format in raw JSON
-// The Cloudflare API returns include as a direct array, but the v5 schema expects it wrapped in an object
-// API format: { "include": ["param1", "param2"] }
-// Schema format: { "include": { "list": ["param1", "param2"] } }
+// transformQueryStringJSON transforms query_string include and exclude values from
+// API format to the v5 schema format in raw JSON. The API returns direct arrays,
+// and legacy all-values semantics as the string "*".
 func transformQueryStringJSON(jsonBytes []byte) []byte {
 	jsonStr := string(jsonBytes)
 	parsed := gjson.Parse(jsonStr)
@@ -424,7 +423,10 @@ func transformQueryStringJSON(jsonBytes []byte) []byte {
 		includePath := rulePath + ".action_parameters.cache_key.custom_key.query_string.include"
 		includeValue := gjson.Get(jsonStr, includePath)
 
-		if includeValue.Exists() && includeValue.IsArray() {
+		if includeValue.Exists() && includeValue.Type == gjson.String && includeValue.String() == "*" {
+			jsonStr, _ = sjson.Set(jsonStr, includePath, map[string]interface{}{"all": true})
+			modified = true
+		} else if includeValue.Exists() && includeValue.IsArray() {
 			// Transform array to object with "list" field
 			// Check if it's a wildcard case: ["*"]
 			if len(includeValue.Array()) == 1 && includeValue.Array()[0].String() == "*" {
@@ -448,7 +450,11 @@ func transformQueryStringJSON(jsonBytes []byte) []byte {
 		excludePath := rulePath + ".action_parameters.cache_key.custom_key.query_string.exclude"
 		excludeValue := gjson.Get(jsonStr, excludePath)
 
-		if excludeValue.Exists() && excludeValue.IsArray() {
+		if excludeValue.Exists() && excludeValue.Type == gjson.String && excludeValue.String() == "*" {
+			jsonStr, _ = sjson.Set(jsonStr, excludePath, map[string]interface{}{"all": true})
+			modified = true
+		} else if excludeValue.Exists() && excludeValue.IsArray() {
+			// The legacy API uses the string "*" for all; array values are literal lists.
 			// Convert ["item1", "item2"] to { "list": ["item1", "item2"] }
 			newExclude := map[string]interface{}{
 				"list": excludeValue.Value(),

@@ -68,6 +68,8 @@ type TargetDefaultProfileModel struct {
 	GatewayUniqueID            types.String                                                             `tfsdk:"gateway_unique_id"`
 	PolicyID                   types.String                                                             `tfsdk:"policy_id"`
 	FallbackDomains            customfield.NestedObjectList[TargetDefaultProfileFallbackDomainsModel]   `tfsdk:"fallback_domains"`
+	ProfileType                types.String                                                             `tfsdk:"profile_type"`
+	UninstallProtection        types.Bool                                                               `tfsdk:"uninstall_protection"`
 }
 
 type TargetDefaultProfileExcludeModel struct {

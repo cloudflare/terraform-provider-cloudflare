@@ -90,6 +90,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"script_deleted": schema.BoolAttribute{
+							Description: "Whether the bound Worker was deleted, leaving this Workflow inactive.",
+							Computed:    true,
+						},
 					},
 				},
 			},

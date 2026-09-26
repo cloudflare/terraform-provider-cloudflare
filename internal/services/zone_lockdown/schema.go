@@ -23,13 +23,13 @@ var _ resource.ResourceWithConfigValidators = (*ZoneLockdownResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Firewall Services Read",
 				"Firewall Services Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The unique identifier of the Zone Lockdown rule.",
@@ -58,7 +58,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplaceIfConfigured()},
 				Default:       booldefault.StaticBool(false),
 			},
-			"urls": schema.ListAttribute{
+			"urls": schema.SetAttribute{
 				Description: "The URLs to include in the current WAF override. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.",
 				Required:    true,
 				ElementType: types.StringType,
@@ -82,11 +82,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			// NOTE: intentionally has no UseNonNullStateForUnknown plan modifier.
+			// Despite the name, the zone lockdown API mutates created_on on every
+			// update, so the prior state value must not be copied into the plan --
+			// doing so yields "Provider produced inconsistent result after apply".
+			// Planning this as unknown lets Update write back whatever the API
+			// returns. Do not re-add the plan modifier during codegen.
 			"created_on": schema.StringAttribute{
-				Description:   "The timestamp of when the rule was created.",
-				Computed:      true,
-				CustomType:    timetypes.RFC3339Type{},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+				Description: "The timestamp of when the rule was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "The timestamp of when the rule was last modified.",

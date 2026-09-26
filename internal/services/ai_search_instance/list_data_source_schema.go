@@ -247,6 +247,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										stringvalidator.OneOfCaseInsensitive("porter", "trigram"),
 									},
 								},
+								"use_ocr": schema.BoolAttribute{
+									Computed: true,
+								},
 							},
 						},
 						"last_activity": schema.StringAttribute{

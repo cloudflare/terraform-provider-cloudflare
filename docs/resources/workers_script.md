@@ -106,6 +106,9 @@ resource "cloudflare_workers_script" "example_workers_script" {
     observability = {
       enabled = true
       head_sampling_rate = 0.1
+      issues = {
+        enabled = true
+      }
       logs = {
         enabled = true
         invocation_logs = true
@@ -170,6 +173,7 @@ value for a single entrypoint. (see [below for nested schema](#nestedatt--cache_
 - `content_type` (String) Content-Type of the Worker. Required if uploading a non-JavaScript Worker (e.g. "text/x-python").
 - `exports` (Attributes Map) Per-entrypoint export configuration. Keys are the export names; values describe the entrypoint's kind and per-entrypoint cache behavior. (see [below for nested schema](#nestedatt--exports))
 - `files` (Attributes Map) Additional modules and data files to include in the multipart Worker upload. Map keys are multipart part names referenced by binding `part` values and module imports. (see [below for nested schema](#nestedatt--files))
+- `force` (Boolean) If true, delete the Worker even when other Workers still reference it. Service bindings in those Workers may be left broken. Durable Object namespaces implemented by the deleted Worker are deleted even if other Workers reference them.
 - `keep_assets` (Boolean) Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token. An explicit `assets` upload takes precedence over `keep_assets`.
 - `keep_bindings` (Set of String) List of binding types to keep from previous_upload.
 - `limits` (Attributes) Limits to apply for this Worker. (see [below for nested schema](#nestedatt--limits))

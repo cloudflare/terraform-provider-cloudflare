@@ -18,9 +18,10 @@ Accepted Permissions
 resource "cloudflare_logpush_job" "example_logpush_job" {
   destination_conf = "s3://mybucket/logs?region=us-west-2"
   zone_id = "zone_id"
-  dataset = "gateway_dns"
+  dataset = "http_requests"
   enabled = false
   filter = "{\"where\":{\"and\":[{\"key\":\"ClientRequestPath\",\"operator\":\"contains\",\"value\":\"/static\"},{\"key\":\"ClientRequestHost\",\"operator\":\"eq\",\"value\":\"example.com\"}]}}"
+  filter_attack_traffic = true
   frequency = "high"
   kind = ""
   logpull_options = "fields=RayID,ClientIP,EdgeStartTimestamp&timestamps=rfc3339"
@@ -29,19 +30,16 @@ resource "cloudflare_logpush_job" "example_logpush_job" {
   max_upload_records = 1000
   name = "example.com"
   output_options = {
-    batch_prefix = ""
-    batch_suffix = ""
-    cve_2021_44228 = false
-    field_delimiter = ","
-    field_names = ["Datetime", "DstIP", "SrcIP"]
+    batch_prefix = "batch_prefix"
+    batch_suffix = "batch_suffix"
+    cve_2021_44228 = true
+    field_delimiter = "field_delimiter"
+    field_names = ["ClientIP", "EdgeStartTimestamp", "RayID"]
     merge_subrequests = true
     output_type = "ndjson"
-    record_delimiter = ""
-    record_prefix = "{"
-    record_suffix = <<EOT
-    }
-
-    EOT
+    record_delimiter = "record_delimiter"
+    record_prefix = "record_prefix"
+    record_suffix = "record_suffix"
     record_template = "record_template"
     sample_rate = 1
     timestamp_format = "unixnano"
@@ -64,6 +62,7 @@ resource "cloudflare_logpush_job" "example_logpush_job" {
 Available values: "access_requests", "account_abuse_protection_events", "audit_logs", "audit_logs_v2", "biso_user_actions", "casb_findings", "device_posture_results", "dex_application_tests", "dex_device_state_events", "dlp_forensic_copies", "dns_firewall_logs", "dns_logs", "email_security_alerts", "email_security_post_delivery_events", "firewall_events", "gateway_dns", "gateway_http", "gateway_network", "http_requests", "ipsec_logs", "magic_bgp_logs", "magic_ids_detections", "mcp_portal_logs", "mnm_flow_logs", "nel_reports", "network_analytics_logs", "page_shield_events", "sinkhole_http_logs", "spectrum_events", "ssh_logs", "turnstile_events", "warp_config_changes", "warp_toggle_changes", "websocket_analytics", "workers_trace_events", "zaraz_events", "zero_trust_network_sessions".
 - `enabled` (Boolean) Flag that indicates if the job is enabled.
 - `filter` (String) The filters to select the events to include and/or remove from your logs. For more information, refer to [Filters](https://developers.cloudflare.com/logs/reference/filters/).
+- `filter_attack_traffic` (Boolean) When true, excludes DDoS attack traffic from logs. This option is supported for the `http_requests`, `firewall_events`, and `network_analytics_logs` datasets.
 - `frequency` (String, Deprecated) This field is deprecated. Please use `max_upload_*` parameters instead. . The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.
 Available values: "high", "low".
 - `kind` (String) The kind parameter (optional) is used to differentiate between Logpush and Edge Log Delivery jobs (when supported by the dataset).
@@ -101,7 +100,7 @@ Available values: "ndjson", "csv".
 - `record_prefix` (String) String to be prepended before each record.
 - `record_suffix` (String) String to be appended after each record.
 - `record_template` (String) String to use as template for each record instead of the default json key value mapping. All fields used in the template must be present in `field_names` as well, otherwise they will end up as null. Format as a Go `text/template` without any standard functions, like conditionals, loops, sub-templates, etc.
-- `sample_rate` (Number) Floating number to specify sampling rate. Sampling is applied on top of filtering, and regardless of the current `sample_interval` of the data.
+- `sample_rate` (Number) Specifies the sampling rate as a floating number greater than 0 and at most 1. Sampling is applied on top of filtering, and regardless of the current `sample_interval` of the data.
 - `timestamp_format` (String) String to specify the format for timestamps, such as `unixnano`, `unix`, `rfc3339`, `rfc3339ms` or `rfc3339ns`.
 Available values: "unixnano", "unix", "rfc3339", "rfc3339ms", "rfc3339ns".
 

@@ -21,7 +21,6 @@ var _ resource.ResourceWithConfigValidators = (*TokenValidationConfigResource)(n
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Account API Gateway",
@@ -30,6 +29,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Domain API Gateway Read",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID.",

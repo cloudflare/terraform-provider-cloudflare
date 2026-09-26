@@ -16,9 +16,9 @@ type ZeroTrustResourceLibraryApplicationResultEnvelope struct {
 type ZeroTrustResourceLibraryApplicationModel struct {
 	ID                          types.Int64                   `tfsdk:"id" json:"id,computed"`
 	AccountID                   types.String                  `tfsdk:"account_id" path:"account_id,required"`
-	CategoryID                  types.Int64                   `tfsdk:"category_id" json:"category_id,required"`
-	HumanID                     types.String                  `tfsdk:"human_id" json:"human_id,required"`
-	Name                        types.String                  `tfsdk:"name" json:"name,required"`
+	CategoryID                  types.Int64                   `tfsdk:"category_id" json:"category_id,optional"`
+	HumanID                     types.String                  `tfsdk:"human_id" json:"human_id,optional"`
+	Name                        types.String                  `tfsdk:"name" json:"name,optional"`
 	Hostnames                   *[]types.String               `tfsdk:"hostnames" json:"hostnames,optional"`
 	IPSubnets                   *[]types.String               `tfsdk:"ip_subnets" json:"ip_subnets,optional"`
 	PortProtocols               *[]types.String               `tfsdk:"port_protocols" json:"port_protocols,optional"`

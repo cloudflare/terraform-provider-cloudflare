@@ -22,6 +22,7 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
   }
   indexing_options = {
     keyword_tokenizer = "porter"
+    use_ocr = true
   }
   max_num_results = 1
   metadata = {

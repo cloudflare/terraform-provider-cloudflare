@@ -19,7 +19,7 @@ type ZeroTrustGatewayPolicyResultDataSourceEnvelope struct {
 
 type ZeroTrustGatewayPolicyDataSourceModel struct {
 	ID            types.String                                                                `tfsdk:"id" path:"rule_id,computed"`
-	RuleID        types.String                                                                `tfsdk:"rule_id" path:"rule_id,required"`
+	RuleID        types.String                                                                `tfsdk:"rule_id" path:"rule_id,optional"`
 	AccountID     types.String                                                                `tfsdk:"account_id" path:"account_id,optional"`
 	Action        types.String                                                                `tfsdk:"action" json:"action,computed"`
 	CreatedAt     timetypes.RFC3339                                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -41,11 +41,38 @@ type ZeroTrustGatewayPolicyDataSourceModel struct {
 	Expiration    customfield.NestedObject[ZeroTrustGatewayPolicyExpirationDataSourceModel]   `tfsdk:"expiration" json:"expiration,computed"`
 	RuleSettings  customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsDataSourceModel] `tfsdk:"rule_settings" json:"rule_settings,computed"`
 	Schedule      customfield.NestedObject[ZeroTrustGatewayPolicyScheduleDataSourceModel]     `tfsdk:"schedule" json:"schedule,computed"`
+	Filter        *ZeroTrustGatewayPolicyFindOneByDataSourceModel                             `tfsdk:"filter"`
 }
 
 func (m *ZeroTrustGatewayPolicyDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayRuleGetParams, diags diag.Diagnostics) {
 	params = zero_trust.GatewayRuleGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *ZeroTrustGatewayPolicyDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayRuleListParams, diags diag.Diagnostics) {
+	mFilterFilter := []string{}
+	if m.Filter.Filter != nil {
+		for _, item := range *m.Filter.Filter {
+			mFilterFilter = append(mFilterFilter, item.ValueString())
+		}
+	}
+
+	params = zero_trust.GatewayRuleListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+		Filter:    cloudflare.F(mFilterFilter),
+	}
+
+	if !m.Filter.Direction.IsNull() {
+		params.Direction = cloudflare.F(zero_trust.GatewayRuleListParamsDirection(m.Filter.Direction.ValueString()))
+	}
+	if !m.Filter.OrderBy.IsNull() {
+		params.OrderBy = cloudflare.F(zero_trust.GatewayRuleListParamsOrderBy(m.Filter.OrderBy.ValueString()))
+	}
+	if !m.Filter.Search.IsNull() {
+		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}
 
 	return
@@ -191,4 +218,11 @@ type ZeroTrustGatewayPolicyScheduleDataSourceModel struct {
 	TimeZone types.String `tfsdk:"time_zone" json:"time_zone,computed"`
 	Tue      types.String `tfsdk:"tue" json:"tue,computed"`
 	Wed      types.String `tfsdk:"wed" json:"wed,computed"`
+}
+
+type ZeroTrustGatewayPolicyFindOneByDataSourceModel struct {
+	Direction types.String    `tfsdk:"direction" query:"direction,optional"`
+	Filter    *[]types.String `tfsdk:"filter" query:"filter,optional"`
+	OrderBy   types.String    `tfsdk:"order_by" query:"order_by,optional"`
+	Search    types.String    `tfsdk:"search" query:"search,optional"`
 }

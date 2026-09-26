@@ -87,6 +87,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_impersonation_registry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_trusted_domains"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_sending_subdomain"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/field_extractor"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/filter"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/firewall_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/flagship_app"
@@ -120,6 +121,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_transit_site_acl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_transit_site_lan"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_transit_site_wan"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_bgp_filter_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_gre_tunnel"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_ipsec_tunnel"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_static_route"
@@ -235,6 +237,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_service_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_short_lived_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_tag"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_casb_policy"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_casb_webhook"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_connectivity_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_custom_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_custom_profile_local_domain_fallback"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_default_profile"
@@ -300,6 +305,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_subscription"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_tracing"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_tracing_rules"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -439,9 +446,11 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		PluginVersion:   pluginVersion,
 	}
 
-	if !data.UserAgentOperatorSuffix.IsNull() {
-		operatorSuffix := data.UserAgentOperatorSuffix.String()
+	if !data.UserAgentOperatorSuffix.IsNull() && !data.UserAgentOperatorSuffix.IsUnknown() {
+		operatorSuffix := data.UserAgentOperatorSuffix.ValueString()
 		userAgentParams.OperatorSuffix = &operatorSuffix
+	} else if o, ok := os.LookupEnv(consts.UserAgentOperatorSuffixEnvVarKey); ok {
+		userAgentParams.OperatorSuffix = &o
 	} else {
 		userAgentParams.TerraformVersion = &req.TerraformVersion
 	}
@@ -478,6 +487,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		user.NewResource,
 		api_token.NewResource,
 		zone.NewResource,
+		zone_tracing.NewResource,
+		zone_tracing_rules.NewResource,
 		zone_setting.NewResource,
 		nel_setting.NewResource,
 		zone_hold.NewResource,
@@ -581,6 +592,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		magic_wan_gre_tunnel.NewResource,
 		magic_wan_ipsec_tunnel.NewResource,
 		magic_wan_static_route.NewResource,
+		magic_wan_bgp_filter_profile.NewResource,
 		magic_transit_site.NewResource,
 		magic_transit_site_acl.NewResource,
 		magic_transit_site_lan.NewResource,
@@ -642,11 +654,14 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_access_custom_page.NewResource,
 		zero_trust_access_tag.NewResource,
 		zero_trust_access_policy.NewResource,
+		zero_trust_casb_policy.NewResource,
+		zero_trust_casb_webhook.NewResource,
 		zero_trust_dex_rule.NewResource,
 		zero_trust_tunnel_cloudflared.NewResource,
 		zero_trust_tunnel_cloudflared_config.NewResource,
 		zero_trust_tunnel_warp_connector.NewResource,
 		zero_trust_tunnel_warp_connector_config.NewResource,
+		zero_trust_connectivity_settings.NewResource,
 		zero_trust_dlp_dataset.NewResource,
 		zero_trust_dlp_settings.NewResource,
 		zero_trust_dlp_custom_profile.NewResource,
@@ -732,6 +747,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		schema_validation_operation_settings.NewResource,
 		token_validation_config.NewResource,
 		token_validation_rules.NewResource,
+		field_extractor.NewResource,
 	}
 }
 
@@ -760,6 +776,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		api_token_permission_groups.NewAPITokenPermissionGroupsListDataSource,
 		zone.NewZoneDataSource,
 		zone.NewZonesDataSource,
+		zone_tracing.NewZoneTracingDataSource,
+		zone_tracing_rules.NewZoneTracingRulesDataSource,
 		zone_setting.NewZoneSettingDataSource,
 		nel_setting.NewNELSettingDataSource,
 		zone_hold.NewZoneHoldDataSource,
@@ -861,7 +879,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		authenticated_origin_pulls_settings.NewAuthenticatedOriginPullsSettingsDataSource,
 		page_rule.NewPageRuleDataSource,
 		rate_limit.NewRateLimitDataSource,
-		rate_limit.NewRateLimitsDataSource,
 		waiting_room.NewWaitingRoomDataSource,
 		waiting_room.NewWaitingRoomsDataSource,
 		waiting_room_event.NewWaitingRoomEventDataSource,
@@ -881,6 +898,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		workers_script_subdomain.NewWorkersScriptSubdomainDataSource,
 		workers_cron_trigger.NewWorkersCronTriggerDataSource,
 		workers_deployment.NewWorkersDeploymentDataSource,
+		workers_deployment.NewWorkersDeploymentsDataSource,
 		workers_custom_domain.NewWorkersCustomDomainDataSource,
 		workers_custom_domain.NewWorkersCustomDomainsDataSource,
 		workers_kv_namespace.NewWorkersKVNamespaceDataSource,
@@ -927,6 +945,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		magic_wan_gre_tunnel.NewMagicWANGRETunnelDataSource,
 		magic_wan_ipsec_tunnel.NewMagicWANIPSECTunnelDataSource,
 		magic_wan_static_route.NewMagicWANStaticRouteDataSource,
+		magic_wan_bgp_filter_profile.NewMagicWANBGPFilterProfileDataSource,
+		magic_wan_bgp_filter_profile.NewMagicWANBGPFilterProfilesDataSource,
 		magic_transit_site.NewMagicTransitSiteDataSource,
 		magic_transit_site.NewMagicTransitSitesDataSource,
 		magic_transit_site_acl.NewMagicTransitSiteACLDataSource,
@@ -1027,6 +1047,10 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_access_tag.NewZeroTrustAccessTagsDataSource,
 		zero_trust_access_policy.NewZeroTrustAccessPolicyDataSource,
 		zero_trust_access_policy.NewZeroTrustAccessPoliciesDataSource,
+		zero_trust_casb_policy.NewZeroTrustCasbPolicyDataSource,
+		zero_trust_casb_policy.NewZeroTrustCasbPoliciesDataSource,
+		zero_trust_casb_webhook.NewZeroTrustCasbWebhookDataSource,
+		zero_trust_casb_webhook.NewZeroTrustCasbWebhooksDataSource,
 		zero_trust_dex_rule.NewZeroTrustDEXRuleDataSource,
 		zero_trust_dex_rule.NewZeroTrustDEXRulesDataSource,
 		zero_trust_tunnel_cloudflared.NewZeroTrustTunnelCloudflaredDataSource,
@@ -1037,6 +1061,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_warp_connector.NewZeroTrustTunnelWARPConnectorsDataSource,
 		zero_trust_tunnel_warp_connector_token.NewZeroTrustTunnelWARPConnectorTokenDataSource,
 		zero_trust_tunnel_warp_connector_config.NewZeroTrustTunnelWARPConnectorConfigDataSource,
+		zero_trust_connectivity_settings.NewZeroTrustConnectivitySettingsDataSource,
 		zero_trust_dlp_custom_prompt_topic.NewZeroTrustDLPCustomPromptTopicDataSource,
 		zero_trust_dlp_custom_prompt_topic.NewZeroTrustDLPCustomPromptTopicsDataSource,
 		zero_trust_dlp_dataset.NewZeroTrustDLPDatasetDataSource,
@@ -1194,6 +1219,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		token_validation_config.NewTokenValidationConfigsDataSource,
 		token_validation_rules.NewTokenValidationRulesDataSource,
 		token_validation_rules.NewTokenValidationRulesListDataSource,
+		field_extractor.NewFieldExtractorDataSource,
 	}
 }
 

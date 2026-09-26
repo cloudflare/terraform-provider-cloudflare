@@ -27,13 +27,13 @@ var _ resource.ResourceWithConfigValidators = (*StreamResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Stream Read",
 				"Stream Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "The account identifier tag.",
@@ -44,6 +44,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "A Cloudflare-generated unique identifier for a media item.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"direct_user": schema.BoolAttribute{
+				Description: "Provisions a URL to let your end users upload videos directly to Cloudflare Stream without exposing your API token to clients.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"creator": schema.StringAttribute{
 				Description: "A user-defined identifier for the media creator.",

@@ -154,17 +154,19 @@ func (r *CertificateAuthoritiesHostnameAssociationsResource) Read(ctx context.Co
 		return
 	}
 
-	res := new(http.Response)
-	env := CertificateAuthoritiesHostnameAssociationsResultEnvelope{*data}
-	getParams := certificate_authorities.HostnameAssociationGetParams{
+	params := certificate_authorities.HostnameAssociationGetParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 	}
+
 	if !data.MTLSCertificateID.IsNull() && !data.MTLSCertificateID.IsUnknown() {
-		getParams.MTLSCertificateID = cloudflare.F(data.MTLSCertificateID.ValueString())
+		params.MTLSCertificateID = cloudflare.F(data.MTLSCertificateID.ValueString())
 	}
+
+	res := new(http.Response)
+	env := CertificateAuthoritiesHostnameAssociationsResultEnvelope{*data}
 	_, err := r.client.CertificateAuthorities.HostnameAssociations.Get(
 		ctx,
-		getParams,
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

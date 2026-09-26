@@ -16,7 +16,7 @@ import (
 // In v4, rules were defined as repeated blocks. In state, they are stored as a JSON array.
 // Field names are identical between v4 and v5, but v4 did not have computed fields (id, last_updated).
 type SourceSnippetRulesModel struct {
-	ZoneID types.String            `tfsdk:"zone_id"`
+	ZoneID types.String             `tfsdk:"zone_id"`
 	Rules  []SourceSnippetRuleModel `tfsdk:"rules"`
 }
 
@@ -40,9 +40,14 @@ type SourceSnippetRuleModel struct {
 // - Rules uses *[]*TargetSnippetRuleModel (matches SnippetRulesModel.Rules)
 // - last_updated uses timetypes.RFC3339 (matches schema CustomType)
 type TargetSnippetRulesModel struct {
-	ID     types.String               `tfsdk:"id"`
-	ZoneID types.String               `tfsdk:"zone_id"`
-	Rules  *[]*TargetSnippetRuleModel `tfsdk:"rules"`
+	ID          types.String               `tfsdk:"id"`
+	ZoneID      types.String               `tfsdk:"zone_id"`
+	Rules       *[]*TargetSnippetRuleModel `tfsdk:"rules"`
+	Description types.String               `tfsdk:"description"`
+	Enabled     types.Bool                 `tfsdk:"enabled"`
+	Expression  types.String               `tfsdk:"expression"`
+	LastUpdated timetypes.RFC3339          `tfsdk:"last_updated"`
+	SnippetName types.String               `tfsdk:"snippet_name"`
 }
 
 // TargetSnippetRuleModel represents a single rule in the v5 state.

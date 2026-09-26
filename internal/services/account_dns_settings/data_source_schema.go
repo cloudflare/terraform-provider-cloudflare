@@ -34,8 +34,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"zone_defaults": schema.SingleNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectType[AccountDNSSettingsZoneDefaultsDataSourceModel](ctx),
+				Description: "Default settings for new zones created in this account.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[AccountDNSSettingsZoneDefaultsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"flatten_all_cnames": schema.BoolAttribute{
 						Description: "Whether to flatten all CNAME records in the zone. Note that, due to DNS limitations, a CNAME record at the zone apex will always be flattened.",

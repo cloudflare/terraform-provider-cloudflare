@@ -109,6 +109,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "If not null, the job is currently failing. Failures are usually. repetitive (example: no permissions to write to destination bucket). Only the last failure is recorded. On successful execution of a job the error_message and last_error are set to null.",
 				Computed:    true,
 			},
+			"filter_attack_traffic": schema.BoolAttribute{
+				Description: "When true, excludes DDoS attack traffic from logs. This option is supported for the `http_requests`, `firewall_events`, and `network_analytics_logs` datasets.",
+				Computed:    true,
+			},
 			"frequency": schema.StringAttribute{
 				Description:        "This field is deprecated. Please use `max_upload_*` parameters instead. . The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.\nAvailable values: \"high\", \"low\".",
 				Computed:           true,
@@ -210,7 +214,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"sample_rate": schema.Float64Attribute{
-						Description: "Floating number to specify sampling rate. Sampling is applied on top of filtering, and regardless of the current `sample_interval` of the data.",
+						Description: "Specifies the sampling rate as a floating number greater than 0 and at most 1. Sampling is applied on top of filtering, and regardless of the current `sample_interval` of the data.",
 						Computed:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 1),

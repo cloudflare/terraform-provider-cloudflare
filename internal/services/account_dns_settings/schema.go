@@ -21,13 +21,13 @@ var _ resource.ResourceWithConfigValidators = (*AccountDNSSettingsResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Account DNS Settings Read",
 				"Account DNS Settings Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -39,9 +39,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"zone_defaults": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[AccountDNSSettingsZoneDefaultsModel](ctx),
+				Description: "Default settings for new zones created in this account.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[AccountDNSSettingsZoneDefaultsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"flatten_all_cnames": schema.BoolAttribute{
 						Description: "Whether to flatten all CNAME records in the zone. Note that, due to DNS limitations, a CNAME record at the zone apex will always be flattened.",

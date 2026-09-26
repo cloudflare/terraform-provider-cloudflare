@@ -30,11 +30,13 @@ type ZeroTrustDeviceDefaultProfileDataSourceModel struct {
 	ExcludeOfficeIPs           types.Bool                                                                                  `tfsdk:"exclude_office_ips" json:"exclude_office_ips,computed"`
 	GatewayUniqueID            types.String                                                                                `tfsdk:"gateway_unique_id" json:"gateway_unique_id,computed"`
 	PolicyID                   types.String                                                                                `tfsdk:"policy_id" json:"policy_id,computed"`
+	ProfileType                types.String                                                                                `tfsdk:"profile_type" json:"profile_type,computed"`
 	RegisterInterfaceIPWithDNS types.Bool                                                                                  `tfsdk:"register_interface_ip_with_dns" json:"register_interface_ip_with_dns,computed"`
 	SccmVpnBoundarySupport     types.Bool                                                                                  `tfsdk:"sccm_vpn_boundary_support" json:"sccm_vpn_boundary_support,computed"`
 	SupportURL                 types.String                                                                                `tfsdk:"support_url" json:"support_url,computed"`
 	SwitchLocked               types.Bool                                                                                  `tfsdk:"switch_locked" json:"switch_locked,computed"`
 	TunnelProtocol             types.String                                                                                `tfsdk:"tunnel_protocol" json:"tunnel_protocol,computed"`
+	UninstallProtection        types.Bool                                                                                  `tfsdk:"uninstall_protection" json:"uninstall_protection,computed"`
 	DNSSearchSuffixes          customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileDNSSearchSuffixesDataSourceModel] `tfsdk:"dns_search_suffixes" json:"dns_search_suffixes,computed"`
 	Exclude                    customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileExcludeDataSourceModel]           `tfsdk:"exclude" json:"exclude,computed"`
 	FallbackDomains            customfield.NestedObjectList[ZeroTrustDeviceDefaultProfileFallbackDomainsDataSourceModel]   `tfsdk:"fallback_domains" json:"fallback_domains,computed"`
@@ -66,6 +68,14 @@ type ZeroTrustDeviceDefaultProfileFallbackDomainsDataSourceModel struct {
 	Suffix      types.String                   `tfsdk:"suffix" json:"suffix,computed"`
 	Description types.String                   `tfsdk:"description" json:"description,computed"`
 	DNSServer   customfield.List[types.String] `tfsdk:"dns_server" json:"dns_server,computed"`
+}
+
+type ZeroTrustDeviceDefaultProfileGlobalAccelerationDataSourceModel struct {
+	APIEndpoints       customfield.List[types.String] `tfsdk:"api_endpoints" json:"api_endpoints,computed"`
+	Enabled            types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
+	MasqueEndpoints    customfield.List[types.String] `tfsdk:"masque_endpoints" json:"masque_endpoints,computed"`
+	WireguardEndpoints customfield.List[types.String] `tfsdk:"wireguard_endpoints" json:"wireguard_endpoints,computed"`
+	Autoswitch         types.Bool                     `tfsdk:"autoswitch" json:"autoswitch,computed"`
 }
 
 type ZeroTrustDeviceDefaultProfileIncludeDataSourceModel struct {

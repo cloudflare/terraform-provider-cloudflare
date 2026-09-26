@@ -8,7 +8,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/resourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
@@ -23,7 +25,6 @@ var _ resource.ResourceWithConfigValidators = (*CustomSSLResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Access: Mutual TLS Certificates Read",
@@ -32,6 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"SSL and Certificates Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -59,8 +61,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"private_key": schema.StringAttribute{
-				Description:   "The zone's private key.",
-				Required:      true,
+				Description:   "The zone's private key. Not required if custom_csr_id is provided, in which case the private key is retrieved from the CSR record held by Cloudflare.",
+				Optional:      true,
 				Sensitive:     true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -234,5 +236,15 @@ func (r *CustomSSLResource) Schema(ctx context.Context, req resource.SchemaReque
 }
 
 func (r *CustomSSLResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
-	return []resource.ConfigValidator{}
+	return []resource.ConfigValidator{
+		// The API requires a key source: either the private key inline, or a
+		// custom_csr_id identifying a CSR whose key Cloudflare already holds.
+		// Not modelled as ExactlyOneOf because the API does not document the
+		// two as mutually exclusive, only that private_key is unnecessary when
+		// custom_csr_id is supplied.
+		resourcevalidator.AtLeastOneOf(
+			path.MatchRoot("private_key"),
+			path.MatchRoot("custom_csr_id"),
+		),
+	}
 }

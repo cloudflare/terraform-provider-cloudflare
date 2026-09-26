@@ -24,6 +24,34 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Optional: true,
 			},
+			"direction": schema.StringAttribute{
+				Description: "Sort direction. When `order_by` is omitted, this controls the direction\nof the existing precedence ordering. Shared rules remain first in either\ndirection. Accepted values are `asc` and `desc`.\nAvailable values: \"asc\", \"desc\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+				},
+			},
+			"order_by": schema.StringAttribute{
+				Description: "Field to sort the returned rules by. Supported values are `name`,\n`created_at`, `updated_at`, and `precedence`.\nAvailable values: \"name\", \"created_at\", \"updated_at\", \"precedence\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"name",
+						"created_at",
+						"updated_at",
+						"precedence",
+					),
+				},
+			},
+			"search": schema.StringAttribute{
+				Description: "Case-insensitive substring search across rule name and description.",
+				Optional:    true,
+			},
+			"filter": schema.ListAttribute{
+				Description: "Filter the returned rules by one or more `field:value` pairs. Repeat the\nparameter to combine filters with logical AND.\n\nSupported fields are `name`, `id`, `action`, `enabled`, `source_account`,\n`is_shared`, `filters`, and `expression` (max 1024 bytes). The `source_account`\nvalue is matched as a normalized UUID substring. The `filters` value must\nbe one of the rule filter names and matches a member of the rule's `filters`\narray. The `expression` filter performs a case-insensitive literal\nsubstring match across traffic, identity, and device posture expressions.",
+				Optional:    true,
+				ElementType: types.StringType,
+			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,

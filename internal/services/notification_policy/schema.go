@@ -23,7 +23,6 @@ var _ resource.ResourceWithConfigValidators = (*NotificationPolicyResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Account Settings Read",
@@ -33,6 +32,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Zero Trust: PII Read",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID",
@@ -371,6 +371,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"target_zone_name": schema.ListAttribute{
 						Description: "Used for configuring advanced_ddos_attack_l7_alert",
+						Optional:    true,
+						ElementType: types.StringType,
+					},
+					"token_id": schema.ListAttribute{
+						Description: "Access service token IDs to include for expiring_service_token_alert. Omit this property to include all current and future service tokens.",
 						Optional:    true,
 						ElementType: types.StringType,
 					},

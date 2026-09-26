@@ -86,7 +86,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"num_tables": schema.Float64Attribute{
-				Computed: true,
+				Description:        "The number of tables in the D1 database. This count is no longer accurate and should not be relied upon.",
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
 			},
 			"uuid": schema.StringAttribute{
 				Description: "D1 database identifier (UUID).",

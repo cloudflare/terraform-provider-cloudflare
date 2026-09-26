@@ -41,25 +41,31 @@ func (m *WorkersDataSourceModel) toListParams(_ context.Context) (params workers
 }
 
 type WorkersResultDataSourceModel struct {
-	ID            types.String                                                     `tfsdk:"id" json:"id,computed"`
-	CreatedOn     timetypes.RFC3339                                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Logpush       types.Bool                                                       `tfsdk:"logpush" json:"logpush,computed"`
-	Name          types.String                                                     `tfsdk:"name" json:"name,computed"`
-	Observability customfield.NestedObject[WorkersObservabilityDataSourceModel]    `tfsdk:"observability" json:"observability,computed"`
-	References    customfield.NestedObject[WorkersReferencesDataSourceModel]       `tfsdk:"references" json:"references,computed"`
-	Subdomain     customfield.NestedObject[WorkersSubdomainDataSourceModel]        `tfsdk:"subdomain" json:"subdomain,computed"`
-	Tags          customfield.Set[types.String]                                    `tfsdk:"tags" json:"tags,computed"`
-	TailConsumers customfield.NestedObjectSet[WorkersTailConsumersDataSourceModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
-	UpdatedOn     timetypes.RFC3339                                                `tfsdk:"updated_on" json:"updated_on,computed" format:"date-time"`
-	DeployedOn    timetypes.RFC3339                                                `tfsdk:"deployed_on" json:"deployed_on,computed" format:"date-time"`
+	ID                 types.String                                                       `tfsdk:"id" json:"id,computed"`
+	CreatedOn          timetypes.RFC3339                                                  `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Logpush            types.Bool                                                         `tfsdk:"logpush" json:"logpush,computed"`
+	Name               types.String                                                       `tfsdk:"name" json:"name,computed"`
+	Observability      customfield.NestedObject[WorkersObservabilityDataSourceModel]      `tfsdk:"observability" json:"observability,computed"`
+	References         customfield.NestedObject[WorkersReferencesDataSourceModel]         `tfsdk:"references" json:"references,computed"`
+	Subdomain          customfield.NestedObject[WorkersSubdomainDataSourceModel]          `tfsdk:"subdomain" json:"subdomain,computed"`
+	Tags               customfield.Set[types.String]                                      `tfsdk:"tags" json:"tags,computed"`
+	TailConsumers      customfield.NestedObjectSet[WorkersTailConsumersDataSourceModel]   `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
+	UpdatedOn          timetypes.RFC3339                                                  `tfsdk:"updated_on" json:"updated_on,computed" format:"date-time"`
+	DeployedOn         timetypes.RFC3339                                                  `tfsdk:"deployed_on" json:"deployed_on,computed" format:"date-time"`
+	PreviewsBaseConfig customfield.NestedObject[WorkersPreviewsBaseConfigDataSourceModel] `tfsdk:"previews_base_config" json:"previews_base_config,computed"`
 }
 
 type WorkersObservabilityDataSourceModel struct {
 	Enabled           types.Bool                                                          `tfsdk:"enabled" json:"enabled,computed"`
 	HeadSamplingRate  types.Float64                                                       `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Issues            customfield.NestedObject[WorkersObservabilityIssuesDataSourceModel] `tfsdk:"issues" json:"issues,computed"`
 	Logs              customfield.NestedObject[WorkersObservabilityLogsDataSourceModel]   `tfsdk:"logs" json:"logs,computed"`
 	RedactQueryString types.Bool                                                          `tfsdk:"redact_query_string" json:"redact_query_string,computed"`
 	Traces            customfield.NestedObject[WorkersObservabilityTracesDataSourceModel] `tfsdk:"traces" json:"traces,computed"`
+}
+
+type WorkersObservabilityIssuesDataSourceModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 type WorkersObservabilityLogsDataSourceModel struct {
@@ -127,5 +133,76 @@ type WorkersSubdomainDataSourceModel struct {
 }
 
 type WorkersTailConsumersDataSourceModel struct {
+	Name types.String `tfsdk:"name" json:"name,computed"`
+}
+
+type WorkersPreviewsBaseConfigDataSourceModel struct {
+	CacheOptions  customfield.NestedObject[WorkersPreviewsBaseConfigCacheOptionsDataSourceModel]     `tfsdk:"cache_options" json:"cache_options,computed"`
+	Env           customfield.NestedObjectMap[WorkersPreviewsBaseConfigEnvDataSourceModel]           `tfsdk:"env" json:"env,computed"`
+	Limits        customfield.NestedObject[WorkersPreviewsBaseConfigLimitsDataSourceModel]           `tfsdk:"limits" json:"limits,computed"`
+	Logpush       types.Bool                                                                         `tfsdk:"logpush" json:"logpush,computed"`
+	Observability customfield.NestedObject[WorkersPreviewsBaseConfigObservabilityDataSourceModel]    `tfsdk:"observability" json:"observability,computed"`
+	Placement     customfield.NestedObject[WorkersPreviewsBaseConfigPlacementDataSourceModel]        `tfsdk:"placement" json:"placement,computed"`
+	TailConsumers customfield.NestedObjectSet[WorkersPreviewsBaseConfigTailConsumersDataSourceModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
+}
+
+type WorkersPreviewsBaseConfigCacheOptionsDataSourceModel struct {
+	Enabled           types.Bool `tfsdk:"enabled" json:"enabled,computed"`
+	CrossVersionCache types.Bool `tfsdk:"cross_version_cache" json:"cross_version_cache,computed"`
+}
+
+type WorkersPreviewsBaseConfigEnvDataSourceModel struct {
+	Type types.String `tfsdk:"type" json:"type,computed"`
+}
+
+type WorkersPreviewsBaseConfigLimitsDataSourceModel struct {
+	CPUMs       types.Int64 `tfsdk:"cpu_ms" json:"cpu_ms,computed"`
+	Subrequests types.Int64 `tfsdk:"subrequests" json:"subrequests,computed"`
+}
+
+type WorkersPreviewsBaseConfigObservabilityDataSourceModel struct {
+	Enabled           types.Bool                                                                            `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate  types.Float64                                                                         `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Issues            customfield.NestedObject[WorkersPreviewsBaseConfigObservabilityIssuesDataSourceModel] `tfsdk:"issues" json:"issues,computed"`
+	Logs              customfield.NestedObject[WorkersPreviewsBaseConfigObservabilityLogsDataSourceModel]   `tfsdk:"logs" json:"logs,computed"`
+	RedactQueryString types.Bool                                                                            `tfsdk:"redact_query_string" json:"redact_query_string,computed"`
+	Traces            customfield.NestedObject[WorkersPreviewsBaseConfigObservabilityTracesDataSourceModel] `tfsdk:"traces" json:"traces,computed"`
+}
+
+type WorkersPreviewsBaseConfigObservabilityIssuesDataSourceModel struct {
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
+}
+
+type WorkersPreviewsBaseConfigObservabilityLogsDataSourceModel struct {
+	Destinations     customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	Enabled          types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	InvocationLogs   types.Bool                     `tfsdk:"invocation_logs" json:"invocation_logs,computed"`
+	Persist          types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+}
+
+type WorkersPreviewsBaseConfigObservabilityTracesDataSourceModel struct {
+	Destinations      customfield.List[types.String] `tfsdk:"destinations" json:"destinations,computed"`
+	Enabled           types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
+	HeadSamplingRate  types.Float64                  `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
+	Persist           types.Bool                     `tfsdk:"persist" json:"persist,computed"`
+	PropagationPolicy types.String                   `tfsdk:"propagation_policy" json:"propagation_policy,computed"`
+}
+
+type WorkersPreviewsBaseConfigPlacementDataSourceModel struct {
+	Mode     types.String                                                                          `tfsdk:"mode" json:"mode,computed"`
+	Region   types.String                                                                          `tfsdk:"region" json:"region,computed"`
+	Hostname types.String                                                                          `tfsdk:"hostname" json:"hostname,computed"`
+	Host     types.String                                                                          `tfsdk:"host" json:"host,computed"`
+	Target   customfield.NestedObjectList[WorkersPreviewsBaseConfigPlacementTargetDataSourceModel] `tfsdk:"target" json:"target,computed"`
+}
+
+type WorkersPreviewsBaseConfigPlacementTargetDataSourceModel struct {
+	Region   types.String `tfsdk:"region" json:"region,computed"`
+	Hostname types.String `tfsdk:"hostname" json:"hostname,computed"`
+	Host     types.String `tfsdk:"host" json:"host,computed"`
+}
+
+type WorkersPreviewsBaseConfigTailConsumersDataSourceModel struct {
 	Name types.String `tfsdk:"name" json:"name,computed"`
 }

@@ -20,6 +20,7 @@ var (
 )
 
 // Embed test configs
+//
 //go:embed testdata/v4_basic.tf
 var v4BasicConfig string
 
@@ -172,6 +173,13 @@ func TestMigrateLoadBalancerMonitor_V4ToV5_WithHeaders(t *testing.T) {
 		{
 			name:    "from_v5", // Tests within v5 (version bump)
 			version: currentProviderVersion,
+			configFn: func(rnd, accountID, hostname string) string {
+				return fmt.Sprintf(v5WithHeadersConfig, rnd, accountID, hostname)
+			},
+		},
+		{
+			name:    "from_early_v5",
+			version: "5.15.0",
 			configFn: func(rnd, accountID, hostname string) string {
 				return fmt.Sprintf(v5WithHeadersConfig, rnd, accountID, hostname)
 			},

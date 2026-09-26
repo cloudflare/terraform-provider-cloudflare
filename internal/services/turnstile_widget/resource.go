@@ -63,6 +63,30 @@ func (r *TurnstileWidgetResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
+	params := turnstile.WidgetNewParams{
+		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	}
+
+	if !data.Direction.IsNull() && !data.Direction.IsUnknown() {
+		params.Direction = cloudflare.F(turnstile.WidgetNewParamsDirection(data.Direction.ValueString()))
+	}
+
+	if !data.Filter.IsNull() && !data.Filter.IsUnknown() {
+		params.Filter = cloudflare.F(data.Filter.ValueString())
+	}
+
+	if !data.Order.IsNull() && !data.Order.IsUnknown() {
+		params.Order = cloudflare.F(turnstile.WidgetNewParamsOrder(data.Order.ValueString()))
+	}
+
+	if !data.Page.IsNull() && !data.Page.IsUnknown() {
+		params.Page = cloudflare.F(data.Page.ValueFloat64())
+	}
+
+	if !data.PerPage.IsNull() && !data.PerPage.IsUnknown() {
+		params.PerPage = cloudflare.F(data.PerPage.ValueFloat64())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -72,9 +96,7 @@ func (r *TurnstileWidgetResource) Create(ctx context.Context, req resource.Creat
 	env := TurnstileWidgetResultEnvelope{*data}
 	_, err = r.client.Turnstile.Widgets.New(
 		ctx,
-		turnstile.WidgetNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -254,6 +276,12 @@ func (r *TurnstileWidgetResource) ImportState(ctx context.Context, req resource.
 	}
 	data = &env.Result
 	data.ID = data.Sitekey
+	if data.Page.IsNull() {
+		data.Page = types.Float64Value(1)
+	}
+	if data.PerPage.IsNull() {
+		data.PerPage = types.Float64Value(25)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

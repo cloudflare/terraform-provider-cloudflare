@@ -64,6 +64,14 @@ func (r *WorkersDeploymentResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
+	params := workers.ScriptDeploymentNewParams{
+		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	}
+
+	if !data.Force.IsNull() && !data.Force.IsUnknown() {
+		params.Force = cloudflare.F(data.Force.ValueBool())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -74,9 +82,7 @@ func (r *WorkersDeploymentResource) Create(ctx context.Context, req resource.Cre
 	_, err = r.client.Workers.Scripts.Deployments.New(
 		ctx,
 		data.ScriptName.ValueString(),
-		workers.ScriptDeploymentNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

@@ -17,6 +17,7 @@ type DNSRecordResultEnvelope struct {
 type DNSRecordModel struct {
 	ID                types.String                                     `tfsdk:"id" json:"id,computed"`
 	ZoneID            types.String                                     `tfsdk:"zone_id" path:"zone_id,required"`
+	IncludeShadowMetadata types.Bool                                   `tfsdk:"include_shadow_metadata" query:"include_shadow_metadata,computed_optional"`
 	Name              types.String                                     `tfsdk:"name" json:"name,required"`
 	Type              types.String                                     `tfsdk:"type" json:"type,required"`
 	Comment           types.String                                     `tfsdk:"comment" json:"comment,optional"`
@@ -45,8 +46,6 @@ func (m DNSRecordModel) MarshalJSONForUpdate(state DNSRecordModel) (data []byte,
 }
 
 type DNSRecordDataModel struct {
-	Priority      types.Float64                      `tfsdk:"priority" json:"priority,optional"`
-	Target        types.String                       `tfsdk:"target" json:"target,optional"`
 	Flags         customfield.NormalizedDynamicValue `tfsdk:"flags" json:"flags,optional"`
 	Tag           types.String                       `tfsdk:"tag" json:"tag,optional"`
 	Value         types.String                       `tfsdk:"value" json:"value,optional"`
@@ -58,6 +57,8 @@ type DNSRecordDataModel struct {
 	PublicKey     types.String                       `tfsdk:"public_key" json:"public_key,optional"`
 	Digest        types.String                       `tfsdk:"digest" json:"digest,optional"`
 	DigestType    types.Float64                      `tfsdk:"digest_type" json:"digest_type,optional"`
+	Priority      types.Float64                      `tfsdk:"priority" json:"priority,optional"`
+	Target        types.String                       `tfsdk:"target" json:"target,optional"`
 	Altitude      types.Float64                      `tfsdk:"altitude" json:"altitude,optional"`
 	LatDegrees    types.Float64                      `tfsdk:"lat_degrees" json:"lat_degrees,optional"`
 	LatDirection  types.String                       `tfsdk:"lat_direction" json:"lat_direction,optional"`
@@ -89,3 +90,9 @@ type DNSRecordSettingsModel struct {
 	FlattenCNAME types.Bool `tfsdk:"flatten_cname" json:"flatten_cname,computed_optional"`
 }
 
+type DNSRecordMetaModel struct {
+	DeadGlue             types.Bool                     `tfsdk:"dead_glue" json:"dead_glue,computed"`
+	IsGlue               types.Bool                     `tfsdk:"is_glue" json:"is_glue,computed"`
+	ShadowedBy           customfield.List[types.String] `tfsdk:"shadowed_by" json:"shadowed_by,computed"`
+	ShadowedRecordsCount types.Int64                    `tfsdk:"shadowed_records_count" json:"shadowed_records_count,computed"`
+}

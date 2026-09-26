@@ -57,6 +57,40 @@ func (d *FlagshipFlagDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
+	if data.Filter != nil {
+		params, diags := data.toListParams(ctx)
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		env := FlagshipFlagsResultListDataSourceEnvelope{}
+		page, err := d.client.Flagship.Apps.Flags.List(
+			ctx,
+			data.AppID.ValueString(),
+			params,
+		)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
+
+		bytes := []byte(page.JSON.RawJSON())
+		err = apijson.UnmarshalComputed(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
+			return
+		}
+
+		if count := len(env.Result.Elements()); count != 1 {
+			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
+			return
+		}
+		ts, diags := env.Result.AsStructSliceT(ctx)
+		resp.Diagnostics.Append(diags...)
+		data.FlagKey = ts[0].Key
+	}
+
 	params, diags := data.toReadParams(ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -84,6 +118,7 @@ func (d *FlagshipFlagDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.FlagKey
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

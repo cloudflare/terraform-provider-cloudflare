@@ -17,25 +17,27 @@ type ZeroTrustOrganizationResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustOrganizationDataSourceModel struct {
-	AccountID                              types.String                                                                           `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID                                 types.String                                                                           `tfsdk:"zone_id" path:"zone_id,optional"`
-	AllowAuthenticateViaWARP               types.Bool                                                                             `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp,computed"`
-	AuthDomain                             types.String                                                                           `tfsdk:"auth_domain" json:"auth_domain,computed"`
-	AutoRedirectToIdentity                 types.Bool                                                                             `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed"`
-	DenyUnmatchedRequests                  types.Bool                                                                             `tfsdk:"deny_unmatched_requests" json:"deny_unmatched_requests,computed"`
-	IsUIReadOnly                           types.Bool                                                                             `tfsdk:"is_ui_read_only" json:"is_ui_read_only,computed"`
-	MfaRequiredForAllApps                  types.Bool                                                                             `tfsdk:"mfa_required_for_all_apps" json:"mfa_required_for_all_apps,computed"`
-	Name                                   types.String                                                                           `tfsdk:"name" json:"name,computed"`
-	SessionDuration                        types.String                                                                           `tfsdk:"session_duration" json:"session_duration,computed"`
-	UIReadOnlyToggleReason                 types.String                                                                           `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason,computed"`
-	UserSeatExpirationInactiveTime         types.String                                                                           `tfsdk:"user_seat_expiration_inactive_time" json:"user_seat_expiration_inactive_time,computed"`
-	WARPAuthSessionDuration                types.String                                                                           `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration,computed"`
-	DenyUnmatchedRequestsExemptedZoneNames customfield.List[types.String]                                                         `tfsdk:"deny_unmatched_requests_exempted_zone_names" json:"deny_unmatched_requests_exempted_zone_names,computed"`
-	CustomPages                            customfield.NestedObject[ZeroTrustOrganizationCustomPagesDataSourceModel]              `tfsdk:"custom_pages" json:"custom_pages,computed"`
-	LoginDesign                            customfield.NestedObject[ZeroTrustOrganizationLoginDesignDataSourceModel]              `tfsdk:"login_design" json:"login_design,computed"`
-	MfaConfig                              customfield.NestedObject[ZeroTrustOrganizationMfaConfigDataSourceModel]                `tfsdk:"mfa_config" json:"mfa_config,computed"`
+	AccountID                              types.String                                                                         `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID                                 types.String                                                                         `tfsdk:"zone_id" path:"zone_id,optional"`
+	AllowAuthenticateViaWARP               types.Bool                                                                           `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp,computed"`
+	AuthDomain                             types.String                                                                         `tfsdk:"auth_domain" json:"auth_domain,computed"`
+	AutoRedirectToIdentity                 types.Bool                                                                           `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed"`
+	DenyUnmatchedRequests                  types.Bool                                                                           `tfsdk:"deny_unmatched_requests" json:"deny_unmatched_requests,computed"`
+	IsUIReadOnly                           types.Bool                                                                           `tfsdk:"is_ui_read_only" json:"is_ui_read_only,computed"`
+	MfaRequiredForAllApps                  types.Bool                                                                           `tfsdk:"mfa_required_for_all_apps" json:"mfa_required_for_all_apps,computed"`
+	Name                                   types.String                                                                         `tfsdk:"name" json:"name,computed"`
+	SessionDuration                        types.String                                                                         `tfsdk:"session_duration" json:"session_duration,computed"`
+	UIReadOnlyToggleReason                 types.String                                                                         `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason,computed"`
+	UserSeatExpirationInactiveTime         types.String                                                                         `tfsdk:"user_seat_expiration_inactive_time" json:"user_seat_expiration_inactive_time,computed"`
+	WARPAuthSessionDuration                types.String                                                                         `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration,computed"`
+	DenyUnmatchedRequestsExemptedZoneNames customfield.List[types.String]                                                       `tfsdk:"deny_unmatched_requests_exempted_zone_names" json:"deny_unmatched_requests_exempted_zone_names,computed"`
+	TrustedAccounts                        customfield.List[types.String]                                                       `tfsdk:"trusted_accounts" json:"trusted_accounts,computed"`
+	CustomPages                            customfield.NestedObject[ZeroTrustOrganizationCustomPagesDataSourceModel]            `tfsdk:"custom_pages" json:"custom_pages,computed"`
+	LoginDesign                            customfield.NestedObject[ZeroTrustOrganizationLoginDesignDataSourceModel]            `tfsdk:"login_design" json:"login_design,computed"`
+	MfaConfig                              customfield.NestedObject[ZeroTrustOrganizationMfaConfigDataSourceModel]              `tfsdk:"mfa_config" json:"mfa_config,computed"`
 	MfaSSHPivKeyRequirements               customfield.NestedObject[ZeroTrustOrganizationMfaSSHPivKeyRequirementsDataSourceModel] `tfsdk:"mfa_ssh_piv_key_requirements" json:"mfa_ssh_piv_key_requirements,computed"`
-	WarpAuthNonBrowser401                  types.Bool                                                                             `tfsdk:"warp_auth_non_browser_401" json:"warp_auth_non_browser_401,computed"`
+	WarpAuthNonBrowser401                  types.Bool  `tfsdk:"warp_auth_non_browser_401" json:"warp_auth_non_browser_401,computed"`
+	ServiceTokenInactivity                 customfield.NestedObject[ZeroTrustOrganizationServiceTokenInactivityDataSourceModel] `tfsdk:"service_token_inactivity" json:"service_token_inactivity,computed"`
 }
 
 func (m *ZeroTrustOrganizationDataSourceModel) toReadParams(_ context.Context) (params zero_trust.OrganizationListParams, diags diag.Diagnostics) {
@@ -76,4 +78,10 @@ type ZeroTrustOrganizationMfaSSHPivKeyRequirementsDataSourceModel struct {
 	SSHKeySize        customfield.List[types.Int64]  `tfsdk:"ssh_key_size" json:"ssh_key_size,computed"`
 	SSHKeyType        customfield.List[types.String] `tfsdk:"ssh_key_type" json:"ssh_key_type,computed"`
 	TouchPolicy       types.String                   `tfsdk:"touch_policy" json:"touch_policy,computed"`
+}
+
+type ZeroTrustOrganizationServiceTokenInactivityDataSourceModel struct {
+	Action                  types.String `tfsdk:"action" json:"action,computed"`
+	Enabled                 types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
+	InactivityThresholdDays types.Int64  `tfsdk:"inactivity_threshold_days" json:"inactivity_threshold_days,computed"`
 }

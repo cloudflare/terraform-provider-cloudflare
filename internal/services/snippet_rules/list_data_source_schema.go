@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -17,9 +18,15 @@ var _ datasource.DataSourceWithConfigValidators = (*SnippetRulesListDataSource)(
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Snippets Read",
+				"Snippets Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
-				Description: "The unique ID of the zone.",
+				Description: "Use this field to specify the unique ID of the zone.",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -36,28 +43,28 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "The unique ID of the rule.",
+							Description: "Specify the unique ID of the rule.",
 							Computed:    true,
 						},
 						"expression": schema.StringAttribute{
-							Description: "The expression defining which traffic will match the rule.",
+							Description: "Define the expression that determines which traffic matches the rule.",
 							Computed:    true,
 						},
 						"last_updated": schema.StringAttribute{
-							Description: "The timestamp of when the rule was last modified.",
+							Description: "Specify the timestamp of when the rule was last modified.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
 						"snippet_name": schema.StringAttribute{
-							Description: "The identifying name of the snippet.",
+							Description: "Identify the snippet.",
 							Computed:    true,
 						},
 						"description": schema.StringAttribute{
-							Description: "An informative description of the rule.",
+							Description: "Provide an informative description of the rule.",
 							Computed:    true,
 						},
 						"enabled": schema.BoolAttribute{
-							Description: "Whether the rule should be executed.",
+							Description: "Indicate whether to execute the rule.",
 							Computed:    true,
 						},
 					},

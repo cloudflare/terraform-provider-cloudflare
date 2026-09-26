@@ -1,6 +1,7 @@
 package v500
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -64,6 +65,8 @@ type TargetZeroTrustOrganizationModel struct {
 	LoginDesign                            *TargetLoginDesignModel              `tfsdk:"login_design"`
 	MfaConfig                              *TargetMfaConfigModel                `tfsdk:"mfa_config"`
 	MfaSSHPivKeyRequirements               *TargetMfaSSHPivKeyRequirementsModel `tfsdk:"mfa_ssh_piv_key_requirements"`
+	ServiceTokenInactivity                 *TargetServiceTokenInactivityModel   `tfsdk:"service_token_inactivity"`
+	TrustedAccounts                        customfield.List[types.String]       `tfsdk:"trusted_accounts"`
 	AllowAuthenticateViaWARP               types.Bool                           `tfsdk:"allow_authenticate_via_warp"`
 	AutoRedirectToIdentity                 types.Bool                           `tfsdk:"auto_redirect_to_identity"`
 	IsUIReadOnly                           types.Bool                           `tfsdk:"is_ui_read_only"`
@@ -97,6 +100,14 @@ type TargetMfaConfigModel struct {
 	AmrMatchingSessionDuration types.String    `tfsdk:"amr_matching_session_duration"`
 	RequiredAaguids            types.String    `tfsdk:"required_aaguids"`
 	SessionDuration            types.String    `tfsdk:"session_duration"`
+}
+
+// TargetServiceTokenInactivityModel represents the service_token_inactivity nested structure in v5.
+// This is a new field in v5, not present in v4.
+type TargetServiceTokenInactivityModel struct {
+	Action                  types.String `tfsdk:"action"`
+	Enabled                 types.Bool   `tfsdk:"enabled"`
+	InactivityThresholdDays types.Int64  `tfsdk:"inactivity_threshold_days"`
 }
 
 // TargetMfaSSHPivKeyRequirementsModel represents the mfa_ssh_piv_key_requirements nested structure in v5.

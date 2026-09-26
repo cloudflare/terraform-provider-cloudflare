@@ -19,7 +19,7 @@ type ZeroTrustDNSLocationResultDataSourceEnvelope struct {
 
 type ZeroTrustDNSLocationDataSourceModel struct {
 	ID                        types.String                                                              `tfsdk:"id" path:"location_id,computed"`
-	LocationID                types.String                                                              `tfsdk:"location_id" path:"location_id,required"`
+	LocationID                types.String                                                              `tfsdk:"location_id" path:"location_id,optional"`
 	AccountID                 types.String                                                              `tfsdk:"account_id" path:"account_id,optional"`
 	ClientDefault             types.Bool                                                                `tfsdk:"client_default" json:"client_default,computed"`
 	CreatedAt                 timetypes.RFC3339                                                         `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -35,11 +35,38 @@ type ZeroTrustDNSLocationDataSourceModel struct {
 	Endpoints                 customfield.NestedObject[ZeroTrustDNSLocationEndpointsDataSourceModel]    `tfsdk:"endpoints" json:"endpoints,computed"`
 	MaxTTL                    customfield.NestedObject[ZeroTrustDNSLocationMaxTTLDataSourceModel]       `tfsdk:"max_ttl" json:"max_ttl,computed"`
 	Networks                  customfield.NestedObjectList[ZeroTrustDNSLocationNetworksDataSourceModel] `tfsdk:"networks" json:"networks,computed"`
+	Filter                    *ZeroTrustDNSLocationFindOneByDataSourceModel                             `tfsdk:"filter"`
 }
 
 func (m *ZeroTrustDNSLocationDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayLocationGetParams, diags diag.Diagnostics) {
 	params = zero_trust.GatewayLocationGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *ZeroTrustDNSLocationDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayLocationListParams, diags diag.Diagnostics) {
+	mFilterFilter := []string{}
+	if m.Filter.Filter != nil {
+		for _, item := range *m.Filter.Filter {
+			mFilterFilter = append(mFilterFilter, item.ValueString())
+		}
+	}
+
+	params = zero_trust.GatewayLocationListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+		Filter:    cloudflare.F(mFilterFilter),
+	}
+
+	if !m.Filter.Direction.IsNull() {
+		params.Direction = cloudflare.F(zero_trust.GatewayLocationListParamsDirection(m.Filter.Direction.ValueString()))
+	}
+	if !m.Filter.OrderBy.IsNull() {
+		params.OrderBy = cloudflare.F(zero_trust.GatewayLocationListParamsOrderBy(m.Filter.OrderBy.ValueString()))
+	}
+	if !m.Filter.Search.IsNull() {
+		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}
 
 	return
@@ -91,4 +118,11 @@ type ZeroTrustDNSLocationMaxTTLDataSourceModel struct {
 
 type ZeroTrustDNSLocationNetworksDataSourceModel struct {
 	Network types.String `tfsdk:"network" json:"network,computed"`
+}
+
+type ZeroTrustDNSLocationFindOneByDataSourceModel struct {
+	Direction types.String    `tfsdk:"direction" query:"direction,optional"`
+	Filter    *[]types.String `tfsdk:"filter" query:"filter,optional"`
+	OrderBy   types.String    `tfsdk:"order_by" query:"order_by,optional"`
+	Search    types.String    `tfsdk:"search" query:"search,optional"`
 }

@@ -21,13 +21,13 @@ var _ resource.ResourceWithConfigValidators = (*BotManagementResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Bot Management Read",
 				"Bot Management Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -39,6 +39,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
+			"ai_bots_migration_opt_out": schema.BoolAttribute{
+				Description: "Temporary migration flag tracking zones opted out of AI bots managed-rule updates.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
 			"ai_bots_protection": schema.StringAttribute{
 				Description: "Enable rule to block AI Scrapers and Crawlers.\nAvailable values: \"block\", \"disabled\", \"only_on_ad_pages\".",
 				Computed:    true,
@@ -47,6 +53,46 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive(
 						"block",
 						"disabled",
+						"only_on_ad_pages",
+					),
+				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"ai_training": schema.StringAttribute{
+				Description: "Configure robots.txt policy for AI model training bots.\nAvailable values: \"disabled\", \"disallow\", \"block\", \"only_on_ad_pages\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"disabled",
+						"disallow",
+						"block",
+						"only_on_ad_pages",
+					),
+				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"ai_user": schema.StringAttribute{
+				Description: "Configure robots.txt policy for AI assistant and agent bots.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"disabled",
+						"block",
+						"only_on_ad_pages",
+					),
+				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"aisearch": schema.StringAttribute{
+				Description: "Configure robots.txt policy for AI search bots.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"disabled",
+						"block",
 						"only_on_ad_pages",
 					),
 				},
@@ -112,6 +158,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
+			},
+			"jsd_api_results_enabled": schema.BoolAttribute{
+				Description:   "Whether to use JavaScript Detection results submitted through the API for this zone.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"optimize_wordpress": schema.BoolAttribute{
 				Description:   "Whether to optimize Super Bot Fight Mode protections for Wordpress.",

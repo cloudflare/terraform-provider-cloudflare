@@ -58,10 +58,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "When true, indicates that the rule is currently paused.",
 				Computed:    true,
 			},
-			"urls": schema.ListAttribute{
+			"urls": schema.SetAttribute{
 				Description: "The URLs to include in the rule definition. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.",
 				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"configurations": schema.ListNestedAttribute{

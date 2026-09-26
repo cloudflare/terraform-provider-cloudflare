@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -28,12 +29,12 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDeviceCustomProfileReso
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Zero Trust Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
@@ -46,10 +47,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"match": schema.StringAttribute{
-				Description: `The wirefilter expression to match devices. Available values: "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.service_token_uuid", "identity.saml_attributes", "network", "os.name", "os.version".`,
-				Required:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the device settings profile.",
@@ -124,6 +121,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 							Computed:    true,
 						},
+					},
+				},
+			},
+			"match": schema.StringAttribute{
+				Description: `The wirefilter expression to match devices. Available values: "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.service_token_uuid", "identity.saml_attributes", "network", "os.name", "os.version".`,
+				Optional:    true,
+			},
+			"browser_extension_config": schema.SingleNestedAttribute{
+				Description: "Browser extension proxy settings. Required when profile_type is browser_extension and invalid for WARP profiles.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"proxy_control": schema.StringAttribute{
+						Description: "Whether the user may disable the browser extension proxy.\nAvailable values: \"unlocked\", \"locked\".",
+						Required:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("unlocked", "locked"),
+						},
+					},
+					"proxy_enabled": schema.BoolAttribute{
+						Description: "Whether the browser extension proxy is active.",
+						Required:    true,
 					},
 				},
 			},
@@ -239,6 +257,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 			},
+			"profile_type": schema.StringAttribute{
+				Description: "The client type to which the device settings profile applies.\nAvailable values: \"warp\", \"browser_extension\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("warp", "browser_extension"),
+				},
+				Default: stringdefault.StaticString("warp"),
+			},
 			"register_interface_ip_with_dns": schema.BoolAttribute{
 				Description: "Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.",
 				Computed:    true,
@@ -268,6 +295,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
+			"uninstall_protection": schema.BoolAttribute{
+				Description: "Determines whether uninstalling the WARP client requires an override code. (Windows only).",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"dns_search_suffixes": schema.ListNestedAttribute{
 				Description: "List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear.",
