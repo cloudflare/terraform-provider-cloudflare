@@ -474,3 +474,100 @@ func testAccCloudflareZeroTrustDeviceCustomProfileWithExcludeDrift(accountID, rn
 func testAccCloudflareZeroTrustDeviceCustomProfileWithExcludeDriftUpdated(accountID, rnd string, precedence int) string {
 	return acctest.LoadTestCase("devicecustomprofilewithexcludedriftupdated.tf", rnd, accountID, precedence)
 }
+
+func testAccCloudflareZeroTrustDeviceCustomProfileIncludeShift(accountID, rnd string, precedence int, include string) string {
+	return acctest.LoadTestCase("devicecustomprofileincludeshift.tf", rnd, accountID, precedence, include)
+}
+
+// splitTunnelEntry matches an include/exclude entry exactly; "" means null.
+func splitTunnelEntry(address, host, description string) knownvalue.Check {
+	field := func(v string) knownvalue.Check {
+		if v == "" {
+			return knownvalue.Null()
+		}
+		return knownvalue.StringExact(v)
+	}
+	return knownvalue.ObjectExact(map[string]knownvalue.Check{
+		"address":     field(address),
+		"host":        field(host),
+		"description": field(description),
+	})
+}
+
+// Inserting into include must not plan a shifted entry with the fields the
+// previous entry at that index had in state.
+func TestAccCloudflareZeroTrustDeviceCustomProfile_IncludeListShift(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_device_custom_profile.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	randomPrecedence := rand.Intn(250)
+
+	base := `[{ host = "a.example.com" }, { address = "192.0.2.0/24", description = "first" }]`
+	front := `[{ address = "198.51.100.0/24" }, { host = "a.example.com" }, { address = "192.0.2.0/24", description = "first" }]`
+	middle := `[{ host = "a.example.com" }, { address = "198.51.100.0/24" }, { address = "192.0.2.0/24", description = "first" }]`
+
+	expectInclude := func(entries ...knownvalue.Check) []plancheck.PlanCheck {
+		return []plancheck.PlanCheck{
+			plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+			plancheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListExact(entries)),
+		}
+	}
+	stateInclude := func(entries ...knownvalue.Check) []statecheck.StateCheck {
+		return []statecheck.StateCheck{
+			statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListExact(entries)),
+		}
+	}
+	frontEntries := []knownvalue.Check{
+		splitTunnelEntry("198.51.100.0/24", "", ""),
+		splitTunnelEntry("", "a.example.com", ""),
+		splitTunnelEntry("192.0.2.0/24", "", "first"),
+	}
+	middleEntries := []knownvalue.Check{
+		splitTunnelEntry("", "a.example.com", ""),
+		splitTunnelEntry("198.51.100.0/24", "", ""),
+		splitTunnelEntry("192.0.2.0/24", "", "first"),
+	}
+	removed := `[{ address = "198.51.100.0/24" }, { address = "192.0.2.0/24", description = "first" }]`
+	removedEntries := []knownvalue.Check{
+		splitTunnelEntry("198.51.100.0/24", "", ""),
+		splitTunnelEntry("192.0.2.0/24", "", "first"),
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZeroTrustDeviceCustomProfileDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileIncludeShift(accountID, rnd, randomPrecedence, base),
+			},
+			// Insert at the front: used to plan host and address on one entry.
+			{
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileIncludeShift(accountID, rnd, randomPrecedence, front),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: expectInclude(frontEntries...),
+				},
+				ConfigStateChecks: stateInclude(frontEntries...),
+			},
+			{
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileIncludeShift(accountID, rnd, randomPrecedence, base),
+			},
+			// Insert in the middle: previously applied the next entry's description.
+			{
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileIncludeShift(accountID, rnd, randomPrecedence, middle),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: expectInclude(middleEntries...),
+				},
+				ConfigStateChecks: stateInclude(middleEntries...),
+			},
+			// Remove the first entry: the rest shift left onto the host entry's slot.
+			{
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileIncludeShift(accountID, rnd, randomPrecedence, removed),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: expectInclude(removedEntries...),
+				},
+				ConfigStateChecks: stateInclude(removedEntries...),
+			},
+		},
+	})
+}

@@ -74,9 +74,9 @@ type ZeroTrustDeviceCustomProfileDNSSearchSuffixesModel struct {
 }
 
 type ZeroTrustDeviceCustomProfileExcludeModel struct {
-	Address     types.String `tfsdk:"address" json:"address,computed_optional"`
-	Description types.String `tfsdk:"description" json:"description,computed_optional"`
-	Host        types.String `tfsdk:"host" json:"host,computed_optional"`
+	Address     types.String `tfsdk:"address" json:"address,optional"`
+	Description types.String `tfsdk:"description" json:"description,optional"`
+	Host        types.String `tfsdk:"host" json:"host,optional"`
 }
 
 type ZeroTrustDeviceCustomProfileGlobalAccelerationModel struct {
@@ -88,9 +88,9 @@ type ZeroTrustDeviceCustomProfileGlobalAccelerationModel struct {
 }
 
 type ZeroTrustDeviceCustomProfileIncludeModel struct {
-	Address     types.String `tfsdk:"address" json:"address,computed_optional"`
-	Description types.String `tfsdk:"description" json:"description,computed_optional"`
-	Host        types.String `tfsdk:"host" json:"host,computed_optional"`
+	Address     types.String `tfsdk:"address" json:"address,optional"`
+	Description types.String `tfsdk:"description" json:"description,optional"`
+	Host        types.String `tfsdk:"host" json:"host,optional"`
 }
 
 type ZeroTrustDeviceCustomProfileServiceModeV2Model struct {
