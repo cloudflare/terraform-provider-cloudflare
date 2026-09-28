@@ -1,0 +1,39 @@
+examples/data-sources/cloudflare_zero_trust_casb_webhook/data-source.tf
+  s_403e4c66b85118::t_9456e390b0fb36 1-4
+examples/data-sources/cloudflare_zero_trust_casb_webhooks/data-source.tf
+  s_403e4c66b85118::t_499a95ab7a19e4 1-3
+examples/resources/cloudflare_zero_trust_casb_webhook/import.sh
+  s_403e4c66b85118::t_28d89aa88fd240 1
+examples/resources/cloudflare_zero_trust_casb_webhook/resource.tf
+  s_403e4c66b85118::t_6cf008848a6eda 1-14
+docs/data-sources/zero_trust_casb_webhook.md
+  s_302a33d3a1d05d::t_6eff991e1e10f0 16-23
+docs/data-sources/zero_trust_casb_webhooks.md
+  s_302a33d3a1d05d::t_a81f4b6810f4bc 16,18-22
+docs/resources/zero_trust_casb_webhook.md
+  s_302a33d3a1d05d::t_33236b05075cb0 16-33,73-78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a467bda5cd65de268c7c38fd8209d046f808ee4d",
+  "prompts": {},
+  "sessions": {
+    "s_302a33d3a1d05d": {
+      "agent_id": {
+        "tool": "devin",
+        "id": "s_302a33d3a1d05d",
+        "model": "unknown"
+      },
+      "human_author": "Reid Klarsfeld <rklarsfeld@cloudflare.com>"
+    },
+    "s_403e4c66b85118": {
+      "agent_id": {
+        "tool": "windsurf",
+        "id": "acidic-hydrogen",
+        "model": "unknown"
+      },
+      "human_author": "Reid Klarsfeld <rklarsfeld@cloudflare.com>"
+    }
+  }
+}
