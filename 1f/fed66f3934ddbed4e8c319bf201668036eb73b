@@ -1,0 +1,24 @@
+internal/services/zero_trust_tunnel_warp_connector/normalizations.go
+  s_cc32fe918200f9::t_a23002ba04c392 1-56
+internal/services/zero_trust_tunnel_warp_connector/resource.go
+  s_cc32fe918200f9::t_f6ce1827179a1b 197-199
+  s_cc32fe918200f9::t_3704ea8350239f 67-71,100-106
+  s_cc32fe918200f9::t_bf3c776680b341 270-271
+  s_cc32fe918200f9::t_fdba12f82295d8 107,272
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1ffed66f3934ddbed4e8c319bf201668036eb73b",
+  "prompts": {},
+  "sessions": {
+    "s_cc32fe918200f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f163304c5ffe3CKSBhHc0cwL4Z",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
