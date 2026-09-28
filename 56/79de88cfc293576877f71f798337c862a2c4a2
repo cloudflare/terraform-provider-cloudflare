@@ -1,0 +1,19 @@
+internal/services/turnstile_widget/resource.go
+  s_bc866926eb2f14::t_fbe4d72c3787c0 279-284
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5679de88cfc293576877f71f798337c862a2c4a2",
+  "prompts": {},
+  "sessions": {
+    "s_bc866926eb2f14": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2b08f86cffeZw1R3nijHbmwMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+internal/services/api_shield_operation/resource.go
+  s_bc866926eb2f14::t_054745007fc72e 230-232
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "89f3cd221790b7df4e870199269ff62d6eaacf73",
+  "prompts": {},
+  "sessions": {
+    "s_bc866926eb2f14": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2b08f86cffeZw1R3nijHbmwMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
