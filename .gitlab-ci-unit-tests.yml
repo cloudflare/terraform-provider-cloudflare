@@ -79,7 +79,7 @@ test-diagnostic:
     - if: '$TEST_DIAGNOSTIC_ONLY == "true"'
   image: $IMAGE_GO_TRIXIE
   tags:
-    - linux-x86-16cpu-32gb
+    - linux-x86-8cpu-16gb
   timeout: 75 minutes
   allow_failure: true
   cache:
@@ -88,7 +88,7 @@ test-diagnostic:
   script:
     - ./scripts/bootstrap
     - |
-      echo "Diagnostic shard 3/16 on 32 GiB runner; Go version: $(go version)"
+      echo "Diagnostic shard 3/16 with go test -p 2; Go version: $(go version)"
       echo "GOMAXPROCS=${GOMAXPROCS:-unset}; GOFLAGS=${GOFLAGS:-unset}"
       (
         while :; do
@@ -125,5 +125,5 @@ test-diagnostic:
 
       echo '[diag] running shard 3 tests'
       started=$(date +%s)
-      printf '%s\n' "$packages" | xargs go test -v -timeout 25m
+      printf '%s\n' "$packages" | xargs go test -p 2 -v -timeout 25m
       echo "[diag] shard 3 tests finished in $(($(date +%s) - started))s"
