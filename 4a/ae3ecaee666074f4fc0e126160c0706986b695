@@ -1,0 +1,33 @@
+internal/services/calls_turn_app/schema.go
+  s_cc32fe918200f9::t_e8ff1123b096db 35-41,43-44
+internal/services/calls_turn_app/resource.go
+  s_cc32fe918200f9::t_8df7a674a930d1 15,18
+  s_cc32fe918200f9::t_eaf6fb90734e6b 244-287
+  s_cc32fe918200f9::t_7ed7d113dbb414 95-99
+  s_cc32fe918200f9::t_d01bea0bfd7b59 222-227,230
+  s_cc32fe918200f9::t_8be568c1d48113 158
+  s_cc32fe918200f9::t_2aae0c2355f589 24
+  s_cc32fe918200f9::t_485a1c21d08e74 125-133,138
+  s_cc32fe918200f9::t_6b782912aa9c3f 172-178,183,207-208
+  s_cc32fe918200f9::t_b7093b3d2ea5c7 159
+  s_cc32fe918200f9::t_223afd23039acb 209
+  s_cc32fe918200f9::t_2fc6b8858bb30a 288-290
+internal/services/calls_turn_app/normalizations.go
+  s_cc32fe918200f9::t_055de41f4d75a4 1-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4aae3ecaee666074f4fc0e126160c0706986b695",
+  "prompts": {},
+  "sessions": {
+    "s_cc32fe918200f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f163304c5ffe3CKSBhHc0cwL4Z",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}

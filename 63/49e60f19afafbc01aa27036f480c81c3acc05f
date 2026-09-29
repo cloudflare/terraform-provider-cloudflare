@@ -1,0 +1,21 @@
+internal/services/zero_trust_tunnel_warp_connector/testdata/warp_connector_ha_update_name.tf
+  s_cc32fe918200f9::t_25065cd6662ec5 1-6
+internal/services/zero_trust_tunnel_warp_connector/resource_test.go
+  s_cc32fe918200f9::t_e44129882fcc55 175-198,206,209-248,250-272,276,280-283,288-289,294-308
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6349e60f19afafbc01aa27036f480c81c3acc05f",
+  "prompts": {},
+  "sessions": {
+    "s_cc32fe918200f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f163304c5ffe3CKSBhHc0cwL4Z",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
