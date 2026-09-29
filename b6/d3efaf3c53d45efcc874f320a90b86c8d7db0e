@@ -1,0 +1,19 @@
+.gitlab-ci-unit-tests.yml
+  s_c7ce36584cb153::t_1b3435d70347cf 41,53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b6d3efaf3c53d45efcc874f320a90b86c8d7db0e",
+  "prompts": {},
+  "sessions": {
+    "s_c7ce36584cb153": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f1274dfc9ffeJxJ41oNMYOmcMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
