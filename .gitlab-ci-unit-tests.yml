@@ -38,7 +38,7 @@ test-cache-warm:
     - ./scripts/bootstrap
     - go build ./...
 
-# Mirrors the GitHub "test" job, sharded 16 ways via GitLab's parallel jobs.
+# Split Go packages across 32 GitLab parallel jobs to reduce the slowest shard.
 # Wait for the cache upload, but run even if warming fails (cold-cache fallback).
 test:
   stage: test
@@ -50,7 +50,7 @@ test:
       artifacts: false
   timeout: 75 minutes
   allow_failure: true
-  parallel: 16
+  parallel: 32
   cache:
     <<: *test-go-cache
     policy: pull
