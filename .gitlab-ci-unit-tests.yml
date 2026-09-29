@@ -26,6 +26,10 @@ variables:
 # Seed both module and compiled build caches before starting the test shards.
 test-cache-warm:
   stage: warm
+  rules:
+    - if: '$TEST_DIAGNOSTIC_ONLY == "true"'
+      when: never
+    - when: on_success
   image: $IMAGE_GO_TRIXIE
   tags:
     - linux-x86-16cpu-32gb
@@ -42,6 +46,10 @@ test-cache-warm:
 # Wait for the cache upload, but run even if warming fails (cold-cache fallback).
 test:
   stage: test
+  rules:
+    - if: '$TEST_DIAGNOSTIC_ONLY == "true"'
+      when: never
+    - when: on_success
   image: $IMAGE_GO_TRIXIE
   tags:
     - linux-x86-8cpu-16gb
@@ -62,3 +70,58 @@ test:
       if [ -n "$packages" ]; then
         echo "$packages" | xargs go test -v -timeout 25m
       fi
+
+# Run one representative shard against the existing cache, without launching
+# the warmer or the other 15 shards. Log progress while Go is otherwise quiet.
+test-diagnostic:
+  stage: test
+  rules:
+    - if: '$TEST_DIAGNOSTIC_ONLY == "true"'
+  image: $IMAGE_GO_TRIXIE
+  tags:
+    - linux-x86-8cpu-16gb
+  timeout: 75 minutes
+  allow_failure: true
+  cache:
+    <<: *test-go-cache
+    policy: pull
+  script:
+    - ./scripts/bootstrap
+    - |
+      echo "Diagnostic shard 3/16; Go version: $(go version)"
+      echo "GOMAXPROCS=${GOMAXPROCS:-unset}; GOFLAGS=${GOFLAGS:-unset}"
+      (
+        while :; do
+          echo "[diag] snapshot $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          ps -eo pid,ppid,stat,etime,pcpu,pmem,rss,comm --sort=-pcpu | awk 'NR <= 12' || true
+          for metric in cpu.max cpu.stat memory.current memory.max memory.events io.stat; do
+            file="/sys/fs/cgroup/$metric"
+            if [ -r "$file" ]; then
+              printf '[diag] %s: ' "$metric"
+              tr '\n' ' ' < "$file"
+              printf '\n'
+            fi
+          done
+          df -h . || true
+          sleep 60
+        done
+      ) &
+      monitor_pid=$!
+      trap 'kill "$monitor_pid" 2>/dev/null || true' EXIT
+
+      started=$(date +%s)
+      all_packages=$(go list ./...)
+      echo "[diag] go list ./... finished in $(($(date +%s) - started))s"
+      packages=$(printf '%s\n' "$all_packages" | awk 'NR % 16 == 2')
+      test -n "$packages" || { echo '[diag] shard 3 has no packages'; exit 1; }
+      echo "[diag] selected $(printf '%s\n' "$packages" | wc -l) packages"
+      first_package=$(printf '%s\n' "$packages" | awk 'NR == 1 { print; exit }')
+      echo "[diag] compiling first test package: $first_package"
+      started=$(date +%s)
+      go test -c -o /dev/null "$first_package"
+      echo "[diag] first test binary compiled in $(($(date +%s) - started))s"
+
+      echo '[diag] running shard 3 tests'
+      started=$(date +%s)
+      printf '%s\n' "$packages" | xargs go test -v -timeout 25m
+      echo "[diag] shard 3 tests finished in $(($(date +%s) - started))s"

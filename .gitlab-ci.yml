@@ -85,7 +85,13 @@ unit-tests:
   stage: test
   needs: []
   allow_failure: true
-  rules: *ci-rules
+  rules:
+    # Temporarily run one diagnostic shard on MRs instead of the full suite.
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      variables:
+        TEST_DIAGNOSTIC_ONLY: "true"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH =~ /^release[\/-]/
   # Parent cache variables expand before CI_PROJECT_DIR exists in the child.
   # Use the child's own variables so Go writes to its checkout, not /.
   inherit:
