@@ -86,6 +86,10 @@ unit-tests:
   needs: []
   allow_failure: true
   rules: *ci-rules
+  # Parent cache variables expand before CI_PROJECT_DIR exists in the child.
+  # Use the child's own variables so Go writes to its checkout, not /.
+  inherit:
+    variables: false
   trigger:
     include:
       - local: .gitlab-ci-unit-tests.yml
