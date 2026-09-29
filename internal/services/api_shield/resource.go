@@ -64,14 +64,6 @@ func (r *APIShieldResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	params := api_gateway.ConfigurationUpdateParams{
-		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-	}
-
-	if !data.Normalize.IsNull() && !data.Normalize.IsUnknown() {
-		params.Normalize = cloudflare.F(data.Normalize.ValueBool())
-	}
-
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -81,7 +73,9 @@ func (r *APIShieldResource) Create(ctx context.Context, req resource.CreateReque
 	env := APIShieldResultEnvelope{*data}
 	_, err = r.client.APIGateway.Configurations.Update(
 		ctx,
-		params,
+		api_gateway.ConfigurationUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -119,14 +113,6 @@ func (r *APIShieldResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	params := api_gateway.ConfigurationUpdateParams{
-		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-	}
-
-	if !data.Normalize.IsNull() && !data.Normalize.IsUnknown() {
-		params.Normalize = cloudflare.F(data.Normalize.ValueBool())
-	}
-
 	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -136,7 +122,9 @@ func (r *APIShieldResource) Update(ctx context.Context, req resource.UpdateReque
 	env := APIShieldResultEnvelope{*data}
 	_, err = r.client.APIGateway.Configurations.Update(
 		ctx,
-		params,
+		api_gateway.ConfigurationUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -166,19 +154,13 @@ func (r *APIShieldResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	params := api_gateway.ConfigurationGetParams{
-		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-	}
-
-	if !data.Normalize.IsNull() && !data.Normalize.IsUnknown() {
-		params.Normalize = cloudflare.F(data.Normalize.ValueBool())
-	}
-
 	res := new(http.Response)
 	env := APIShieldResultEnvelope{*data}
 	_, err := r.client.APIGateway.Configurations.Get(
 		ctx,
-		params,
+		api_gateway.ConfigurationGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

@@ -34,7 +34,7 @@ type SourceAPITokenModel struct {
 
 // SourcePolicyModel represents a v4 policy block.
 type SourcePolicyModel struct {
-	ID               types.String            `tfsdk:"id"`                // computed, removed in v5
+	ID               types.String            `tfsdk:"id"` // computed, removed in v5
 	Effect           types.String            `tfsdk:"effect"`
 	PermissionGroups types.Set               `tfsdk:"permission_groups"` // Set of strings
 	Resources        map[string]types.String `tfsdk:"resources"`         // Map of strings
@@ -61,24 +61,32 @@ type SourceRequestIPModel struct {
 //
 // Note: This must match the APITokenModel in the parent package's model.go file.
 type TargetAPITokenModel struct {
-	ID         types.String                `tfsdk:"id"`
-	Name       types.String                `tfsdk:"name"`
-	Policies   *[]*TargetPolicyModel       `tfsdk:"policies"`
-	ExpiresOn  timetypes.RFC3339           `tfsdk:"expires_on"`
-	NotBefore  timetypes.RFC3339           `tfsdk:"not_before"`
-	Condition  *TargetConditionModel       `tfsdk:"condition"`
-	Status     types.String                `tfsdk:"status"`
-	IssuedOn   timetypes.RFC3339           `tfsdk:"issued_on"`
-	LastUsedOn timetypes.RFC3339           `tfsdk:"last_used_on"`
-	ModifiedOn timetypes.RFC3339           `tfsdk:"modified_on"`
-	Value      types.String                `tfsdk:"value"`
+	ID         types.String          `tfsdk:"id"`
+	Name       types.String          `tfsdk:"name"`
+	Policies   *[]*TargetPolicyModel `tfsdk:"policies"`
+	ExpiresOn  timetypes.RFC3339     `tfsdk:"expires_on"`
+	NotBefore  timetypes.RFC3339     `tfsdk:"not_before"`
+	Condition  *TargetConditionModel `tfsdk:"condition"`
+	Status     types.String          `tfsdk:"status"`
+	IssuedOn   timetypes.RFC3339     `tfsdk:"issued_on"`
+	LastUsedOn timetypes.RFC3339     `tfsdk:"last_used_on"`
+	ModifiedOn timetypes.RFC3339     `tfsdk:"modified_on"`
+	Value      types.String          `tfsdk:"value"`
+
+	// Computed-only attributes added to the live schema after this migration was
+	// written. They have no v4 counterpart, so Transform leaves them at their
+	// zero value (null) and the next Read populates them. They must still be
+	// declared here: resp.State.Set rejects a struct that omits schema attributes.
+	CreatorEmailAtCreation types.String `tfsdk:"creator_email_at_creation"`
+	ProvisionerID          types.String `tfsdk:"provisioner_id"`
+	ProvisionerType        types.String `tfsdk:"provisioner_type"`
 }
 
 // TargetPolicyModel represents a v5 policy in the policies set.
 type TargetPolicyModel struct {
-	Effect           types.String                    `tfsdk:"effect"`
-	PermissionGroups *[]*TargetPermissionGroupModel  `tfsdk:"permission_groups"`
-	Resources        types.String                    `tfsdk:"resources"` // JSON string
+	Effect           types.String                   `tfsdk:"effect"`
+	PermissionGroups *[]*TargetPermissionGroupModel `tfsdk:"permission_groups"`
+	Resources        types.String                   `tfsdk:"resources"` // JSON string
 }
 
 // TargetPermissionGroupModel represents a v5 permission group object.

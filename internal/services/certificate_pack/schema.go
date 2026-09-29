@@ -35,7 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Identifier.",
+				Description:   "The unique identifier for a certificate_pack.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},

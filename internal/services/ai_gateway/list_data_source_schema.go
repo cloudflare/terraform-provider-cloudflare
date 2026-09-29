@@ -50,7 +50,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "gateway id",
+							Description: "Unique identifier of the AI Gateway within the account.",
 							Computed:    true,
 						},
 						"cache_invalidate_on_update": schema.BoolAttribute{

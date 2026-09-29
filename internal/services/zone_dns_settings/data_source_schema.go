@@ -37,8 +37,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"foundation_dns": schema.BoolAttribute{
-				Description: "Whether to enable Foundation DNS Advanced Nameservers on the zone.",
-				Computed:    true,
+				Description:        "Deprecated. Use nameservers.type to configure Advanced Nameservers.",
+				Computed:           true,
+				DeprecationMessage: "foundation_dns is deprecated. Use nameservers.type: cloudflare.advanced to turn on Advanced Nameservers and cloudflare.standard to turn it off. This field will be removed in a future API version.\n",
 			},
 			"multi_provider": schema.BoolAttribute{
 				Description: "Whether to enable multi-provider DNS, which causes Cloudflare to activate the zone even when non-Cloudflare NS records exist, and to respect NS records at the zone apex during outbound zone transfers.",
@@ -78,28 +79,34 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"nameservers": schema.SingleNestedAttribute{
-				Description: "Settings determining the nameservers through which the zone should be available.",
+				Description: "Controls the nameservers through which the zone is available.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[ZoneDNSSettingsNameserversDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
-						Description: "Nameserver type\nAvailable values: \"cloudflare.standard\", \"custom.account\", \"custom.tenant\", \"custom.zone\".",
+						Description: "Nameserver type.\nAvailable values: \"cloudflare.standard\", \"custom.account\", \"custom.tenant\", \"custom.zone\", \"custom\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"cloudflare.standard",
+								"cloudflare.advanced",
 								"custom.account",
 								"custom.tenant",
 								"custom.zone",
+								"custom",
 							),
 						},
 					},
 					"ns_set": schema.Int64Attribute{
-						Description: "Configured nameserver set to be used for this zone",
+						Description: "Configured nameserver set number to use for this zone.",
 						Computed:    true,
 						Validators: []validator.Int64{
 							int64validator.Between(1, 5),
 						},
+					},
+					"nameserver_set_id": schema.StringAttribute{
+						Description: "Identifier of the account-owned Custom Nameserver Set to use for this zone.",
+						Computed:    true,
 					},
 				},
 			},

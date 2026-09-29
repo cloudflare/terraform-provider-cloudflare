@@ -32,6 +32,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
+				Description: "Specify the Cloudflare account identifier.",
 				Optional: true,
 			},
 			"action": schema.StringAttribute{
@@ -122,7 +123,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filters": schema.ListAttribute{
 				Description: "Specify the protocol or layer to evaluate the traffic, identity, and device posture expressions. Can only contain a single value.",
 				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
 				Validators: []validator.List{
 					listvalidator.ValueStringsAre(
 						stringvalidator.OneOfCaseInsensitive(
@@ -134,6 +134,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						),
 					),
 				},
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"expiration": schema.SingleNestedAttribute{

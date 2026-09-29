@@ -64,13 +64,19 @@ func (r *StreamKeyResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
+	dataBytes, err := data.MarshalJSON()
+	if err != nil {
+		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+		return
+	}
 	res := new(http.Response)
 	env := StreamKeyResultEnvelope{*data}
-	_, err := r.client.Stream.Keys.New(
+	_, err = r.client.Stream.Keys.New(
 		ctx,
 		stream.KeyNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
+		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

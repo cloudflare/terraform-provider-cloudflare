@@ -32,7 +32,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "gateway id",
+				Description: "Unique identifier of the AI Gateway within the account.",
 				Computed:    true,
 				Optional:    true,
 			},

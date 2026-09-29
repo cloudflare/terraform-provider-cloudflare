@@ -20,7 +20,7 @@ type FlagshipFlagsResultListDataSourceEnvelope struct {
 type FlagshipFlagsDataSourceModel struct {
 	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
 	AppID     types.String                                                     `tfsdk:"app_id" path:"app_id,required"`
-	Limit     types.String                                                     `tfsdk:"limit" query:"limit,optional"`
+	Limit     types.Int64                                                      `tfsdk:"limit" query:"limit,optional"`
 	MaxItems  types.Int64                                                      `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[FlagshipFlagsResultDataSourceModel] `tfsdk:"result"`
 }
@@ -31,7 +31,7 @@ func (m *FlagshipFlagsDataSourceModel) toListParams(_ context.Context) (params f
 	}
 
 	if !m.Limit.IsNull() {
-		params.Limit = cloudflare.F(m.Limit.ValueString())
+		params.Limit = cloudflare.F(m.Limit.ValueInt64())
 	}
 
 	return

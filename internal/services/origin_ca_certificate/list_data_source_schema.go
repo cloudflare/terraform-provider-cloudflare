@@ -82,7 +82,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"id": schema.StringAttribute{
-							Description: "Identifier.",
+							Description: "The x509 serial number of the Origin CA certificate.",
 							Computed:    true,
 						},
 						"certificate": schema.StringAttribute{

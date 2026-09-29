@@ -39,7 +39,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "gateway id",
+				Description:   "Unique identifier of the AI Gateway within the account.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
@@ -511,7 +511,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"id": schema.StringAttribute{
 									Computed: true,
 									Optional: true,
-									Default:  stringdefault.StaticString("865b4d33"),
+									Default:  stringdefault.StaticString("00000000"),
 								},
 								"enabled": schema.BoolAttribute{
 									Computed: true,

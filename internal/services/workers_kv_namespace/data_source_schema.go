@@ -26,15 +26,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Namespace identifier tag.",
+				Description: "ID of the Workers KV namespace.",
 				Computed:    true,
 			},
 			"namespace_id": schema.StringAttribute{
-				Description: "Namespace identifier tag.",
+				Description: "ID of the Workers KV namespace.",
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "ID of the Cloudflare account that owns the Workers KV namespaces.",
 				Optional:    true,
 			},
 			"jurisdiction": schema.StringAttribute{
@@ -53,21 +53,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"title": schema.StringAttribute{
-				Description: "A human-readable string name for a Namespace.",
+				Description: "Human-readable string name for a Workers KV namespace.",
 				Computed:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"direction": schema.StringAttribute{
-						Description: "Direction to order namespaces.\nAvailable values: \"asc\", \"desc\".",
+						Description: "Sort namespaces in ascending (`asc`) or descending (`desc`) order.\nAvailable values: \"asc\", \"desc\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
 						},
 					},
 					"order": schema.StringAttribute{
-						Description: "Field to order results by.\nAvailable values: \"id\", \"title\".",
+						Description: "Namespace field to sort by (`id` or `title`).\nAvailable values: \"id\", \"title\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("id", "title"),

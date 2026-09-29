@@ -48,6 +48,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"profile_type": schema.StringAttribute{
+				Description: "The client type to which the device settings profile applies. This field is set when the profile is created and cannot be changed.\nAvailable values: \"warp\", \"browser_extension\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("warp", "browser_extension"),
+				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
+				Default:       stringdefault.StaticString("warp"),
+			},
 			"name": schema.StringAttribute{
 				Description: "The name of the device settings profile.",
 				Required:    true,
@@ -256,15 +266,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
-			},
-			"profile_type": schema.StringAttribute{
-				Description: "The client type to which the device settings profile applies.\nAvailable values: \"warp\", \"browser_extension\".",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("warp", "browser_extension"),
-				},
-				Default: stringdefault.StaticString("warp"),
 			},
 			"register_interface_ip_with_dns": schema.BoolAttribute{
 				Description: "Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.",

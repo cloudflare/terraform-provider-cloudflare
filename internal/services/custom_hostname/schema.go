@@ -32,7 +32,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Identifier.",
+				Description:   "Custom hostname identifier tag.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},

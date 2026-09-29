@@ -21,15 +21,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "App identifier.",
+				Description: "Flagship app ID returned when the app was created.",
 				Computed:    true,
 			},
 			"app_id": schema.StringAttribute{
-				Description: "App identifier.",
+				Description: "Flagship app ID returned when the app was created.",
 				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Cloudflare account ID.",
+				Description: "Cloudflare account ID that owns the Flagship app.",
 				Required:    true,
 			},
 			"created_at": schema.StringAttribute{

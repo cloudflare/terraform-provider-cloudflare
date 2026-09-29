@@ -25,11 +25,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Name of the script, used in URLs and route configuration.",
+				Description: "Name of the script.",
 				Computed:    true,
 			},
 			"script_name": schema.StringAttribute{
-				Description: "Name of the script, used in URLs and route configuration.",
+				Description: "Name of the script.",
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{

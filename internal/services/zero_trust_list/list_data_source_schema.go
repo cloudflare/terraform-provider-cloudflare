@@ -21,6 +21,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
+				Description: "Specify the Cloudflare account identifier.",
 				Optional:    true,
 			},
 			"direction": schema.StringAttribute{
@@ -42,11 +43,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-		"search": schema.StringAttribute{
-			Description: "Case-insensitive substring match on the list name or description. When\ncombined with `filter`, both must match (logical AND).",
-			Optional:    true,
-		},
-		"type": schema.StringAttribute{
+			"search": schema.StringAttribute{
+				Description: "Case-insensitive substring match on the list name or description. When\ncombined with `filter`, both must match (logical AND).",
+				Optional:    true,
+			},
+			"type": schema.StringAttribute{
 				Description: "Specify the list type.\nAvailable values: \"SERIAL\", \"URL\", \"DOMAIN\", \"EMAIL\", \"IP\", \"CATEGORY\", \"LOCATION\", \"DEVICE\", \"AAGUID\".",
 				Optional:    true,
 				Validators: []validator.String{

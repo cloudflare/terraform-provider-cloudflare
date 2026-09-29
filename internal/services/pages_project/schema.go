@@ -36,12 +36,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Name of the project.",
+				Description:   "Name for the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description:   "Name of the project.",
+				Description:   "Name for the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
@@ -910,7 +910,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"is_skipped": schema.BoolAttribute{
-						Description: "If the deployment has been skipped.",
+						Description: "Whether the deployment was skipped.",
 						Computed:    true,
 					},
 					"latest_stage": schema.SingleNestedAttribute{
@@ -942,7 +942,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								CustomType:  timetypes.RFC3339Type{},
 							},
 							"status": schema.StringAttribute{
-								Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\".",
+								Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\", \"skipped\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -951,6 +951,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										"active",
 										"failure",
 										"canceled",
+										"skipped",
 									),
 								},
 							},
@@ -966,7 +967,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"project_name": schema.StringAttribute{
-						Description: "Name of the project.",
+						Description: "Name of the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.",
 						Computed:    true,
 					},
 					"short_id": schema.StringAttribute{
@@ -1091,7 +1092,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  timetypes.RFC3339Type{},
 								},
 								"status": schema.StringAttribute{
-									Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\".",
+									Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\", \"skipped\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -1100,6 +1101,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											"active",
 											"failure",
 											"canceled",
+											"skipped",
 										),
 									},
 								},
@@ -1239,7 +1241,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"is_skipped": schema.BoolAttribute{
-						Description: "If the deployment has been skipped.",
+						Description: "Whether the deployment was skipped.",
 						Computed:    true,
 					},
 					"latest_stage": schema.SingleNestedAttribute{
@@ -1271,7 +1273,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								CustomType:  timetypes.RFC3339Type{},
 							},
 							"status": schema.StringAttribute{
-								Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\".",
+								Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\", \"skipped\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -1280,6 +1282,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										"active",
 										"failure",
 										"canceled",
+										"skipped",
 									),
 								},
 							},
@@ -1295,7 +1298,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"project_name": schema.StringAttribute{
-						Description: "Name of the project.",
+						Description: "Name of the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.",
 						Computed:    true,
 					},
 					"short_id": schema.StringAttribute{
@@ -1420,7 +1423,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  timetypes.RFC3339Type{},
 								},
 								"status": schema.StringAttribute{
-									Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\".",
+									Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\", \"skipped\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -1429,6 +1432,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											"active",
 											"failure",
 											"canceled",
+											"skipped",
 										),
 									},
 								},

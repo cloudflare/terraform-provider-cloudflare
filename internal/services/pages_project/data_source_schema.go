@@ -27,11 +27,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Name of the project.",
+				Description: "Name of the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.",
 				Computed:    true,
 			},
 			"project_name": schema.StringAttribute{
-				Description: "Name of the project.",
+				Description: "Name of the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.",
 				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
@@ -52,7 +52,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of the project.",
+				Description: "Name of the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.",
 				Computed:    true,
 			},
 			"preview_script_name": schema.StringAttribute{
@@ -235,7 +235,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"is_skipped": schema.BoolAttribute{
-						Description: "If the deployment has been skipped.",
+						Description: "Whether the deployment was skipped.",
 						Computed:    true,
 					},
 					"latest_stage": schema.SingleNestedAttribute{
@@ -267,7 +267,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								CustomType:  timetypes.RFC3339Type{},
 							},
 							"status": schema.StringAttribute{
-								Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\".",
+								Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\", \"skipped\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -276,6 +276,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										"active",
 										"failure",
 										"canceled",
+										"skipped",
 									),
 								},
 							},
@@ -291,7 +292,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"project_name": schema.StringAttribute{
-						Description: "Name of the project.",
+						Description: "Name of the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.",
 						Computed:    true,
 					},
 					"short_id": schema.StringAttribute{
@@ -416,7 +417,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  timetypes.RFC3339Type{},
 								},
 								"status": schema.StringAttribute{
-									Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\".",
+									Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\", \"skipped\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -425,6 +426,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											"active",
 											"failure",
 											"canceled",
+											"skipped",
 										),
 									},
 								},
@@ -436,7 +438,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"skip_reason": schema.StringAttribute{
-						Description: "Why the deployment was skipped.\nAvailable values: \"commit_message\", \"preview_deployments_disabled\", \"production_deployments_disabled\", \"path_config\", \"branch_config\", \"pages_to_workers_conversion\".",
+						Description: "Why the deployment was skipped.\nAvailable values: \"commit_message\", \"preview_deployments_disabled\", \"production_deployments_disabled\", \"path_config\", \"branch_config\", \"pages_to_workers_conversion\", \"superseded_queued_build\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -446,6 +448,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								"path_config",
 								"branch_config",
 								"pages_to_workers_conversion",
+								"superseded_queued_build",
 							),
 						},
 					},
@@ -1078,7 +1081,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"is_skipped": schema.BoolAttribute{
-						Description: "If the deployment has been skipped.",
+						Description: "Whether the deployment was skipped.",
 						Computed:    true,
 					},
 					"latest_stage": schema.SingleNestedAttribute{
@@ -1110,7 +1113,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								CustomType:  timetypes.RFC3339Type{},
 							},
 							"status": schema.StringAttribute{
-								Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\".",
+								Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\", \"skipped\".",
 								Computed:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -1119,6 +1122,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										"active",
 										"failure",
 										"canceled",
+										"skipped",
 									),
 								},
 							},
@@ -1134,7 +1138,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"project_name": schema.StringAttribute{
-						Description: "Name of the project.",
+						Description: "Name of the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.",
 						Computed:    true,
 					},
 					"short_id": schema.StringAttribute{
@@ -1259,7 +1263,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType:  timetypes.RFC3339Type{},
 								},
 								"status": schema.StringAttribute{
-									Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\".",
+									Description: "State of the current stage.\nAvailable values: \"success\", \"idle\", \"active\", \"failure\", \"canceled\", \"skipped\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -1268,6 +1272,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											"active",
 											"failure",
 											"canceled",
+											"skipped",
 										),
 									},
 								},
@@ -1279,7 +1284,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"skip_reason": schema.StringAttribute{
-						Description: "Why the deployment was skipped.\nAvailable values: \"commit_message\", \"preview_deployments_disabled\", \"production_deployments_disabled\", \"path_config\", \"branch_config\", \"pages_to_workers_conversion\".",
+						Description: "Why the deployment was skipped.\nAvailable values: \"commit_message\", \"preview_deployments_disabled\", \"production_deployments_disabled\", \"path_config\", \"branch_config\", \"pages_to_workers_conversion\", \"superseded_queued_build\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -1289,6 +1294,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								"path_config",
 								"branch_config",
 								"pages_to_workers_conversion",
+								"superseded_queued_build",
 							),
 						},
 					},

@@ -106,7 +106,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"hybrid_search_enabled": schema.BoolAttribute{
-				Description:        "Deprecated — use index_method instead.",
+				Description:        "Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.",
 				Computed:           true,
 				DeprecationMessage: "This attribute is deprecated.",
 			},
@@ -181,7 +181,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"type": schema.StringAttribute{
-				Description: `Available values: "r2", "web-crawler".`,
+				Description: "Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.\nAvailable values: \"r2\", \"web-crawler\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("r2", "web-crawler"),
@@ -211,7 +211,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"index_method": schema.SingleNestedAttribute{
-				Description: "Controls which storage backends are used during indexing. Defaults to vector-only.",
+				Description: "Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[AISearchInstanceIndexMethodDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
@@ -525,6 +525,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
+					"hostname": schema.StringAttribute{
+						Description: "Filter by exact Search for Agents hostname (case-insensitive).",
+						Optional:    true,
+					},
 					"namespace": schema.StringAttribute{
 						Description: "Filter by namespace.",
 						Optional:    true,

@@ -24,7 +24,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Cloudflare account ID.",
+				Description: "Cloudflare account ID that owns the Flagship app.",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{

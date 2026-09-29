@@ -26,7 +26,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"mtls_certificate_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Certificate identifier tag.",
 				Required:    true,
 			},
 			"service": schema.StringAttribute{

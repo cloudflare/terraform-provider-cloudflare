@@ -27,7 +27,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description:   "Account ID.",
+				Description:   "Cloudflare account ID that owns the R2 resource.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -96,7 +96,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"region": schema.StringAttribute{
-						Description: "Name of the AWS availability zone.",
+						Description: "AWS region containing the source S3 bucket.",
 						Optional:    true,
 					},
 					"secret_access_key": schema.StringAttribute{

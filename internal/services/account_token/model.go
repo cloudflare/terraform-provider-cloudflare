@@ -12,18 +12,21 @@ type AccountTokenResultEnvelope struct {
 }
 
 type AccountTokenModel struct {
-	ID         types.String                  `tfsdk:"id" json:"id,computed"`
-	AccountID  types.String                  `tfsdk:"account_id" path:"account_id,required"`
-	Name       types.String                  `tfsdk:"name" json:"name,required"`
-	Policies   *[]*AccountTokenPoliciesModel `tfsdk:"policies" json:"policies,required"`
-	ExpiresOn  timetypes.RFC3339             `tfsdk:"expires_on" json:"expires_on,optional" format:"date-time"`
-	NotBefore  timetypes.RFC3339             `tfsdk:"not_before" json:"not_before,optional" format:"date-time"`
-	Condition  *AccountTokenConditionModel   `tfsdk:"condition" json:"condition,optional"`
-	Status     types.String                  `tfsdk:"status" json:"status,computed_optional"`
-	IssuedOn   timetypes.RFC3339             `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
-	LastUsedOn timetypes.RFC3339             `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
-	ModifiedOn timetypes.RFC3339             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Value      types.String                  `tfsdk:"value" json:"value,computed,no_refresh"`
+	ID                     types.String                  `tfsdk:"id" json:"id,computed"`
+	AccountID              types.String                  `tfsdk:"account_id" path:"account_id,required"`
+	Name                   types.String                  `tfsdk:"name" json:"name,required"`
+	Policies               *[]*AccountTokenPoliciesModel `tfsdk:"policies" json:"policies,required"`
+	ExpiresOn              timetypes.RFC3339             `tfsdk:"expires_on" json:"expires_on,optional" format:"date-time"`
+	NotBefore              timetypes.RFC3339             `tfsdk:"not_before" json:"not_before,optional" format:"date-time"`
+	Condition              *AccountTokenConditionModel   `tfsdk:"condition" json:"condition,optional"`
+	Status                 types.String                  `tfsdk:"status" json:"status,computed_optional"`
+	CreatorEmailAtCreation types.String                  `tfsdk:"creator_email_at_creation" json:"creator_email_at_creation,computed"`
+	IssuedOn               timetypes.RFC3339             `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
+	LastUsedOn             timetypes.RFC3339             `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
+	ModifiedOn             timetypes.RFC3339             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	ProvisionerID          types.String                  `tfsdk:"provisioner_id" json:"provisioner_id,computed"`
+	ProvisionerType        types.String                  `tfsdk:"provisioner_type" json:"provisioner_type,computed"`
+	Value                  types.String                  `tfsdk:"value" json:"value,computed,no_refresh"`
 }
 
 func (m AccountTokenModel) MarshalJSON() (data []byte, err error) {

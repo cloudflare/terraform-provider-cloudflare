@@ -74,6 +74,9 @@ func (m *AISearchInstanceDataSourceModel) toListParams(_ context.Context) (param
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
+	if !m.Filter.Hostname.IsNull() {
+		params.Hostname = cloudflare.F(m.Filter.Hostname.ValueString())
+	}
 	if !m.Filter.Namespace.IsNull() {
 		params.Namespace = cloudflare.F(m.Filter.Namespace.ValueString())
 	}
@@ -194,6 +197,7 @@ type AISearchInstanceSourceParamsWebCrawlerStoreOptionsDataSourceModel struct {
 }
 
 type AISearchInstanceFindOneByDataSourceModel struct {
+	Hostname         types.String `tfsdk:"hostname" query:"hostname,optional"`
 	Namespace        types.String `tfsdk:"namespace" query:"namespace,optional"`
 	OrderBy          types.String `tfsdk:"order_by" query:"order_by,computed_optional"`
 	OrderByDirection types.String `tfsdk:"order_by_direction" query:"order_by_direction,computed_optional"`

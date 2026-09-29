@@ -52,12 +52,18 @@ type SourceCustomPagesModel struct {
 // This corresponds to schema_version=500 in the current provider.
 // Must match zero_trust_organization.ZeroTrustOrganizationModel structure for core fields.
 type TargetZeroTrustOrganizationModel struct {
-	AccountID                              types.String                         `tfsdk:"account_id"`
-	ZoneID                                 types.String                         `tfsdk:"zone_id"`
-	AuthDomain                             types.String                         `tfsdk:"auth_domain"`
-	DenyUnmatchedRequests                  types.Bool                           `tfsdk:"deny_unmatched_requests"`
-	Name                                   types.String                         `tfsdk:"name"`
-	SessionDuration                        types.String                         `tfsdk:"session_duration"`
+	AccountID             types.String `tfsdk:"account_id"`
+	ZoneID                types.String `tfsdk:"zone_id"`
+	AuthDomain            types.String `tfsdk:"auth_domain"`
+	DenyUnmatchedRequests types.Bool   `tfsdk:"deny_unmatched_requests"`
+	Name                  types.String `tfsdk:"name"`
+	SessionDuration       types.String `tfsdk:"session_duration"`
+	// Optional attribute added to the live schema after this migration was
+	// written. It has no v4 counterpart, so Transform leaves it at its zero
+	// value (null), which matches an absent config value and produces no diff.
+	// It must still be declared here: resp.State.Set rejects a struct that
+	// omits schema attributes.
+	StrictServiceTokenAuth                 types.Bool                           `tfsdk:"strict_service_token_auth"`
 	UserSeatExpirationInactiveTime         types.String                         `tfsdk:"user_seat_expiration_inactive_time"`
 	WARPAuthSessionDuration                types.String                         `tfsdk:"warp_auth_session_duration"`
 	DenyUnmatchedRequestsExemptedZoneNames *[]types.String                      `tfsdk:"deny_unmatched_requests_exempted_zone_names"`

@@ -68,7 +68,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "Identifier.",
+							Description: "Custom certificate identifier tag.",
 							Computed:    true,
 						},
 						"zone_id": schema.StringAttribute{

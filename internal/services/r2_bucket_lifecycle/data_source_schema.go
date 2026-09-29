@@ -19,7 +19,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Account ID.",
+				Description: "Cloudflare account ID that owns the R2 resource.",
 				Required:    true,
 			},
 			"bucket_name": schema.StringAttribute{

@@ -37,7 +37,9 @@ func (m *APITokenPermissionGroupsListDataSourceModel) toListParams(_ context.Con
 }
 
 type APITokenPermissionGroupsListResultDataSourceModel struct {
-	ID     types.String                   `tfsdk:"id" json:"id,computed"`
-	Name   types.String                   `tfsdk:"name" json:"name,computed"`
-	Scopes customfield.List[types.String] `tfsdk:"scopes" json:"scopes,computed"`
+	ID           types.String                   `tfsdk:"id" json:"id,computed"`
+	Category     types.String                   `tfsdk:"category" json:"category,computed"`
+	IsSelectable types.Bool                     `tfsdk:"is_selectable" json:"is_selectable,computed"`
+	Name         types.String                   `tfsdk:"name" json:"name,computed"`
+	Scopes       customfield.List[types.String] `tfsdk:"scopes" json:"scopes,computed"`
 }

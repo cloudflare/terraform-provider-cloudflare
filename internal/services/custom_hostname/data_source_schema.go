@@ -30,11 +30,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Custom hostname identifier tag.",
 				Computed:    true,
 			},
 			"custom_hostname_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Custom hostname identifier tag.",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{

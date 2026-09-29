@@ -85,6 +85,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"creator_email_at_creation": schema.StringAttribute{
+							Description: "The email address of the user who created the token at the time of\ncreation. Only present for Account Owned API Tokens when a creator email\nwas available.",
+							Computed:    true,
+						},
 						"expires_on": schema.StringAttribute{
 							Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
 							Computed:    true,
@@ -169,6 +173,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
+						},
+						"provisioner_id": schema.StringAttribute{
+							Description: "The identifier of the service that provisioned the token. For an\nOAuth-provisioned token, this is the OAuth client identifier. Present\nwhen `provisioner_type` is present and null when the identifier is\nunavailable.",
+							Computed:    true,
+						},
+						"provisioner_type": schema.StringAttribute{
+							Description: "The type of service that provisioned the token. Only present for\nprovisioned Account Owned API Tokens.",
+							Computed:    true,
 						},
 						"status": schema.StringAttribute{
 							Description: "Status of the token.\nAvailable values: \"active\", \"disabled\", \"expired\".",

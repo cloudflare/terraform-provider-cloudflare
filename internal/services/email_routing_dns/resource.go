@@ -154,19 +154,13 @@ func (r *EmailRoutingDNSResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	params := email_routing.DNSGetParams{
-		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-	}
-
-	if !data.Subdomain.IsNull() && !data.Subdomain.IsUnknown() {
-		params.Subdomain = cloudflare.F(data.Subdomain.ValueString())
-	}
-
 	res := new(http.Response)
 	env := EmailRoutingDNSResultEnvelope{*data}
 	_, err := r.client.EmailRouting.DNS.Get(
 		ctx,
-		params,
+		email_routing.DNSGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

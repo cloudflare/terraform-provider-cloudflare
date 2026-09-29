@@ -61,18 +61,18 @@ func (r *StreamResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	params := stream.StreamNewParams{
-		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	dataBytes, err := data.MarshalJSON()
+	if err != nil {
+		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+		return
 	}
-
-	if !data.DirectUser.IsNull() && !data.DirectUser.IsUnknown() {
-		params.DirectUser = cloudflare.F(data.DirectUser.ValueBool())
-	}
-
 	res := new(http.Response)
-	err := r.client.Stream.New(
+	err = r.client.Stream.New(
 		ctx,
-		params,
+		stream.StreamNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

@@ -20,9 +20,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Computed: true,
+				Description: "Specify the Cloudflare account identifier.",
+				Computed:    true,
 			},
 			"account_id": schema.StringAttribute{
+				Description: "Specify the Cloudflare account identifier.",
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{

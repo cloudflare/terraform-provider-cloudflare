@@ -160,31 +160,13 @@ func (r *UserGroupMembersResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
-	params := iam.UserGroupMemberListParams{
-		AccountID: cloudflare.F(data.AccountID.ValueString()),
-	}
-
-	if !data.Direction.IsNull() && !data.Direction.IsUnknown() {
-		params.Direction = cloudflare.F(iam.UserGroupMemberListParamsDirection(data.Direction.ValueString()))
-	}
-
-	if !data.FuzzyEmail.IsNull() && !data.FuzzyEmail.IsUnknown() {
-		params.FuzzyEmail = cloudflare.F(data.FuzzyEmail.ValueString())
-	}
-
-	if !data.Page.IsNull() && !data.Page.IsUnknown() {
-		params.Page = cloudflare.F(data.Page.ValueFloat64())
-	}
-
-	if !data.PerPage.IsNull() && !data.PerPage.IsUnknown() {
-		params.PerPage = cloudflare.F(data.PerPage.ValueFloat64())
-	}
-
 	res := new(http.Response)
 	_, err := r.client.IAM.UserGroups.Members.List(
 		ctx,
 		data.UserGroupID.ValueString(),
-		params,
+		iam.UserGroupMemberListParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

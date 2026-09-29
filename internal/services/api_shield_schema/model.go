@@ -23,7 +23,6 @@ type APIShieldSchemaModel struct {
 	File              types.String                                                `tfsdk:"file" json:"file,required,no_refresh"`
 	Kind              types.String                                                `tfsdk:"kind" json:"kind,required"`
 	Name              types.String                                                `tfsdk:"name" json:"name,optional"`
-	OmitSource        types.Bool                                                  `tfsdk:"omit_source" query:"omit_source,computed_optional"`
 	ValidationEnabled types.String                                                `tfsdk:"validation_enabled" json:"validation_enabled,optional,no_refresh"`
 	CreatedAt         timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Source            types.String                                                `tfsdk:"source" json:"source,computed"`

@@ -94,7 +94,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"profile_type": schema.StringAttribute{
-				Description: "The client type to which the device settings profile applies.\nAvailable values: \"warp\", \"browser_extension\".",
+				Description: "The client type to which the device settings profile applies. This field is set when the profile is created and cannot be changed.\nAvailable values: \"warp\", \"browser_extension\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("warp", "browser_extension"),

@@ -17,16 +17,17 @@ type MagicTransitSiteWANResultDataSourceEnvelope struct {
 }
 
 type MagicTransitSiteWANDataSourceModel struct {
-	ID               types.String                                                                 `tfsdk:"id" path:"wan_id,computed"`
-	WANID            types.String                                                                 `tfsdk:"wan_id" path:"wan_id,required"`
-	AccountID        types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
-	SiteID           types.String                                                                 `tfsdk:"site_id" path:"site_id,required"`
-	HealthCheckRate  types.String                                                                 `tfsdk:"health_check_rate" json:"health_check_rate,computed"`
-	Name             types.String                                                                 `tfsdk:"name" json:"name,computed"`
-	Physport         types.Int64                                                                  `tfsdk:"physport" json:"physport,computed"`
-	Priority         types.Int64                                                                  `tfsdk:"priority" json:"priority,computed"`
-	VlanTag          types.Int64                                                                  `tfsdk:"vlan_tag" json:"vlan_tag,computed"`
-	StaticAddressing customfield.NestedObject[MagicTransitSiteWANStaticAddressingDataSourceModel] `tfsdk:"static_addressing" json:"static_addressing,computed"`
+	ID                    types.String                                                                 `tfsdk:"id" path:"wan_id,computed"`
+	WANID                 types.String                                                                 `tfsdk:"wan_id" path:"wan_id,required"`
+	AccountID             types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
+	SiteID                types.String                                                                 `tfsdk:"site_id" path:"site_id,required"`
+	HealthCheckRate       types.String                                                                 `tfsdk:"health_check_rate" json:"health_check_rate,computed"`
+	LoadBalanceInnerFlows types.Bool                                                                   `tfsdk:"load_balance_inner_flows" json:"load_balance_inner_flows,computed"`
+	Name                  types.String                                                                 `tfsdk:"name" json:"name,computed"`
+	Physport              types.Int64                                                                  `tfsdk:"physport" json:"physport,computed"`
+	Priority              types.Int64                                                                  `tfsdk:"priority" json:"priority,computed"`
+	VlanTag               types.Int64                                                                  `tfsdk:"vlan_tag" json:"vlan_tag,computed"`
+	StaticAddressing      customfield.NestedObject[MagicTransitSiteWANStaticAddressingDataSourceModel] `tfsdk:"static_addressing" json:"static_addressing,computed"`
 }
 
 func (m *MagicTransitSiteWANDataSourceModel) toReadParams(_ context.Context) (params magic_transit.SiteWANGetParams, diags diag.Diagnostics) {

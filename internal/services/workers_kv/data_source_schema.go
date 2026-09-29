@@ -31,11 +31,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "ID of the Cloudflare account that owns the Workers KV namespaces.",
 				Required:    true,
 			},
 			"namespace_id": schema.StringAttribute{
-				Description: "Namespace identifier tag.",
+				Description: "ID of the Workers KV namespace.",
 				Required:    true,
 			},
 			"value": schema.StringAttribute{

@@ -48,7 +48,7 @@ func (m *FlagshipFlagDataSourceModel) toListParams(_ context.Context) (params fl
 	}
 
 	if !m.Filter.Limit.IsNull() {
-		params.Limit = cloudflare.F(m.Filter.Limit.ValueString())
+		params.Limit = cloudflare.F(m.Filter.Limit.ValueInt64())
 	}
 
 	return
@@ -115,5 +115,5 @@ type FlagshipFlagRulesRolloutDataSourceModel struct {
 }
 
 type FlagshipFlagFindOneByDataSourceModel struct {
-	Limit types.String `tfsdk:"limit" query:"limit,optional"`
+	Limit types.Int64 `tfsdk:"limit" query:"limit,optional"`
 }

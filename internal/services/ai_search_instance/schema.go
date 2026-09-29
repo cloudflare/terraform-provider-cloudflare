@@ -40,7 +40,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"type": schema.StringAttribute{
-				Description: `Available values: "r2", "web-crawler".`,
+				Description: "Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.\nAvailable values: \"r2\", \"web-crawler\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("r2", "web-crawler"),
@@ -48,12 +48,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"hybrid_search_enabled": schema.BoolAttribute{
-				Description:        "Deprecated — use index_method instead.",
+				Description:        "Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.",
 				Computed:           true,
 				Optional:           true,
 				DeprecationMessage: "This attribute is deprecated.",
 				PlanModifiers:      []planmodifier.Bool{boolplanmodifier.RequiresReplaceIfConfigured()},
-				Default:            booldefault.StaticBool(false),
+				Default:            booldefault.StaticBool(true),
 			},
 			"ai_gateway_id": schema.StringAttribute{
 				Computed: true,
@@ -287,7 +287,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default: float64default.StaticFloat64(21600),
 			},
 			"index_method": schema.SingleNestedAttribute{
-				Description: "Controls which storage backends are used during indexing. Defaults to vector-only.",
+				Description: "Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.",
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectType[AISearchInstanceIndexMethodModel](ctx),

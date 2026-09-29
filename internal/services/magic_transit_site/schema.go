@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -37,11 +36,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"ha_mode": schema.BoolAttribute{
-				Description:   "Site high availability mode. If set to true, the site can have two connectors and runs in high availability mode.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
-			},
 			"name": schema.StringAttribute{
 				Description: "The name of the site.",
 				Required:    true,
@@ -52,6 +46,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Optional: true,
+			},
+			"ha_mode": schema.BoolAttribute{
+				Description: "Site high availability mode. If set to true, the site can have two connectors and runs in high availability mode.",
+				Optional:    true,
 			},
 			"secondary_connector_id": schema.StringAttribute{
 				Description: "Magic Connector identifier tag. Used when high availability mode is on.",

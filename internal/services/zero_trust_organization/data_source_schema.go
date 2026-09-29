@@ -70,6 +70,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The amount of time that tokens issued for applications will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
 				Computed:    true,
 			},
+			"strict_service_token_auth": schema.BoolAttribute{
+				Description: "Enables new behaviors for requests made with Access service tokens. Unauthorized requests emit audit logs, and return a 401 or 403 status code in the response instead of redirecting to the login page. Successful requests no longer receive a CF_Authorization cookie in the response. Zero Trust organizations created on or after October 5, 2026 will have this setting enabled by default, and cannot disable it.",
+				Computed:    true,
+			},
 			"ui_read_only_toggle_reason": schema.StringAttribute{
 				Description: "A description of the reason why the UI read only field is being toggled.",
 				Computed:    true,
