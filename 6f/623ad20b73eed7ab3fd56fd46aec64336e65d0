@@ -1,0 +1,19 @@
+internal/services/zero_trust_organization/resource_test.go
+  s_bc866926eb2f14::t_a21012d71e0e80 607-613
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6f623ad20b73eed7ab3fd56fd46aec64336e65d0",
+  "prompts": {},
+  "sessions": {
+    "s_bc866926eb2f14": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2b08f86cffeZw1R3nijHbmwMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

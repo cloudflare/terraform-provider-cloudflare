@@ -1,0 +1,21 @@
+internal/services/d1_database/migration/v500/model.go
+  s_bc866926eb2f14::t_f4f71def6c9cbc 31
+  s_bc866926eb2f14::t_c10b738795d545 28-30
+  s_bc866926eb2f14::t_7970d01e1afb50 32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "151e0d1054c239668072efa5f56a18d0c937eab4",
+  "prompts": {},
+  "sessions": {
+    "s_bc866926eb2f14": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2b08f86cffeZw1R3nijHbmwMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+internal/services/notification_policy/migration/v500/model.go
+  s_bc866926eb2f14::t_c3cbd85de0500d 179
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d53604f005f3a23c1eea7fae00702a13f3e764d4",
+  "prompts": {},
+  "sessions": {
+    "s_bc866926eb2f14": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2b08f86cffeZw1R3nijHbmwMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

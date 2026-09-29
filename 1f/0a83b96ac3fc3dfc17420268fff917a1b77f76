@@ -1,0 +1,24 @@
+internal/services/page_rule/testdata/pageruleemtpycookie.tf
+  s_279715510d0e77::t_d1e0d512481b6a 10-11,13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1f0a83b96ac3fc3dfc17420268fff917a1b77f76",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_279715510d0e77": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3b3385afffe3Lff8FOi4r5Dwz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
