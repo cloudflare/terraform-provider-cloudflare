@@ -1,0 +1,64 @@
+# Detached unit-test pipeline: the MR pipeline does not wait for its result.
+stages:
+  - warm
+  - test
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+
+variables:
+  GOPATH: $CI_PROJECT_DIR/.go
+  GOMODCACHE: $CI_PROJECT_DIR/.go/pkg/mod
+  GOCACHE: $CI_PROJECT_DIR/.cache/go-build
+
+# Keep test cache separate from lint: both build concurrently and would race
+# to upload the same archive if they shared a key.
+.test-go-cache: &test-go-cache
+  key:
+    files:
+      - go.sum
+    prefix: test-go
+  paths:
+    - .go/pkg/mod
+    - .cache/go-build
+
+# Seed both module and compiled build caches before starting the test shards.
+test-cache-warm:
+  stage: warm
+  image: $IMAGE_GO_TRIXIE
+  tags:
+    - linux-x86-16cpu-32gb
+  timeout: 45 minutes
+  allow_failure: true
+  cache:
+    <<: *test-go-cache
+    policy: pull-push
+  script:
+    - ./scripts/bootstrap
+    - go build ./...
+
+# Mirrors the GitHub "test" job, sharded 16 ways via GitLab's parallel jobs.
+# Wait for the cache upload, but run even if warming fails (cold-cache fallback).
+test:
+  stage: test
+  image: $IMAGE_GO_TRIXIE
+  tags:
+    - linux-x86-8cpu-16gb
+  needs:
+    - job: test-cache-warm
+      artifacts: false
+  timeout: 75 minutes
+  allow_failure: true
+  parallel: 16
+  cache:
+    <<: *test-go-cache
+    policy: pull
+  script:
+    - ./scripts/bootstrap
+    - |
+      # Select this shard's packages (1-indexed), matching the GitHub sharding logic.
+      packages=$(go list ./... | awk "NR % $CI_NODE_TOTAL == ($CI_NODE_INDEX - 1)")
+      if [ -n "$packages" ]; then
+        echo "$packages" | xargs go test -v -timeout 25m
+      fi
