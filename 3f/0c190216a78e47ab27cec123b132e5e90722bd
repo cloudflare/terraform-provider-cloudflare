@@ -1,0 +1,21 @@
+docs/resources/zero_trust_access_ai_controls_mcp_server.md
+  s_99f2086c95da4f::t_4aa8b79d2499a7 74-75
+internal/services/zero_trust_access_ai_controls_mcp_server/schema.go
+  s_99f2086c95da4f::t_d73b821bee804c 65,70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3f0c190216a78e47ab27cec123b132e5e90722bd",
+  "prompts": {},
+  "sessions": {
+    "s_99f2086c95da4f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f283a4823ffeJ72yofuJSLYjvC",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Miguel Saraiva <msaraiva@cloudflare.com>"
+    }
+  }
+}

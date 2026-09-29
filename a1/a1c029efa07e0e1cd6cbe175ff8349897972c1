@@ -1,0 +1,19 @@
+go.mod
+  s_bc17186b151f42::t_50203e2321f02b 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a1a1c029efa07e0e1cd6cbe175ff8349897972c1",
+  "prompts": {},
+  "sessions": {
+    "s_bc17186b151f42": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2ae5e761ffeDNSm7fw7hlVPey",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

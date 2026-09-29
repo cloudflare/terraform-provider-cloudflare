@@ -1,0 +1,29 @@
+internal/services/zone_lockdown/testdata/cloudflarezonelockdownmultiurl.tf
+  s_279715510d0e77::t_52d82c238e4ca8 1-10
+internal/services/zone_lockdown/resource_test.go
+  s_6ac8adf43747f8::t_81cf042dbfdcea 104-106,115-170,221-224
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9fc40aefa54a13b9a595bba27888f425e6d78424",
+  "prompts": {},
+  "sessions": {
+    "s_279715510d0e77": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3b3385afffe3Lff8FOi4r5Dwz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    },
+    "s_6ac8adf43747f8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3a99796effeByI518AfVyZnzi",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}

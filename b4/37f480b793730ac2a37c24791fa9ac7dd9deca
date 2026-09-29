@@ -1,0 +1,140 @@
+internal/services/flagship_flag/migration/v501/handler.go
+  s_de6097212a84c2::t_3c3905a34a1a86 1-7,9-10,12,14-20,22-59,61,63-65,104,107,149-212,219-221
+  s_de6097212a84c2::t_29ba723cc3e07b 11,13,60,62,66-103,105-106,108-148
+  s_de6097212a84c2::t_2f05d39411f62d 8,213-218
+  s_de6097212a84c2::t_60a29ad0e4e1c1 21
+internal/services/flagship_flag/migrations.go
+  s_de6097212a84c2::t_3c3905a34a1a86 8-9,16-20
+internal/services/flagship_flag/model_test.go
+  s_f1b6023935fbbe::t_94f3d53e67ba58 1-14,27-28,37,42,44-57,61-67,76-79,83-84,91-92
+  s_f1b6023935fbbe::t_76b9ccd2292136 17-26,29-36,38-41,43,58-60
+  s_de6097212a84c2::t_2f05d39411f62d 93-148
+  s_f1b6023935fbbe::t_2b5c7506893281 15-16
+  s_f1b6023935fbbe::t_c2040644d2b4b4 68-75,80-82,85-90
+internal/services/flagship_flag/resource_test.go
+  s_de6097212a84c2::t_f5d8d26b250353 1-25,30-49,51-64,83-91,93-158,160-176
+  s_de6097212a84c2::t_0e18a70b5aaf90 65-82
+  s_de6097212a84c2::t_540cd50cc0fe37 92
+  s_de6097212a84c2::t_36ae7c2d318c65 26-29,50,159
+internal/services/flagship_flag/plan_modifiers_test.go
+  s_de6097212a84c2::t_540c21a0808e3d 1-54
+internal/services/flagship_flag/migrations_test.go
+  s_de6097212a84c2::t_953d0312aeed52 1-15
+  s_de6097212a84c2::t_80b122cae4c979 16-17
+internal/services/flagship_flag/data_source_schema.go
+  s_f1b6023935fbbe::t_97af5a28263b5a 7,22,25-28,33,46,49-50,56-57,59
+  s_f1b6023935fbbe::t_980e196f1a2a99 51,54
+internal/services/flagship_flag/list_data_source_schema.go
+  s_f1b6023935fbbe::t_97af5a28263b5a 7,22,25-26,34-35,37
+internal/services/flagship_flag/list_data_source.go
+  s_f1b6023935fbbe::t_fbb79d1d26e9f7 80
+  s_f1b6023935fbbe::t_2c0db4427ff18f 13,81-86
+  s_f1b6023935fbbe::t_76b9ccd2292136 7,65,99-111
+internal/services/flagship_flag/list_data_source_model.go
+  s_f1b6023935fbbe::t_76b9ccd2292136 16,20-23
+  s_f1b6023935fbbe::t_5f30362d43f305 95-96,98-99
+  s_f1b6023935fbbe::t_555b2101b1f574 41,57,65,73,81,89,97
+internal/services/flagship_flag/data_source_model.go
+  s_f1b6023935fbbe::t_555b2101b1f574 31,53,61,69,77,85,93
+  s_f1b6023935fbbe::t_76b9ccd2292136 32
+  s_f1b6023935fbbe::t_5f30362d43f305 91-92,94-95
+  s_f1b6023935fbbe::t_0edf7b2531d504 20-30
+go.sum
+  s_de6097212a84c2::t_9bc45d7a37c8e0 15-19,32-33,49-52,57-58,61-63,66-67,83-84,92-93,97-106,123-126,129-130,144-148,166-169,173-174,211-213,225-228,246-247,251-253,258-260,263-264,277-278,285,287-288,292-293,295,298-300,303-306,310-312
+internal/services/flagship_flag/resource_schema_test.go
+  s_de6097212a84c2::t_e16c62c01bc9e1 17
+internal/services/flagship_flag/testdata/flagship_flag.tf
+  s_de6097212a84c2::t_f5d8d26b250353 1-16
+examples/resources/cloudflare_flagship_flag/resource.tf
+  s_f1b6023935fbbe::t_f968cd6769a819 2-3,5-6,10-11,13
+  s_f1b6023935fbbe::t_3b430147fd698b 4,9,14,17-20
+  s_de6097212a84c2::t_c90bb02c0e1e50 21-31,33-77
+internal/services/flagship_flag/model.go
+  s_de6097212a84c2::t_faf51a013b4680 6-10,13,15,17-19,42-46,50-132
+  s_f1b6023935fbbe::t_76b9ccd2292136 34
+  s_f1b6023935fbbe::t_5f30362d43f305 27-32,35-38,183-184,186-187
+  s_f1b6023935fbbe::t_555b2101b1f574 12,33,145,153,161,169,177,185
+internal/services/flagship_flag/migration/v501/handler_test.go
+  s_de6097212a84c2::t_434b2225b6621c 36-37,43-47,103-110
+  s_de6097212a84c2::t_4e6b03e025e8e2 117
+  s_de6097212a84c2::t_60a29ad0e4e1c1 1-35,38-42,48-102,111-116,118-120,122-170
+  s_de6097212a84c2::t_e16c62c01bc9e1 121
+internal/services/flagship_flag/plan_modifiers.go
+  s_de6097212a84c2::t_0c9a951de444fd 1-130
+internal/services/flagship_flag/validators.go
+  s_de6097212a84c2::t_744222463daf95 187,198,222-223,230-231
+  s_f1b6023935fbbe::t_2c889e224dc516 6,475
+  s_f1b6023935fbbe::t_bfcb955404acfe 9,365-366
+  s_de6097212a84c2::t_56dfbf87f81a91 12
+  s_de6097212a84c2::t_3754f4366d6f28 399,435-436,439-441,443
+  s_de6097212a84c2::t_bee0a7fc7eab7b 437-438,442,444-445
+  s_de6097212a84c2::t_041f566de0a9c9 354-357,363,483-486
+  s_de6097212a84c2::t_67f67a6762b97e 229,232,446-447,465-466
+  s_f1b6023935fbbe::t_463c650d8a6fb7 423,470
+  s_f1b6023935fbbe::t_76c6d8bd0a0351 1-5,10,13-15,19-22,28,56-70,72-73,78-81,100-121,234,236-237,242-244,250-275,492
+  s_de6097212a84c2::t_bc4a068fce93dc 199,367-372,378-380,463-464
+  s_de6097212a84c2::t_75e0730ad41e99 143,174-175,317
+  s_f1b6023935fbbe::t_18b63ab421fbbb 293,303,339,348,449
+  s_f1b6023935fbbe::t_7b92850df4f866 235,238-241,245-249
+  s_de6097212a84c2::t_1a49d871b44ff1 7-8,11,16-18,26,29-32,83-99,122-142,144-173,184-186,188-197,200-221,224-228
+  s_f1b6023935fbbe::t_f1d33bea9d93a9 49-55,74-75,77,306-309,313,326-327,353,358-360,364,376-377,381-383,389-398,400-413,427,431-432,454-457,477-478,480-482,487-491
+  s_f1b6023935fbbe::t_2c0db4427ff18f 23,27,33-48,276-292,294-302,304-305,310-312,314-316,318-325,328-338,340-347,349-352,361-362,373-375,384-388,414-422,424-426,428-430,433-434,448,450-453,458-462,467-469,471-474,476,479
+  s_de6097212a84c2::t_60a29ad0e4e1c1 71,76,82
+  s_de6097212a84c2::t_bab1ed52f22813 176-177,183
+  s_de6097212a84c2::t_8b6e37960b4f72 178-182
+  s_de6097212a84c2::t_d68826f591b97e 233
+  s_de6097212a84c2::t_2c8f0189d2f810 24-25
+go.mod
+  s_de6097212a84c2::t_f556427909d825 15
+  s_de6097212a84c2::t_171782ef5a7592 26-27,32,35,41,45,47-51,53,55,64-65,67,73,78,80,82-88,90
+internal/services/flagship_flag/validators_test.go
+  s_de6097212a84c2::t_67f67a6762b97e 70-71,382-384,453-454
+  s_f1b6023935fbbe::t_f1d33bea9d93a9 54-57,237-253,283-286,334-355,358-364,415,418-424,441-442,455,458,460-466
+  s_f1b6023935fbbe::t_3320cff2c88541 1-4,6-7,10-13,15-29,36-42,50-53,72-89,205
+  s_f1b6023935fbbe::t_f0d80a47b81236 14,456-457,459
+  s_de6097212a84c2::t_a70c83afbcf8b5 175-204,365-381
+  s_de6097212a84c2::t_fa99bebd28eb17 406-414,416
+  s_de6097212a84c2::t_ba27892cfb1b1d 154
+  s_f1b6023935fbbe::t_a7150e39dc2c83 206-236,356-357,385-405,417,425-440,467
+  s_de6097212a84c2::t_56dfbf87f81a91 5,8-9,58-69,91-153,155,443-444,446-449,451
+  s_de6097212a84c2::t_bee0a7fc7eab7b 287-297
+  s_de6097212a84c2::t_132df629bcef15 254-263,278-280,282
+  s_de6097212a84c2::t_4c2800d5cf0135 90,264-277,281
+  s_de6097212a84c2::t_041f566de0a9c9 298-333
+  s_de6097212a84c2::t_4e6b03e025e8e2 445,450,452
+  s_f1b6023935fbbe::t_7b92850df4f866 43-49
+  s_de6097212a84c2::t_60a29ad0e4e1c1 30-35
+  s_de6097212a84c2::t_22b2bc813814d1 156-174
+internal/services/flagship_flag/schema.go
+  s_f1b6023935fbbe::t_2c0db4427ff18f 71-73
+  s_de6097212a84c2::t_3c3905a34a1a86 26
+  s_f1b6023935fbbe::t_76c6d8bd0a0351 60-62
+  s_f1b6023935fbbe::t_14ecaa265b3010 8,56,59,63,65
+  s_f1b6023935fbbe::t_97af5a28263b5a 7,24,67-68,70,74,78,85,89-90
+  s_de6097212a84c2::t_1a49d871b44ff1 100
+  s_de6097212a84c2::t_0c9a951de444fd 64,75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b437f480b793730ac2a37c24791fa9ac7dd9deca",
+  "prompts": {},
+  "sessions": {
+    "s_de6097212a84c2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3759b9deffeWRQ7qgDmdBHddy",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Akshit Sinha <asinha@cloudflare.com>"
+    },
+    "s_f1b6023935fbbe": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f56f267efffejnan9PcurnbYCH",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Akshit Sinha <asinha@cloudflare.com>"
+    }
+  }
+}

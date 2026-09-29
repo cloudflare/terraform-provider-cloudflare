@@ -1,0 +1,20 @@
+internal/services/workers_script/schema.go
+  s_bc866926eb2f14::t_ea9283ae084b5f 186-191
+  s_bc866926eb2f14::t_a3bd1e8dd582f1 721-730
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d17b8cef8108071e31afebae747a62b06ac6faa6",
+  "prompts": {},
+  "sessions": {
+    "s_bc866926eb2f14": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2b08f86cffeZw1R3nijHbmwMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

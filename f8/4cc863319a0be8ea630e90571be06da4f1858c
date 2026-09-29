@@ -1,0 +1,19 @@
+internal/services/flagship_flag/resource.go
+  s_de6097212a84c2::t_51524479adc530 277-280,286-289,291-300
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f84cc863319a0be8ea630e90571be06da4f1858c",
+  "prompts": {},
+  "sessions": {
+    "s_de6097212a84c2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3759b9deffeWRQ7qgDmdBHddy",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Akshit Sinha <asinha@cloudflare.com>"
+    }
+  }
+}

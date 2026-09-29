@@ -1,0 +1,24 @@
+internal/services/calls_turn_app/resource_test.go
+  s_cc32fe918200f9::t_cab7f34f232052 1-88,99-102
+  s_cc32fe918200f9::t_6c0f673b368ff1 89-98
+internal/services/calls_turn_app/testdata/calls_turn_app_basic.tf
+  s_cc32fe918200f9::t_5135040803065c 1-5
+internal/services/calls_turn_app/testdata/calls_turn_app_update_name.tf
+  s_cc32fe918200f9::t_0d4a088dea2301 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d8ebb5ca13f67ef07caec4dd012d305a469b3c6f",
+  "prompts": {},
+  "sessions": {
+    "s_cc32fe918200f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f163304c5ffe3CKSBhHc0cwL4Z",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}

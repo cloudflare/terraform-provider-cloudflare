@@ -1,0 +1,89 @@
+internal/services/flagship_flag/resource_test.go
+  s_de6097212a84c2::t_540cd50cc0fe37 92
+  s_de6097212a84c2::t_f5d8d26b250353 1-25,30-49,51-64,83-91,93-158,160-176
+  s_de6097212a84c2::t_0e18a70b5aaf90 65-82
+  s_de6097212a84c2::t_36ae7c2d318c65 26-29,50,159
+internal/services/flagship_flag/migrations.go
+  s_de6097212a84c2::t_3c3905a34a1a86 8-9,16-20
+go.mod
+  s_de6097212a84c2::t_171782ef5a7592 26-27,32,35,41,45,47-51,53,55,64-65,67,73,78,80,82-88,90
+  s_de6097212a84c2::t_f556427909d825 15
+internal/services/flagship_flag/plan_modifiers.go
+  s_de6097212a84c2::t_0c9a951de444fd 1-130
+internal/services/flagship_flag/resource_schema_test.go
+  s_de6097212a84c2::t_e16c62c01bc9e1 17
+internal/apijson/encoder.go
+  s_de6097212a84c2::t_faf51a013b4680 179
+internal/services/flagship_flag/testdata/flagship_flag.tf
+  s_de6097212a84c2::t_f5d8d26b250353 1-16
+internal/services/flagship_flag/migrations_test.go
+  s_de6097212a84c2::t_953d0312aeed52 1,4,8,11-12,14-15
+internal/services/flagship_flag/migration/v501/handler_test.go
+  s_de6097212a84c2::t_434b2225b6621c 36-37,43-47,103-110
+  s_de6097212a84c2::t_e16c62c01bc9e1 121
+  s_de6097212a84c2::t_60a29ad0e4e1c1 1-35,38-42,48-102,111-116,118-120,122-170
+  s_de6097212a84c2::t_4e6b03e025e8e2 117
+internal/services/flagship_flag/model.go
+  s_de6097212a84c2::t_faf51a013b4680 6-10,13,15,17-19,42-46,50-132
+internal/services/flagship_flag/validators.go
+  s_de6097212a84c2::t_1a49d871b44ff1 7-8,11,16-18,26,29-32,83-99,122-142,144-173,184-186,188-197,200-221,224-228
+  s_de6097212a84c2::t_744222463daf95 187,198,222-223,230-231
+  s_de6097212a84c2::t_56dfbf87f81a91 12
+  s_de6097212a84c2::t_3754f4366d6f28 399,435-436,439-441,443
+  s_de6097212a84c2::t_bee0a7fc7eab7b 437-438,442,444-445
+  s_de6097212a84c2::t_041f566de0a9c9 354-357,363,483-486
+  s_de6097212a84c2::t_8b6e37960b4f72 178-182
+  s_de6097212a84c2::t_bc4a068fce93dc 199,367-372,378-380,463-464
+  s_de6097212a84c2::t_2c8f0189d2f810 24-25
+  s_de6097212a84c2::t_67f67a6762b97e 229,232,446-447,465-466
+  s_de6097212a84c2::t_75e0730ad41e99 143,174-175,317
+  s_de6097212a84c2::t_60a29ad0e4e1c1 71,76,82
+  s_de6097212a84c2::t_bab1ed52f22813 176-177,183
+  s_de6097212a84c2::t_d68826f591b97e 233
+internal/services/flagship_flag/model_test.go
+  s_de6097212a84c2::t_2f05d39411f62d 93-148
+internal/services/flagship_flag/schema.go
+  s_de6097212a84c2::t_0c9a951de444fd 64,75
+  s_de6097212a84c2::t_3c3905a34a1a86 26
+  s_de6097212a84c2::t_1a49d871b44ff1 100
+internal/services/flagship_flag/migration/v501/handler.go
+  s_de6097212a84c2::t_29ba723cc3e07b 11,13,60,62,66-103,105-106,108-148
+  s_de6097212a84c2::t_2f05d39411f62d 8,213-218
+  s_de6097212a84c2::t_60a29ad0e4e1c1 21
+  s_de6097212a84c2::t_3c3905a34a1a86 1-7,9-10,12,14-20,22-59,61,63-65,104,107,149-212,219-221
+examples/resources/cloudflare_flagship_flag/resource.tf
+  s_de6097212a84c2::t_c90bb02c0e1e50 22-78
+internal/services/flagship_flag/plan_modifiers_test.go
+  s_de6097212a84c2::t_540c21a0808e3d 1-54
+internal/services/flagship_flag/validators_test.go
+  s_de6097212a84c2::t_4c2800d5cf0135 90,264-277,281
+  s_de6097212a84c2::t_56dfbf87f81a91 5,8-9,58-69,91-153,155,443-444,446-449,451
+  s_de6097212a84c2::t_60a29ad0e4e1c1 30-35
+  s_de6097212a84c2::t_22b2bc813814d1 156-174
+  s_de6097212a84c2::t_bee0a7fc7eab7b 287-297
+  s_de6097212a84c2::t_a70c83afbcf8b5 175-204,365-381
+  s_de6097212a84c2::t_132df629bcef15 254-263,278-280,282
+  s_de6097212a84c2::t_041f566de0a9c9 298-333
+  s_de6097212a84c2::t_67f67a6762b97e 70-71,382-384,453-454
+  s_de6097212a84c2::t_4e6b03e025e8e2 445,450,452
+  s_de6097212a84c2::t_fa99bebd28eb17 406-414,416
+  s_de6097212a84c2::t_ba27892cfb1b1d 154
+go.sum
+  s_de6097212a84c2::t_9bc45d7a37c8e0 15-19,32-33,49-52,57-58,61-63,66-67,83-84,92-93,97-106,123-126,129-130,144-148,166-169,173-174,211-213,225-228,246-247,251-253,258-260,263-264,277-278,285,287-288,292-293,295,298-300,303-306,310-312
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4e7e40c704ad5cbbf2835034f1078e06c0cd3c4d",
+  "prompts": {},
+  "sessions": {
+    "s_de6097212a84c2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3759b9deffeWRQ7qgDmdBHddy",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Akshit Sinha <asinha@cloudflare.com>"
+    }
+  }
+}

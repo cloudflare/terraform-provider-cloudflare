@@ -1,0 +1,68 @@
+go.mod
+  h_5f12c8df3da73f 6-11,14,22-26,29-30,39-40,43-56,59,61,63-64,70,74-79,82,88,91-92,94-95,97,102,107,109-116,118
+internal/services/bot_management/migration/v500/model.go
+  s_a3c28aae836ac1::t_2fddb0ed22387c 41-46
+  s_a3c28aae836ac1::t_f8b17a190563f5 39-40,47-63
+internal/services/account/migration/v500/model.go
+  s_a3c28aae836ac1::t_97b480ca344364 65-67
+  s_a3c28aae836ac1::t_d8d3bec7b379a4 64,68-71
+internal/services/zero_trust_organization/migration/v500/model.go
+  s_a3c28aae836ac1::t_5362a925c4ea4a 4
+  s_a3c28aae836ac1::t_008e3b4d177452 68-69
+  s_a3c28aae836ac1::t_e85fe38424d7da 105-112
+internal/services/zero_trust_access_identity_provider/migration/v500/model.go
+  s_a3c28aae836ac1::t_f2cd8c8b601c57 101
+internal/services/load_balancer/model.go
+  s_a3c28aae836ac1::t_0b2edce8a08a81 112,121
+internal/services/zero_trust_dlp_custom_profile/migration/v500/model.go
+  s_a3c28aae836ac1::t_f67ff5ca11d934 75
+internal/services/snippet_rules/migration/v500/model.go
+  s_a3c28aae836ac1::t_cf9a680982a1eb 43-50
+  s_a3c28aae836ac1::t_4fd28703d05e6e 19
+internal/services/queue/migration/v500/model.go
+  s_a3c28aae836ac1::t_42968a49dd696f 63-79
+  s_a3c28aae836ac1::t_17c798c9a981c1 80-86
+  s_a3c28aae836ac1::t_f51b43c0350cba 24
+  s_a3c28aae836ac1::t_eb78a25d990208 20-23,25-31,45-51,57-62
+internal/services/zero_trust_organization/data_source_model.go
+  h_5f12c8df3da73f 38-39,75
+internal/services/hyperdrive_config/migration/v500/model.go
+  s_a3c28aae836ac1::t_ff1a4cd63fe3c3 37
+  s_a3c28aae836ac1::t_6cb4e9c9bed757 4
+  s_a3c28aae836ac1::t_865b6c8e92539d 13-15,17,35-36,38-40,42-45
+internal/services/logpush_job/migration/v500/model.go
+  s_a3c28aae836ac1::t_99a793dc29d65d 65
+internal/services/spectrum_application/schema.go
+  h_5f12c8df3da73f 17,70-79,87-89,146,160,175,203
+internal/services/zero_trust_device_custom_profile/migration/v500/model.go
+  s_a3c28aae836ac1::t_3116be22335023 76-86
+  s_a3c28aae836ac1::t_c220a0faaf613d 44-75
+internal/services/spectrum_application/migration/v500/model.go
+  s_a3c28aae836ac1::t_ee12764f365124 77
+  s_a3c28aae836ac1::t_6ca50fec10ebb8 22-37,70-76,78-86
+internal/services/zero_trust_organization/model.go
+  h_5f12c8df3da73f 28,33,36,68
+internal/services/zero_trust_device_default_profile/migration/v500/model.go
+  s_a3c28aae836ac1::t_7a22e1c8f6a326 71-72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1140fd9df2474b42be833f7e8a5d4f9160067dfe",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_a3c28aae836ac1": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3a539bc5fferAa4ZLfxKMkXIx",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}

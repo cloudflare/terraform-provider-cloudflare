@@ -1,0 +1,19 @@
+internal/services/schema_validation_schemas/resource.go
+  s_bc866926eb2f14::t_8a71cfd010fc66 264-266
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "17de53806029a1b1d3b8ac27b5bbbd2edd79b05e",
+  "prompts": {},
+  "sessions": {
+    "s_bc866926eb2f14": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2b08f86cffeZw1R3nijHbmwMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}

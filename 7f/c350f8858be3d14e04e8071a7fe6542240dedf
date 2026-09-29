@@ -1,0 +1,23 @@
+.release-please-manifest.json
+  s_bc866926eb2f14::t_9b3f539f671088 2
+README.md
+  s_bc866926eb2f14::t_93d7f961ac87a0 23
+internal/version.go
+  s_bc866926eb2f14::t_bb49201b06a1cb 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "7fc350f8858be3d14e04e8071a7fe6542240dedf",
+  "prompts": {},
+  "sessions": {
+    "s_bc866926eb2f14": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f2b08f86cffeZw1R3nijHbmwMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
