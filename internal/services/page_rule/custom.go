@@ -3,6 +3,7 @@ package page_rule
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -191,6 +192,13 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 		var qs PageRuleActionsCacheKeyFieldsQueryStringModel
 		ckf.QueryString.As(context.TODO(), &qs, basetypes.ObjectAsOptions{})
 
+		if err = validateQueryStringField("include", qs.Include); err != nil {
+			return nil, err
+		}
+		if err = validateQueryStringField("exclude", qs.Exclude); err != nil {
+			return nil, err
+		}
+
 		var header PageRuleActionsCacheKeyFieldsHeaderModel
 		ckf.Header.As(context.TODO(), &header, basetypes.ObjectAsOptions{})
 
@@ -212,9 +220,9 @@ func (m *PageRuleActionsModel) Encode() (encoded []map[string]any, err error) {
 				"host": map[string]bool{
 					"resolved": host.Resolved.ValueBool(),
 				},
-				"query_string": map[string][]string{
-					"include": convertToStringSlice(qs.Include),
-					"exclude": convertToStringSlice(qs.Exclude),
+				"query_string": map[string]any{
+					"include": encodeQueryStringField(qs.Include),
+					"exclude": encodeQueryStringField(qs.Exclude),
 				},
 				"user": map[string]bool{
 					"geo":         user.Geo.ValueBool(),
@@ -474,20 +482,10 @@ func UnmarshalPageRuleModel(b []byte) (*PageRuleModel, error) {
 					var queryString PageRuleActionsCacheKeyFieldsQueryStringModel
 					qsMap := field.(map[string]interface{})
 					if inc, ok := qsMap["include"]; ok {
-						includesSlice, ok := inc.([]interface{})
-						if ok {
-							for _, i := range includesSlice {
-								queryString.Include = append(queryString.Include, types.StringValue(i.(string)))
-							}
-						}
+						queryString.Include = decodeQueryStringField(inc)
 					}
 					if exc, ok := qsMap["exclude"]; ok {
-						excludesSlice, ok := exc.([]interface{})
-						if ok {
-							for _, e := range excludesSlice {
-								queryString.Exclude = append(queryString.Exclude, types.StringValue(e.(string)))
-							}
-						}
+						queryString.Exclude = decodeQueryStringField(exc)
 					}
 					ckf.QueryString, _ = customfield.NewObject[PageRuleActionsCacheKeyFieldsQueryStringModel](context.Background(), &queryString)
 				case "user":
@@ -636,4 +634,80 @@ func convertToStringSlice(b []basetypes.StringValue) []string {
 		ss = append(ss, v.ValueString())
 	}
 	return ss
+}
+
+// queryStringWildcard is the API's sentinel for "every query string parameter".
+const queryStringWildcard = "*"
+
+// The API models cache_key_fields.query_string.include/exclude as a oneOf: the
+// bare string "*" means all query string parameters, while an array is a list of
+// literal parameter names. Terraform models both as a list of strings, so the
+// wildcard is carried as the single-element list ["*"] and translated at the
+// wire boundary.
+//
+// Sending ["*"] verbatim is not equivalent: the API stores it as the array
+// branch, i.e. one parameter literally named "*", which matches nothing. That
+// silently drops every parameter from the cache key. The v4 provider rejected
+// "*" in these lists outright and sent the string form instead. See
+// ESCALATION-10577.
+
+// isQueryStringWildcard reports whether values is exactly the wildcard list.
+func isQueryStringWildcard(values []basetypes.StringValue) bool {
+	return len(values) == 1 && values[0].ValueString() == queryStringWildcard
+}
+
+// validateQueryStringField rejects "*" mixed with named parameters, which has no
+// meaning on the API: the wildcard is a whole-value sentinel, not a list element.
+func validateQueryStringField(field string, values []basetypes.StringValue) error {
+	if len(values) < 2 {
+		return nil
+	}
+	for _, v := range values {
+		if v.ValueString() == queryStringWildcard {
+			return fmt.Errorf(
+				"invalid %s value: %q cannot be combined with named query string parameters; "+
+					"use [%q] on its own to match all parameters",
+				field, queryStringWildcard, queryStringWildcard)
+		}
+	}
+	return nil
+}
+
+// encodeQueryStringField renders include/exclude for the API, emitting the bare
+// string "*" for the wildcard list and a list of parameter names otherwise.
+func encodeQueryStringField(values []basetypes.StringValue) any {
+	if isQueryStringWildcard(values) {
+		return queryStringWildcard
+	}
+	return convertToStringSlice(values)
+}
+
+// decodeQueryStringField reads include/exclude back from the API, surfacing the
+// bare string "*" as ["*"] so it round-trips through the list schema. Before
+// this, the string form failed a []interface{} type assertion and was discarded
+// without error, so importing a rule that used the wildcard produced an empty
+// list and the next apply overwrote it.
+//
+// This affects `terraform import` only. UnmarshalPageRuleModel, the sole caller,
+// is reached from ImportState; Create, Update and Read decode with
+// apijson.UnmarshalComputed, which leaves non-computed properties alone, and
+// actions is json:"actions,required". Ordinary refresh therefore never reads
+// actions back from the API at all.
+func decodeQueryStringField(v any) []basetypes.StringValue {
+	switch t := v.(type) {
+	case string:
+		if t == queryStringWildcard {
+			return []basetypes.StringValue{types.StringValue(queryStringWildcard)}
+		}
+	case []interface{}:
+		// Left nil when empty, matching how the API reports an unset field.
+		var out []basetypes.StringValue
+		for _, e := range t {
+			if s, ok := e.(string); ok {
+				out = append(out, types.StringValue(s))
+			}
+		}
+		return out
+	}
+	return nil
 }

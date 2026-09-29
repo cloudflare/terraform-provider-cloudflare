@@ -3418,34 +3418,26 @@ func TestAccCloudflarePageRule_CacheKeyFieldsExcludeAllQueryString(t *testing.T)
 	})
 }
 
-// func TestAccCloudflarePageRule_CacheKeyFieldsInvalidExcludeAllQueryString(t *testing.T) {
-// 	var pageRule cloudflare.PageRule
-// 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-// 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-// 	rnd := utils.GenerateRandomResourceName()
-// 	pageRuleTarget := fmt.Sprintf("%s.%s", rnd, domain)
-// 	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
-//
-// 	resource.Test(t, resource.TestCase{
-// 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-// 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-// 		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
-// 		Steps: []resource.TestStep{
-// 			{
-// 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsInvalidIgnoreAllQueryString(zoneID, rnd, pageRuleTarget),
-// 				Check: resource.ComposeTestCheckFunc(
-// 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
-// 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.check_presence.#", "1"),
-// 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.cookie.include.#", "1"),
-// 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.check_presence.#", "1"),
-// 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.include.#", "1"),
-// 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.host.resolved", "true"),
-// 				),
-// 				ExpectError: regexp.MustCompile("Error: Invalid exclude value"),
-// 			},
-// 		},
-// 	})
-// }
+// Counterpart to TestAccCloudflarePageRule_CacheKeyFieldsMixedWildcardInclude,
+// covering the exclude side of the same guard.
+func TestAccCloudflarePageRule_CacheKeyFieldsMixedWildcardExclude(t *testing.T) {
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	pageRuleTarget := fmt.Sprintf("%s.%s", rnd, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflarePageRuleConfigCacheKeyFieldsMixedWildcardExclude(zoneID, rnd, pageRuleTarget),
+				ExpectError: regexp.MustCompile(`invalid exclude value`),
+			},
+		},
+	})
+}
 
 func TestAccCloudflarePageRule_CacheKeyFieldsExcludeMultipleValuesQueryString(t *testing.T) {
 	var pageRule cloudflare.PageRule
@@ -3602,32 +3594,29 @@ func TestAccCloudflarePageRule_CacheKeyFieldsIncludeAllQueryStringValues(t *test
 	})
 }
 
-// func TestAccCloudflarePageRule_CacheKeyFieldsInvalidIncludeAllQueryStringValues(t *testing.T) {
-// 	var pageRule cloudflare.PageRule
-// 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-// 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-// 	rnd := utils.GenerateRandomResourceName()
-// 	resourceName := "cloudflare_page_rule." + rnd
-// 	target := fmt.Sprintf("%s.%s", rnd, domain)
-//
-// 	resource.Test(t, resource.TestCase{
-// 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-// 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-// 		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
-// 		Steps: []resource.TestStep{
-// 			{
-// 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsInvalidIncludeAllQueryStringValues(zoneID, target, rnd),
-// 				Check: resource.ComposeTestCheckFunc(
-// 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
-// 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.header.exclude.#", "1"),
-// 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.user.device_type", "true"),
-// 					resource.TestCheckResourceAttr(resourceName, "actions.cache_key_fields.user.geo", "true"),
-// 				),
-// 				ExpectError: regexp.MustCompile("Error: Invalid include value"),
-// 			},
-// 		},
-// 	})
-// }
+// "*" is a whole-value sentinel on the API, not a list element, so combining it
+// with named parameters is meaningless. v4 rejected this outright; the v5
+// rewrite dropped the guard, so this test was disabled. It is restored here
+// against the mixed list, which is the case that is genuinely invalid now that
+// ["*"] on its own is translated to the API's wildcard.
+func TestAccCloudflarePageRule_CacheKeyFieldsMixedWildcardInclude(t *testing.T) {
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	target := fmt.Sprintf("%s.%s", rnd, domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflarePageRuleConfigCacheKeyFieldsMixedWildcardInclude(zoneID, target, rnd),
+				ExpectError: regexp.MustCompile(`invalid include value`),
+			},
+		},
+	})
+}
 
 func TestAccCloudflarePageRule_CacheKeyFieldsIncludeMultipleValuesQueryString(t *testing.T) {
 	var pageRule cloudflare.PageRule
@@ -3999,8 +3988,8 @@ func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIgnoreAllQueryString(zone
 	return acctest.LoadTestCase("pageruleconfigcachekeyfieldsignoreallquerystring.tf", zoneID, target, rnd)
 }
 
-func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsInvalidIgnoreAllQueryString(zoneID, rnd, target string) string {
-	return acctest.LoadTestCase("pageruleconfigcachekeyfieldsinvalidignoreallquerystring.tf", zoneID, target, rnd)
+func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsMixedWildcardExclude(zoneID, rnd, target string) string {
+	return acctest.LoadTestCase("pageruleconfigcachekeyfieldsmixedwildcardexclude.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsExcludeMultipleValuesQueryString(zoneID, rnd, target string) string {
@@ -4015,8 +4004,8 @@ func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIncludeAllQueryStringValu
 	return acctest.LoadTestCase("pageruleconfigcachekeyfieldsincludeallquerystringvalues.tf", zoneID, target, rnd)
 }
 
-func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsInvalidIncludeAllQueryStringValues(zoneID, target, rnd string) string {
-	return acctest.LoadTestCase("pageruleconfigcachekeyfieldsinvalidincludeallquerystringvalues.tf", zoneID, target, rnd)
+func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsMixedWildcardInclude(zoneID, target, rnd string) string {
+	return acctest.LoadTestCase("pageruleconfigcachekeyfieldsmixedwildcardinclude.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIncludeMultipleValuesQueryString(zoneID, rnd, target string) string {

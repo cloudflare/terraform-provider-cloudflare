@@ -9,7 +9,7 @@ resource "cloudflare_page_rule" "%[3]s" {
       }
       host = {}
       query_string = {
-        include = ["*"]
+        include = ["*", "session"]
       }
       user = {
         device_type = true
