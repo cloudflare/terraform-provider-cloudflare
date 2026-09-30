@@ -53,10 +53,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "Specifies the type of sink.\nAvailable values: \"r2\", \"r2_data_catalog\".",
+				Description: "Specifies the type of sink.\nAvailable values: \"r2\", \"r2_data_catalog\", \"basin_catalog\".",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("r2", "r2_data_catalog"),
+					stringvalidator.OneOfCaseInsensitive(
+						"r2",
+						"r2_data_catalog",
+						"basin_catalog",
+					),
 				},
 			},
 			"config": schema.SingleNestedAttribute{
