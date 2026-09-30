@@ -128,5 +128,7 @@ func (r *ZeroTrustCasbPolicyResource) Schema(ctx context.Context, req resource.S
 }
 
 func (r *ZeroTrustCasbPolicyResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
-	return []resource.ConfigValidator{}
+	return []resource.ConfigValidator{
+		integrationScopeValidator{},
+	}
 }
