@@ -226,7 +226,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						ElementType: types.StringType,
 					},
 					"merge_subrequests": schema.BoolAttribute{
-						Description: "If set to true, subrequests will be merged into the parent request. Only supported for the `http_requests` dataset.",
+						Description: "If set to true, subrequests will be merged into the parent request. Only supported for the `http_requests` dataset. Not supported for account-scoped jobs.",
 						Computed:    true,
 					},
 					"output_type": schema.StringAttribute{
