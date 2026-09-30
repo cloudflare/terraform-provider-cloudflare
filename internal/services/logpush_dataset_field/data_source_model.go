@@ -13,7 +13,7 @@ import (
 )
 
 type LogpushDatasetFieldResultDataSourceEnvelope struct {
-	Result LogpushDatasetFieldDataSourceModel `json:"result,computed"`
+	Result customfield.Map[types.String] `json:"result,computed"`
 }
 
 type LogpushDatasetFieldDataSourceModel struct {

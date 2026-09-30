@@ -3,6 +3,7 @@ package logpush_dataset_field_test
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -31,6 +32,7 @@ func TestAccCloudflareLogpushDatasetFieldDataSource_AccountID(t *testing.T) {
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("dataset_id"), knownvalue.StringExact("http_requests")),
 					// Verify zone_id is not set (mutually exclusive)
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("zone_id"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("fields").AtMapKey("Datetime"), knownvalue.StringRegexp(regexp.MustCompile(`.+`))),
 				},
 			},
 		},
@@ -55,6 +57,7 @@ func TestAccCloudflareLogpushDatasetFieldDataSource_ZoneID(t *testing.T) {
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("dataset_id"), knownvalue.StringExact("firewall_events")),
 					// Verify account_id is not set (mutually exclusive)
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("account_id"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("fields").AtMapKey("Datetime"), knownvalue.StringRegexp(regexp.MustCompile(`.+`))),
 				},
 			},
 		},

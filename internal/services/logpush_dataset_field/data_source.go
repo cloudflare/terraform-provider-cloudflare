@@ -12,8 +12,10 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7/logpush"
 	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type LogpushDatasetFieldDataSource struct {
@@ -65,7 +67,9 @@ func (d *LogpushDatasetFieldDataSource) Read(ctx context.Context, req datasource
 	}
 
 	res := new(http.Response)
-	env := LogpushDatasetFieldResultDataSourceEnvelope{*data}
+	env := LogpushDatasetFieldResultDataSourceEnvelope{
+		Result: customfield.NullMap[types.String](ctx),
+	}
 	_, err := d.client.Logpush.Datasets.Fields.Get(
 		ctx,
 		logpush.DatasetFieldGetParamsDatasetID(data.DatasetID.ValueString()),
@@ -83,7 +87,7 @@ func (d *LogpushDatasetFieldDataSource) Read(ctx context.Context, req datasource
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Fields = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
