@@ -1,0 +1,68 @@
+internal/services/d1_database/resource.go
+  h_5f12c8df3da73f 179
+internal/services/email_routing_settings/resource.go
+  h_5f12c8df3da73f 69
+internal/services/schema_validation_schemas/model.go
+  h_5f12c8df3da73f 22
+internal/services/account_token/migration/v500/model.go
+  s_b6c00b8980a1dd::t_7fb4f64bd130d6 101-108
+internal/services/workers_kv/resource.go
+  h_5f12c8df3da73f 69-80,130-141
+internal/services/dns_record/resource.go
+  h_5f12c8df3da73f 91,132-139,150,197
+internal/services/api_shield_operation/model.go
+  h_5f12c8df3da73f 21-22
+internal/services/r2_bucket/resource.go
+  h_5f12c8df3da73f 128
+internal/services/worker_version/model.go
+  h_5f12c8df3da73f 21-22
+internal/services/api_shield_operation/resource.go
+  h_5f12c8df3da73f 137
+internal/services/turnstile_widget/schema.go
+  h_5f12c8df3da73f 10,52-92
+internal/services/workers_script/resource.go
+  h_5f12c8df3da73f 586-593,597
+internal/services/workers_kv/model.go
+  h_5f12c8df3da73f 23-24
+internal/services/api_token/migration/v500/model.go
+  s_b6c00b8980a1dd::t_f29f71c396b2fc 75-82
+  s_b6c00b8980a1dd::t_0191929e1eb8e2 37,64-74,87-89
+internal/services/worker_version/resource.go
+  h_5f12c8df3da73f 146
+internal/services/queue_consumer/schema.go
+  h_5f12c8df3da73f 50,55-56,104-138
+internal/services/turnstile_widget/model.go
+  h_5f12c8df3da73f 19-23
+internal/services/zero_trust_organization/migration/v500/model.go
+  s_b6c00b8980a1dd::t_51d2f06f74fae8 61-66
+  s_b6c00b8980a1dd::t_0191929e1eb8e2 55-60
+internal/services/workers_script/schema.go
+  h_5f12c8df3da73f 40,45
+internal/services/d1_database/model.go
+  h_5f12c8df3da73f 22
+internal/services/account_token/data_source_model.go
+  h_5f12c8df3da73f 23
+internal/services/zone_dns_settings/data_source_schema.go
+  h_5f12c8df3da73f 87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3cea2fc85ae90796f17a795c377400d6f644eedd",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_b6c00b8980a1dd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f1247e207ffejpsSVmmuRf6erI",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
