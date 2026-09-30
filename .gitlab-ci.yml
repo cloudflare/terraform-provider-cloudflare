@@ -33,8 +33,7 @@ workflow:
 
 # Keep the Go module and build caches inside the project dir so GitLab can
 # cache them between pipelines (cache paths must live under CI_PROJECT_DIR).
-# The lint job reuses these caches between pipelines; unit tests have their
-# own cache in the child pipeline.
+# Lint writes the cache; opt-in unit tests pull the same archive.
 variables:
   GOPATH: $CI_PROJECT_DIR/.go
   GOMODCACHE: $CI_PROJECT_DIR/.go/pkg/mod
@@ -79,11 +78,13 @@ lint:
     - ./scripts/bootstrap
     - ./scripts/lint
 
-# Offer tests on demand for merge requests. The child pipeline is detached:
-# canceling its jobs does not cancel the merge-request pipeline or block merging.
+# Offer tests on demand for merge requests, after lint has seeded the cache.
+# The child pipeline is detached and does not block merging.
 unit-tests:
   stage: test
-  needs: []
+  needs:
+    - job: lint
+      artifacts: false
   allow_failure: true
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
