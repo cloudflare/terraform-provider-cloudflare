@@ -94,3 +94,5 @@ This repository is auto-generated, and **we are no longer accepting pull request
 That said, if you have a fix that is known to work, a pull request can still be helpful as a reference implementation for the team, even though it will not be merged directly. Please open an issue alongside it so we can track the change.
 
 See [the contributing documentation](./CONTRIBUTING.md) for more details.
+
+<!-- gha-poc-lx64 -->
