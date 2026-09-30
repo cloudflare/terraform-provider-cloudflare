@@ -33,7 +33,7 @@ workflow:
 
 # Keep the Go module and build caches inside the project dir so GitLab can
 # cache them between pipelines (cache paths must live under CI_PROJECT_DIR).
-# This is what keeps `go build ./...` / `go test` fast on repeat runs.
+# Lint writes the cache; opt-in unit tests pull the same archive.
 variables:
   GOPATH: $CI_PROJECT_DIR/.go
   GOMODCACHE: $CI_PROJECT_DIR/.go/pkg/mod
@@ -78,26 +78,22 @@ lint:
     - ./scripts/bootstrap
     - ./scripts/lint
 
-# Mirrors the GitHub "test" job, sharded 16 ways via GitLab's parallel matrix.
-# Runs independently of lint (needs: []) so a lint failure does not skip tests.
-test:
+# Offer tests on demand for merge requests, after lint has seeded the cache.
+# The child pipeline is detached and does not block merging.
+unit-tests:
   stage: test
-  image: $IMAGE_GO_TRIXIE
-  tags:
-    - linux-x86-8cpu-16gb
-  needs: []
-  timeout: 45 minutes
+  needs:
+    - job: lint
+      artifacts: false
   allow_failure: true
-  parallel: 16
-  cache:
-    <<: *go-cache
-    policy: pull
-  rules: *ci-rules
-  script:
-    - ./scripts/bootstrap
-    - |
-      # Select this shard's packages (1-indexed), matching the GitHub sharding logic.
-      packages=$(go list ./... | awk "NR % $CI_NODE_TOTAL == ($CI_NODE_INDEX - 1)")
-      if [ -n "$packages" ]; then
-        echo "$packages" | xargs go test -v -timeout 25m
-      fi
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
+  # Parent cache variables expand before CI_PROJECT_DIR exists in the child.
+  # Use the child's own variables so Go writes to its checkout, not /.
+  inherit:
+    variables: false
+  trigger:
+    include:
+      - local: .gitlab-ci-unit-tests.yml

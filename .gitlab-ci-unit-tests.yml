@@ -1,0 +1,44 @@
+# Detached unit-test pipeline: the MR pipeline does not wait for its result.
+stages:
+  - test
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+
+variables:
+  GOPATH: $CI_PROJECT_DIR/.go
+  GOMODCACHE: $CI_PROJECT_DIR/.go/pkg/mod
+  GOCACHE: $CI_PROJECT_DIR/.cache/go-build
+
+# Pull the module and build cache written by the parent pipeline's lint job.
+.go-cache: &go-cache
+  key:
+    files:
+      - go.sum
+  paths:
+    - .go/pkg/mod
+    - .cache/go-build
+
+# Split Go packages across 32 GitLab parallel jobs to reduce the slowest shard.
+# Parent lint has finished before the child starts; each shard restores its cache.
+test:
+  stage: test
+  image: $IMAGE_GO_TRIXIE
+  tags:
+    - linux-x86-8cpu-16gb
+  timeout: 75 minutes
+  allow_failure: true
+  parallel: 32
+  cache:
+    <<: *go-cache
+    policy: pull
+  script:
+    - ./scripts/bootstrap
+    - |
+      # Select this shard's packages (1-indexed), matching the GitHub sharding logic.
+      packages=$(go list ./... | awk "NR % $CI_NODE_TOTAL == ($CI_NODE_INDEX - 1)")
+      if [ -n "$packages" ]; then
+        # Limit concurrent package builds/tests to fit the 16 GiB runner.
+        echo "$packages" | xargs go test -p 2 -v -timeout 25m
+      fi
