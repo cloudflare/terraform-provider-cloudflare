@@ -1,0 +1,23 @@
+internal/services/worker/resource.go
+  s_93dbf4f1fcff7e::t_a3af3f62beccc3 328-332,339
+internal/services/worker/resource_modifyplan_test.go
+  s_93dbf4f1fcff7e::t_bfa93b922c289e 101-106
+  s_93dbf4f1fcff7e::t_14d8eeba7c93e5 1-30,35-62,64-100,107-109
+  s_93dbf4f1fcff7e::t_5ae10c8d64683c 31-34,63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a539359b0967d1749e2c2cd86601311259186cb3",
+  "prompts": {},
+  "sessions": {
+    "s_93dbf4f1fcff7e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f0d0fddccffeDOjB0rtTMRTMVM",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
