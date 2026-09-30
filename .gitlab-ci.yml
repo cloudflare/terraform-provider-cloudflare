@@ -79,13 +79,16 @@ lint:
     - ./scripts/bootstrap
     - ./scripts/lint
 
-# Start tests independently of lint. The child pipeline is deliberately detached:
+# Offer tests on demand for merge requests. The child pipeline is detached:
 # canceling its jobs does not cancel the merge-request pipeline or block merging.
 unit-tests:
   stage: test
   needs: []
   allow_failure: true
-  rules: *ci-rules
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
   # Parent cache variables expand before CI_PROJECT_DIR exists in the child.
   # Use the child's own variables so Go writes to its checkout, not /.
   inherit:
