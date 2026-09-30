@@ -1,0 +1,19 @@
+.github/workflows/ci.yml
+  s_c7ce36584cb153::t_8dae78f8a7a24d 16,55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "bd08a68e11cac1a957f257ef1d35c35bff66d0de",
+  "prompts": {},
+  "sessions": {
+    "s_c7ce36584cb153": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f1274dfc9ffeJxJ41oNMYOmcMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
