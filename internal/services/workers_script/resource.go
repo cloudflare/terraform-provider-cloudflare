@@ -439,14 +439,30 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 				}
 			}
 
-			mainPart := data.MainModule.ValueString()
-			isMainModule := mainPart != ""
-			if mainPart == "" {
-				mainPart = data.BodyPart.ValueString()
+			// Prefer the deployed entrypoint reported by the API so a stale
+			// main_module in state surfaces as drift rather than an error.
+			var mainPart string
+			var isMainModule bool
+			if entrypoint := scriptContentRes.Header.Get("CF-Entrypoint"); entrypoint != "" {
+				if _, ok := parts[entrypoint]; ok {
+					mainPart = entrypoint
+					isMainModule = true
+				}
 			}
 			if mainPart == "" {
-				mainPart = scriptContentRes.Header.Get("CF-Entrypoint")
-				isMainModule = mainPart != ""
+				if name := data.MainModule.ValueString(); name != "" {
+					if _, ok := parts[name]; ok {
+						mainPart = name
+						isMainModule = true
+					}
+				}
+			}
+			if mainPart == "" {
+				if name := data.BodyPart.ValueString(); name != "" {
+					if _, ok := parts[name]; ok {
+						mainPart = name
+					}
+				}
 			}
 			if mainPart == "" {
 				if metadataPart, ok := parts["metadata"]; ok {
