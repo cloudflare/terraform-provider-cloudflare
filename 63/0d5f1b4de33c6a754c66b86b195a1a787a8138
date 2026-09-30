@@ -1,0 +1,19 @@
+.gitlab-ci.yml
+  s_c7ce36584cb153::t_ce501766ef2813 82,88-91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "630d5f1b4de33c6a754c66b86b195a1a787a8138",
+  "prompts": {},
+  "sessions": {
+    "s_c7ce36584cb153": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f1274dfc9ffeJxJ41oNMYOmcMq",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
