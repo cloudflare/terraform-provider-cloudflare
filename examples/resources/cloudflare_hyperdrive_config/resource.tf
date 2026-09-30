@@ -11,6 +11,11 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
   }
   caching = {
     disabled = true
+    max_age = 0
+    stale_while_revalidate = 0
+  }
+  integration = {
+
   }
   mtls = {
     ca_certificate_id = "00000000-0000-0000-0000-0000000000"

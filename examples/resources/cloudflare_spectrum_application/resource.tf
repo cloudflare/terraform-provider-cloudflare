@@ -19,6 +19,8 @@ resource "cloudflare_spectrum_application" "example_spectrum_application" {
     type = ""
   }
   origin_port = 22
+  origin_worker_id = "277b7815c871434b960b60729659000a"
   proxy_protocol = "off"
   tls = "off"
+  virtual_network_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
 }

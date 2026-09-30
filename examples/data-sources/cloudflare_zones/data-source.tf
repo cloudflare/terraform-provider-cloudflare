@@ -7,4 +7,5 @@ data "cloudflare_zones" "example_zones" {
   name = "name"
   order = "status"
   status = "initializing"
+  type = ["full"]
 }

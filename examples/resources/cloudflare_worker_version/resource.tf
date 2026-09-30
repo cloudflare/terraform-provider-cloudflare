@@ -7,6 +7,7 @@ resource "cloudflare_worker_version" "example_worker_version" {
   }
   assets = {
     config = {
+      base_path = "/docs/"
       html_handling = "auto-trailing-slash"
       not_found_handling = "404-page"
       run_worker_first = []
@@ -33,22 +34,25 @@ resource "cloudflare_worker_version" "example_worker_version" {
       cache = {
         enabled = true
       }
-      renamed_to = "renamed_to"
       state = "created"
+    }
+    Counter = {
       storage = "sqlite"
-      transfer_from = "transfer_from"
-      transferred_to = "transferred_to"
+      type = "durable-object"
+      container = "my-container"
+      state = "created"
+    }
+    OldCounter = {
+      renamed_to = "Counter"
+      state = "renamed"
+      type = "durable-object"
     }
     default = {
       type = "worker"
       cache = {
         enabled = false
       }
-      renamed_to = "renamed_to"
       state = "created"
-      storage = "sqlite"
-      transfer_from = "transfer_from"
-      transferred_to = "transferred_to"
     }
   }
   limits = {
@@ -73,7 +77,7 @@ resource "cloudflare_worker_version" "example_worker_version" {
     }]
   }
   modules = [{
-    content_file = "dist/index.js"
+    content_base64 = "ZXhwb3J0IGRlZmF1bHQgewogIGFzeW5jIGZldGNoKHJlcXVlc3QsIGVudiwgY3R4KSB7CiAgICByZXR1cm4gbmV3IFJlc3BvbnNlKCdIZWxsbyBXb3JsZCEnKQogIH0KfQ=="
     content_type = "application/javascript+module"
     name = "index.js"
   }]
@@ -85,4 +89,5 @@ resource "cloudflare_worker_version" "example_worker_version" {
   placement = {
     mode = "smart"
   }
+  usage_model = "standard"
 }

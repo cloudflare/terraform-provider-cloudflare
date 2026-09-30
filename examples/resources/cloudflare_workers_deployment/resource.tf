@@ -4,7 +4,7 @@ resource "cloudflare_workers_deployment" "example_workers_deployment" {
   strategy = "percentage"
   versions = [{
     percentage = 100
-    version_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
+    version_id = "023e105f-2a42-4f8b-a1c1-73f6a2a30c0f"
   }]
   annotations = {
     workers_message = "Deploy bug fix."
