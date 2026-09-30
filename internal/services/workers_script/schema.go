@@ -224,14 +224,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"analytics_engine\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\".",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"messaging\", \"analytics_engine\", \"artifacts\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"k2\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"flagship\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"ai",
 									"ai_search",
 									"ai_search_namespace",
+									"messaging",
 									"analytics_engine",
+									"artifacts",
 									"assets",
 									"browser",
 									"d1",
@@ -247,6 +249,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"mtls_certificate",
 									"plain_text",
 									"pipelines",
+									"k2",
 									"queue",
 									"ratelimit",
 									"r2_bucket",
@@ -258,6 +261,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"vectorize",
 									"version_metadata",
 									"secrets_store_secret",
+									"flagship",
 									"secret_key",
 									"workflow",
 									"wasm_module",

@@ -47,8 +47,14 @@ type APITokenPoliciesPermissionGroupsModel struct {
 }
 
 type APITokenPoliciesPermissionGroupsMetaModel struct {
-	Key   types.String `tfsdk:"key" json:"key,optional"`
-	Value types.String `tfsdk:"value" json:"value,optional"`
+	Category    types.String      `tfsdk:"category" json:"category,optional"`
+	Deprecated  types.String      `tfsdk:"deprecated" json:"deprecated,optional"`
+	Description types.String      `tfsdk:"description" json:"description,optional"`
+	Editable    types.String      `tfsdk:"editable" json:"editable,optional"`
+	EolAt       timetypes.RFC3339 `tfsdk:"eol_at" json:"eol_at,optional" format:"date-time"`
+	Label       types.String      `tfsdk:"label" json:"label,optional"`
+	Scopes      types.String      `tfsdk:"scopes" json:"scopes,optional"`
+	Visibility  types.String      `tfsdk:"visibility" json:"visibility,optional"`
 }
 
 type APITokenConditionModel struct {

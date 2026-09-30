@@ -6,14 +6,26 @@ resource "cloudflare_account_token" "example_account_token" {
     permission_groups = [{
       id = "c8fed203ed3043cba015a93ad1616f1f"
       meta = {
-        key = "key"
-        value = "value"
+        category = "category"
+        deprecated = "deprecated"
+        description = "description"
+        editable = "editable"
+        eol_at = "2019-12-27T18:11:19.117Z"
+        label = "load_balancer_admin"
+        scopes = "com.cloudflare.api.account"
+        visibility = "visibility"
       }
     }, {
       id = "82e64a83756745bbbb1c9c2701bf816b"
       meta = {
-        key = "key"
-        value = "value"
+        category = "category"
+        deprecated = "deprecated"
+        description = "description"
+        editable = "editable"
+        eol_at = "2019-12-27T18:11:19.117Z"
+        label = "fbm_user"
+        scopes = "com.cloudflare.api.account"
+        visibility = "visibility"
       }
     }]
     resources = {

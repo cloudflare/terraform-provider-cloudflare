@@ -63,7 +63,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"policies": schema.ListNestedAttribute{
-				Description: "Set of access policies assigned to the token.",
+				Description: "List of access policies assigned to the token.",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
