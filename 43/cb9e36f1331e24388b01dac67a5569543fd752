@@ -1,0 +1,21 @@
+internal/services/api_shield_operation/migration/v501/testdata/v526_basic.tf
+  s_cc32fe918200f9::t_a609084ce2f217 1-6
+internal/services/api_shield_operation/migration/v501/migrations_test.go
+  s_cc32fe918200f9::t_823924285b87a3 1-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "43cb9e36f1331e24388b01dac67a5569543fd752",
+  "prompts": {},
+  "sessions": {
+    "s_cc32fe918200f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f163304c5ffe3CKSBhHc0cwL4Z",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
