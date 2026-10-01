@@ -1,0 +1,20 @@
+internal/services/api_shield_operation/resource_test.go
+  s_cc32fe918200f9::t_5e8841b194bd75 393-395,402-404
+  s_cc32fe918200f9::t_eea9bbab28a729 364-392,396-401,405-428
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8a5ae9b9bdb99626af93c88e729c4a43c2b58ab6",
+  "prompts": {},
+  "sessions": {
+    "s_cc32fe918200f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f163304c5ffe3CKSBhHc0cwL4Z",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
