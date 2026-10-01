@@ -1,0 +1,38 @@
+internal/services/flagship_flag/list_data_source_model.go
+  s_cc32fe918200f9::t_09184a3b41ed45 7
+  s_cc32fe918200f9::t_47f3734cfc5167 35
+internal/services/api_shield_operation/resource.go
+  s_cc32fe918200f9::t_b3ba1aa7914972 101-112
+  s_cc32fe918200f9::t_5f7445a493e558 21
+internal/services/api_shield_operation/schema.go
+  s_cc32fe918200f9::t_9bcef5c024beca 33
+internal/services/flagship_flag/data_source_model.go
+  s_cc32fe918200f9::t_ec715ef2f5e1cd 7
+  s_cc32fe918200f9::t_2a40d1fe5cc7d0 52
+internal/services/api_shield_operation/migrations.go
+  s_cc32fe918200f9::t_21bb5a5fe2081f 9
+  s_cc32fe918200f9::t_22cea282f5bb37 40-45
+  s_cc32fe918200f9::t_ab6ad772923a40 46
+internal/services/api_shield_operation/migration/v501/handler.go
+  s_cc32fe918200f9::t_0d089b700678d7 1-4,8,15,19-22,24-25,27-28,47-49,61-62,77
+  s_cc32fe918200f9::t_faaccc9c263cf4 5-7,9-14,16-18,23,26,29-38,41-46,50-60,63-72,75-76
+  s_cc32fe918200f9::t_b328ea3c400d59 39-40,73-74
+go.sum
+  s_cc32fe918200f9::t_7c353fdb774e87 74-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "eed00dc954c9791950fde50293c7136fddd24d59",
+  "prompts": {},
+  "sessions": {
+    "s_cc32fe918200f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f163304c5ffe3CKSBhHc0cwL4Z",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
