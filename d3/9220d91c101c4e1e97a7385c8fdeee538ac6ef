@@ -1,0 +1,19 @@
+internal/services/api_shield_operation/migration_v501_test.go
+  s_cc32fe918200f9::t_07300b6d8a01ac 1-78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d39220d91c101c4e1e97a7385c8fdeee538ac6ef",
+  "prompts": {},
+  "sessions": {
+    "s_cc32fe918200f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f163304c5ffe3CKSBhHc0cwL4Z",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
