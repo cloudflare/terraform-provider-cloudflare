@@ -1,0 +1,26 @@
+examples/resources/cloudflare_workers_script_subdomain/import.sh
+  h_5f12c8df3da73f 1
+examples/resources/cloudflare_list_item/import.sh
+  s_0186c0812ecd82::t_bb45e16856a103 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c7826813b3aa5864e2bdfaaba3f33b9f8658b3ee",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_0186c0812ecd82": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f07c11118ffev1vfJ7K3Qfqzjz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
