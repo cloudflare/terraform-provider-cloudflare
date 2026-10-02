@@ -1,0 +1,19 @@
+internal/services/zero_trust_organization/migration/v500/model.go
+  s_cc32fe918200f9::t_fa7ae56b69d1d5 30-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "37da68e1c63ae2a80e5ad135d40bc15ffeec4c68",
+  "prompts": {},
+  "sessions": {
+    "s_cc32fe918200f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f163304c5ffe3CKSBhHc0cwL4Z",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
