@@ -64,6 +64,8 @@ func (r *ZeroTrustTunnelWARPConnectorResource) Create(ctx context.Context, req r
 		return
 	}
 
+	haFromPlan := data.Ha
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -91,6 +93,11 @@ func (r *ZeroTrustTunnelWARPConnectorResource) Create(ctx context.Context, req r
 		return
 	}
 	data = &env.Result
+
+	normalizeWARPConnectorHA(data)
+	if data.Ha.IsNull() || data.Ha.IsUnknown() {
+		data.Ha = haFromPlan
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -181,6 +188,8 @@ func (r *ZeroTrustTunnelWARPConnectorResource) Read(ctx context.Context, req res
 	}
 	data = &env.Result
 
+	normalizeWARPConnectorHA(data)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -250,6 +259,8 @@ func (r *ZeroTrustTunnelWARPConnectorResource) ImportState(ctx context.Context, 
 		return
 	}
 	data = &env.Result
+
+	normalizeWARPConnectorHA(data)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
