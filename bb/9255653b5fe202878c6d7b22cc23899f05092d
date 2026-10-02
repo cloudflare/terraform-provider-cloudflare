@@ -1,0 +1,21 @@
+CHANGELOG.md
+  s_0186c0812ecd82::t_df02e3aa12b4fd 100
+  s_0186c0812ecd82::t_8298737aae7d93 20
+  s_0186c0812ecd82::t_a82bd62feb4576 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "bb9255653b5fe202878c6d7b22cc23899f05092d",
+  "prompts": {},
+  "sessions": {
+    "s_0186c0812ecd82": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f07c11118ffev1vfJ7K3Qfqzjz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
