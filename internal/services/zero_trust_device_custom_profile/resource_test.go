@@ -474,3 +474,72 @@ func testAccCloudflareZeroTrustDeviceCustomProfileWithExcludeDrift(accountID, rn
 func testAccCloudflareZeroTrustDeviceCustomProfileWithExcludeDriftUpdated(accountID, rnd string, precedence int) string {
 	return acctest.LoadTestCase("devicecustomprofilewithexcludedriftupdated.tf", rnd, accountID, precedence)
 }
+
+func testAccCloudflareZeroTrustDeviceCustomProfileMixedIncludeInitial(accountID, rnd string, precedence int) string {
+	return acctest.LoadTestCase("devicecustomprofilemixedincludeinitial.tf", rnd, accountID, precedence)
+}
+
+func testAccCloudflareZeroTrustDeviceCustomProfileMixedIncludeUpdated(accountID, rnd string, precedence int) string {
+	return acctest.LoadTestCase("devicecustomprofilemixedincludeupdated.tf", rnd, accountID, precedence)
+}
+
+// TestAccCloudflareZeroTrustDeviceCustomProfile_MixedIncludePrependHost
+// reproduces GH-7307: prepending a host entry in front of an existing address
+// entry causes the split-tunnel normalizer to match plan[0] (the new host entry,
+// with unknown address) against state[0] (the former address entry). Without
+// the fix, the state address is inherited, producing a PATCH body that contains
+// both host and address in the same object. The API rejects this with error 2049:
+// "cannot update split tunnels: host and Address both cannot be present".
+func TestAccCloudflareZeroTrustDeviceCustomProfile_MixedIncludePrependHost(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_device_custom_profile.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	randomPrecedence := rand.Intn(250)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZeroTrustDeviceCustomProfileDestroy,
+		Steps: []resource.TestStep{
+			// Step 1: Create with a single address entry.
+			// State will have include[0] = { address: "172.64.128.0/20", host: null }.
+			{
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileMixedIncludeInitial(accountID, rnd, randomPrecedence),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(1)),
+					statecheck.ExpectKnownValue(resourceName,
+						tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("address"),
+						knownvalue.StringExact("172.64.128.0/20")),
+				},
+			},
+			// Step 2: Prepend a host entry. Without the fix, plan[0] (host entry,
+			// unknown address) inherits address "172.64.128.0/20" from state[0]
+			// and the PATCH fails with API error 2049. With the fix, the unknown
+			// address is resolved to null because host is already set in the plan.
+			{
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileMixedIncludeUpdated(accountID, rnd, randomPrecedence),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("include"), knownvalue.ListSizeExact(2)),
+					statecheck.ExpectKnownValue(resourceName,
+						tfjsonpath.New("include").AtSliceIndex(0).AtMapKey("host"),
+						knownvalue.StringExact("example.com")),
+					statecheck.ExpectKnownValue(resourceName,
+						tfjsonpath.New("include").AtSliceIndex(1).AtMapKey("address"),
+						knownvalue.StringExact("172.64.128.0/20")),
+				},
+			},
+			// Step 3: Verify the plan is stable (no perpetual diff).
+			{
+				Config: testAccCloudflareZeroTrustDeviceCustomProfileMixedIncludeUpdated(accountID, rnd, randomPrecedence),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+		},
+	})
+}
