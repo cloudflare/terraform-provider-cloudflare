@@ -1,0 +1,38 @@
+internal/services/queue/data_source_model.go
+  s_0186c0812ecd82::t_de8cf5c96637fa 54-74
+internal/services/queue_consumer/list_data_source_model.go
+  s_0186c0812ecd82::t_b2aa8debcbf9c9 46-66
+internal/services/queue_consumer/data_source_model.go
+  s_0186c0812ecd82::t_482a462d3e4f8b 41-61
+internal/services/queue_consumer/data_source_schema.go
+  s_0186c0812ecd82::t_fdd30eefb79bfa 92-129
+internal/services/queue_consumer/list_data_source_schema.go
+  s_0186c0812ecd82::t_6f9ed053116440 99-136
+internal/services/queue/list_data_source_model.go
+  s_0186c0812ecd82::t_576d041ab9fbcc 59-79
+internal/services/queue/list_data_source_schema.go
+  s_0186c0812ecd82::t_fd1f04b403b6b3 103-140
+internal/services/queue/data_source_schema.go
+  s_0186c0812ecd82::t_60abcea47a2dc6 120-157
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e524534902335b73a0896ff3f32837f33f633ed7",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_0186c0812ecd82": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f07c11118ffev1vfJ7K3Qfqzjz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
