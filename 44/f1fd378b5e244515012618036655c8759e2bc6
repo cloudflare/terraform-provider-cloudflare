@@ -1,0 +1,101 @@
+internal/services/turnstile_widget/resource.go
+  s_0186c0812ecd82::t_33c0b2b6fea4d1 66-89,99
+internal/services/observatory_scheduled_test/resource.go
+  s_0186c0812ecd82::t_a12667d27f9ef5 170-177,181
+  s_0186c0812ecd82::t_7211ccd07ea76d 123-130,136
+  s_0186c0812ecd82::t_4df58474552c8e 67-78,89
+internal/services/stream/resource.go
+  s_0186c0812ecd82::t_c32464aef8bd9d 64-71,80
+internal/services/zone_hold/resource.go
+  s_0186c0812ecd82::t_9800f778bed5dc 67-74,84
+  s_0186c0812ecd82::t_510ea599390983 203-210,213
+internal/services/api_shield/model.go
+  s_0186c0812ecd82::t_cb19504423a169 17
+internal/services/api_shield/resource.go
+  s_0186c0812ecd82::t_29f51f7ba57cca 67-74,84,122-129,139,169-176,181
+internal/services/api_shield/schema.go
+  s_0186c0812ecd82::t_90110a0c7236e0 41-44
+internal/services/api_shield_schema/model.go
+  s_0186c0812ecd82::t_d3234e0d01e43f 26
+internal/services/api_shield_schema/resource.go
+  s_0186c0812ecd82::t_556eae1f439312 153-160,166
+internal/services/api_shield_schema/schema.go
+  s_0186c0812ecd82::t_b85874009ff176 14,63-68
+internal/services/certificate_authorities_hostname_associations/resource.go
+  s_0186c0812ecd82::t_e1074353de14c1 157-164,169
+internal/services/email_routing_dns/model.go
+  s_0186c0812ecd82::t_377077e7d55455 18
+internal/services/email_routing_dns/resource.go
+  s_0186c0812ecd82::t_184ec605c9a610 157-164,169
+internal/services/email_routing_dns/schema.go
+  s_0186c0812ecd82::t_7e7fe51626fb0f 22,40-43
+internal/services/observatory_scheduled_test/model.go
+  s_0186c0812ecd82::t_f769d34029b545 20-21
+internal/services/observatory_scheduled_test/schema.go
+  s_0186c0812ecd82::t_37a09a627317fd 15,48,50,54,59,85
+internal/services/schema_validation_schemas/resource.go
+  s_0186c0812ecd82::t_16d356b88d68a7 158-165,171
+internal/services/schema_validation_schemas/schema.go
+  s_0186c0812ecd82::t_2039599c1914cc 13,66-71
+internal/services/secrets_store/model.go
+  s_0186c0812ecd82::t_b4bdf77f8b9bc7 18
+internal/services/secrets_store/resource.go
+  s_0186c0812ecd82::t_552fb78e731ead 151-158,162
+internal/services/secrets_store/schema.go
+  s_0186c0812ecd82::t_e69beb3a5a8b68 12-13,39-45
+internal/services/share/model.go
+  s_0186c0812ecd82::t_343cce9a0fbd50 21-22
+internal/services/share/resource.go
+  s_0186c0812ecd82::t_e1fb06d235a416 156-167,173
+internal/services/share/schema.go
+  s_0186c0812ecd82::t_762cc82049de67 87-94
+internal/services/share_recipient/model.go
+  s_0186c0812ecd82::t_9d274e814b0dc8 20
+internal/services/share_recipient/resource.go
+  s_0186c0812ecd82::t_2fde9a367185f6 112-119,126
+internal/services/share_recipient/schema.go
+  s_0186c0812ecd82::t_5a2da449e23aaa 13,40-44
+internal/services/stream/model.go
+  s_0186c0812ecd82::t_a4f847441d378a 20
+internal/services/stream/schema.go
+  s_0186c0812ecd82::t_c99b3feb90a9aa 48-53
+internal/services/turnstile_widget/schema.go
+  s_0186c0812ecd82::t_8964c36ac7a78f 38,43
+internal/services/user_group_members/model.go
+  s_0186c0812ecd82::t_efdaeab00fe22f 18-21
+internal/services/user_group_members/resource.go
+  s_0186c0812ecd82::t_3c0fdf287ef8df 163-182,187
+internal/services/user_group_members/schema.go
+  s_0186c0812ecd82::t_3cd4583eb7b3ea 9-10,13,15,17,48-78
+internal/services/worker/model.go
+  s_0186c0812ecd82::t_97aaca0375648d 19
+internal/services/worker/resource.go
+  s_0186c0812ecd82::t_f76ab17929d5be 207-214,218
+internal/services/worker/schema.go
+  s_0186c0812ecd82::t_d1dccbf93a244e 50-53
+internal/services/workers_deployment/model.go
+  s_0186c0812ecd82::t_c5ebbb792de96f 20
+internal/services/workers_deployment/resource.go
+  s_0186c0812ecd82::t_c5b4b9a05c6cb3 67-74,85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "44f1fd378b5e244515012618036655c8759e2bc6",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_0186c0812ecd82": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f07c11118ffev1vfJ7K3Qfqzjz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
