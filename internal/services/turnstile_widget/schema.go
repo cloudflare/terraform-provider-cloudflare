@@ -35,12 +35,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Unique identifier for a Turnstile widget.",
+				Description:   "Widget item identifier tag.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"sitekey": schema.StringAttribute{
-				Description:   "Unique identifier for a Turnstile widget.",
+				Description:   "Widget item identifier tag.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},

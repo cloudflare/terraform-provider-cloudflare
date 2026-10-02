@@ -19,13 +19,13 @@ var _ resource.ResourceWithConfigValidators = (*EmailRoutingDNSResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Zone Settings Read",
 				"Zone Settings Write",
 			},
 		}.String(),
-		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier.",
@@ -36,6 +36,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
+			"subdomain": schema.StringAttribute{
+				Description: "Deprecated. When supplied, the response shape differs from the documented default and is not modeled in generated SDKs. Do not rely on this parameter.",
+				Optional:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Domain of your zone.",

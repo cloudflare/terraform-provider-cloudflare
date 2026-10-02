@@ -15,6 +15,7 @@ type EmailRoutingDNSResultEnvelope struct {
 type EmailRoutingDNSModel struct {
 	ID                types.String      `tfsdk:"id" json:"-,computed"`
 	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	Subdomain         types.String      `tfsdk:"subdomain" query:"subdomain,optional"`
 	Name              types.String      `tfsdk:"name" json:"name,optional,no_refresh"`
 	Created           timetypes.RFC3339 `tfsdk:"created" json:"created,computed,no_refresh" format:"date-time"`
 	Enabled           types.Bool        `tfsdk:"enabled" json:"enabled,computed,no_refresh"`
