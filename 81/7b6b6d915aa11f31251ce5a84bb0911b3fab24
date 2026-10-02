@@ -1,0 +1,29 @@
+examples/resources/cloudflare_calls_turn_app/import.sh
+  s_0186c0812ecd82::t_1355b4ce8206e4 1
+examples/resources/cloudflare_list/resource.tf
+  s_0186c0812ecd82::t_e02fd9821906dc 6-17
+examples/resources/cloudflare_page_rule/resource.tf
+  s_0186c0812ecd82::t_c9dfdab1bf9d9f 3-4,6-11
+examples/resources/cloudflare_snippet/resource.tf
+  s_0186c0812ecd82::t_bb13d432d9c91e 2,4-15
+examples/resources/cloudflare_zero_trust_dlp_predefined_profile/resource.tf
+  s_0186c0812ecd82::t_1c4f4f78612ba1 1-2,5-20
+examples/resources/cloudflare_zone_setting/resource.tf
+  s_0186c0812ecd82::t_19c6d754867c11 1-3,5,7-52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "817b6b6d915aa11f31251ce5a84bb0911b3fab24",
+  "prompts": {},
+  "sessions": {
+    "s_0186c0812ecd82": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f07c11118ffev1vfJ7K3Qfqzjz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
