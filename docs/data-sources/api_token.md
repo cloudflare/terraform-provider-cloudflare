@@ -32,6 +32,9 @@ data "cloudflare_api_token" "example_api_token" {
 ### Read-Only
 
 - `condition` (Attributes) (see [below for nested schema](#nestedatt--condition))
+- `creator_email_at_creation` (String) The email address of the user who created the token at the time of
+creation. Only present for Account Owned API Tokens when a creator email
+was available.
 - `expires_on` (String) The expiration time on or after which the JWT MUST NOT be accepted for processing.
 - `id` (String) Token identifier tag.
 - `issued_on` (String) The time on which the token was created.
@@ -40,6 +43,12 @@ data "cloudflare_api_token" "example_api_token" {
 - `name` (String) Token name.
 - `not_before` (String) The time before which the token MUST NOT be accepted for processing.
 - `policies` (Attributes List) List of access policies assigned to the token. (see [below for nested schema](#nestedatt--policies))
+- `provisioner_id` (String) The identifier of the service that provisioned the token. For an
+OAuth-provisioned token, this is the OAuth client identifier. Present
+when `provisioner_type` is present and null when the identifier is
+unavailable.
+- `provisioner_type` (String) The type of service that provisioned the token. Only present for
+provisioned Account Owned API Tokens.
 - `status` (String) Status of the token.
 Available values: "active", "disabled", "expired".
 
@@ -95,7 +104,13 @@ Read-Only:
 
 Read-Only:
 
-- `key` (String)
-- `value` (String)
+- `category` (String) A category used to group permission groups.
+- `deprecated` (String) Indicates whether the permission group is deprecated.
+- `description` (String) Additional information about the permission group.
+- `editable` (String) Indicates whether the permission group can be edited.
+- `eol_at` (String) The planned end-of-life date and time, when provided.
+- `label` (String) A label identifying the permission group.
+- `scopes` (String) The scope associated with the permission group.
+- `visibility` (String) Indicates the permission group's availability or visibility.
 
 

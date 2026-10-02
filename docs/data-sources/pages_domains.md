@@ -27,7 +27,7 @@ data "cloudflare_pages_domains" "example_pages_domains" {
 
 ### Required
 
-- `project_name` (String) Name of the project.
+- `project_name` (String) Name of the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.
 
 ### Optional
 
@@ -47,7 +47,7 @@ Read-Only:
 - `created_on` (String)
 - `domain_id` (String)
 - `id` (String)
-- `name` (String) The domain name.
+- `name` (String) Fully qualified domain name for the Pages project, such as `example.com`.
 - `status` (String) Available values: "initializing", "pending", "active", "deactivated", "blocked", "error".
 - `validation_data` (Attributes) (see [below for nested schema](#nestedatt--result--validation_data))
 - `verification_data` (Attributes) (see [below for nested schema](#nestedatt--result--verification_data))

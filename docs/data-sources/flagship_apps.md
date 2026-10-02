@@ -25,7 +25,7 @@ data "cloudflare_flagship_apps" "example_flagship_apps" {
 
 ### Required
 
-- `account_id` (String) Cloudflare account ID.
+- `account_id` (String) Cloudflare account ID that owns the Flagship app.
 
 ### Optional
 

@@ -66,10 +66,5 @@ resource "cloudflare_image" "example_image_from_url" {
 
 ## Import
 
-Import is supported using the following syntax:
 
-```shell
-$ terraform import cloudflare_image.example '<account_id>/<image_id>'
-```
-
-
+~> This resource does not currently support `terraform import`.

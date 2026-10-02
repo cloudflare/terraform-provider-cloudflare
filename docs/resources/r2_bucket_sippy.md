@@ -20,13 +20,13 @@ resource "cloudflare_r2_bucket_sippy" "example_r2_bucket_sippy" {
   bucket_name = "example-bucket"
   destination = {
     access_key_id = "accessKeyId"
-    cloud_provider = "r2"
+    r2_bucket_sippy_provider = "r2"
     secret_access_key = "secretAccessKey"
   }
   source = {
     access_key_id = "accessKeyId"
     bucket = "bucket"
-    cloud_provider = "aws"
+    r2_bucket_sippy_provider = "aws"
     region = "region"
     secret_access_key = "secretAccessKey"
   }
@@ -38,7 +38,7 @@ resource "cloudflare_r2_bucket_sippy" "example_r2_bucket_sippy" {
 
 ### Required
 
-- `account_id` (String) Account ID.
+- `account_id` (String) Cloudflare account ID that owns the R2 resource.
 - `bucket_name` (String) Name of the bucket.
 
 ### Optional
@@ -85,7 +85,7 @@ Optional:
 - `cloud_provider` (String) Available values: "aws", "gcs", "s3", "azure".
 - `container` (String) Name of the Azure Blob Storage container.
 - `private_key` (String, Sensitive) Private Key of an IAM credential (ideally scoped to a single GCS bucket).
-- `region` (String) Name of the AWS availability zone.
+- `region` (String) AWS region containing the source S3 bucket.
 - `sas_token` (String, Sensitive) Shared Access Signature token for the Azure Storage account. Mutually exclusive with accountKey.
 - `secret_access_key` (String, Sensitive) Secret Access Key of an IAM credential (ideally scoped to a single S3 bucket).
 

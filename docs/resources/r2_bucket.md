@@ -28,7 +28,7 @@ resource "cloudflare_r2_bucket" "example_r2_bucket" {
 
 ### Required
 
-- `account_id` (String) Account ID.
+- `account_id` (String) Cloudflare account ID that owns the R2 resource.
 - `name` (String) Name of the bucket.
 
 ### Optional
@@ -50,7 +50,7 @@ Available values: "Standard", "InfrequentAccess".
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_r2_bucket.example '<account_id>/<bucket_name>/<jurisdiction>'
+$ terraform import cloudflare_r2_bucket.example '<account_id>/<bucket_name>'
 ```
 
 

@@ -37,7 +37,7 @@ resource "cloudflare_zero_trust_gateway_logging" "example_zero_trust_gateway_log
 
 ### Required
 
-- `account_id` (String)
+- `account_id` (String) Specify the Cloudflare account identifier.
 
 ### Optional
 
@@ -46,7 +46,7 @@ resource "cloudflare_zero_trust_gateway_logging" "example_zero_trust_gateway_log
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) Specify the Cloudflare account identifier.
 
 <a id="nestedatt--settings_by_rule_type"></a>
 ### Nested Schema for `settings_by_rule_type`

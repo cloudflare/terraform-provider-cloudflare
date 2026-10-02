@@ -142,7 +142,7 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
 
 ### Required
 
-- `account_id` (String)
+- `account_id` (String) Specify the Cloudflare account identifier.
 - `action` (String) Specify the action to perform when the associated traffic, identity, and device posture expressions either absent or evaluate to `true`.
 Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "resolve", "quarantine", "redirect".
 - `name` (String) Specify the rule name.

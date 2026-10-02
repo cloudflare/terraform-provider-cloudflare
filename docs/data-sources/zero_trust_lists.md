@@ -15,9 +15,7 @@ description: |-
 data "cloudflare_zero_trust_lists" "example_zero_trust_lists" {
   account_id = "699d98642c564d2e855e9661899b7252"
   direction = "asc"
-  filter = [{
-
-  }]
+  filter = ["string"]
   order_by = "name"
   search = "search"
   type = "SERIAL"
@@ -29,7 +27,7 @@ data "cloudflare_zero_trust_lists" "example_zero_trust_lists" {
 
 ### Optional
 
-- `account_id` (String)
+- `account_id` (String) Specify the Cloudflare account identifier.
 - `direction` (String) Sort direction. Applies to the field named in `order_by`; when `order_by`
 is omitted it applies to the default `created_at` ordering. When
 `direction` is omitted the default is field-specific: explicitly choosing

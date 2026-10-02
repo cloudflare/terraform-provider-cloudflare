@@ -29,7 +29,7 @@ data "cloudflare_ai_gateway" "example_ai_gateway" {
 
 - `account_id` (String)
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `id` (String) gateway id
+- `id` (String) Unique identifier of the AI Gateway within the account.
 
 ### Read-Only
 

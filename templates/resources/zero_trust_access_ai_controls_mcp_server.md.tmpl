@@ -1,0 +1,32 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+{{ if .HasExample -}}
+## Example Usage
+
+{{ tffile .ExampleFile }}
+{{- end }}
+
+`auth_credentials` and `client_secret` are write-only and cannot be recovered by import. Omitting either value on update preserves the existing credential. Because the API does not return `auth_credentials`, Terraform cannot automatically detect and restore out-of-band OAuth metadata changes; inspect the computed `auth_config_summary` for the current non-secret metadata. Terraform's `sensitive` marker hides credential values from normal output but still stores them in state, so use a protected state backend with restricted access.
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Import
+
+{{ if .HasImport -}}
+Import is supported using the following syntax:
+
+{{ codefile "shell" .ImportFile }}
+
+{{ else }}
+~> This resource does not currently support `terraform import`.
+
+{{- end }}

@@ -18,7 +18,7 @@ Accepted Permissions
 ```terraform
 data "cloudflare_email_security_trusted_domains" "example_email_security_trusted_domains" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  trusted_domain_id = 2401
+  trusted_domain_id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
 }
 ```
 
@@ -37,11 +37,11 @@ data "cloudflare_email_security_trusted_domains" "example_email_security_trusted
 - `created_at` (String)
 - `id` (String) Trusted domain identifier
 - `is_recent` (Boolean) Select to prevent recently registered domains from triggering a Suspicious or Malicious disposition.
-- `is_regex` (Boolean)
+- `is_regex` (Boolean) Whether `pattern` is a regular expression instead of a literal domain.
 - `is_similarity` (Boolean) Select for partner or other approved domains that have similar spelling to your connected domains. Prevents listed domains from triggering a Spoof disposition.
 - `last_modified` (String, Deprecated) Deprecated, use `modified_at` instead. End of life: November 1, 2026.
 - `modified_at` (String)
-- `pattern` (String)
+- `pattern` (String) The domain pattern to trust, e.g. `example.com`.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

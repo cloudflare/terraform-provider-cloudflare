@@ -72,7 +72,7 @@ Read-Only:
 - `custom_database_name` (String) The database name to use when connecting. Defaults to `postgres` for PostgreSQL and `mysql` for MySQL.
 - `database_branch_name` (String) The name of the PlanetScale database branch.
 - `database_name` (String) The name of the PlanetScale database.
-- `integration` (String) The database integration used by this operation.
+- `hyperdrive_config_provider` (String) The database integration provider used by this operation.
 Available values: "planetscale".
 - `organization_name` (String) The name of the PlanetScale organization.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.

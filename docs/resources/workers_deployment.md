@@ -23,7 +23,7 @@ resource "cloudflare_workers_deployment" "example_workers_deployment" {
   strategy = "percentage"
   versions = [{
     percentage = 100
-    version_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
+    version_id = "023e105f-2a42-4f8b-a1c1-73f6a2a30c0f"
   }]
   annotations = {
     workers_message = "Deploy bug fix."
@@ -37,7 +37,7 @@ resource "cloudflare_workers_deployment" "example_workers_deployment" {
 ### Required
 
 - `account_id` (String) Identifier.
-- `script_name` (String) Name of the script, used in URLs and route configuration.
+- `script_name` (String) Name of the script.
 - `strategy` (String) Available values: "percentage".
 - `versions` (Attributes List) Worker versions included in this deployment. Each object must contain a `version_id` UUID and a `percentage`; percentages across all objects must total 100. In the `cf` CLI, pass the entire array as one JSON value to `--versions`, either inline, for example `--versions '[{"version_id":"023e105f-2a42-4f8b-a1c1-73f6a2a30c0f","percentage":100}]'`, or from a JSON file with `--versions @versions.json`. (see [below for nested schema](#nestedatt--versions))
 

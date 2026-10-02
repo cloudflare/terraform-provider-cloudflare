@@ -30,6 +30,7 @@ resource "cloudflare_bot_management" "example_bot_management" {
   enable_js = true
   fight_mode = true
   is_robots_txt_managed = false
+  jsd_api_results_enabled = true
 }
 ```
 

@@ -23,7 +23,7 @@ resource "cloudflare_zero_trust_gateway_certificate" "example_zero_trust_gateway
 
 ### Required
 
-- `account_id` (String)
+- `account_id` (String) Specify the Cloudflare account identifier.
 
 ### Optional
 

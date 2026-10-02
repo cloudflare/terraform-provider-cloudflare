@@ -36,11 +36,8 @@ resource "cloudflare_cloud_connector_rules" "example_cloud_connector_rules" {
 
 ### Required
 
-- `zone_id` (String) Identifier.
-
-### Optional
-
 - `rules` (Attributes List) (see [below for nested schema](#nestedatt--rules))
+- `zone_id` (String) Identifier.
 
 ### Read-Only
 

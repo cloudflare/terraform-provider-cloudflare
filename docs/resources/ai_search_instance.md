@@ -33,8 +33,8 @@ Available values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 51
 - `custom_metadata` (Attributes List) (see [below for nested schema](#nestedatt--custom_metadata))
 - `embedding_model` (String)
 - `fusion_method` (String) Available values: "max", "rrf".
-- `hybrid_search_enabled` (Boolean, Deprecated) Deprecated — use index_method instead.
-- `index_method` (Attributes) Controls which storage backends are used during indexing. Defaults to vector-only. (see [below for nested schema](#nestedatt--index_method))
+- `hybrid_search_enabled` (Boolean, Deprecated) Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
+- `index_method` (Attributes) Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances. (see [below for nested schema](#nestedatt--index_method))
 - `indexing_options` (Attributes) (see [below for nested schema](#nestedatt--indexing_options))
 - `max_num_results` (Number)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
@@ -56,7 +56,8 @@ Available values: 900, 1800, 3600, 7200, 14400, 21600, 43200, 86400.
 - `system_prompt_index_summarization` (String)
 - `system_prompt_rewrite_query` (String)
 - `token_id` (String)
-- `type` (String) Available values: "r2", "web-crawler".
+- `type` (String) Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
+Available values: "r2", "web-crawler".
 
 ### Read-Only
 

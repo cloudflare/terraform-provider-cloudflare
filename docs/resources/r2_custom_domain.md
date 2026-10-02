@@ -32,7 +32,7 @@ resource "cloudflare_r2_custom_domain" "example_r2_custom_domain" {
 
 ### Required
 
-- `account_id` (String) Account ID.
+- `account_id` (String) Cloudflare account ID that owns the R2 resource.
 - `bucket_name` (String) Name of the bucket.
 - `domain` (String) Name of the custom domain to be added.
 - `enabled` (Boolean) Whether to enable public bucket access at the custom domain. If undefined, the domain will be enabled.

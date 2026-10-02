@@ -42,7 +42,7 @@ data "cloudflare_zero_trust_device_default_profile" "example_zero_trust_device_d
 - `id` (String) The ID of this resource.
 - `include` (Attributes List) List of routes included in the WARP client's tunnel. (see [below for nested schema](#nestedatt--include))
 - `policy_id` (String)
-- `profile_type` (String) The client type to which the device settings profile applies.
+- `profile_type` (String) The client type to which the device settings profile applies. This field is set when the profile is created and cannot be changed.
 Available values: "warp", "browser_extension".
 - `register_interface_ip_with_dns` (Boolean) Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.
 - `sccm_vpn_boundary_support` (Boolean) Determines whether the WARP client indicates to SCCM that it is inside a VPN boundary. (Windows only).

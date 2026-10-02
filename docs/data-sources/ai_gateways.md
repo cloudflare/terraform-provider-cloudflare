@@ -48,7 +48,7 @@ Read-Only:
 - `created_at` (String)
 - `dlp` (Attributes) (see [below for nested schema](#nestedatt--result--dlp))
 - `guardrails` (Attributes) (see [below for nested schema](#nestedatt--result--guardrails))
-- `id` (String) gateway id
+- `id` (String) Unique identifier of the AI Gateway within the account.
 - `is_default` (Boolean)
 - `log_classification` (Boolean)
 - `log_management` (Number)

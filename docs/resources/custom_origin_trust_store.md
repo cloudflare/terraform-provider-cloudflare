@@ -38,7 +38,7 @@ resource "cloudflare_custom_origin_trust_store" "example_custom_origin_trust_sto
 ### Read-Only
 
 - `expires_on` (String) When the certificate expires.
-- `id` (String) Identifier.
+- `id` (String) Certificate identifier tag.
 - `issuer` (String) The certificate authority that issued the certificate.
 - `signature` (String) The type of hash used for the certificate.
 - `status` (String) Status of the zone's custom SSL.

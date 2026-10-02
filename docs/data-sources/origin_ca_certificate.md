@@ -13,7 +13,7 @@ description: |-
 
 ```terraform
 data "cloudflare_origin_ca_certificate" "example_origin_ca_certificate" {
-  certificate_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  certificate_id = "328578533902268680212849205732770752308931942346"
 }
 ```
 
@@ -22,7 +22,7 @@ data "cloudflare_origin_ca_certificate" "example_origin_ca_certificate" {
 
 ### Optional
 
-- `certificate_id` (String) Identifier.
+- `certificate_id` (String) The x509 serial number of the Origin CA certificate.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 
 ### Read-Only
@@ -32,7 +32,7 @@ data "cloudflare_origin_ca_certificate" "example_origin_ca_certificate" {
 - `expires_on` (String) When the certificate will expire.
 - `hostnames` (List of String) Array of hostnames or wildcard names bound to the certificate.
 Hostnames must be fully qualified domain names (FQDNs) belonging to zones on your account (e.g., `example.com` or `sub.example.com`). Wildcards are supported only as a `*.` prefix for a single level (e.g., `*.example.com`). Double wildcards (`*.*.example.com`) and interior wildcards (`foo.*.example.com`) are not allowed. The wildcard suffix must be a multi-label domain (`*.example.com` is valid, but `*.com` is not). Unicode/IDN hostnames are accepted and automatically converted to punycode.
-- `id` (String) Identifier.
+- `id` (String) The x509 serial number of the Origin CA certificate.
 - `request_type` (String) Signature type desired on certificate ("origin-rsa" (rsa), "origin-ecc" (ecdsa), or "keyless-certificate" (for Keyless SSL servers).
 Available values: "origin-rsa", "origin-ecc", "keyless-certificate".
 - `requested_validity` (Number) The number of days for which the certificate should be valid.

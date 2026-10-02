@@ -23,7 +23,7 @@ data "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_policy" 
 
 ### Optional
 
-- `account_id` (String)
+- `account_id` (String) Specify the Cloudflare account identifier.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `rule_id` (String) Identify the API resource with a UUID.
 

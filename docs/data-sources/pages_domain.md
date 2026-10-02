@@ -19,7 +19,7 @@ Accepted Permissions
 data "cloudflare_pages_domain" "example_pages_domain" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   project_name = "this-is-my-project-01"
-  domain_name = "this-is-my-domain-01.com"
+  domain_name = "example.com"
 }
 ```
 
@@ -29,16 +29,16 @@ data "cloudflare_pages_domain" "example_pages_domain" {
 ### Required
 
 - `account_id` (String) Identifier.
-- `domain_name` (String) The domain name.
-- `project_name` (String) Name of the project.
+- `domain_name` (String) Fully qualified domain name for the Pages project, such as `example.com`.
+- `project_name` (String) Name of the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.
 
 ### Read-Only
 
 - `certificate_authority` (String) Available values: "google", "lets_encrypt".
 - `created_on` (String)
 - `domain_id` (String)
-- `id` (String) The domain name.
-- `name` (String) The domain name.
+- `id` (String) Fully qualified domain name for the Pages project, such as `example.com`.
+- `name` (String) Fully qualified domain name for the Pages project, such as `example.com`.
 - `status` (String) Available values: "initializing", "pending", "active", "deactivated", "blocked", "error".
 - `validation_data` (Attributes) (see [below for nested schema](#nestedatt--validation_data))
 - `verification_data` (Attributes) (see [below for nested schema](#nestedatt--verification_data))

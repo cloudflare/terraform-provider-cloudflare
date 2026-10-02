@@ -59,7 +59,7 @@ Read-Only:
 - `name` (String) The name of the device settings profile.
 - `policy_id` (String)
 - `precedence` (Number) The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.
-- `profile_type` (String) The client type to which the device settings profile applies.
+- `profile_type` (String) The client type to which the device settings profile applies. This field is set when the profile is created and cannot be changed.
 Available values: "warp", "browser_extension".
 - `register_interface_ip_with_dns` (Boolean) Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.
 - `sccm_vpn_boundary_support` (Boolean) Determines whether the WARP client indicates to SCCM that it is inside a VPN boundary. (Windows only).

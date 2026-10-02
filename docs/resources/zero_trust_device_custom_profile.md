@@ -17,28 +17,45 @@ Accepted Permissions
 ```terraform
 resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_device_custom_profile" {
   account_id = "699d98642c564d2e855e9661899b7252"
-  match = "identity.email == \"test@cloudflare.com\""
   name = "Allow Developers"
-  precedence = 100
   allow_mode_switch = true
   allow_updates = true
   allowed_to_leave = true
   auto_connect = 0
+  browser_extension_config = {
+    proxy_control = "unlocked"
+    proxy_enabled = true
+  }
   captive_portal = 180
+  default = false
   description = "Policy for test teams."
   disable_auto_fallback = true
+  dns_search_suffixes = [{
+    suffix = "internal.corp"
+    description = "Example internal domains"
+  }]
   enabled = true
   exclude = [{
     address = "192.0.2.0/24"
     description = "Exclude testing domains from the tunnel"
   }]
   exclude_office_ips = true
+  global_acceleration = {
+    api_endpoints = ["198.51.100.1:443"]
+    enabled = true
+    masque_endpoints = ["198.51.100.1:443"]
+    wireguard_endpoints = ["198.51.100.1:2408"]
+    autoswitch = true
+  }
   include = [{
     address = "192.0.2.0/24"
     description = "Include testing domains in the tunnel"
   }]
   lan_allow_minutes = 30
   lan_allow_subnet_size = 24
+  match = "identity.email == \"test@cloudflare.com\""
+  precedence = 100
+  profile_type = "warp"
   register_interface_ip_with_dns = true
   sccm_vpn_boundary_support = false
   service_mode_v2 = {
@@ -48,6 +65,11 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
   support_url = "https://1.1.1.1/help"
   switch_locked = true
   tunnel_protocol = "wireguard"
+  uninstall_protection = false
+  virtual_networks = {
+    allowed = ["f174e90a-fafe-4643-bbbc-4a0ed4fc8415"]
+    default = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
+  }
 }
 ```
 
@@ -79,7 +101,7 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 - `lan_allow_subnet_size` (Number) The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.
 - `match` (String) The wirefilter expression to match devices. Available values: "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.service_token_uuid", "identity.saml_attributes", "network", "os.name", "os.version".
 - `precedence` (Number) The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.
-- `profile_type` (String) The client type to which the device settings profile applies.
+- `profile_type` (String) The client type to which the device settings profile applies. This field is set when the profile is created and cannot be changed.
 Available values: "warp", "browser_extension".
 - `register_interface_ip_with_dns` (Boolean) Determines if the operating system will register WARP's local interface IP with your on-premises DNS server.
 - `sccm_vpn_boundary_support` (Boolean) Determines whether the WARP client indicates to SCCM that it is inside a VPN boundary. (Windows only).
