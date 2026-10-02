@@ -1,0 +1,25 @@
+examples/data-sources/cloudflare_email_routing_rules/data-source.tf
+  s_37f72cfa16146c::t_b33189f8b9b30d 2
+examples/resources/cloudflare_list_item/resource.tf
+  s_37f72cfa16146c::t_4210b20a3a0724 4
+examples/resources/cloudflare_r2_bucket/import.sh
+  s_37f72cfa16146c::t_a475f41b875462 1
+examples/resources/cloudflare_workers_script/resource.tf
+  s_37f72cfa16146c::t_a93e09a3d1a5c7 4-6,13,42,45-46,53,55-57,120-124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "57ad2e30b4f1a78369230963e2f3f20a4d1df876",
+  "prompts": {},
+  "sessions": {
+    "s_37f72cfa16146c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f02b60ac5ffeIYp1YVb6EsDEdy",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
