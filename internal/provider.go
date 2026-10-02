@@ -237,6 +237,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_service_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_short_lived_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_tag"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_casb_integration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_casb_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_casb_webhook"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_connectivity_settings"
@@ -303,10 +304,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_lockdown"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_setting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_subscription"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_tracing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_tracing_rules"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -654,6 +655,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_access_custom_page.NewResource,
 		zero_trust_access_tag.NewResource,
 		zero_trust_access_policy.NewResource,
+		zero_trust_casb_integration.NewResource,
 		zero_trust_casb_policy.NewResource,
 		zero_trust_casb_webhook.NewResource,
 		zero_trust_dex_rule.NewResource,
@@ -1047,6 +1049,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_access_tag.NewZeroTrustAccessTagsDataSource,
 		zero_trust_access_policy.NewZeroTrustAccessPolicyDataSource,
 		zero_trust_access_policy.NewZeroTrustAccessPoliciesDataSource,
+		zero_trust_casb_integration.NewZeroTrustCasbIntegrationDataSource,
+		zero_trust_casb_integration.NewZeroTrustCasbIntegrationsDataSource,
 		zero_trust_casb_policy.NewZeroTrustCasbPolicyDataSource,
 		zero_trust_casb_policy.NewZeroTrustCasbPoliciesDataSource,
 		zero_trust_casb_webhook.NewZeroTrustCasbWebhookDataSource,

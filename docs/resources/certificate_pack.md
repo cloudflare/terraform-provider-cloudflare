@@ -56,7 +56,7 @@ Available values: 14, 30, 90, 365.
 
 - `certificates` (Attributes List) Array of certificates in this pack. (see [below for nested schema](#nestedatt--certificates))
 - `dcv_delegation_records` (Attributes List) DCV Delegation records for domain validation. (see [below for nested schema](#nestedatt--dcv_delegation_records))
-- `id` (String) Identifier.
+- `id` (String) The unique identifier for a certificate_pack.
 - `primary_certificate` (String) Identifier of the primary certificate in a pack.
 - `status` (String) Status of certificate pack.
 Available values: "initializing", "pending_validation", "deleted", "pending_issuance", "pending_deployment", "pending_deletion", "pending_expiration", "expired", "active", "initializing_timed_out", "validation_timed_out", "issuance_timed_out", "deployment_timed_out", "deletion_timed_out", "pending_cleanup", "staging_deployment", "staging_active", "deactivating", "inactive", "backup_issued", "holding_deployment".

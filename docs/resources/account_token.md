@@ -51,7 +51,7 @@ resource "cloudflare_account_token" "example_account_token" {
 
 - `account_id` (String) Account identifier tag.
 - `name` (String) Token name.
-- `policies` (Attributes List) Set of access policies assigned to the token. (see [below for nested schema](#nestedatt--policies))
+- `policies` (Attributes List) List of access policies assigned to the token. (see [below for nested schema](#nestedatt--policies))
 
 ### Optional
 
@@ -63,10 +63,19 @@ Available values: "active", "disabled", "expired".
 
 ### Read-Only
 
+- `creator_email_at_creation` (String) The email address of the user who created the token at the time of
+creation. Only present for Account Owned API Tokens when a creator email
+was available.
 - `id` (String) Token identifier tag.
 - `issued_on` (String) The time on which the token was created.
 - `last_used_on` (String) Last time the token was used.
 - `modified_on` (String) Last time the token was modified.
+- `provisioner_id` (String) The identifier of the service that provisioned the token. For an
+OAuth-provisioned token, this is the OAuth client identifier. Present
+when `provisioner_type` is present and null when the identifier is
+unavailable.
+- `provisioner_type` (String) The type of service that provisioned the token. Only present for
+provisioned Account Owned API Tokens.
 - `value` (String, Sensitive) The token value.
 
 <a id="nestedatt--policies"></a>

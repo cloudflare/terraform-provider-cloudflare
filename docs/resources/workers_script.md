@@ -234,6 +234,7 @@ Read-Only:
 
 Optional:
 
+- `base_path` (String) The public URL path prefix under which assets are served. A null request value resets it to `/`; responses represent the root as `/`. All versions in a gradual deployment must use the same canonical value. To change it, first deploy the version containing the change at 100%.
 - `headers` (String) The contents of a _headers file (used to attach custom headers on asset responses).
 - `html_handling` (String) Determines the redirects and rewrites of requests for HTML content.
 Available values: "auto-trailing-slash", "force-trailing-slash", "drop-trailing-slash", "none".
@@ -252,7 +253,7 @@ Required:
 
 - `name` (String) A JavaScript variable name for the binding.
 - `type` (String) The kind of resource that the binding provides.
-Available values: "ai", "ai_search", "ai_search_namespace", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "media", "mtls_certificate", "plain_text", "pipelines", "queue", "ratelimit", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "secret_key", "workflow", "wasm_module", "vpc_service", "vpc_network".
+Available values: "ai", "ai_search", "ai_search_namespace", "messaging", "analytics_engine", "artifacts", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "media", "mtls_certificate", "plain_text", "pipelines", "k2", "queue", "ratelimit", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "flagship", "secret_key", "workflow", "wasm_module", "vpc_service", "vpc_network".
 
 Optional:
 
@@ -293,6 +294,7 @@ Available values: "eu", "fedramp", "fedramp-high".
 - `service_id` (String) Identifier of the VPC service to bind to.
 - `simple` (Attributes) A simple rate limit. (see [below for nested schema](#nestedatt--bindings--simple))
 - `store_id` (String) ID of the store containing the secret.
+- `stream` (String) ID of a K2 stream owned by the account deploying the Worker.
 - `text` (String, Sensitive) The text value to use.
 - `tunnel_id` (String) UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.
 - `usages` (Set of String) Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
@@ -464,8 +466,17 @@ Required:
 Optional:
 
 - `head_sampling_rate` (Number) The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.
+- `issues` (Attributes) Real-time Issues settings for the Worker. (see [below for nested schema](#nestedatt--observability--issues))
 - `logs` (Attributes) Log settings for the Worker. (see [below for nested schema](#nestedatt--observability--logs))
 - `traces` (Attributes) Trace settings for the Worker. (see [below for nested schema](#nestedatt--observability--traces))
+
+<a id="nestedatt--observability--issues"></a>
+### Nested Schema for `observability.issues`
+
+Optional:
+
+- `enabled` (Boolean) Whether real-time Issues are enabled for the Worker.
+
 
 <a id="nestedatt--observability--logs"></a>
 ### Nested Schema for `observability.logs`

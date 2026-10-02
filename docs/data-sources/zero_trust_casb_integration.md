@@ -2,6 +2,7 @@
 page_title: "cloudflare_zero_trust_casb_integration Data Source - Cloudflare"
 subcategory: ""
 description: |-
+  
 ---
 
 # cloudflare_zero_trust_casb_integration (Data Source)
@@ -26,10 +27,8 @@ data "cloudflare_zero_trust_casb_integration" "example_zero_trust_casb_integrati
 
 ### Optional
 
-Exactly one of `id` or `filter` must be configured.
-
-- `filter` (Attributes) Lookup filters. (see [below for nested schema](#nestedatt--filter))
-- `id` (String) Integration ID to look up.
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
+- `id` (String) Integration ID to look up. Exactly one of `id` or `filter` must be configured.
 
 ### Read-Only
 
@@ -73,3 +72,5 @@ Read-Only:
 
 - `components` (Map of String)
 - `link` (String)
+
+

@@ -21,7 +21,7 @@ resource "cloudflare_email_security_block_sender" "example_email_security_block_
   is_regex = false
   pattern = "test@example.com"
   pattern_type = "EMAIL"
-  comments = "block sender with email test@example.com"
+  comments = "Block sender with email test@example.com"
 }
 ```
 
@@ -31,7 +31,7 @@ resource "cloudflare_email_security_block_sender" "example_email_security_block_
 ### Required
 
 - `account_id` (String) Identifier.
-- `is_regex` (Boolean)
+- `is_regex` (Boolean) Whether `pattern` is a regular expression instead of a literal value.
 - `pattern` (String) The pattern value to match. The format depends on `pattern_type`: a valid email address for EMAIL (e.g. `user@example.com`), a valid domain name for DOMAIN (e.g. `example.com`), or a plain IPv4 or IPv6 address or CIDR block for IP (e.g. `1.2.3.4`, `1.2.3.0/24`, `2606:4700:4700::1111`, or `2606:4700:4700::/48`); the API rejects private or unique-local, loopback, link-local, unspecified, and IPv4 broadcast addresses, including their IPv4-mapped IPv6 equivalents.
 - `pattern_type` (String) Type of pattern matching.
 - EMAIL: matches a full email address (e.g. `user@example.com`)

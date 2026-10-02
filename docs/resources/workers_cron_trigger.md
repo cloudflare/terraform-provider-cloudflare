@@ -32,11 +32,11 @@ resource "cloudflare_workers_cron_trigger" "example_workers_cron_trigger" {
 
 - `account_id` (String) Identifier.
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
-- `script_name` (String) Name of the script, used in URLs and route configuration.
+- `script_name` (String) Name of the script.
 
 ### Read-Only
 
-- `id` (String) Name of the script, used in URLs and route configuration.
+- `id` (String) Name of the script.
 
 <a id="nestedatt--schedules"></a>
 ### Nested Schema for `schedules`

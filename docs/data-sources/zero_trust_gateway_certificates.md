@@ -22,7 +22,7 @@ data "cloudflare_zero_trust_gateway_certificates" "example_zero_trust_gateway_ce
 
 ### Optional
 
-- `account_id` (String)
+- `account_id` (String) Specify the Cloudflare account identifier.
 - `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only

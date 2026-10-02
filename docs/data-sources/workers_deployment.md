@@ -31,7 +31,7 @@ data "cloudflare_workers_deployment" "example_workers_deployment" {
 
 - `account_id` (String) Identifier.
 - `deployment_id` (String)
-- `script_name` (String) Name of the script, used in URLs and route configuration.
+- `script_name` (String) Name of the script.
 
 ### Read-Only
 

@@ -62,7 +62,7 @@ resource "cloudflare_zero_trust_dns_location" "example_zero_trust_dns_location" 
 
 ### Required
 
-- `account_id` (String)
+- `account_id` (String) Specify the Cloudflare account identifier.
 - `name` (String) Specify the location name.
 
 ### Optional

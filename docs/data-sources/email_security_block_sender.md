@@ -18,7 +18,7 @@ Accepted Permissions
 ```terraform
 data "cloudflare_email_security_block_sender" "example_email_security_block_sender" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  pattern_id = 2402
+  pattern_id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
 }
 ```
 
@@ -39,7 +39,7 @@ data "cloudflare_email_security_block_sender" "example_email_security_block_send
 - `comments` (String)
 - `created_at` (String)
 - `id` (String) Blocked sender pattern identifier.
-- `is_regex` (Boolean)
+- `is_regex` (Boolean) Whether `pattern` is a regular expression instead of a literal value.
 - `last_modified` (String, Deprecated) Deprecated, use `modified_at` instead. End of life: November 1, 2026.
 - `modified_at` (String)
 - `pattern` (String) The pattern value to match. The format depends on `pattern_type`: a valid email address for EMAIL (e.g. `user@example.com`), a valid domain name for DOMAIN (e.g. `example.com`), or a plain IPv4 or IPv6 address or CIDR block for IP (e.g. `1.2.3.4`, `1.2.3.0/24`, `2606:4700:4700::1111`, or `2606:4700:4700::/48`); the API rejects private or unique-local, loopback, link-local, unspecified, and IPv4 broadcast addresses, including their IPv4-mapped IPv6 equivalents.

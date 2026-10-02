@@ -31,7 +31,7 @@ data "cloudflare_turnstile_widget" "example_turnstile_widget" {
 
 - `account_id` (String) Identifier
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `sitekey` (String) Widget item identifier tag.
+- `sitekey` (String) Unique identifier for a Turnstile widget.
 
 ### Read-Only
 
@@ -48,7 +48,7 @@ before this field existed.
 Available values: "wrangler", "dashboard", "spin", "api", "unknown".
 - `domains` (List of String)
 - `ephemeral_id` (Boolean) Return the Ephemeral ID in /siteverify (ENT only).
-- `id` (String) Widget item identifier tag.
+- `id` (String) Unique identifier for a Turnstile widget.
 - `last_modified_via` (String) Origin of the most recent mutation (create, update, delete, or
 secret rotation). Server-derived; not client-settable. Omitted for
 widgets last mutated before this field existed.
@@ -71,7 +71,8 @@ Optional:
 
 - `direction` (String) Direction to order widgets.
 Available values: "asc", "desc".
-- `filter` (String) Filter widgets by field using case-insensitive substring matching.
+- `filter` (String) Filter widgets by field. The `name` field uses case-insensitive
+substring matching; `sitekey` uses exact matching.
 Format: `field:value`
 
 Supported fields:

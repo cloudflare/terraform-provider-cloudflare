@@ -58,7 +58,7 @@ Available values: 7, 30, 90, 365, 730, 1095, 5475.
 
 - `certificate` (String) The Origin CA certificate. Will be newline-encoded.
 - `expires_on` (String) When the certificate will expire.
-- `id` (String) Identifier.
+- `id` (String) The x509 serial number of the Origin CA certificate.
 
 ## Import
 

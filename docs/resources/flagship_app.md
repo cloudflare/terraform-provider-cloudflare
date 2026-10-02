@@ -27,8 +27,8 @@ resource "cloudflare_flagship_app" "example_flagship_app" {
 
 ### Required
 
-- `account_id` (String) Cloudflare account ID.
-- `name` (String)
+- `account_id` (String) Cloudflare account ID that owns the Flagship app.
+- `name` (String) Name of the Flagship app (1–64 letters, numbers, hyphens, or underscores).
 
 ### Read-Only
 

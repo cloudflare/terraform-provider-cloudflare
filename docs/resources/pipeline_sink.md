@@ -71,7 +71,7 @@ resource "cloudflare_pipeline_sink" "example_pipeline_sink" {
 - `account_id` (String) Specifies the public ID of the account.
 - `name` (String) Defines the name of the Sink.
 - `type` (String) Specifies the type of sink.
-Available values: "r2", "r2_data_catalog".
+Available values: "r2", "r2_data_catalog", "basin_catalog".
 
 ### Optional
 

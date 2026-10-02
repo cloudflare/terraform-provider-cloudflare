@@ -18,7 +18,7 @@ Accepted Permissions
 ```terraform
 data "cloudflare_mtls_certificate_associations" "example_mtls_certificate_associations" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  mtls_certificate_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  mtls_certificate_id = "2458ce5a-0c35-4c7f-82c7-8e9487d3ff60"
 }
 ```
 
@@ -28,7 +28,7 @@ data "cloudflare_mtls_certificate_associations" "example_mtls_certificate_associ
 ### Required
 
 - `account_id` (String) Identifier.
-- `mtls_certificate_id` (String) Identifier.
+- `mtls_certificate_id` (String) Certificate identifier tag.
 
 ### Read-Only
 

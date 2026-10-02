@@ -1,5 +1,104 @@
 # Changelog
 
+## 5.27.0 (2026-10-03)
+
+Full Changelog: [v5.26.0...v5.27.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.26.0...v5.27.0)
+
+### ⚠ BREAKING CHANGES
+
+One change requires a configuration edit. The rest of this release's schema movement is read-only reshaping with no action required — see [Schema Changes](#schema-changes-no-action-required) at the end.
+
+- **api_shield_operation**: the `feature` and `with_schemas` attributes have been removed from the resource. They were never resource state — both are read-shaping query parameters on the list/get endpoints, and there is no create or update endpoint that accepts them. Remove them from any `cloudflare_api_shield_operation` block; leaving them in place produces an "Unsupported argument" error. The schema version moves from 500 to 501 and an automatic state upgrader strips both fields from existing state, so no manual state editing is required. This also fixes the `.with_schemas: was cty.False, but now null` error raised when upgrading from v5.26.0.
+
+### Notes
+
+- **magic_transit_site**: changing `ha_mode` no longer forces replacement. The upstream API added update support, so the site is modified in place.
+- **magic_transit_site_lan**: changing `ha_link` no longer forces replacement, for the same reason.
+- **magic_transit_site_wan**: `health_check_rate` is now configurable (previously read-only).
+- **ai_search_instance**: `hybrid_search_enabled` now defaults to `true` instead of `false`, matching the documented API behaviour for new instances.
+- **zone_dns_settings**: `nameservers.ns_set` is now computed with a default of `1`.
+- **zone_dns_settings**: `foundation_dns` is deprecated and will be removed in a future API version. Set `nameservers.type` to `cloudflare.advanced` to turn Advanced Nameservers on, or `cloudflare.standard` to turn it off.
+- **ai_gateway**: the default for `spend_limits.rules.id` changed from `865b4d33` to `00000000`. Configurations that do not set `id` explicitly will show a one-time diff on the next plan.
+- **zero_trust_device_custom_profile**: changing an explicitly configured `profile_type` now forces replacement. The field is set when the profile is created and cannot be changed, so an in-place update was never possible. Configurations that omit `profile_type` are unaffected.
+
+### Features
+
+#### New Resources
+
+- **cloudflare_zero_trust_casb_integration**: Zero Trust CASB Integration
+
+#### New Data Sources
+
+- **cloudflare_zero_trust_casb_integration**: Zero Trust CASB Integration
+- **cloudflare_zero_trust_casb_integrations**: Zero Trust CASB Integrations (list)
+
+#### New Attributes
+
+- **magic_transit_site_wan**: `load_balance_inner_flows`
+- **zero_trust_organization**: `strict_service_token_auth`
+- **zone_dns_settings**: `nameservers.nameserver_set_id`
+- **ai_search_instance, ai_search_instances**: `hostname` filter
+- **account_api_token_permission_groups, account_api_token_permission_groups_list, api_token_permission_groups_list**: `category` and `is_selectable`
+
+#### New Accepted Values
+
+- **flagship_flag**: `rules.conditions[...].operator` accepts `has` and `not_has`
+- **pipeline_sink**: `type` accepts `basin_catalog`
+- **worker_version**: `bindings.type` accepts `artifacts`
+- **workers_script**: `bindings.type` accepts `artifacts`, `flagship`, `k2` and `messaging`
+- **zone_dns_settings**: `nameservers.type` accepts `cloudflare.advanced` and `custom`
+
+#### Other
+
+- bump cloudflare-go to v7.12.0
+- **calls_turn_app**: add support for `terraform import`
+- **zero_trust_casb_policy**: reject at plan time configurations where `applies_to_all_integrations` is `false` and `integration_ids` is empty
+
+### Bug Fixes
+
+- **api_shield**: add missing `normalize` field to v500 migration target model
+- **bot_management**: wire up AI Crawl Control fields in hand-maintained API plumbing
+- **bot_management**: wire `ai_bots_migration_opt_out` into the API model
+- **calls_turn_app**: populate `key_id` from the API's `uid` after create, so plan, refresh, update and destroy no longer fail with "missing required key_id parameter"
+- **d1_database**: add missing fields to the v500 migration target model
+- **dns_record**: default `include_shadow_metadata` to false on import
+- **logpush_dataset_field**: deserialize the `fields` result map
+- **logpush_job**: add `decode_null_to_zero` to `filter_attack_traffic`
+- **notification_policy**: add missing `token_id` to the v500 migration target model
+- **observatory_scheduled_test**: require replacement when `frequency` or `region` change, as the API has no update endpoint for scheduled tests
+- **page_rule**: send the API's `query_string` wildcard
+- **schema_validation_schemas**: default `omit_source` to false on import
+- **snippet_rules**: remove stale and spurious top-level fields from the migration target model
+- **turnstile_widget**: default `page`/`per_page` to their spec values on import
+- **worker**: remove `observability.redact_query_string`
+- **worker, worker_version**: backfill author fields on create
+- **worker_version**: exclude `exports_reconciliation` from the v0 legacy schema
+- **worker_version**: add missing V0 fields to fix a migration test panic
+- **workers_kv**: add missing `expiration`/`expiration_ttl` to the v500 migration target model
+- **workers_script**: add missing `base_path` and `observability.issues` attributes
+- **workers_script**: add missing `stream` attribute to the bindings schema
+- **workers_script**: add missing `force` field to the legacy V0 migration struct
+- **zero_trust_access_ai_controls_mcp_server**: only send changed fields on update, so unrelated changes no longer resend and rotate `client_secret`; redact `auth_credentials` and `client_secret` from debug logs
+- **zero_trust_device_custom_profile**: stop split tunnel entries inheriting a mutually exclusive field from state, which caused "host and Address both cannot be present" API errors
+- **zero_trust_organization**: add `warp_auth_non_browser_401` to the v4 source model, unblocking v4 to v5 migration
+- **zero_trust_organization**: ignore `mfa_configuration_allowed`/`service_token_inactivity` on import
+- **zero_trust_organization**: normalize `mfa_configuration_allowed`, `service_token_inactivity`, `trusted_accounts`
+- **zero_trust_organization**: fix refresh-plan instability for 4 attributes
+- **zero_trust_tunnel_warp_connector**: restore `ha` from `metadata.ha` on import and read
+
+### Schema Changes (no action required)
+
+Upstream Cloudflare API schema changes picked up via the cloudflare-go v7.12.0 bump. These are listed for completeness; none require a change to a working configuration.
+
+Of the 54 removed attributes, 52 are read-only (computed): existing state files load without user action and plans are unaffected, so only configurations that *reference* them — in an `output` block or an expression — need updating. The two attributes that become `Required` were already mandatory server-side, so a request omitting them was always rejected; the failure simply moves from apply time to plan time. The one type change is on data sources only, and HCL converts numeric strings automatically.
+
+- **account_member, account_members, account_permission_group, account_permission_groups, account_token, account_tokens, api_token, api_tokens, user_group, user_groups**: the generic `policies.permission_groups.meta.key` / `.value` pair has been replaced with typed fields — `category`, `deprecated`, `description`, `editable`, `eol_at`, `label`, `scopes`, `visibility`. Expressions reading `meta.key`/`meta.value` must move to the named field.
+- **hyperdrive_config, hyperdrive_configs**: `integration.integration` has been renamed to `integration.hyperdrive_config_provider`.
+- **queue, queues, queue_consumer, queue_consumers**: the read-only `settings.email`, `settings.pagerduty` and `settings.webhooks` detail attributes are no longer surfaced on the `cloudflare_queue` resource or the queue data sources. Relatedly, `notification` is no longer an accepted value for the read-only `consumers.type` attribute on those surfaces. Queue *configuration* is unaffected — the `cloudflare_queue_consumer` resource is unchanged and still accepts and manages all three settings blocks.
+- **cloud_connector_rules**: `rules` is now `Required` instead of `Optional`. The API already rejects a request that omits it, so this moves the failure from apply time to plan time rather than breaking a working configuration.
+- **zone_dns_settings**: `nameservers.type` is now `Required` instead of `Optional`. `nameservers` became a discriminated union upstream and `type` is its discriminator, so it was already mandatory in practice.
+- **flagship_flag, flagship_flags**: `limit` changed from `String` to `Int64` and is now constrained to between 1 and 200. These are data sources only, so there is no state to migrate, and HCL converts numeric strings automatically — `limit = "10"` continues to work.
+
 ## 5.26.0 (2026-09-24)
 
 Full Changelog: [v5.25.0...v5.26.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.25.0...v5.26.0)

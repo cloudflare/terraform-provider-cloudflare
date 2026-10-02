@@ -17,6 +17,7 @@ description: |-
 ### Optional
 
 - `account_id` (String)
+- `hostname` (String) Filter by exact Search for Agents hostname (case-insensitive).
 - `max_items` (Number) Max items to fetch, default: 1000
 - `namespace` (String) Filter by namespace.
 - `order_by` (String) Field to order results by.

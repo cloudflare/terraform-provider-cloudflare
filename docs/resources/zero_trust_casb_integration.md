@@ -308,11 +308,11 @@ Optional:
 
 ## Import
 
-Define the resource with the existing integration's vendor and authentication method before importing. Credentials are write-only and are not returned by the API, so they must also be supplied in configuration after import. The first apply sends the configured credentials as an in-place update and records `secrets_digest`; it does not replace the integration.
-
 Import is supported using the following syntax:
 
 ```shell
 # Define the resource with its vendor, authentication method, and credentials before importing.
 $ terraform import cloudflare_zero_trust_casb_integration.example '<account_id>/<id>'
 ```
+
+

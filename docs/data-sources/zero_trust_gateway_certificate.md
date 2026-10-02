@@ -27,7 +27,7 @@ data "cloudflare_zero_trust_gateway_certificate" "example_zero_trust_gateway_cer
 
 ### Optional
 
-- `account_id` (String)
+- `account_id` (String) Specify the Cloudflare account identifier.
 
 ### Read-Only
 

@@ -15,9 +15,7 @@ description: |-
 data "cloudflare_zero_trust_gateway_proxy_endpoints" "example_zero_trust_gateway_proxy_endpoints" {
   account_id = "699d98642c564d2e855e9661899b7252"
   direction = "asc"
-  filter = [{
-
-  }]
+  filter = ["string"]
   order_by = "name"
   search = "search"
 }
@@ -28,7 +26,7 @@ data "cloudflare_zero_trust_gateway_proxy_endpoints" "example_zero_trust_gateway
 
 ### Optional
 
-- `account_id` (String)
+- `account_id` (String) Specify the Cloudflare account identifier.
 - `direction` (String) Sort direction. Only takes effect when `order_by` is also provided; it
 is ignored otherwise. When `direction` is omitted the effective
 direction is field-specific: `created_at` and `updated_at` default to

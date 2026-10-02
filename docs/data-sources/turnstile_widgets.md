@@ -34,7 +34,8 @@ data "cloudflare_turnstile_widgets" "example_turnstile_widgets" {
 - `account_id` (String) Identifier
 - `direction` (String) Direction to order widgets.
 Available values: "asc", "desc".
-- `filter` (String) Filter widgets by field using case-insensitive substring matching.
+- `filter` (String) Filter widgets by field. The `name` field uses case-insensitive
+substring matching; `sitekey` uses exact matching.
 Format: `field:value`
 
 Supported fields:
@@ -69,7 +70,7 @@ before this field existed.
 Available values: "wrangler", "dashboard", "spin", "api", "unknown".
 - `domains` (List of String)
 - `ephemeral_id` (Boolean) Return the Ephemeral ID in /siteverify (ENT only).
-- `id` (String) Widget item identifier tag.
+- `id` (String) Unique identifier for a Turnstile widget.
 - `last_modified_via` (String) Origin of the most recent mutation (create, update, delete, or
 secret rotation). Server-derived; not client-settable. Omitted for
 widgets last mutated before this field existed.
@@ -83,6 +84,6 @@ widget, and where it is used.
 - `offlabel` (Boolean) Do not show any Cloudflare branding on the widget (ENT only).
 - `region` (String) Region where this widget can be used. This cannot be changed after creation.
 Available values: "world", "china".
-- `sitekey` (String) Widget item identifier tag.
+- `sitekey` (String) Unique identifier for a Turnstile widget.
 
 

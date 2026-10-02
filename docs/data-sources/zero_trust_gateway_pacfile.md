@@ -31,7 +31,7 @@ data "cloudflare_zero_trust_gateway_pacfile" "example_zero_trust_gateway_pacfile
 
 ### Optional
 
-- `account_id` (String)
+- `account_id` (String) Specify the Cloudflare account identifier.
 
 ### Read-Only
 

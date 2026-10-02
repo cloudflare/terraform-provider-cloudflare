@@ -28,8 +28,8 @@ resource "cloudflare_workers_kv_namespace" "example_workers_kv_namespace" {
 
 ### Required
 
-- `account_id` (String) Identifier.
-- `title` (String) A human-readable string name for a Namespace.
+- `account_id` (String) ID of the Cloudflare account that owns the Workers KV namespaces.
+- `title` (String) Human-readable string name for a Workers KV namespace.
 
 ### Optional
 
@@ -38,7 +38,7 @@ Available values: "eu", "fedramp", "us".
 
 ### Read-Only
 
-- `id` (String) Namespace identifier tag.
+- `id` (String) ID of the Workers KV namespace.
 - `supports_url_encoding` (Boolean) True if keys written on the URL will be URL-decoded before storing. For example, if set to "true", a key written on the URL as "%3F" will be stored as "?".
 
 ## Import

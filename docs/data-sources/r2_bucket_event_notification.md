@@ -28,9 +28,9 @@ data "cloudflare_r2_bucket_event_notification" "example_r2_bucket_event_notifica
 
 ### Required
 
-- `account_id` (String) Account ID.
+- `account_id` (String) Cloudflare account ID that owns the R2 resource.
 - `bucket_name` (String) Name of the bucket.
-- `queue_id` (String) Queue ID.
+- `queue_id` (String) ID of the Cloudflare Queue that receives notifications for matching R2 object events.
 
 ### Read-Only
 

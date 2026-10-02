@@ -80,7 +80,13 @@ Read-Only:
 
 Read-Only:
 
-- `key` (String)
-- `value` (String)
+- `category` (String) A category used to group permission groups.
+- `deprecated` (String) Indicates whether the permission group is deprecated.
+- `description` (String) Additional information about the permission group.
+- `editable` (String) Indicates whether the permission group can be edited.
+- `eol_at` (String) The planned end-of-life date and time, when provided.
+- `label` (String) A label identifying the permission group.
+- `scopes` (String) The scope associated with the permission group.
+- `visibility` (String) Indicates the permission group's availability or visibility.
 
 

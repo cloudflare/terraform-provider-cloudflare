@@ -27,7 +27,6 @@ resource "cloudflare_zone_dns_settings" "example_zone_dns_settings" {
   }
   multi_provider = false
   nameservers = {
-    ns_set = 1
     type = "cloudflare.standard"
   }
   ns_ttl = 86400
@@ -55,10 +54,10 @@ resource "cloudflare_zone_dns_settings" "example_zone_dns_settings" {
 ### Optional
 
 - `flatten_all_cnames` (Boolean) Whether to flatten all CNAME records in the zone. Note that, due to DNS limitations, a CNAME record at the zone apex will always be flattened.
-- `foundation_dns` (Boolean) Whether to enable Foundation DNS Advanced Nameservers on the zone.
+- `foundation_dns` (Boolean, Deprecated) Deprecated. Use nameservers.type to configure Advanced Nameservers.
 - `internal_dns` (Attributes) Settings for this internal zone. (see [below for nested schema](#nestedatt--internal_dns))
 - `multi_provider` (Boolean) Whether to enable multi-provider DNS, which causes Cloudflare to activate the zone even when non-Cloudflare NS records exist, and to respect NS records at the zone apex during outbound zone transfers.
-- `nameservers` (Attributes) Settings determining the nameservers through which the zone should be available. (see [below for nested schema](#nestedatt--nameservers))
+- `nameservers` (Attributes) Controls the nameservers through which the zone is available. (see [below for nested schema](#nestedatt--nameservers))
 - `ns_ttl` (Number) The time to live (TTL) of the zone's nameserver (NS) records.
 - `secondary_overrides` (Boolean) Allows a Secondary DNS zone to use (proxied) override records and CNAME flattening at the zone apex.
 - `soa` (Attributes) Components of the zone's SOA record. (see [below for nested schema](#nestedatt--soa))
@@ -76,11 +75,15 @@ Optional:
 <a id="nestedatt--nameservers"></a>
 ### Nested Schema for `nameservers`
 
+Required:
+
+- `type` (String) Nameserver type.
+Available values: "cloudflare.standard", "cloudflare.advanced", "custom.account", "custom.tenant", "custom.zone", "custom".
+
 Optional:
 
-- `ns_set` (Number) Configured nameserver set to be used for this zone
-- `type` (String) Nameserver type
-Available values: "cloudflare.standard", "custom.account", "custom.tenant", "custom.zone".
+- `nameserver_set_id` (String) Identifier of the account-owned Custom Nameserver Set to use for this zone.
+- `ns_set` (Number) Configured nameserver set number to use for this zone.
 
 
 <a id="nestedatt--soa"></a>

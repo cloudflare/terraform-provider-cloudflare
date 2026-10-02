@@ -44,7 +44,7 @@ Read-Only:
 
 - `certificate` (String) The root CA certificate in PEM format. Only root CA certificates are accepted; intermediate and leaf certificates are not supported.
 - `expires_on` (String) When the certificate expires.
-- `id` (String) Identifier.
+- `id` (String) Certificate identifier tag.
 - `issuer` (String) The certificate authority that issued the certificate.
 - `signature` (String) The type of hash used for the certificate.
 - `status` (String) Status of the zone's custom SSL.

@@ -36,9 +36,9 @@ Available values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 51
 - `enable` (Boolean)
 - `engine_version` (Number)
 - `fusion_method` (String) Available values: "max", "rrf".
-- `hybrid_search_enabled` (Boolean, Deprecated) Deprecated — use index_method instead.
+- `hybrid_search_enabled` (Boolean, Deprecated) Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
 - `id` (String) The ID of this resource.
-- `index_method` (Attributes) Controls which storage backends are used during indexing. Defaults to vector-only. (see [below for nested schema](#nestedatt--index_method))
+- `index_method` (Attributes) Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances. (see [below for nested schema](#nestedatt--index_method))
 - `indexing_options` (Attributes) (see [below for nested schema](#nestedatt--indexing_options))
 - `last_activity` (String)
 - `max_num_results` (Number)
@@ -61,13 +61,15 @@ Available values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 51
 - `sync_interval` (Number) Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).
 Available values: 900, 1800, 3600, 7200, 14400, 21600, 43200, 86400.
 - `token_id` (String)
-- `type` (String) Available values: "r2", "web-crawler".
+- `type` (String) Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.
+Available values: "r2", "web-crawler".
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
 
 Optional:
 
+- `hostname` (String) Filter by exact Search for Agents hostname (case-insensitive).
 - `namespace` (String) Filter by namespace.
 - `order_by` (String) Field to order results by.
 Available values: "created_at".

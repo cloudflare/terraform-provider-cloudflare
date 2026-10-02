@@ -22,12 +22,12 @@ data "cloudflare_zero_trust_gateway_settings" "example_zero_trust_gateway_settin
 
 ### Optional
 
-- `account_id` (String)
+- `account_id` (String) Specify the Cloudflare account identifier.
 
 ### Read-Only
 
 - `created_at` (String)
-- `id` (String) The ID of this resource.
+- `id` (String) Specify the Cloudflare account identifier.
 - `settings` (Attributes) Specify account settings. (see [below for nested schema](#nestedatt--settings))
 - `updated_at` (String)
 

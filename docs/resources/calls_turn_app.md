@@ -46,5 +46,7 @@ resource "cloudflare_calls_turn_app" "example_calls_turn_app" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import cloudflare_calls_turn_app.example <account_id>/<key_id>
+$ terraform import cloudflare_calls_turn_app.example '<account_id>/<key_id>'
 ```
+
+

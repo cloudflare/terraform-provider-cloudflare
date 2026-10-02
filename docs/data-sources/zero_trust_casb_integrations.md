@@ -2,6 +2,7 @@
 page_title: "cloudflare_zero_trust_casb_integrations Data Source - Cloudflare"
 subcategory: ""
 description: |-
+  
 ---
 
 # cloudflare_zero_trust_casb_integrations (Data Source)
@@ -64,3 +65,5 @@ Read-Only:
 - `name` (String) Name of the integration.
 - `status` (String) Integration status.
 - `updated` (String) When the integration was last updated.
+
+
