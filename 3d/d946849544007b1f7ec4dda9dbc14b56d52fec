@@ -1,0 +1,19 @@
+internal/services/zero_trust_organization/migration/v500/migration_model_parity_test.go
+  s_cc32fe918200f9::t_bebda64da31ab3 27-43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3dd946849544007b1f7ec4dda9dbc14b56d52fec",
+  "prompts": {},
+  "sessions": {
+    "s_cc32fe918200f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f163304c5ffe3CKSBhHc0cwL4Z",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
