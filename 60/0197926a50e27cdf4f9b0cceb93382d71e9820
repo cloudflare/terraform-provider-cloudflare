@@ -1,0 +1,20 @@
+internal/services/zero_trust_device_custom_profile/custom.go
+  s_cc32fe918200f9::t_402bb79834fb1b 101-104
+  s_cc32fe918200f9::t_478bea93766ced 151
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "600197926a50e27cdf4f9b0cceb93382d71e9820",
+  "prompts": {},
+  "sessions": {
+    "s_cc32fe918200f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f163304c5ffe3CKSBhHc0cwL4Z",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
