@@ -24,3 +24,20 @@ func TestZeroTrustOrganizationMigrationModelSchemaParity(t *testing.T) {
 	errs := test_helpers.ValidateMigrationModelSchemaIntegrity(model, schema)
 	errs.Report(t)
 }
+
+// TestZeroTrustOrganizationMigrationSourceModelSchemaParity verifies that
+// SourceCloudflareAccessOrganizationModel (used in MoveState and
+// UpgradeFromLegacyV0 to decode v4 state) declares every attribute that
+// SourceCloudflareAccessOrganizationSchema defines. A missing field causes the
+// Plugin Framework to return a Value Conversion Error when reading v4 state,
+// blocking terraform plan after migration.
+//
+// Regression test for ESCALATION-11029: warp_auth_non_browser_401 was added to
+// the source schema but omitted from the source model struct.
+func TestZeroTrustOrganizationMigrationSourceModelSchemaParity(t *testing.T) {
+	t.Parallel()
+	model := (*v500.SourceCloudflareAccessOrganizationModel)(nil)
+	schema := v500.SourceCloudflareAccessOrganizationSchema()
+	errs := test_helpers.ValidateMigrationModelSchemaIntegrity(model, schema)
+	errs.Report(t)
+}

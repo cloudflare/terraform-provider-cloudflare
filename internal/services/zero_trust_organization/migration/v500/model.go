@@ -27,6 +27,11 @@ type SourceCloudflareAccessOrganizationModel struct {
 	SessionDuration                types.String             `tfsdk:"session_duration"`
 	AllowAuthenticateViaWARP       types.Bool               `tfsdk:"allow_authenticate_via_warp"`
 	WARPAuthSessionDuration        types.String             `tfsdk:"warp_auth_session_duration"`
+	// Added to match SourceCloudflareAccessOrganizationSchema (v5.24.0+).
+	// This field did not exist in v4; its value will always be null when
+	// decoded from v4 state. Transform ignores it — the v5 Read populates
+	// the real value from the API after migration.
+	WarpAuthNonBrowser401          types.Bool               `tfsdk:"warp_auth_non_browser_401"`
 	LoginDesign                    []SourceLoginDesignModel `tfsdk:"login_design"`
 	CustomPages                    []SourceCustomPagesModel `tfsdk:"custom_pages"`
 }
