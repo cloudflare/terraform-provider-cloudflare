@@ -361,6 +361,55 @@ func testCheckAPIShieldOperationRecreated(operationID1, operationID2 *string) re
 	}
 }
 
+// TestAccCloudflareAPIShieldOperation_WithSchemasNoSpuriousUpdate reproduces
+// APIX-1815 / GH-7394: codegen commit 45a7e379 added GET query parameters
+// feature and with_schemas as resource schema attributes. This caused a
+// model-schema mismatch that broke fresh creates with "Value Conversion Error:
+// Struct defines fields not found in object: feature and with_schemas".
+//
+// The fix removes both attributes from the model and schema (v501), and
+// provides a StateUpgrader (500→501) to strip them from any v5.26.0 state.
+func TestAccCloudflareAPIShieldOperation_WithSchemasNoSpuriousUpdate(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	resourceID := "cloudflare_api_shield_operation." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_Credentials(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckAPIShieldOperationDelete,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAPIShieldOperation(rnd, zoneID, cloudflare.APIShieldBasicOperation{
+					Method:   "GET",
+					Host:     domain,
+					Endpoint: "/apix1815/test",
+				}),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("operation_id"), knownvalue.NotNull()),
+					statecheck.ExpectKnownValue(resourceID, tfjsonpath.New("endpoint"), knownvalue.StringExact("/apix1815/test")),
+				},
+			},
+			{
+				ResourceName:        resourceID,
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+			},
+			{
+				Config:   testAccCloudflareAPIShieldOperation(rnd, zoneID, cloudflare.APIShieldBasicOperation{Method: "GET", Host: domain, Endpoint: "/apix1815/test"}),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
 func testAccCloudflareAPIShieldOperation(resourceName, zone string, op cloudflare.APIShieldBasicOperation) string {
 	return acctest.LoadTestCase("apishieldoperation.tf", resourceName, zone, op.Method, op.Host, op.Endpoint)
 }

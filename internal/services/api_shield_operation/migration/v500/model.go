@@ -28,14 +28,10 @@ type SourceCloudflareAPIShieldOperationModel struct {
 // Target Models (Current Provider - v5.x+)
 // ============================================================================
 
-// TargetAPIShieldOperationModel represents the target cloudflare_api_shield_operation state structure (v500).
-// This matches the structure in the parent package's model.go file.
 type TargetAPIShieldOperationModel struct {
 	ID          types.String                                                    `tfsdk:"id"`
 	OperationID types.String                                                    `tfsdk:"operation_id"`
 	ZoneID      types.String                                                    `tfsdk:"zone_id"`
-	Feature     *[]types.String                                                 `tfsdk:"feature"`
-	WithSchemas types.Bool                                                      `tfsdk:"with_schemas"`
 	Endpoint    types.String                                                    `tfsdk:"endpoint"`
 	Host        types.String                                                    `tfsdk:"host"`
 	Method      types.String                                                    `tfsdk:"method"`
