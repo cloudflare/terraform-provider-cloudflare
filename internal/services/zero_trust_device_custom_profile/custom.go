@@ -89,16 +89,19 @@ type splitTunnelEntry interface {
 	ZeroTrustDeviceCustomProfileExcludeModel | ZeroTrustDeviceCustomProfileIncludeModel
 }
 
+// splitTunnelMutuallyExclusive maps each field to the field it cannot coexist
+// with in a single split-tunnel entry. The API returns error 2049 when both
+// are non-null in the same object.
+var splitTunnelMutuallyExclusive = map[string]string{
+	"address": "host",
+	"host":    "address",
+}
+
 // normalizeSplitTunnelList resolves unknown nested attributes in exclude/include
-// list elements. For each element, if address/host/description is unknown, it is
-// resolved to the corresponding state value (for existing entries at the same
-// index) or null (for new entries beyond the state length).
-//
-// NOTE: Matching is index-based (plan element i ↔ state element i), not
-// identity-based. If a user reorders entries in config, the wrong state values
-// may be applied for one plan-apply cycle; the next read corrects them. This is
-// acceptable because the API does not compute these fields — the worst case is
-// a single extra apply with null values that get overwritten by the API response.
+// list elements. Matching is index-based (plan[i] ↔ state[i]). For unknown
+// fields: if the mutually exclusive counterpart (address↔host) is already set
+// in the plan entry, resolve to null to avoid API error 2049; otherwise fall
+// back to the state value (or null for new entries beyond state length).
 func normalizeSplitTunnelList[T splitTunnelEntry](
 	ctx context.Context,
 	planList customfield.NestedObjectList[T],
@@ -145,6 +148,13 @@ func normalizeSplitTunnelList[T splitTunnelEntry](
 		for key, val := range attrs {
 			if val.IsUnknown() {
 				elementChanged = true
+				// Mutually exclusive counterpart already set — resolve to null.
+				if counterpart, isMutex := splitTunnelMutuallyExclusive[key]; isMutex {
+					if cv, exists := attrs[counterpart]; exists && !cv.IsNull() && !cv.IsUnknown() {
+						newAttrs[key] = basetypes.NewStringNull()
+						continue
+					}
+				}
 				// Try to use state value; fall back to null.
 				// NOTE: all nested attributes in exclude/include models are strings;
 				// update this fallback if non-string Optional+Computed fields are added.
