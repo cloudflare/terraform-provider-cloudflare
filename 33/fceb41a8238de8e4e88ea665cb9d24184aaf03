@@ -1,0 +1,23 @@
+.release-please-manifest.json
+  s_0186c0812ecd82::t_67a9137c7b1fff 2
+README.md
+  s_0186c0812ecd82::t_e7b93ff1b078c8 23
+internal/version.go
+  s_0186c0812ecd82::t_5c1875e9a8a450 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "33fceb41a8238de8e4e88ea665cb9d24184aaf03",
+  "prompts": {},
+  "sessions": {
+    "s_0186c0812ecd82": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f07c11118ffev1vfJ7K3Qfqzjz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
