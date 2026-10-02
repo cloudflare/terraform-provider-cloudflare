@@ -17,7 +17,7 @@ Accepted Permissions
 
 ```terraform
 resource "cloudflare_account_subscription" "example_account_subscription" {
-  zone_id = "zone_id"
+  account_id = "account_id"
   frequency = "monthly"
   rate_plan = {
     id = "free"
@@ -69,5 +69,10 @@ Read-Only:
 
 ## Import
 
+Import is supported using the following syntax:
 
-~> This resource does not currently support `terraform import`.
+```shell
+$ terraform import cloudflare_account_subscription.example '<account_id>'
+```
+
+
