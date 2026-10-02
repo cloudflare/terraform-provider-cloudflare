@@ -1,0 +1,21 @@
+internal/services/calls_turn_app/resource.go
+  s_cc32fe918200f9::t_1776d8dd99fa08 126-127,133
+docs/resources/calls_turn_app.md
+  s_cc32fe918200f9::t_b60d2d15d02a16 46,48-50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ff5cee0a046ab81ec1cf7b487f9f0a1ae45a977e",
+  "prompts": {},
+  "sessions": {
+    "s_cc32fe918200f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f163304c5ffe3CKSBhHc0cwL4Z",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
