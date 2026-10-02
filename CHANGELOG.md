@@ -17,7 +17,9 @@ One change requires a configuration edit. The rest of this release's schema move
 - **magic_transit_site_wan**: `health_check_rate` is now configurable (previously read-only).
 - **ai_search_instance**: `hybrid_search_enabled` now defaults to `true` instead of `false`, matching the documented API behaviour for new instances.
 - **zone_dns_settings**: `nameservers.ns_set` is now computed with a default of `1`.
+- **zone_dns_settings**: `foundation_dns` is deprecated and will be removed in a future API version. Set `nameservers.type` to `cloudflare.advanced` to turn Advanced Nameservers on, or `cloudflare.standard` to turn it off.
 - **ai_gateway**: the default for `spend_limits.rules.id` changed from `865b4d33` to `00000000`. Configurations that do not set `id` explicitly will show a one-time diff on the next plan.
+- **zero_trust_device_custom_profile**: changing an explicitly configured `profile_type` now forces replacement. The field is set when the profile is created and cannot be changed, so an in-place update was never possible. Configurations that omit `profile_type` are unaffected.
 
 ### Features
 
@@ -95,7 +97,7 @@ Of the 54 removed attributes, 52 are read-only (computed): existing state files 
 - **queue, queues, queue_consumer, queue_consumers**: the read-only `settings.email`, `settings.pagerduty` and `settings.webhooks` detail attributes are no longer surfaced on the `cloudflare_queue` resource or the queue data sources. Relatedly, `notification` is no longer an accepted value for the read-only `consumers.type` attribute on those surfaces. Queue *configuration* is unaffected — the `cloudflare_queue_consumer` resource is unchanged and still accepts and manages all three settings blocks.
 - **cloud_connector_rules**: `rules` is now `Required` instead of `Optional`. The API already rejects a request that omits it, so this moves the failure from apply time to plan time rather than breaking a working configuration.
 - **zone_dns_settings**: `nameservers.type` is now `Required` instead of `Optional`. `nameservers` became a discriminated union upstream and `type` is its discriminator, so it was already mandatory in practice.
-- **flagship_flag, flagship_flags**: `limit` changed from `String` to `Int64`. These are data sources only, so there is no state to migrate, and HCL converts numeric strings automatically — `limit = "10"` continues to work.
+- **flagship_flag, flagship_flags**: `limit` changed from `String` to `Int64` and is now constrained to between 1 and 200. These are data sources only, so there is no state to migrate, and HCL converts numeric strings automatically — `limit = "10"` continues to work.
 
 ## 5.26.0 (2026-09-24)
 
