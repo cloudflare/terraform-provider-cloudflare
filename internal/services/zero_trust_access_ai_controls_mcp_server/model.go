@@ -47,7 +47,7 @@ func (m ZeroTrustAccessAIControlsMcpServerModel) MarshalJSON() (data []byte, err
 }
 
 func (m ZeroTrustAccessAIControlsMcpServerModel) MarshalJSONForUpdate(state ZeroTrustAccessAIControlsMcpServerModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return marshalMcpServerUpdate(m, state)
 }
 
 type ZeroTrustAccessAIControlsMcpServerUpdatedPromptsModel struct {
