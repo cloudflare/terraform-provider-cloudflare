@@ -1,0 +1,77 @@
+examples/data-sources/cloudflare_authenticated_origin_pulls/data-source.tf
+  s_0186c0812ecd82::t_34cf774e331f77 1-4
+examples/data-sources/cloudflare_authenticated_origin_pulls_certificate/data-source.tf
+  s_0186c0812ecd82::t_eca5d9a82e2bd1 1-4
+examples/data-sources/cloudflare_authenticated_origin_pulls_certificates/data-source.tf
+  s_0186c0812ecd82::t_64e1c587ad4c94 1-3
+examples/data-sources/cloudflare_authenticated_origin_pulls_hostname_certificate/data-source.tf
+  s_0186c0812ecd82::t_bcfacbbd809d1f 1-4
+examples/data-sources/cloudflare_authenticated_origin_pulls_hostname_certificates/data-source.tf
+  s_0186c0812ecd82::t_25bd022ec2c914 1-3
+examples/data-sources/cloudflare_mtls_certificate/data-source.tf
+  s_0186c0812ecd82::t_0f0d4968b984ca 1-4
+examples/data-sources/cloudflare_mtls_certificates/data-source.tf
+  s_0186c0812ecd82::t_2100729955e57c 1-3
+examples/data-sources/cloudflare_rate_limits/data-source.tf
+  s_0186c0812ecd82::t_ba69662933c52b 1-3
+examples/data-sources/cloudflare_ruleset/data-source.tf
+  s_0186c0812ecd82::t_623eec44c7fa3b 1-4
+examples/data-sources/cloudflare_rulesets/data-source.tf
+  s_0186c0812ecd82::t_a9ca72bc3d04f7 1-3
+examples/data-sources/cloudflare_zero_trust_access_application/data-source.tf
+  s_0186c0812ecd82::t_ddfd5a11288a66 1-5
+examples/data-sources/cloudflare_zero_trust_access_applications/data-source.tf
+  s_0186c0812ecd82::t_f774a88b5c8735 1-9
+examples/provider/provider.tf
+  s_0186c0812ecd82::t_6f310c636da821 1-9,11-16
+examples/resources/cloudflare_account_subscription/import.sh
+  s_0186c0812ecd82::t_fe53fce503b39a 1
+examples/resources/cloudflare_account_subscription/resource.tf
+  s_0186c0812ecd82::t_d1169af387d26c 2
+examples/resources/cloudflare_api_shield_discovery_operation/resource.tf
+  s_0186c0812ecd82::t_09774033f7552b 1-5
+examples/resources/cloudflare_authenticated_origin_pulls/import.sh
+  s_0186c0812ecd82::t_67f9aaa9fe23c7 1
+examples/resources/cloudflare_authenticated_origin_pulls/resource.tf
+  s_0186c0812ecd82::t_8f8722bff007b3 1-8
+examples/resources/cloudflare_authenticated_origin_pulls_certificate/import.sh
+  s_0186c0812ecd82::t_8751c53544aee4 1
+examples/resources/cloudflare_authenticated_origin_pulls_certificate/resource.tf
+  s_0186c0812ecd82::t_d3add139a9be7e 1-58
+examples/resources/cloudflare_authenticated_origin_pulls_hostname_certificate/import.sh
+  s_0186c0812ecd82::t_5201f577fc2251 1
+examples/resources/cloudflare_authenticated_origin_pulls_hostname_certificate/resource.tf
+  s_0186c0812ecd82::t_ee24e2531d3d0a 1-58
+examples/resources/cloudflare_image/resource.tf
+  s_0186c0812ecd82::t_1dcb18f4adc257 1-11
+examples/resources/cloudflare_mtls_certificate/import.sh
+  s_0186c0812ecd82::t_efa01e8d764499 1
+examples/resources/cloudflare_mtls_certificate/resource.tf
+  s_0186c0812ecd82::t_93a844f733cb5e 1-15
+examples/resources/cloudflare_rate_limit/import.sh
+  s_0186c0812ecd82::t_cbd40fe8aadc98 1
+examples/resources/cloudflare_ruleset/import.sh
+  s_0186c0812ecd82::t_6b19725967efe7 1
+examples/resources/cloudflare_ruleset/resource.tf
+  s_0186c0812ecd82::t_0cc309c585cfa7 1-15
+examples/resources/cloudflare_zero_trust_access_application/import.sh
+  s_0186c0812ecd82::t_05d7c041af8a14 1
+examples/resources/cloudflare_zero_trust_access_application/resource.tf
+  s_0186c0812ecd82::t_4d8581e3fd3b2e 1-92
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6e186679084262643147af2ed82a8682bbe0af58",
+  "prompts": {},
+  "sessions": {
+    "s_0186c0812ecd82": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f07c11118ffev1vfJ7K3Qfqzjz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
