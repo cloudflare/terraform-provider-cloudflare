@@ -97,7 +97,13 @@ func (r *APIShieldOperationResource) Create(ctx context.Context, req resource.Cr
 }
 
 func (r *APIShieldOperationResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	// Update is not supported for this resource
+	var data *APIShieldOperationModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	data.ID = data.OperationID
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *APIShieldOperationResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -109,24 +115,8 @@ func (r *APIShieldOperationResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 
-	dataFeature := []api_gateway.OperationGetParamsFeature{}
-
-	if data.Feature != nil {
-		for _, item := range *data.Feature {
-			dataFeature = append(dataFeature, api_gateway.OperationGetParamsFeature(item.ValueString()))
-		}
-	}
-
 	params := api_gateway.OperationGetParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-	}
-
-	if data.Feature != nil {
-		params.Feature = cloudflare.F(dataFeature)
-	}
-
-	if !data.WithSchemas.IsNull() && !data.WithSchemas.IsUnknown() {
-		params.WithSchemas = cloudflare.F(data.WithSchemas.ValueBool())
 	}
 
 	res := new(http.Response)
@@ -227,9 +217,6 @@ func (r *APIShieldOperationResource) ImportState(ctx context.Context, req resour
 	}
 	data = &env.Result
 	data.ID = data.OperationID
-	if data.WithSchemas.IsNull() {
-		data.WithSchemas = types.BoolValue(false)
-	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
