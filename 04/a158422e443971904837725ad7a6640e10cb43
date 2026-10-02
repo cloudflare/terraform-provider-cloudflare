@@ -1,0 +1,19 @@
+internal/services/zero_trust_tunnel_warp_connector/normalizations.go
+  s_cc32fe918200f9::t_80f497e140a5a8 21-22,24-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "04a158422e443971904837725ad7a6640e10cb43",
+  "prompts": {},
+  "sessions": {
+    "s_cc32fe918200f9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f163304c5ffe3CKSBhHc0cwL4Z",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Musa Jundi <musa@cloudflare.com>"
+    }
+  }
+}
