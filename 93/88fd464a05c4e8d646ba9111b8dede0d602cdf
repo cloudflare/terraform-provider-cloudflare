@@ -1,0 +1,22 @@
+docs/resources/image.md
+  s_0186c0812ecd82::t_797761247f4021 69-73
+  s_0186c0812ecd82::t_43ffbdfac5271c 74
+examples/resources/cloudflare_image/import.sh
+  s_0186c0812ecd82::t_95d8ee2cec518c 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9388fd464a05c4e8d646ba9111b8dede0d602cdf",
+  "prompts": {},
+  "sessions": {
+    "s_0186c0812ecd82": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f07c11118ffev1vfJ7K3Qfqzjz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
