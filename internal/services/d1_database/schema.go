@@ -7,6 +7,7 @@ import (
 	
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -14,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*D1DatabaseResource)(nil)
@@ -74,6 +76,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"fields": schema.ListAttribute{
+				Description: "Comma-separated list of fields to include in the response. When omitted,\nall fields are returned.",
+				Optional:    true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive(
+							"uuid",
+							"name",
+							"created_at",
+							"version",
+							"jurisdiction",
+							"num_tables",
+							"file_size",
+							"running_in_region",
+							"read_replication",
+						),
+					),
+				},
+				ElementType: types.StringType,
 			},
 			"read_replication": schema.SingleNestedAttribute{
 				Description: "Configuration for D1 read replication.",

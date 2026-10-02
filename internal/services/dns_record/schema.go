@@ -49,6 +49,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"include_shadow_metadata": schema.BoolAttribute{
+				Description: "Whether to include shadow metadata in the `meta` field of each record in the response. See [Shadowed records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
 			"name": schema.StringAttribute{
 				Description: "DNS record name (or @ for the zone apex) in Punycode.",
 				Required:    true,

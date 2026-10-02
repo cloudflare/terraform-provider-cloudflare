@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
@@ -44,15 +45,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"frequency": schema.StringAttribute{
-				Description: "The frequency of the test.\nAvailable values: \"DAILY\", \"WEEKLY\".",
+				Description: "The frequency of the scheduled test. Defaults to WEEKLY for free plans, DAILY for paid plans.\nAvailable values: \"DAILY\", \"WEEKLY\".",
 				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("DAILY", "WEEKLY"),
 				},
+				// The API has no update endpoint for scheduled tests (speed.ScheduleService
+				// exposes only New/Delete/Get) and Update() is a no-op, so a change must
+				// force replacement — as url and zone_id already do.
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"region": schema.StringAttribute{
 				Description: "A test region.\nAvailable values: \"asia-east1\", \"asia-northeast1\", \"asia-northeast2\", \"asia-south1\", \"asia-southeast1\", \"australia-southeast1\", \"europe-north1\", \"europe-southwest1\", \"europe-west1\", \"europe-west2\", \"europe-west3\", \"europe-west4\", \"europe-west8\", \"europe-west9\", \"me-west1\", \"southamerica-east1\", \"us-central1\", \"us-east1\", \"us-east4\", \"us-south1\", \"us-west1\".",
 				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"asia-east1",
@@ -78,6 +85,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"us-west1",
 					),
 				},
+				Default: stringdefault.StaticString("us-central1"),
+				// See the note on frequency: no update endpoint, Update() is a no-op.
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"schedule": schema.SingleNestedAttribute{
 				Description: "The test schedule.",

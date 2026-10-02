@@ -64,6 +64,14 @@ func (r *ZoneHoldResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
+	params := zones.HoldNewParams{
+		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	}
+
+	if !data.IncludeSubdomains.IsNull() && !data.IncludeSubdomains.IsUnknown() {
+		params.IncludeSubdomains = cloudflare.F(data.IncludeSubdomains.ValueBool())
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -73,9 +81,7 @@ func (r *ZoneHoldResource) Create(ctx context.Context, req resource.CreateReques
 	env := ZoneHoldResultEnvelope{*data}
 	_, err = r.client.Zones.Holds.New(
 		ctx,
-		zones.HoldNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -194,11 +200,17 @@ func (r *ZoneHoldResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
+	params := zones.HoldDeleteParams{
+		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	}
+
+	if !data.HoldAfter.IsNull() && !data.HoldAfter.IsUnknown() {
+		params.HoldAfter = cloudflare.F(data.HoldAfter.ValueString())
+	}
+
 	_, err := r.client.Zones.Holds.Delete(
 		ctx,
-		zones.HoldDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
