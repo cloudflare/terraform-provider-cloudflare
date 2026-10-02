@@ -52,7 +52,7 @@ One change requires a configuration edit. The rest of this release's schema move
 
 - bump cloudflare-go to v7.12.0
 - **calls_turn_app**: add support for `terraform import`
-- **zero_trust_casb_integration**: validate integration scope
+- **zero_trust_casb_policy**: reject at plan time configurations where `applies_to_all_integrations` is `false` and `integration_ids` is empty
 
 ### Bug Fixes
 
