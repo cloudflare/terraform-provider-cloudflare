@@ -1,0 +1,29 @@
+internal/services/observatory_scheduled_test/resource_test.go
+  s_0186c0812ecd82::t_816b3b279f2149 165-211
+  s_0186c0812ecd82::t_01d7d4c0c0f5e9 243-252
+  s_0186c0812ecd82::t_8191853775b374 79
+internal/services/observatory_scheduled_test/schema.go
+  s_0186c0812ecd82::t_ab7566d4d10099 89-90
+  s_0186c0812ecd82::t_8818b3208da0d4 54-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "566cc31f3a5475650f932d540401310c99a4878c",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_0186c0812ecd82": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f07c11118ffev1vfJ7K3Qfqzjz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
