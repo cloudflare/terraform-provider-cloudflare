@@ -78,16 +78,25 @@ lint:
     - ./scripts/bootstrap
     - ./scripts/lint
 
-# Offer tests on demand for merge requests, after lint has seeded the cache.
+# Offer tests on demand, after lint has seeded the cache. Always manual: on
+# merge requests, and on main/release branches so a pipeline can be kicked off
+# from the UI ("Run pipeline") or the API and the tests started by hand.
 # The child pipeline is detached and does not block merging.
 unit-tests:
   stage: test
   needs:
     - job: lint
       artifacts: false
+      optional: true
   allow_failure: true
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+      allow_failure: true
+    - if: $CI_COMMIT_BRANCH =~ /^release[\/-]/
       when: manual
       allow_failure: true
   # Parent cache variables expand before CI_PROJECT_DIR exists in the child.
