@@ -311,6 +311,61 @@ func (r *LogpushJobResource) ImportState(ctx context.Context, req resource.Impor
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *LogpushJobResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *LogpushJobResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	if req.State.Raw.IsNull() || req.Plan.Raw.IsNull() {
+		return
+	}
 
+	var state, plan LogpushJobModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if state.OutputOptions == nil || plan.OutputOptions == nil ||
+		state.OutputOptions.FieldNames == nil || plan.OutputOptions.FieldNames == nil {
+		return
+	}
+
+	stateFields := *state.OutputOptions.FieldNames
+	planFields := *plan.OutputOptions.FieldNames
+
+	if len(stateFields) != len(planFields) {
+		return
+	}
+
+	stateCounts := make(map[string]int, len(stateFields))
+	for _, f := range stateFields {
+		if !f.IsNull() && !f.IsUnknown() {
+			stateCounts[f.ValueString()]++
+		}
+	}
+
+	planCounts := make(map[string]int, len(planFields))
+	for _, f := range planFields {
+		if f.IsNull() || f.IsUnknown() {
+			return
+		}
+		planCounts[f.ValueString()]++
+	}
+
+	if len(stateCounts) != len(planCounts) {
+		return
+	}
+
+	for k, v := range planCounts {
+		if stateCounts[k] != v {
+			return
+		}
+	}
+
+	// Cloudflare's Logpush API canonicalises and stores output_options.field_names
+	// in alphabetical order. Because field_names is defined as a ListAttribute,
+	// any declaration in HCL that does not match alphabetical order causes perpetual
+	// drift on subsequent plans.
+	// When the planned fields match the state fields as a multiset, preserve the state's
+	// ordering in the plan to prevent unnecessary diffs.
+	plan.OutputOptions.FieldNames = state.OutputOptions.FieldNames
+	resp.Diagnostics.Append(resp.Plan.Set(ctx, &plan)...)
 }
