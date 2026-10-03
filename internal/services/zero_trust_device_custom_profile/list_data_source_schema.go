@@ -249,8 +249,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"target_tests": schema.ListNestedAttribute{
-							Computed:   true,
-							CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfilesTargetTestsDataSourceModel](ctx),
+							Computed:           true,
+							DeprecationMessage: "This attribute is deprecated.",
+							CustomType:         customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfilesTargetTestsDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{

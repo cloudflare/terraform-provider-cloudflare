@@ -7,13 +7,13 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDLPEntriesDataSource)(nil)
@@ -162,9 +162,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"secret": schema.BoolAttribute{
 							Computed: true,
 						},
-						"word_list": schema.StringAttribute{
-							Computed:   true,
-							CustomType: jsontypes.NormalizedType{},
+						"word_list": schema.ListAttribute{
+							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
 						},
 					},
 				},

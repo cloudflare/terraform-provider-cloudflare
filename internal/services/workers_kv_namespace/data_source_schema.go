@@ -48,6 +48,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"mode": schema.StringAttribute{
+				Description: "The mode of the Workers KV namespace. Specify `instant` when creating a namespace to create a KV Instant namespace. Omit this field when creating a namespace to create a classic namespace. Currently, `instant` is the only supported explicit value.\nAvailable values: \"instant\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("instant"),
+				},
+			},
 			"supports_url_encoding": schema.BoolAttribute{
 				Description: `True if keys written on the URL will be URL-decoded before storing. For example, if set to "true", a key written on the URL as "%3F" will be stored as "?".`,
 				Computed:    true,

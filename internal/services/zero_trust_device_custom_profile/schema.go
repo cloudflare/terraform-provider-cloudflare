@@ -355,8 +355,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"target_tests": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileTargetTestsModel](ctx),
+				Computed:           true,
+				DeprecationMessage: "This attribute is deprecated.",
+				CustomType:         customfield.NewNestedObjectListType[ZeroTrustDeviceCustomProfileTargetTestsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{

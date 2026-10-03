@@ -224,6 +224,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Description: "When enabled, only users who are members of your Cloudflare account can authenticate through this identity provider. When disabled, any user with a Cloudflare account can authenticate, subject to your Access policies.",
 									Computed:    true,
 								},
+								"login_page_auto_prompt": schema.BoolAttribute{
+									Description: "When enabled, the Access login page automatically prompts the user to authenticate with a passkey.",
+									Computed:    true,
+								},
 							},
 						},
 						"name": schema.StringAttribute{
@@ -231,7 +235,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).\nAvailable values: \"onetimepin\", \"azureAD\", \"saml\", \"centrify\", \"facebook\", \"github\", \"google-apps\", \"google\", \"linkedin\", \"oidc\", \"okta\", \"onelogin\", \"pingone\", \"yandex\", \"cloudflare\".",
+							Description: "The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).\nAvailable values: \"onetimepin\", \"azureAD\", \"saml\", \"centrify\", \"facebook\", \"github\", \"google-apps\", \"google\", \"linkedin\", \"oidc\", \"okta\", \"onelogin\", \"pingone\", \"yandex\", \"cloudflare\", \"passkeys\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -250,6 +254,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"pingone",
 									"yandex",
 									"cloudflare",
+									"passkeys",
 								),
 							},
 						},
