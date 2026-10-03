@@ -140,6 +140,7 @@ func serviceAccountKeyJSONAttribute() schema.StringAttribute {
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Description: "Creates and manages a CASB integration. Exactly one vendor and exactly one authentication method must be configured.",
+		Version:     500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Integration ID.",
