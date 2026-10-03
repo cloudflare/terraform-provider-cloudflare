@@ -123,10 +123,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"redact_query_string": schema.BoolAttribute{
-						Description: "Whether query strings are removed from request URLs in logs and traces.",
-						Computed:    true,
-					},
 				"traces": schema.SingleNestedAttribute{
 					Description: "Trace settings for the Worker.",
 					Computed:    true,
