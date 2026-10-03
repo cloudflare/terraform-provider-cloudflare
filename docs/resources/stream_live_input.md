@@ -21,9 +21,9 @@ resource "cloudflare_stream_live_input" "example_stream_live_input" {
   default_creator = "defaultCreator"
   delete_recording_after_days = 45
   enabled = true
-  meta = {
+  meta = jsonencode({
     name = "test stream 1"
-  }
+  })
   prefer_low_latency = true
   recording = {
     allowed_origins = ["example.com"]

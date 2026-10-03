@@ -238,5 +238,10 @@ Required:
 
 ## Import
 
+Import is supported using the following syntax:
 
-~> This resource does not currently support `terraform import`.
+```shell
+$ terraform import cloudflare_ai_search_instance.example '<account_id>/<id>'
+```
+
+

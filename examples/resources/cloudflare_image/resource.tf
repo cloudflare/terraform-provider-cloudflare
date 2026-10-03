@@ -3,9 +3,7 @@ resource "cloudflare_image" "example_image" {
   id = "id"
   creator = "creator"
   file = "Example data"
-  metadata = {
-
-  }
+  metadata = jsonencode({})
   require_signed_urls = true
   url = "https://example.com/path/to/logo.png"
 }

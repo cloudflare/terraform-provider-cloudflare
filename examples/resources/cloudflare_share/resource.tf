@@ -6,9 +6,7 @@ resource "cloudflare_share" "example_share" {
     recipient_account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   }]
   resources = [{
-    meta = {
-
-    }
+    meta = jsonencode({})
     resource_account_id = "023e105f4ecef8ad9ca31a8372d0c353"
     resource_id = "023e105f4ecef8ad9ca31a8372d0c353"
     resource_type = "custom-ruleset"
