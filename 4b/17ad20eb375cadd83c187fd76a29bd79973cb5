@@ -1,0 +1,19 @@
+internal/services/worker/data_source_test.go
+  s_0186c0812ecd82::t_1ab8dccc90dadc 36,39-52,69,77,79-80,82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4b17ad20eb375cadd83c187fd76a29bd79973cb5",
+  "prompts": {},
+  "sessions": {
+    "s_0186c0812ecd82": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f07c11118ffev1vfJ7K3Qfqzjz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
