@@ -3,7 +3,5 @@ resource "cloudflare_workers_kv" "example_workers_kv" {
   namespace_id = "0f2ac74b498b48028cb68387c421e279"
   key_name = "My-Key"
   value = "Some Value"
-  metadata = {
-
-  }
+  metadata = jsonencode({})
 }

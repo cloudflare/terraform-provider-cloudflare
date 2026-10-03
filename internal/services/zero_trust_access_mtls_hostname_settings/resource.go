@@ -14,9 +14,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 )
 
@@ -228,19 +226,10 @@ func (r *ZeroTrustAccessMTLSHostnameSettingsResource) Delete(ctx context.Context
 
 func (r *ZeroTrustAccessMTLSHostnameSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *ZeroTrustAccessMTLSHostnameSettingsModel = new(ZeroTrustAccessMTLSHostnameSettingsModel)
-	importID := req.ID
-	
-	// Check if it's a zone ID or account ID and set the appropriate field
-	if len(importID) == 32 {
-		// Account ID
-		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("account_id"), importID)...)
-		data.AccountID = types.StringValue(importID)
-	} else {
-		// Zone ID
-		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("zone_id"), importID)...)
-		data.ZoneID = types.StringValue(importID)
-	}
-	
+
+	accountID, zoneID, diags := resolveImportScope(req.ID)
+	resp.Diagnostics.Append(diags...)
+	data.AccountID, data.ZoneID = accountID, zoneID
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -253,20 +242,20 @@ func (r *ZeroTrustAccessMTLSHostnameSettingsResource) ImportState(ctx context.Co
 	} else {
 		fullData.ZoneID = data.ZoneID
 	}
-	
+
 	// Set the full data in state first so Read can process it
 	resp.Diagnostics.Append(resp.State.Set(ctx, fullData)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	
+
 	// Create a Read request and response to fetch the full state
 	readReq := resource.ReadRequest{State: resp.State}
 	readResp := &resource.ReadResponse{State: resp.State, Diagnostics: resp.Diagnostics}
-	
+
 	// Call the Read method to populate the full state
 	r.Read(ctx, readReq, readResp)
-	
+
 	// Copy back the results
 	resp.State = readResp.State
 	resp.Diagnostics = readResp.Diagnostics

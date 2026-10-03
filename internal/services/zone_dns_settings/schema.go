@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -113,7 +113,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Validators: []validator.Int64{
 							int64validator.Between(1, 5),
 						},
-						Default: int64default.StaticInt64(1),
+						// ns_set only applies to custom nameserver types and is
+						// absent from the zone DNS settings response, so a static
+						// default would be re-proposed on every plan.
+						PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 					},
 					"nameserver_set_id": schema.StringAttribute{
 						Description: "Identifier of the account-owned Custom Nameserver Set to use for this zone.",

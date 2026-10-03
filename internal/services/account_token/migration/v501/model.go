@@ -22,6 +22,38 @@ type AccountTokenModelV500 struct {
 	LastUsedOn timetypes.RFC3339 `tfsdk:"last_used_on"`
 }
 
+// AccountTokenModelV501 represents the account_token state written by UpgradeFromV500.
+//
+// This must mirror the *live* v501 ResourceSchema, which is a wider set of
+// attributes than the v500 prior schema that AccountTokenModelV500 reads. The two
+// cannot be the same struct: req.State.Get rejects a struct declaring fields
+// absent from the prior schema, and resp.State.Set rejects a struct omitting
+// attributes present in the live schema.
+//
+// TestAccountTokenV501MigrationModelSchemaParity guards this against schema drift.
+type AccountTokenModelV501 struct {
+	AccountID  types.String      `tfsdk:"account_id"`
+	ID         types.String      `tfsdk:"id"`
+	IssuedOn   timetypes.RFC3339 `tfsdk:"issued_on"`
+	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on"`
+	Name       types.String      `tfsdk:"name"`
+	Policies   []PolicyV500      `tfsdk:"policies"`
+	Status     types.String      `tfsdk:"status"`
+	Value      types.String      `tfsdk:"value"`
+	NotBefore  timetypes.RFC3339 `tfsdk:"not_before"`
+	ExpiresOn  timetypes.RFC3339 `tfsdk:"expires_on"`
+	Condition  *ConditionV500    `tfsdk:"condition"`
+	LastUsedOn timetypes.RFC3339 `tfsdk:"last_used_on"`
+
+	// Computed-only attributes added to the live schema after this migration was
+	// written. They have no v500 counterpart, so the upgrade leaves them at their
+	// zero value (null) and the next Read populates them. They must still be
+	// declared here: resp.State.Set rejects a struct that omits schema attributes.
+	CreatorEmailAtCreation types.String `tfsdk:"creator_email_at_creation"`
+	ProvisionerID          types.String `tfsdk:"provisioner_id"`
+	ProvisionerType        types.String `tfsdk:"provisioner_type"`
+}
+
 // PolicyV500 represents a policy in v500 state.
 type PolicyV500 struct {
 	Effect           types.String          `tfsdk:"effect"`

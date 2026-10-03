@@ -67,6 +67,7 @@ Read-Only:
 - `head_sampling_rate` (Number) The sampling rate for observability. From 0 to 1 (1 = 100%, 0.1 = 10%).
 - `issues` (Attributes) Real-time Issues settings for the Worker. (see [below for nested schema](#nestedatt--observability--issues))
 - `logs` (Attributes) Log settings for the Worker. (see [below for nested schema](#nestedatt--observability--logs))
+- `redact_query_string` (Boolean) Whether query strings are removed from request URLs in logs and traces.
 - `traces` (Attributes) Trace settings for the Worker. (see [below for nested schema](#nestedatt--observability--traces))
 
 <a id="nestedatt--observability--issues"></a>
