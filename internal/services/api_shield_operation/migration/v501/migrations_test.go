@@ -55,7 +55,7 @@ func TestMigrateAPIShieldOperation_V526ToCurrentSchema(t *testing.T) {
 				// The plan must be completely empty: neither attribute should
 				// appear as a pending change.
 				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-				Config: cfg,
+				Config:                   cfg,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectEmptyPlan(),

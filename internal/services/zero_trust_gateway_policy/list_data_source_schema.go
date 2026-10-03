@@ -23,7 +23,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Specify the Cloudflare account identifier.",
-				Optional: true,
+				Optional:    true,
 			},
 			"direction": schema.StringAttribute{
 				Description: "Sort direction. When `order_by` is omitted, this controls the direction\nof the existing precedence ordering. Shared rules remain first in either\ndirection. Accepted values are `asc` and `desc`.\nAvailable values: \"asc\", \"desc\".",

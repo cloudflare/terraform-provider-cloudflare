@@ -40,7 +40,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"is_regex": schema.BoolAttribute{
-				Optional: true,
+				Optional:    true,
 				Description: "Whether `pattern` is a regular expression instead of a literal domain.",
 			},
 			"is_similarity": schema.BoolAttribute{

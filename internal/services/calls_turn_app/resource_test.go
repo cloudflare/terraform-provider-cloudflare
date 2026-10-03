@@ -90,12 +90,12 @@ func TestAccCallsTURNApp_Lifecycle(t *testing.T) {
 				// import identifier for verification. key is excluded because it is
 				// write-once (returned only on Create, marked no_refresh) and cannot
 				// be round-tripped through import.
-				ResourceName:                        resourceName,
-				ImportStateIdFunc:                   callsTURNImportIDFunc(resourceName),
-				ImportState:                         true,
-				ImportStateVerify:                   true,
+				ResourceName:                         resourceName,
+				ImportStateIdFunc:                    callsTURNImportIDFunc(resourceName),
+				ImportState:                          true,
+				ImportStateVerify:                    true,
 				ImportStateVerifyIdentifierAttribute: "key_id",
-				ImportStateVerifyIgnore:             []string{"key"},
+				ImportStateVerifyIgnore:              []string{"key"},
 			},
 		},
 	})

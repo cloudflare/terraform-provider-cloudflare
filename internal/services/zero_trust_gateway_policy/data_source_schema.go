@@ -33,7 +33,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Specify the Cloudflare account identifier.",
-				Optional: true,
+				Optional:    true,
 			},
 			"action": schema.StringAttribute{
 				Description: "Specify the action to perform when the associated traffic, identity, and device posture expressions either absent or evaluate to `true`.\nAvailable values: \"on\", \"off\", \"allow\", \"block\", \"scan\", \"noscan\", \"safesearch\", \"ytrestricted\", \"isolate\", \"noisolate\", \"override\", \"l4_override\", \"egress\", \"resolve\", \"quarantine\", \"redirect\".",

@@ -15,25 +15,25 @@ import (
 // Used by both MoveState (Terraform 1.8+) and UpgradeFromLegacyV0 (Terraform < 1.8)
 // to parse legacy state.
 type SourceCloudflareAccessOrganizationModel struct {
-	ID                             types.String             `tfsdk:"id"`
-	AccountID                      types.String             `tfsdk:"account_id"`
-	ZoneID                         types.String             `tfsdk:"zone_id"`
-	AuthDomain                     types.String             `tfsdk:"auth_domain"`
-	Name                           types.String             `tfsdk:"name"`
-	IsUIReadOnly                   types.Bool               `tfsdk:"is_ui_read_only"`
-	UIReadOnlyToggleReason         types.String             `tfsdk:"ui_read_only_toggle_reason"`
-	UserSeatExpirationInactiveTime types.String             `tfsdk:"user_seat_expiration_inactive_time"`
-	AutoRedirectToIdentity         types.Bool               `tfsdk:"auto_redirect_to_identity"`
-	SessionDuration                types.String             `tfsdk:"session_duration"`
-	AllowAuthenticateViaWARP       types.Bool               `tfsdk:"allow_authenticate_via_warp"`
-	WARPAuthSessionDuration        types.String             `tfsdk:"warp_auth_session_duration"`
+	ID                             types.String `tfsdk:"id"`
+	AccountID                      types.String `tfsdk:"account_id"`
+	ZoneID                         types.String `tfsdk:"zone_id"`
+	AuthDomain                     types.String `tfsdk:"auth_domain"`
+	Name                           types.String `tfsdk:"name"`
+	IsUIReadOnly                   types.Bool   `tfsdk:"is_ui_read_only"`
+	UIReadOnlyToggleReason         types.String `tfsdk:"ui_read_only_toggle_reason"`
+	UserSeatExpirationInactiveTime types.String `tfsdk:"user_seat_expiration_inactive_time"`
+	AutoRedirectToIdentity         types.Bool   `tfsdk:"auto_redirect_to_identity"`
+	SessionDuration                types.String `tfsdk:"session_duration"`
+	AllowAuthenticateViaWARP       types.Bool   `tfsdk:"allow_authenticate_via_warp"`
+	WARPAuthSessionDuration        types.String `tfsdk:"warp_auth_session_duration"`
 	// Added to match SourceCloudflareAccessOrganizationSchema (v5.24.0+).
 	// This field did not exist in v4; its value will always be null when
 	// decoded from v4 state. Transform ignores it — the v5 Read populates
 	// the real value from the API after migration.
-	WarpAuthNonBrowser401          types.Bool               `tfsdk:"warp_auth_non_browser_401"`
-	LoginDesign                    []SourceLoginDesignModel `tfsdk:"login_design"`
-	CustomPages                    []SourceCustomPagesModel `tfsdk:"custom_pages"`
+	WarpAuthNonBrowser401 types.Bool               `tfsdk:"warp_auth_non_browser_401"`
+	LoginDesign           []SourceLoginDesignModel `tfsdk:"login_design"`
+	CustomPages           []SourceCustomPagesModel `tfsdk:"custom_pages"`
 }
 
 // SourceLoginDesignModel represents the login_design nested structure in v4.
