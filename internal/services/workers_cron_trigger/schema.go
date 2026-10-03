@@ -24,12 +24,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Name of the script, used in URLs and route configuration.",
+				Description:   "Name of the script.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"script_name": schema.StringAttribute{
-				Description:   "Name of the script, used in URLs and route configuration.",
+				Description:   "Name of the script.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},

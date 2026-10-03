@@ -38,7 +38,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"script_name": schema.StringAttribute{
-				Description: "Name of the script, used in URLs and route configuration.",
+				Description: "Name of the script.",
 				Required:    true,
 			},
 			"author_email": schema.StringAttribute{

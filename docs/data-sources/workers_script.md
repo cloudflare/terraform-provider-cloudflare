@@ -30,11 +30,11 @@ data "cloudflare_workers_script" "example_workers_script" {
 
 - `account_id` (String) Identifier.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `script_name` (String) Name of the script, used in URLs and route configuration.
+- `script_name` (String) Name of the script.
 
 ### Read-Only
 
-- `id` (String) Name of the script, used in URLs and route configuration.
+- `id` (String) Name of the script.
 - `script` (String)
 
 <a id="nestedatt--filter"></a>

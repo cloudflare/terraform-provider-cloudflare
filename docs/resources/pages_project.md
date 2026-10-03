@@ -229,7 +229,7 @@ resource "cloudflare_pages_project" "example_pages_project" {
 ### Required
 
 - `account_id` (String) Identifier.
-- `name` (String) Name of the project.
+- `name` (String) Name for the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.
 - `production_branch` (String) Production branch of the project. Used to identify production deployments.
 
 ### Optional
@@ -245,7 +245,7 @@ resource "cloudflare_pages_project" "example_pages_project" {
 - `domains` (List of String) A list of associated custom domains for the project.
 - `framework` (String) Framework the project is using.
 - `framework_version` (String) Version of the framework the project is using.
-- `id` (String) Name of the project.
+- `id` (String) Name for the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.
 - `latest_deployment` (Attributes) Most recent deployment of the project. (see [below for nested schema](#nestedatt--latest_deployment))
 - `preview_script_name` (String) Name of the preview script.
 - `production_script_name` (String) Name of the production script.
@@ -631,11 +631,11 @@ Read-Only:
 - `environment` (String) Type of deploy.
 Available values: "preview", "production".
 - `id` (String) Id of the deployment.
-- `is_skipped` (Boolean) If the deployment has been skipped.
+- `is_skipped` (Boolean) Whether the deployment was skipped.
 - `latest_stage` (Attributes) The status of the deployment. (see [below for nested schema](#nestedatt--canonical_deployment--latest_stage))
 - `modified_on` (String) When the deployment was last modified.
 - `project_id` (String) Id of the project.
-- `project_name` (String) Name of the project.
+- `project_name` (String) Name of the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.
 - `short_id` (String) Short Id (8 character) of the deployment.
 - `source` (Attributes) Configs for the project source control. (see [below for nested schema](#nestedatt--canonical_deployment--source))
 - `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--canonical_deployment--stages))
@@ -695,7 +695,7 @@ Read-Only:
 Available values: "queued", "initialize", "clone_repo", "build", "deploy".
 - `started_on` (String) When the stage started.
 - `status` (String) State of the current stage.
-Available values: "success", "idle", "active", "failure", "canceled".
+Available values: "success", "idle", "active", "failure", "canceled", "skipped".
 
 
 <a id="nestedatt--canonical_deployment--source"></a>
@@ -740,7 +740,7 @@ Read-Only:
 Available values: "queued", "initialize", "clone_repo", "build", "deploy".
 - `started_on` (String) When the stage started.
 - `status` (String) State of the current stage.
-Available values: "success", "idle", "active", "failure", "canceled".
+Available values: "success", "idle", "active", "failure", "canceled", "skipped".
 
 
 
@@ -757,11 +757,11 @@ Read-Only:
 - `environment` (String) Type of deploy.
 Available values: "preview", "production".
 - `id` (String) Id of the deployment.
-- `is_skipped` (Boolean) If the deployment has been skipped.
+- `is_skipped` (Boolean) Whether the deployment was skipped.
 - `latest_stage` (Attributes) The status of the deployment. (see [below for nested schema](#nestedatt--latest_deployment--latest_stage))
 - `modified_on` (String) When the deployment was last modified.
 - `project_id` (String) Id of the project.
-- `project_name` (String) Name of the project.
+- `project_name` (String) Name of the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.
 - `short_id` (String) Short Id (8 character) of the deployment.
 - `source` (Attributes) Configs for the project source control. (see [below for nested schema](#nestedatt--latest_deployment--source))
 - `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--latest_deployment--stages))
@@ -821,7 +821,7 @@ Read-Only:
 Available values: "queued", "initialize", "clone_repo", "build", "deploy".
 - `started_on` (String) When the stage started.
 - `status` (String) State of the current stage.
-Available values: "success", "idle", "active", "failure", "canceled".
+Available values: "success", "idle", "active", "failure", "canceled", "skipped".
 
 
 <a id="nestedatt--latest_deployment--source"></a>
@@ -866,7 +866,7 @@ Read-Only:
 Available values: "queued", "initialize", "clone_repo", "build", "deploy".
 - `started_on` (String) When the stage started.
 - `status` (String) State of the current stage.
-Available values: "success", "idle", "active", "failure", "canceled".
+Available values: "success", "idle", "active", "failure", "canceled", "skipped".
 
 ## Import
 

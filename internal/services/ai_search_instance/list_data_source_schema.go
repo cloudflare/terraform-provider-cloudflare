@@ -24,6 +24,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Optional: true,
 			},
+			"hostname": schema.StringAttribute{
+				Description: "Filter by exact Search for Agents hostname (case-insensitive).",
+				Optional:    true,
+			},
 			"namespace": schema.StringAttribute{
 				Description: "Filter by namespace.",
 				Optional:    true,

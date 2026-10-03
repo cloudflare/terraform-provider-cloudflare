@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -89,11 +90,38 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							CustomType:  customfield.NewNestedObjectType[AccountPermissionGroupsMetaDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"key": schema.StringAttribute{
-									Computed: true,
+								"category": schema.StringAttribute{
+									Description: "A category used to group permission groups.",
+									Computed:    true,
 								},
-								"value": schema.StringAttribute{
-									Computed: true,
+								"deprecated": schema.StringAttribute{
+									Description: "Indicates whether the permission group is deprecated.",
+									Computed:    true,
+								},
+								"description": schema.StringAttribute{
+									Description: "Additional information about the permission group.",
+									Computed:    true,
+								},
+								"editable": schema.StringAttribute{
+									Description: "Indicates whether the permission group can be edited.",
+									Computed:    true,
+								},
+								"eol_at": schema.StringAttribute{
+									Description: "The planned end-of-life date and time, when provided.",
+									Computed:    true,
+									CustomType:  timetypes.RFC3339Type{},
+								},
+								"label": schema.StringAttribute{
+									Description: "A label identifying the permission group.",
+									Computed:    true,
+								},
+								"scopes": schema.StringAttribute{
+									Description: "The scope associated with the permission group.",
+									Computed:    true,
+								},
+								"visibility": schema.StringAttribute{
+									Description: "Indicates the permission group's availability or visibility.",
+									Computed:    true,
 								},
 							},
 						},

@@ -33,23 +33,23 @@ func TestAccCloudflareWorkerDataSource_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("logpush"), knownvalue.Bool(false)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("tags"), knownvalue.SetExact([]knownvalue.Check{})),
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("observability"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
-					"enabled":            knownvalue.Bool(false),
-					"head_sampling_rate": knownvalue.Float64Exact(1),
-					"logs": knownvalue.ObjectExact(map[string]knownvalue.Check{
-						"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("observability"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
 						"enabled":            knownvalue.Bool(false),
 						"head_sampling_rate": knownvalue.Float64Exact(1),
-						"invocation_logs":    knownvalue.Bool(true),
-						"persist":            knownvalue.Bool(true),
-					}),
-					"traces": knownvalue.ObjectPartial(map[string]knownvalue.Check{
-						"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
-						"enabled":            knownvalue.Bool(false),
-						"head_sampling_rate": knownvalue.Float64Exact(1),
-						"persist":            knownvalue.Bool(true),
-					}),
-				})),
+						"logs": knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
+							"enabled":            knownvalue.Bool(false),
+							"head_sampling_rate": knownvalue.Float64Exact(1),
+							"invocation_logs":    knownvalue.Bool(true),
+							"persist":            knownvalue.Bool(true),
+						}),
+						"traces": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
+							"enabled":            knownvalue.Bool(false),
+							"head_sampling_rate": knownvalue.Float64Exact(1),
+							"persist":            knownvalue.Bool(true),
+						}),
+					})),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("subdomain"), knownvalue.ObjectPartial(map[string]knownvalue.Check{
 						"enabled":          knownvalue.Bool(false),
 						"previews_enabled": knownvalue.Bool(false),
@@ -66,7 +66,7 @@ func TestAccCloudflareWorkerDataSource_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(dataSourceName, tfjsonpath.New("observability"), knownvalue.ObjectExact(map[string]knownvalue.Check{
 						"enabled":            knownvalue.Bool(false),
 						"head_sampling_rate": knownvalue.Float64Exact(1),
-						"issues": knownvalue.Null(),
+						"issues":             knownvalue.Null(),
 						"logs": knownvalue.ObjectExact(map[string]knownvalue.Check{
 							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
 							"enabled":            knownvalue.Bool(false),
@@ -74,11 +74,12 @@ func TestAccCloudflareWorkerDataSource_Basic(t *testing.T) {
 							"invocation_logs":    knownvalue.Bool(true),
 							"persist":            knownvalue.Bool(true),
 						}),
+						"redact_query_string": knownvalue.Bool(false),
 						"traces": knownvalue.ObjectExact(map[string]knownvalue.Check{
-							"destinations": knownvalue.ListExact([]knownvalue.Check{}),
-							"enabled":      knownvalue.Bool(false),
+							"destinations":       knownvalue.ListExact([]knownvalue.Check{}),
+							"enabled":            knownvalue.Bool(false),
 							"head_sampling_rate": knownvalue.Float64Exact(1),
-							"persist":      knownvalue.Bool(true),
+							"persist":            knownvalue.Bool(true),
 							// The Cloudflare Workers API does not currently echo
 							// observability.traces.propagation_policy in responses, so
 							// the data source surfaces it as null. The resource has a

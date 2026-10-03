@@ -30,7 +30,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"project_name": schema.StringAttribute{
-				Description: "Name of the project.",
+				Description: "Name of the Pages project. Must begin with a lowercase letter or digit and contain only lowercase letters, digits, and hyphens.",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
@@ -63,7 +63,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"name": schema.StringAttribute{
-							Description: "The domain name.",
+							Description: "Fully qualified domain name for the Pages project, such as `example.com`.",
 							Computed:    true,
 						},
 						"status": schema.StringAttribute{

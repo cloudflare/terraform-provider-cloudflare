@@ -27,6 +27,7 @@ type ZeroTrustOrganizationDataSourceModel struct {
 	MfaRequiredForAllApps                  types.Bool                                                                           `tfsdk:"mfa_required_for_all_apps" json:"mfa_required_for_all_apps,computed"`
 	Name                                   types.String                                                                         `tfsdk:"name" json:"name,computed"`
 	SessionDuration                        types.String                                                                         `tfsdk:"session_duration" json:"session_duration,computed"`
+	StrictServiceTokenAuth                 types.Bool                                                                           `tfsdk:"strict_service_token_auth" json:"strict_service_token_auth,computed"`
 	UIReadOnlyToggleReason                 types.String                                                                         `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason,computed"`
 	UserSeatExpirationInactiveTime         types.String                                                                         `tfsdk:"user_seat_expiration_inactive_time" json:"user_seat_expiration_inactive_time,computed"`
 	WARPAuthSessionDuration                types.String                                                                         `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration,computed"`

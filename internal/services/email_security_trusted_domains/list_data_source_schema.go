@@ -88,7 +88,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"is_regex": schema.BoolAttribute{
-							Computed: true,
+							Description: "Whether `pattern` is a regular expression instead of a literal domain.",
+							Computed:    true,
 						},
 						"is_similarity": schema.BoolAttribute{
 							Description: "Select for partner or other approved domains that have similar spelling to your connected domains. Prevents listed domains from triggering a Spoof disposition.",
@@ -105,7 +106,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"pattern": schema.StringAttribute{
-							Computed: true,
+							Description: "The domain pattern to trust, e.g. `example.com`.",
+							Computed:    true,
 						},
 					},
 				},

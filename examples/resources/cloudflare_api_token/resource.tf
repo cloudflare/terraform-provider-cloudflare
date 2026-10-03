@@ -1,25 +1,22 @@
 resource "cloudflare_api_token" "example_api_token" {
-  name       = "workers read-only token"
-
+  name = "readonly token"
   policies = [{
     effect = "allow"
     permission_groups = [{
-      id = "1a71c399035b4950a1bd1466bbe4f420"
+      id = "c8fed203ed3043cba015a93ad1616f1f"
     }, {
-      id = "8b47d2786a534c08a1f94ee8f9f599ef"
+      id = "82e64a83756745bbbb1c9c2701bf816b"
     }]
     resources = jsonencode({
-      "com.cloudflare.api.account.b67e14daa5f8dceeb91fe5449ba496eb" = "*"
+      "com.cloudflare.api.account.zone.22b1de5f1c0e4b3ea97bb1e963b06a43" = "*"
     })
   }]
-
   condition = {
     request_ip = {
-      in     = ["123.123.123.0/24", "2606:4700::/32"]
-      not_in = ["123.123.123.0/28", "2606:4700:4700::/48"]
+      in = ["123.123.123.0/24", "2606:4700::/32"]
+      not_in = ["123.123.123.100/24", "2606:4700:4700::/48"]
     }
   }
-
-  expires_on = "2027-10-01T00:00:00Z"
-  not_before = "2025-10-01T00:00:00Z"
+  expires_on = "2020-01-01T00:00:00Z"
+  not_before = "2018-07-01T05:20:00Z"
 }

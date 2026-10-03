@@ -34,7 +34,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"key_id": schema.StringAttribute{
 				Description:   "A Cloudflare-generated unique identifier for a item.",
 				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured(), stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"name": schema.StringAttribute{
 				Description: "A short description of a TURN key, not shown to end users.",

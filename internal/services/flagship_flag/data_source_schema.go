@@ -30,19 +30,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Flag key (slug).",
+				Description: "Case-sensitive key identifying the flag within the app.",
 				Computed:    true,
 			},
 			"flag_key": schema.StringAttribute{
-				Description: "Flag key (slug).",
+				Description: "Case-sensitive key identifying the flag within the app.",
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Cloudflare account ID.",
+				Description: "Cloudflare account ID that owns the Flagship app.",
 				Required:    true,
 			},
 			"app_id": schema.StringAttribute{
-				Description: "App identifier.",
+				Description: "Flagship app ID returned when the app was created.",
 				Required:    true,
 			},
 			"default_variation": schema.StringAttribute{
@@ -50,7 +50,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"description": schema.StringAttribute{
-				Computed: true,
+				Description: "Optional operator-facing description. It does not affect flag evaluation.",
+				Computed:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "When false, the flag bypasses all rules and always serves `default_variation`.",
@@ -100,7 +101,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										Computed: true,
 									},
 									"operator": schema.StringAttribute{
-										Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".`,
+										Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".`,
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -115,6 +116,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 												"ends_with",
 												"in",
 												"not_in",
+												"has",
+												"not_has",
 											),
 										},
 									},
@@ -132,7 +135,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 													Computed: true,
 												},
 												"operator": schema.StringAttribute{
-													Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".`,
+													Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".`,
 													Computed:    true,
 													Validators: []validator.String{
 														stringvalidator.OneOfCaseInsensitive(
@@ -147,6 +150,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 															"ends_with",
 															"in",
 															"not_in",
+															"has",
+															"not_has",
 														),
 													},
 												},
@@ -164,7 +169,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 																Computed: true,
 															},
 															"operator": schema.StringAttribute{
-																Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".`,
+																Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".`,
 																Computed:    true,
 																Validators: []validator.String{
 																	stringvalidator.OneOfCaseInsensitive(
@@ -179,6 +184,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 																		"ends_with",
 																		"in",
 																		"not_in",
+																		"has",
+																		"not_has",
 																	),
 																},
 															},
@@ -196,7 +203,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 																			Computed: true,
 																		},
 																		"operator": schema.StringAttribute{
-																			Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".`,
+																			Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".`,
 																			Computed:    true,
 																			Validators: []validator.String{
 																				stringvalidator.OneOfCaseInsensitive(
@@ -211,6 +218,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 																					"ends_with",
 																					"in",
 																					"not_in",
+																					"has",
+																					"not_has",
 																				),
 																			},
 																		},
@@ -228,7 +237,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 																						Computed: true,
 																					},
 																					"operator": schema.StringAttribute{
-																						Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".`,
+																						Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".`,
 																						Computed:    true,
 																						Validators: []validator.String{
 																							stringvalidator.OneOfCaseInsensitive(
@@ -243,6 +252,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 																								"ends_with",
 																								"in",
 																								"not_in",
+																								"has",
+																								"not_has",
 																							),
 																						},
 																					},
@@ -260,7 +271,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 																									Computed: true,
 																								},
 																								"operator": schema.StringAttribute{
-																									Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".`,
+																									Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".`,
 																									Computed:    true,
 																									Validators: []validator.String{
 																										stringvalidator.OneOfCaseInsensitive(
@@ -275,6 +286,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 																											"ends_with",
 																											"in",
 																											"not_in",
+																											"has",
+																											"not_has",
 																										),
 																									},
 																								},
@@ -364,7 +377,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: customfield.NewNestedObjectType[FlagshipFlagRulesRolloutDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"percentage": schema.Float64Attribute{
-									Description: "Percentage of matching traffic (0–100) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).",
+									Description: "Percentage of matching traffic (0–100, up to 2 decimal places) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).",
 									Computed:    true,
 									Validators: []validator.Float64{
 										float64validator.Between(0, 100),
@@ -382,9 +395,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"limit": schema.StringAttribute{
+					"limit": schema.Int64Attribute{
 						Description: "Max items to return (1–200).",
 						Optional:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(1, 200),
+						},
 					},
 				},
 			},

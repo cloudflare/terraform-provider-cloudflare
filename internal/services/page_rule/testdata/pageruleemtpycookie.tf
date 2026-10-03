@@ -7,8 +7,10 @@ resource "cloudflare_page_rule" "%[3]s" {
       host = {
         resolved = true
       }
+      # `ignore` was a v4-only attribute, dropped in v5. `ignore = true` meant
+      # "exclude every query string parameter", which v5 spells as ["*"].
       query_string = {
-        ignore = true
+        exclude = ["*"]
       }
       user = {
         device_type = true

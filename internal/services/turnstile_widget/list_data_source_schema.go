@@ -41,7 +41,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"filter": schema.StringAttribute{
-				Description: "Filter widgets by field using case-insensitive substring matching.\nFormat: `field:value`\n\nSupported fields:\n- `name` - Filter by widget name (e.g., `filter=name:login-form`)\n- `sitekey` - Filter by sitekey (e.g., `filter=sitekey:0x4AAA`)\n\nReturns 400 Bad Request if the field is unsupported or format is invalid.\nAn empty filter value returns all results.",
+				Description: "Filter widgets by field. The `name` field uses case-insensitive\nsubstring matching; `sitekey` uses exact matching.\nFormat: `field:value`\n\nSupported fields:\n- `name` - Filter by widget name (e.g., `filter=name:login-form`)\n- `sitekey` - Filter by sitekey (e.g., `filter=sitekey:0x4AAA`)\n\nReturns 400 Bad Request if the field is unsupported or format is invalid.\nAn empty filter value returns all results.",
 				Optional:    true,
 			},
 			"order": schema.StringAttribute{
@@ -71,7 +71,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "Widget item identifier tag.",
+							Description: "Unique identifier for a Turnstile widget.",
 							Computed:    true,
 						},
 						"bot_fight_mode": schema.BoolAttribute{
@@ -136,7 +136,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"sitekey": schema.StringAttribute{
-							Description: "Widget item identifier tag.",
+							Description: "Unique identifier for a Turnstile widget.",
 							Computed:    true,
 						},
 						"deployed_via": schema.StringAttribute{

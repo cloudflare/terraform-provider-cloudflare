@@ -10,7 +10,6 @@ data "cloudflare_custom_hostnames" "example_custom_hostnames" {
     starts_with = "app"
   }
   hostname_status = "provisioned"
-  ssl = 0
   ssl_status = "active"
   wildcard = false
 }

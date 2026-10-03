@@ -18,6 +18,7 @@ Accepted Permissions
 ```terraform
 data "cloudflare_pipeline_sinks" "example_pipeline_sinks" {
   account_id = "0123105f4ecef8ad9ca31a8372d0c353"
+  name = "x"
   pipeline_id = "pipeline_id"
 }
 ```
@@ -49,7 +50,7 @@ Read-Only:
 - `name` (String) Defines the name of the Sink.
 - `schema` (Attributes) Defines the schema of the events in the data stream. (see [below for nested schema](#nestedatt--result--schema))
 - `type` (String) Specifies the type of sink.
-Available values: "r2", "r2_data_catalog".
+Available values: "r2", "r2_data_catalog", "basin_catalog".
 
 <a id="nestedatt--result--config"></a>
 ### Nested Schema for `result.config`

@@ -41,7 +41,7 @@ data "cloudflare_pipeline_sink" "example_pipeline_sink" {
 - `name` (String) Defines the name of the Sink.
 - `schema` (Attributes) Defines the schema of the events in the data stream. (see [below for nested schema](#nestedatt--schema))
 - `type` (String) Specifies the type of sink.
-Available values: "r2", "r2_data_catalog".
+Available values: "r2", "r2_data_catalog", "basin_catalog".
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

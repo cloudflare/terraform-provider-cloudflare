@@ -98,4 +98,12 @@ type TargetAccountTokenModelV500 struct {
 	ExpiresOn  timetypes.RFC3339  `tfsdk:"expires_on"`
 	Condition  *SourceConditionV0 `tfsdk:"condition"`
 	LastUsedOn timetypes.RFC3339  `tfsdk:"last_used_on"`
+
+	// Computed-only attributes added to the live schema after this migration was
+	// written. They have no v0 counterpart, so Transform leaves them at their
+	// zero value (null) and the next Read populates them. They must still be
+	// declared here: resp.State.Set rejects a struct that omits schema attributes.
+	CreatorEmailAtCreation types.String `tfsdk:"creator_email_at_creation"`
+	ProvisionerID          types.String `tfsdk:"provisioner_id"`
+	ProvisionerType        types.String `tfsdk:"provisioner_type"`
 }

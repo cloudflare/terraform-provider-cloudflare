@@ -41,12 +41,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Cloudflare account ID.",
+				Description:   "Cloudflare account ID that owns the Flagship app.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"app_id": schema.StringAttribute{
-				Description:   "App identifier.",
+				Description:   "Flagship app ID returned when the app was created.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -77,7 +77,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Optional: true,
 									},
 									"operator": schema.StringAttribute{
-										Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".`,
+										Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".`,
 										Optional:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -92,6 +92,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												"ends_with",
 												"in",
 												"not_in",
+												"has",
+												"not_has",
 											),
 										},
 									},
@@ -108,7 +110,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 													Optional: true,
 												},
 												"operator": schema.StringAttribute{
-													Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".`,
+													Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".`,
 													Optional:    true,
 													Validators: []validator.String{
 														stringvalidator.OneOfCaseInsensitive(
@@ -123,6 +125,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 															"ends_with",
 															"in",
 															"not_in",
+															"has",
+															"not_has",
 														),
 													},
 												},
@@ -139,7 +143,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 																Optional: true,
 															},
 															"operator": schema.StringAttribute{
-																Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".`,
+																Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".`,
 																Optional:    true,
 																Validators: []validator.String{
 																	stringvalidator.OneOfCaseInsensitive(
@@ -154,6 +158,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 																		"ends_with",
 																		"in",
 																		"not_in",
+																		"has",
+																		"not_has",
 																	),
 																},
 															},
@@ -170,7 +176,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 																			Optional: true,
 																		},
 																		"operator": schema.StringAttribute{
-																			Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".`,
+																			Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".`,
 																			Optional:    true,
 																			Validators: []validator.String{
 																				stringvalidator.OneOfCaseInsensitive(
@@ -185,6 +191,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 																					"ends_with",
 																					"in",
 																					"not_in",
+																					"has",
+																					"not_has",
 																				),
 																			},
 																		},
@@ -201,7 +209,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 																						Optional: true,
 																					},
 																					"operator": schema.StringAttribute{
-																						Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".`,
+																						Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".`,
 																						Optional:    true,
 																						Validators: []validator.String{
 																							stringvalidator.OneOfCaseInsensitive(
@@ -216,6 +224,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 																								"ends_with",
 																								"in",
 																								"not_in",
+																								"has",
+																								"not_has",
 																							),
 																						},
 																					},
@@ -232,7 +242,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 																									Optional: true,
 																								},
 																								"operator": schema.StringAttribute{
-																									Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".`,
+																									Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".`,
 																									Optional:    true,
 																									Validators: []validator.String{
 																										stringvalidator.OneOfCaseInsensitive(
@@ -247,6 +257,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 																											"ends_with",
 																											"in",
 																											"not_in",
+																											"has",
+																											"not_has",
 																										),
 																									},
 																								},
@@ -334,7 +346,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Attributes: map[string]schema.Attribute{
 								"percentage": schema.Float64Attribute{
-									Description: "Percentage of matching traffic (0–100) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).",
+									Description: "Percentage of matching traffic (0–100, up to 2 decimal places) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).",
 									Required:    true,
 									Validators: []validator.Float64{
 										float64validator.Between(0, 100),
@@ -350,7 +362,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"description": schema.StringAttribute{
-				Optional: true,
+				Description: "Optional operator-facing description. It does not affect flag evaluation.",
+				Optional:    true,
 			},
 			"type": schema.StringAttribute{
 				Description:        "Deprecated compatibility field. Omit it; the API ignores this value and infers the type from the flag's variations.\nAvailable values: \"boolean\", \"string\", \"number\", \"json\".",

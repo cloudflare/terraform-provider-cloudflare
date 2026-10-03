@@ -27,11 +27,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Client Certificate Tag",
 				Computed:    true,
 			},
 			"client_certificate_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Client Certificate Tag",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{

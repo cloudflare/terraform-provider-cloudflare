@@ -212,7 +212,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"default_disabled": schema.BoolAttribute{
-							Computed: true,
+							Description: "Hide this server's tools and prompts by default. To expose specific capabilities, set enabled: true for them in updated_tools or updated_prompts.",
+							Computed:    true,
 						},
 						"description": schema.StringAttribute{
 							Description: "Optional description of the MCP server.",

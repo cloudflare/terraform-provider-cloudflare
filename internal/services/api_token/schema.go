@@ -63,7 +63,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"policies": schema.ListNestedAttribute{
-				Description: "Set of access policies assigned to the token.",
+				Description: "List of access policies assigned to the token.",
 				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -140,6 +140,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
+			"creator_email_at_creation": schema.StringAttribute{
+				Description: "The email address of the user who created the token at the time of\ncreation. Only present for Account Owned API Tokens when a creator email\nwas available.",
+				Computed:    true,
+			},
 			"issued_on": schema.StringAttribute{
 				Description: "The time on which the token was created.",
 				Computed:    true,
@@ -154,6 +158,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Last time the token was modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"provisioner_id": schema.StringAttribute{
+				Description: "The identifier of the service that provisioned the token. For an\nOAuth-provisioned token, this is the OAuth client identifier. Present\nwhen `provisioner_type` is present and null when the identifier is\nunavailable.",
+				Computed:    true,
+			},
+			"provisioner_type": schema.StringAttribute{
+				Description: "The type of service that provisioned the token. Only present for\nprovisioned Account Owned API Tokens.",
+				Computed:    true,
 			},
 			"value": schema.StringAttribute{
 				Description: "The token value.",

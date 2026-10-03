@@ -43,7 +43,8 @@ data "cloudflare_email_security_domain" "example_email_security_domain" {
 - `domain` (String)
 - `drop_dispositions` (Set of String)
 - `emails_processed` (Attributes) (see [below for nested schema](#nestedatt--emails_processed))
-- `folder` (String) Available values: "AllItems", "Inbox".
+- `folder` (String) The mailbox folder to scan, for API-scanning domains.
+Available values: "AllItems", "Inbox".
 - `id` (String) Domain identifier.
 - `inbox_provider` (String) Available values: "Microsoft", "Google".
 - `integration_id` (String)

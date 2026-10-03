@@ -18,7 +18,7 @@ Accepted Permissions
 ```terraform
 data "cloudflare_email_security_impersonation_registry" "example_email_security_impersonation_registry" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  display_name_id = 2403
+  impersonation_registry_id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415"
 }
 ```
 
@@ -33,18 +33,19 @@ data "cloudflare_email_security_impersonation_registry" "example_email_security_
 
 ### Read-Only
 
-- `comments` (String)
+- `comments` (String) Optional note describing the entry.
 - `created_at` (String)
-- `directory_id` (Number)
-- `directory_node_id` (Number)
-- `email` (String)
-- `external_directory_node_id` (String, Deprecated)
+- `directory_id` (Number) Identifier of the directory the entry was synced from, when directory-synced.
+- `directory_node_id` (Number) Identifier of the directory node the entry was synced from, when directory-synced.
+- `email` (String) Email address (or pattern) of the protected identity.
+- `external_directory_node_id` (String, Deprecated) Deprecated. External identifier of the directory node.
 - `id` (String) Impersonation registry entry identifier
-- `is_email_regex` (Boolean)
+- `is_email_regex` (Boolean) Whether `email` is a regular expression instead of a literal address.
 - `last_modified` (String, Deprecated) Deprecated, use `modified_at` instead. End of life: November 1, 2026.
 - `modified_at` (String)
-- `name` (String)
-- `provenance` (String) Available values: "A1S_INTERNAL", "SNOOPY-CASB_OFFICE_365", "SNOOPY-OFFICE_365", "SNOOPY-GOOGLE_DIRECTORY".
+- `name` (String) Display name of the protected identity.
+- `provenance` (String) Source the entry was created from.
+Available values: "A1S_INTERNAL", "SNOOPY-CASB_OFFICE_365", "SNOOPY-OFFICE_365", "SNOOPY-GOOGLE_DIRECTORY".
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

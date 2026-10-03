@@ -8,9 +8,7 @@ resource "cloudflare_flagship_flag" "example_flagship_flag" {
     conditions = [{
       attribute = "x"
       operator = "equals"
-      value = {
-
-      }
+      value = "string"
     }]
     priority = 1
     serve_variation = "x"

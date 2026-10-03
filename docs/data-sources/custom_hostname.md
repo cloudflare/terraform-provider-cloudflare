@@ -18,7 +18,7 @@ Accepted Permissions
 ```terraform
 data "cloudflare_custom_hostname" "example_custom_hostname" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  custom_hostname_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  custom_hostname_id = "0d89c70d-ad9f-4843-b99f-6cc0252067e9"
 }
 ```
 
@@ -27,7 +27,7 @@ data "cloudflare_custom_hostname" "example_custom_hostname" {
 
 ### Optional
 
-- `custom_hostname_id` (String) Identifier.
+- `custom_hostname_id` (String) Custom hostname identifier tag.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `zone_id` (String) Identifier.
 
@@ -38,7 +38,7 @@ data "cloudflare_custom_hostname" "example_custom_hostname" {
 - `custom_origin_server` (String) a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.
 - `custom_origin_sni` (String) A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.
 - `hostname` (String) The custom hostname that will point to your hostname via CNAME.
-- `id` (String) Identifier.
+- `id` (String) Custom hostname identifier tag.
 - `ownership_verification` (Attributes) This is a record which can be placed to activate a hostname. (see [below for nested schema](#nestedatt--ownership_verification))
 - `ownership_verification_http` (Attributes) This presents the token to be served by the given http url to activate a hostname. (see [below for nested schema](#nestedatt--ownership_verification_http))
 - `ssl` (Attributes) (see [below for nested schema](#nestedatt--ssl))

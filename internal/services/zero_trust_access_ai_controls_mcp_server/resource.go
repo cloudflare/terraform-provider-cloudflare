@@ -78,7 +78,7 @@ func (r *ZeroTrustAccessAIControlsMcpServerResource) Create(ctx context.Context,
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithMiddleware(logging.Middleware(ctx, "auth_credentials", "client_secret")),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -127,7 +127,7 @@ func (r *ZeroTrustAccessAIControlsMcpServerResource) Update(ctx context.Context,
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
+		option.WithMiddleware(logging.Middleware(ctx, "auth_credentials", "client_secret")),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

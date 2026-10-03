@@ -60,7 +60,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"folder": schema.StringAttribute{
-				Description: `Available values: "AllItems", "Inbox".`,
+				Description: "The mailbox folder to scan, for API-scanning domains.\nAvailable values: \"AllItems\", \"Inbox\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("AllItems", "Inbox"),

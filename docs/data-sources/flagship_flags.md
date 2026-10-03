@@ -18,7 +18,7 @@ Accepted Permissions
 data "cloudflare_flagship_flags" "example_flagship_flags" {
   account_id = "account_id"
   app_id = "app_id"
-  limit = "limit"
+  limit = 1
 }
 ```
 
@@ -27,12 +27,12 @@ data "cloudflare_flagship_flags" "example_flagship_flags" {
 
 ### Required
 
-- `account_id` (String) Cloudflare account ID.
-- `app_id` (String) App identifier.
+- `account_id` (String) Cloudflare account ID that owns the Flagship app.
+- `app_id` (String) Flagship app ID returned when the app was created.
 
 ### Optional
 
-- `limit` (String) Max items to return (1–200).
+- `limit` (Number) Max items to return (1–200).
 - `max_items` (Number) Max items to fetch, default: 1000
 
 ### Read-Only
@@ -45,7 +45,7 @@ data "cloudflare_flagship_flags" "example_flagship_flags" {
 Read-Only:
 
 - `default_variation` (String) Variation served when no rule matches or the flag is disabled. Must be a key in `variations`.
-- `description` (String)
+- `description` (String) Optional operator-facing description. It does not affect flag evaluation.
 - `enabled` (Boolean) When false, the flag bypasses all rules and always serves `default_variation`.
 - `id` (String) Unique identifier for the flag within an app. Used in all evaluation and SDK calls.
 - `key` (String) Unique identifier for the flag within an app. Used in all evaluation and SDK calls.
@@ -74,7 +74,7 @@ Read-Only:
 - `attribute` (String)
 - `clauses` (Attributes List) (see [below for nested schema](#nestedatt--result--rules--conditions--clauses))
 - `logical_operator` (String) Available values: "AND", "OR".
-- `operator` (String) Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".
+- `operator` (String) Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".
 - `value` (String) Value to compare against the context attribute. Must be an array for `in` and `not_in`; numeric and ISO-8601 datetime strings are accepted by the ordering operators.
 
 <a id="nestedatt--result--rules--conditions--clauses"></a>
@@ -85,7 +85,7 @@ Read-Only:
 - `attribute` (String)
 - `clauses` (Attributes List) (see [below for nested schema](#nestedatt--result--rules--conditions--clauses--clauses))
 - `logical_operator` (String) Available values: "AND", "OR".
-- `operator` (String) Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".
+- `operator` (String) Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".
 - `value` (String) Value to compare against the context attribute. Must be an array for `in` and `not_in`; numeric and ISO-8601 datetime strings are accepted by the ordering operators.
 
 <a id="nestedatt--result--rules--conditions--clauses--clauses"></a>
@@ -96,7 +96,7 @@ Read-Only:
 - `attribute` (String)
 - `clauses` (Attributes List) (see [below for nested schema](#nestedatt--result--rules--conditions--clauses--clauses--clauses))
 - `logical_operator` (String) Available values: "AND", "OR".
-- `operator` (String) Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".
+- `operator` (String) Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".
 - `value` (String) Value to compare against the context attribute. Must be an array for `in` and `not_in`; numeric and ISO-8601 datetime strings are accepted by the ordering operators.
 
 <a id="nestedatt--result--rules--conditions--clauses--clauses--clauses"></a>
@@ -107,7 +107,7 @@ Read-Only:
 - `attribute` (String)
 - `clauses` (Attributes List) (see [below for nested schema](#nestedatt--result--rules--conditions--clauses--clauses--clauses--clauses))
 - `logical_operator` (String) Available values: "AND", "OR".
-- `operator` (String) Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".
+- `operator` (String) Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".
 - `value` (String) Value to compare against the context attribute. Must be an array for `in` and `not_in`; numeric and ISO-8601 datetime strings are accepted by the ordering operators.
 
 <a id="nestedatt--result--rules--conditions--clauses--clauses--clauses--clauses"></a>
@@ -118,7 +118,7 @@ Read-Only:
 - `attribute` (String)
 - `clauses` (Attributes List) (see [below for nested schema](#nestedatt--result--rules--conditions--clauses--clauses--clauses--clauses--clauses))
 - `logical_operator` (String) Available values: "AND", "OR".
-- `operator` (String) Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".
+- `operator` (String) Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".
 - `value` (String) Value to compare against the context attribute. Must be an array for `in` and `not_in`; numeric and ISO-8601 datetime strings are accepted by the ordering operators.
 
 <a id="nestedatt--result--rules--conditions--clauses--clauses--clauses--clauses--clauses"></a>
@@ -129,7 +129,7 @@ Read-Only:
 - `attribute` (String)
 - `clauses` (List of String)
 - `logical_operator` (String) Available values: "AND", "OR".
-- `operator` (String) Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in".
+- `operator` (String) Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".
 - `value` (String) Value to compare against the context attribute. Must be an array for `in` and `not_in`; numeric and ISO-8601 datetime strings are accepted by the ordering operators.
 
 
@@ -144,6 +144,6 @@ Read-Only:
 Read-Only:
 
 - `attribute` (String) Context attribute used for sticky bucketing. Defaults to `targetingKey`. If absent at evaluation time, bucketing is random per request.
-- `percentage` (Number) Percentage of matching traffic (0–100) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
+- `percentage` (Number) Percentage of matching traffic (0–100, up to 2 decimal places) served this variation. For multi-way splits, use cumulative upper bounds across rules (e.g. 30, 70, 100).
 
 

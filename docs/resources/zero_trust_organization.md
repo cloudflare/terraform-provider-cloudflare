@@ -51,7 +51,13 @@ resource "cloudflare_zero_trust_organization" "example_zero_trust_organization" 
   }
   mfa_required_for_all_apps = false
   name = "Widget Corps Internal Applications"
+  service_token_inactivity = {
+    action = "disable"
+    enabled = true
+    inactivity_threshold_days = 30
+  }
   session_duration = "24h"
+  strict_service_token_auth = true
   ui_read_only_toggle_reason = "Temporarily turn off the UI read only lock to make a change via the UI"
   user_seat_expiration_inactive_time = "730h"
   warp_auth_non_browser_401 = false
@@ -80,6 +86,7 @@ resource "cloudflare_zero_trust_organization" "example_zero_trust_organization" 
 - `name` (String) The name of your Zero Trust organization.
 - `service_token_inactivity` (Attributes) Configures automatic enforcement for inactive service tokens. A service token is inactive if no policy references it, and it has not successfully authenticated with an Access application during the selected inactivity period. This setting applies to every service token in your Zero Trust account. (see [below for nested schema](#nestedatt--service_token_inactivity))
 - `session_duration` (String) The amount of time that tokens issued for applications will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.
+- `strict_service_token_auth` (Boolean) Enables new behaviors for requests made with Access service tokens. Unauthorized requests emit audit logs, and return a 401 or 403 status code in the response instead of redirecting to the login page. Successful requests no longer receive a CF_Authorization cookie in the response. Zero Trust organizations created on or after October 5, 2026 will have this setting enabled by default, and cannot disable it.
 - `ui_read_only_toggle_reason` (String) A description of the reason why the UI read only field is being toggled.
 - `user_seat_expiration_inactive_time` (String) The amount of time a user seat is inactive before it expires. When the user seat exceeds the set time of inactivity, the user is removed as an active seat and no longer counts against your Teams seat count.  Minimum value for this setting is 1 month (730h). Must be in the format `300ms` or `2h45m`. Valid time units are: `ns`, `us` (or `µs`), `ms`, `s`, `m`, `h`.
 - `warp_auth_non_browser_401` (Boolean) When enabled, unsuccessful WARP authentication requests with a non-HTML Accept header return a 401 response instead of redirecting to the login page.
@@ -148,5 +155,10 @@ Available values: "disable", "delete".
 
 ## Import
 
+Import is supported using the following syntax:
 
-~> This resource does not currently support `terraform import`.
+```shell
+$ terraform import cloudflare_zero_trust_organization.example '<account_id>'
+```
+
+

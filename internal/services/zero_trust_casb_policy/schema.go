@@ -16,8 +16,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.ResourceWithConfigValidators = (*ZeroTrustCasbPolicyResource)(nil)
-
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		MarkdownDescription: schemata.Description{
@@ -125,8 +123,4 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 
 func (r *ZeroTrustCasbPolicyResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = ResourceSchema(ctx)
-}
-
-func (r *ZeroTrustCasbPolicyResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
-	return []resource.ConfigValidator{}
 }

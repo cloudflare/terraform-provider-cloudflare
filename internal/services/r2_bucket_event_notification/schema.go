@@ -30,7 +30,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description:   "Account ID.",
+				Description:   "Cloudflare account ID that owns the R2 resource.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -53,7 +53,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"queue_id": schema.StringAttribute{
-				Description:   "Queue ID.",
+				Description:   "ID of the Cloudflare Queue that receives notifications for matching R2 object events.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

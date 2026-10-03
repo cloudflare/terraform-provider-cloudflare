@@ -89,7 +89,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"is_regex": schema.BoolAttribute{
-							Computed: true,
+							Description: "Whether `pattern` is a regular expression instead of a literal value.",
+							Computed:    true,
 						},
 						"last_modified": schema.StringAttribute{
 							Description:        "Deprecated, use `modified_at` instead. End of life: November 1, 2026.",

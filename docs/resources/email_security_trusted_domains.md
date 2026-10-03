@@ -22,7 +22,7 @@ resource "cloudflare_email_security_trusted_domains" "example_email_security_tru
   is_regex = false
   is_similarity = false
   pattern = "example.com"
-  comments = null
+  comments = "Trusted partner domain"
 }
 ```
 
@@ -32,19 +32,19 @@ resource "cloudflare_email_security_trusted_domains" "example_email_security_tru
 ### Required
 
 - `account_id` (String) Identifier.
-- `pattern` (String)
+- `pattern` (String) The domain pattern to trust, e.g. `example.com`.
 
 ### Optional
 
 - `comments` (String)
 - `is_recent` (Boolean) Select to prevent recently registered domains from triggering a Suspicious or Malicious disposition.
-- `is_regex` (Boolean)
+- `is_regex` (Boolean) Whether `pattern` is a regular expression instead of a literal domain.
 - `is_similarity` (Boolean) Select for partner or other approved domains that have similar spelling to your connected domains. Prevents listed domains from triggering a Spoof disposition.
 
 ### Read-Only
 
 - `created_at` (String)
-- `id` (String) Trusted domain identifier
+- `id` (String) Trusted domain identifier.
 - `last_modified` (String, Deprecated) Deprecated, use `modified_at` instead. End of life: November 1, 2026.
 - `modified_at` (String)
 

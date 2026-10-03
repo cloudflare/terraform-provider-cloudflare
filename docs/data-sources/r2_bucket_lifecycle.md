@@ -23,7 +23,7 @@ data "cloudflare_r2_bucket_lifecycle" "example_r2_bucket_lifecycle" {
 
 ### Required
 
-- `account_id` (String) Account ID.
+- `account_id` (String) Cloudflare account ID that owns the R2 resource.
 - `bucket_name` (String) Name of the bucket.
 
 ### Read-Only

@@ -89,7 +89,7 @@ resource "cloudflare_zero_trust_gateway_settings" "example_zero_trust_gateway_se
 
 ### Required
 
-- `account_id` (String)
+- `account_id` (String) Specify the Cloudflare account identifier.
 
 ### Optional
 
@@ -98,7 +98,7 @@ resource "cloudflare_zero_trust_gateway_settings" "example_zero_trust_gateway_se
 ### Read-Only
 
 - `created_at` (String)
-- `id` (String) The ID of this resource.
+- `id` (String) Specify the Cloudflare account identifier.
 - `updated_at` (String)
 
 <a id="nestedatt--settings"></a>

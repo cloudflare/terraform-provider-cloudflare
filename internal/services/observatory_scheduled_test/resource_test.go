@@ -76,7 +76,7 @@ func testSweepCloudflareObservatoryScheduledTests(r string) error {
 }
 
 func TestAccCloudflareObservatoryScheduledTest_Basic(t *testing.T) {
-	t.Skip("needs to be fixed by service team");
+	t.Skip("needs to be fixed by service team")
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -162,6 +162,53 @@ func TestAccCloudflareObservatoryScheduledTest_Basic(t *testing.T) {
 	})
 }
 
+// TestAccCloudflareObservatoryScheduledTest_FrequencyUpdate changes `frequency` on an
+// existing resource. No existing test sets frequency or region at all, so this path has
+// never been exercised.
+//
+// The API exposes no update endpoint for scheduled tests — speed.ScheduleService has only
+// New, Delete and Get — and the resource's Update() is a no-op. So a change to a settable
+// attribute must force replacement. Every other settable attribute here (url, zone_id)
+// carries RequiresReplace(); frequency and region do not. If that is a real defect,
+// Terraform plans an in-place update, Update() never calls the API or sets resp.State, and
+// this test fails with "Provider produced inconsistent result after apply".
+func TestAccCloudflareObservatoryScheduledTest_FrequencyUpdate(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_observatory_scheduled_test.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			// Step 1: create with an explicit frequency
+			{
+				Config: testAccCloudflareObservatoryScheduledTestConfigFrequency(rnd, zoneID, domain, rnd, "WEEKLY"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("frequency"),
+						knownvalue.StringExact("WEEKLY"),
+					),
+				},
+			},
+			// Step 2: change only frequency
+			{
+				Config: testAccCloudflareObservatoryScheduledTestConfigFrequency(rnd, zoneID, domain, rnd, "DAILY"),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("frequency"),
+						knownvalue.StringExact("DAILY"),
+					),
+				},
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareObservatoryScheduledTestDestroy(s *terraform.State) error {
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
@@ -192,4 +239,14 @@ resource "cloudflare_observatory_scheduled_test" "%[1]s" {
   url     = urlencode("%[3]s/%[4]s")
 }
 `, resourceName, zoneID, domain, path)
+}
+
+func testAccCloudflareObservatoryScheduledTestConfigFrequency(resourceName, zoneID, domain, path, frequency string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_observatory_scheduled_test" "%[1]s" {
+  zone_id   = %[2]q
+  url       = urlencode("%[3]s/%[4]s")
+  frequency = %[5]q
+}
+`, resourceName, zoneID, domain, path, frequency)
 }

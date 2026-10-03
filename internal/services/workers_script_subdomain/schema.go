@@ -37,7 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"script_name": schema.StringAttribute{
-				Description:   "Name of the script, used in URLs and route configuration.",
+				Description:   "Name of the script.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

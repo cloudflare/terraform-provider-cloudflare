@@ -113,6 +113,54 @@ func TestAccZeroTrustAccessAIControlsMcpServer_basic(t *testing.T) {
 	})
 }
 
+func TestAccZeroTrustAccessAIControlsMcpServer_manualOAuth(t *testing.T) {
+	resourceName := "cloudflare_zero_trust_access_ai_controls_mcp_server.tf-test-manual"
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareZeroTrustAccessAIControlsMcpServerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("manual_oauth.tf", accountID, "Manual OAuth Server", "test-secret-v1"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "auth_config_summary.auth_mode", "manual"),
+					resource.TestCheckResourceAttr(resourceName, "auth_config_summary.has_client_secret", "true"),
+					resource.TestCheckResourceAttr(resourceName, "auth_config_summary.client_secret_version", "1"),
+					resource.TestCheckResourceAttr(resourceName, "auth_config_summary.registration_info.client_id", "terraform-acceptance-test"),
+				),
+			},
+			{
+				Config: acctest.LoadTestCase("manual_oauth.tf", accountID, "Renamed Manual OAuth Server", "test-secret-v1"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "Renamed Manual OAuth Server"),
+					resource.TestCheckResourceAttr(resourceName, "auth_config_summary.client_secret_version", "1"),
+				),
+			},
+			{
+				Config: acctest.LoadTestCase("manual_oauth.tf", accountID, "Renamed Manual OAuth Server", "test-secret-v2"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "auth_config_summary.client_secret_version", "2"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", rs.Primary.Attributes["account_id"], rs.Primary.ID), nil
+				},
+				ImportStateVerifyIgnore: []string{"auth_credentials", "client_secret", "last_synced", "last_successful_sync"},
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareZeroTrustAccessAIControlsMcpServerDestroy(s *terraform.State) error {
 	client := acctest.SharedClient()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

@@ -26,13 +26,13 @@ data "cloudflare_flagship_app" "example_flagship_app" {
 
 ### Required
 
-- `account_id` (String) Cloudflare account ID.
-- `app_id` (String) App identifier.
+- `account_id` (String) Cloudflare account ID that owns the Flagship app.
+- `app_id` (String) Flagship app ID returned when the app was created.
 
 ### Read-Only
 
 - `created_at` (String)
-- `id` (String) App identifier.
+- `id` (String) Flagship app ID returned when the app was created.
 - `name` (String)
 - `updated_at` (String)
 - `updated_by` (String) Email of the actor who last modified the app, or `edge-gateway` for gateway-authenticated changes.

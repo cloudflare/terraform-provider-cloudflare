@@ -69,7 +69,7 @@ Read-Only:
 - `cve_2021_44228` (Boolean) If set to true, will cause all occurrences of `${` in the generated files to be replaced with `x{`.
 - `field_delimiter` (String) String to join fields. This field be ignored when `record_template` is set.
 - `field_names` (List of String) List of field names to be included in the Logpush output. For the moment, there is no option to add all fields at once, so you must specify all the fields names you are interested in.
-- `merge_subrequests` (Boolean) If set to true, subrequests will be merged into the parent request. Only supported for the `http_requests` dataset.
+- `merge_subrequests` (Boolean) If set to true, subrequests will be merged into the parent request. Only supported for the `http_requests` dataset. Not supported for account-scoped jobs.
 - `output_type` (String) Specifies the output type, such as `ndjson` or `csv`. This sets default values for the rest of the settings, depending on the chosen output type. Some formatting rules, like string quoting, are different between output types.
 Available values: "ndjson", "csv".
 - `record_delimiter` (String) String to be inserted in-between the records as separator.

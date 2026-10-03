@@ -18,7 +18,7 @@ Accepted Permissions
 ```terraform
 data "cloudflare_client_certificate" "example_client_certificate" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  client_certificate_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  client_certificate_id = "0d89c70d-ad9f-4843-b99f-6cc0252067e9"
 }
 ```
 
@@ -27,7 +27,7 @@ data "cloudflare_client_certificate" "example_client_certificate" {
 
 ### Optional
 
-- `client_certificate_id` (String) Identifier.
+- `client_certificate_id` (String) Client Certificate Tag
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `zone_id` (String) Identifier.
 
@@ -40,7 +40,7 @@ data "cloudflare_client_certificate" "example_client_certificate" {
 - `csr` (String) The Certificate Signing Request (CSR). Must be newline-encoded.
 - `expires_on` (String) Date that the Client Certificate expires.
 - `fingerprint_sha256` (String) Unique identifier of the Client Certificate.
-- `id` (String) Identifier.
+- `id` (String) Client Certificate Tag
 - `issued_on` (String) Date that the Client Certificate was issued by the Certificate Authority.
 - `location` (String) Location, provided by the CSR.
 - `organization` (String) Organization, provided by the CSR.

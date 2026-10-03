@@ -29,7 +29,7 @@ resource "cloudflare_zero_trust_list" "example_zero_trust_list" {
 
 ### Required
 
-- `account_id` (String)
+- `account_id` (String) Specify the Cloudflare account identifier.
 - `name` (String) Specify the list name.
 - `type` (String) Specify the list type.
 Available values: "SERIAL", "URL", "DOMAIN", "EMAIL", "IP", "CATEGORY", "LOCATION", "DEVICE", "AAGUID".

@@ -38,12 +38,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Identifier.",
+				Description:   "ID of the Cloudflare account that owns the Workers KV namespaces.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"namespace_id": schema.StringAttribute{
-				Description:   "Namespace identifier tag.",
+				Description:   "ID of the Workers KV namespace.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

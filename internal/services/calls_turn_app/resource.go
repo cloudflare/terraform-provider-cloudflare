@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7/calls"
 	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*CallsTURNAppResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*CallsTURNAppResource)(nil)
+var _ resource.ResourceWithImportState = (*CallsTURNAppResource)(nil)
 
 func NewResource() resource.Resource {
 	return &CallsTURNAppResource{}
@@ -89,6 +92,8 @@ func (r *CallsTURNAppResource) Create(ctx context.Context, req resource.CreateRe
 	}
 	data = &env.Result
 
+	normalizeCallsTURNKeyID(data)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -114,11 +119,19 @@ func (r *CallsTURNAppResource) Update(ctx context.Context, req resource.UpdateRe
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+	keyIDForUpdate := data.KeyID.ValueString()
+	if keyIDForUpdate == "" {
+		keyIDForUpdate = state.KeyID.ValueString()
+	}
+	if keyIDForUpdate == "" {
+		keyIDForUpdate = state.UID.ValueString()
+	}
+
 	res := new(http.Response)
 	env := CallsTURNAppResultEnvelope{*data}
 	_, err = r.client.Calls.TURN.Update(
 		ctx,
-		data.KeyID.ValueString(),
+		keyIDForUpdate,
 		calls.TURNUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -138,6 +151,8 @@ func (r *CallsTURNAppResource) Update(ctx context.Context, req resource.UpdateRe
 	}
 	data = &env.Result
 
+	normalizeCallsTURNKeyID(data)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -150,11 +165,16 @@ func (r *CallsTURNAppResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
+	keyID := data.KeyID.ValueString()
+	if keyID == "" {
+		keyID = data.UID.ValueString()
+	}
+
 	res := new(http.Response)
 	env := CallsTURNAppResultEnvelope{*data}
 	_, err := r.client.Calls.TURN.Get(
 		ctx,
-		data.KeyID.ValueString(),
+		keyID,
 		calls.TURNGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -178,6 +198,8 @@ func (r *CallsTURNAppResource) Read(ctx context.Context, req resource.ReadReques
 	}
 	data = &env.Result
 
+	normalizeCallsTURNKeyID(data)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -190,9 +212,14 @@ func (r *CallsTURNAppResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
+	keyIDForDelete := data.KeyID.ValueString()
+	if keyIDForDelete == "" {
+		keyIDForDelete = data.UID.ValueString()
+	}
+
 	_, err := r.client.Calls.TURN.Delete(
 		ctx,
-		data.KeyID.ValueString(),
+		keyIDForDelete,
 		calls.TURNDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -202,6 +229,53 @@ func (r *CallsTURNAppResource) Delete(ctx context.Context, req resource.DeleteRe
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *CallsTURNAppResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data = new(CallsTURNAppModel)
+
+	path_account_id := ""
+	path_key_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<key_id>",
+		&path_account_id,
+		&path_key_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.KeyID = types.StringValue(path_key_id)
+
+	res := new(http.Response)
+	env := CallsTURNAppResultEnvelope{*data}
+	_, err := r.client.Calls.TURN.Get(
+		ctx,
+		path_key_id,
+		calls.TURNGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	normalizeCallsTURNKeyID(data)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -38,20 +38,21 @@ resource "cloudflare_email_security_domain" "example_email_security_domain" {
 ### Required
 
 - `account_id` (String) Identifier.
-- `allowed_delivery_modes` (Set of String)
-- `domain` (String)
-- `drop_dispositions` (Set of String)
-- `ip_restrictions` (Set of String)
-- `regions` (Set of String)
+- `allowed_delivery_modes` (Set of String) Delivery modes to onboard the domain through.
+- `domain` (String) The email domain to protect.
+- `drop_dispositions` (Set of String) Dispositions to drop instead of delivering, e.g. `["MALICIOUS", "SPAM"]`.
+- `ip_restrictions` (Set of String) Source IP ranges mail is accepted from. Any other source is rejected.
+- `regions` (Set of String) Regions that process messages for this domain, e.g. `["GLOBAL"]` or `["US"]`.
 
 ### Optional
 
-- `folder` (String) Available values: "AllItems", "Inbox".
-- `integration_id` (String)
-- `lookback_hops` (Number)
-- `require_tls_inbound` (Boolean)
-- `require_tls_outbound` (Boolean)
-- `transport` (String)
+- `folder` (String) The mailbox folder to scan, for API-scanning domains.
+Available values: "AllItems", "Inbox".
+- `integration_id` (String) Identifier of the CASB integration that authorizes this domain. The integration also enables API scanning, post-delivery actions, and directory sync.
+- `lookback_hops` (Number) Number of hops to trace back through received headers when reconstructing the original message (1-20).
+- `require_tls_inbound` (Boolean) Require TLS on inbound connections.
+- `require_tls_outbound` (Boolean) Require TLS on outbound connections.
+- `transport` (String) The mail transport hostname for MX/Inline delivery — the MX record Cloudflare delivers email to (e.g. `mx.example.com`).
 
 ### Read-Only
 

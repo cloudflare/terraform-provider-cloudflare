@@ -32,7 +32,13 @@ resource "cloudflare_zero_trust_organization" "example_zero_trust_organization" 
   }
   mfa_required_for_all_apps = false
   name = "Widget Corps Internal Applications"
+  service_token_inactivity = {
+    action = "disable"
+    enabled = true
+    inactivity_threshold_days = 30
+  }
   session_duration = "24h"
+  strict_service_token_auth = true
   ui_read_only_toggle_reason = "Temporarily turn off the UI read only lock to make a change via the UI"
   user_seat_expiration_inactive_time = "730h"
   warp_auth_non_browser_401 = false

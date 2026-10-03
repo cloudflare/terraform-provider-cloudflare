@@ -81,6 +81,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"creator_email_at_creation": schema.StringAttribute{
+							Description: "The email address of the user who created the token at the time of\ncreation. Only present for Account Owned API Tokens when a creator email\nwas available.",
+							Computed:    true,
+						},
 						"expires_on": schema.StringAttribute{
 							Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
 							Computed:    true,
@@ -142,11 +146,38 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 													Computed:    true,
 													CustomType:  customfield.NewNestedObjectType[APITokensPoliciesPermissionGroupsMetaDataSourceModel](ctx),
 													Attributes: map[string]schema.Attribute{
-														"key": schema.StringAttribute{
-															Computed: true,
+														"category": schema.StringAttribute{
+															Description: "A category used to group permission groups.",
+															Computed:    true,
 														},
-														"value": schema.StringAttribute{
-															Computed: true,
+														"deprecated": schema.StringAttribute{
+															Description: "Indicates whether the permission group is deprecated.",
+															Computed:    true,
+														},
+														"description": schema.StringAttribute{
+															Description: "Additional information about the permission group.",
+															Computed:    true,
+														},
+														"editable": schema.StringAttribute{
+															Description: "Indicates whether the permission group can be edited.",
+															Computed:    true,
+														},
+														"eol_at": schema.StringAttribute{
+															Description: "The planned end-of-life date and time, when provided.",
+															Computed:    true,
+															CustomType:  timetypes.RFC3339Type{},
+														},
+														"label": schema.StringAttribute{
+															Description: "A label identifying the permission group.",
+															Computed:    true,
+														},
+														"scopes": schema.StringAttribute{
+															Description: "The scope associated with the permission group.",
+															Computed:    true,
+														},
+														"visibility": schema.StringAttribute{
+															Description: "Indicates the permission group's availability or visibility.",
+															Computed:    true,
 														},
 													},
 												},
@@ -165,6 +196,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
+						},
+						"provisioner_id": schema.StringAttribute{
+							Description: "The identifier of the service that provisioned the token. For an\nOAuth-provisioned token, this is the OAuth client identifier. Present\nwhen `provisioner_type` is present and null when the identifier is\nunavailable.",
+							Computed:    true,
+						},
+						"provisioner_type": schema.StringAttribute{
+							Description: "The type of service that provisioned the token. Only present for\nprovisioned Account Owned API Tokens.",
+							Computed:    true,
 						},
 						"status": schema.StringAttribute{
 							Description: "Status of the token.\nAvailable values: \"active\", \"disabled\", \"expired\".",

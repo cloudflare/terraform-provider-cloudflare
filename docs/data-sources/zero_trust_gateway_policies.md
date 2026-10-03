@@ -15,9 +15,7 @@ description: |-
 data "cloudflare_zero_trust_gateway_policies" "example_zero_trust_gateway_policies" {
   account_id = "699d98642c564d2e855e9661899b7252"
   direction = "asc"
-  filter = [{
-
-  }]
+  filter = ["string"]
   order_by = "name"
   search = "search"
 }
@@ -28,7 +26,7 @@ data "cloudflare_zero_trust_gateway_policies" "example_zero_trust_gateway_polici
 
 ### Optional
 
-- `account_id` (String)
+- `account_id` (String) Specify the Cloudflare account identifier.
 - `direction` (String) Sort direction. When `order_by` is omitted, this controls the direction
 of the existing precedence ordering. Shared rules remain first in either
 direction. Accepted values are `asc` and `desc`.

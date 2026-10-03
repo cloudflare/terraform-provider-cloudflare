@@ -52,7 +52,7 @@ Read-Only:
 - `csr` (String) The Certificate Signing Request (CSR). Must be newline-encoded.
 - `expires_on` (String) Date that the Client Certificate expires.
 - `fingerprint_sha256` (String) Unique identifier of the Client Certificate.
-- `id` (String) Identifier.
+- `id` (String) Client Certificate Tag
 - `issued_on` (String) Date that the Client Certificate was issued by the Certificate Authority.
 - `location` (String) Location, provided by the CSR.
 - `organization` (String) Organization, provided by the CSR.

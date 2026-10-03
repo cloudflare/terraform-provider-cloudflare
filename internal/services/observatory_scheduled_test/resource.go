@@ -76,12 +76,18 @@ func (r *ObservatoryScheduledTestResource) Create(ctx context.Context, req resou
 		params.Region = cloudflare.F(speed.ScheduleNewParamsRegion(data.Region.ValueString()))
 	}
 
+	dataBytes, err := data.MarshalJSON()
+	if err != nil {
+		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+		return
+	}
 	res := new(http.Response)
 	env := ObservatoryScheduledTestResultEnvelope{*data}
-	_, err := r.client.Speed.Schedule.New(
+	_, err = r.client.Speed.Schedule.New(
 		ctx,
 		data.URL.ValueString(),
 		params,
+		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

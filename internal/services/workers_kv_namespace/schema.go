@@ -27,12 +27,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Namespace identifier tag.",
+				Description:   "ID of the Workers KV namespace.",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Identifier.",
+				Description:   "ID of the Cloudflare account that owns the Workers KV namespaces.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -49,7 +49,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"title": schema.StringAttribute{
-				Description: "A human-readable string name for a Namespace.",
+				Description: "Human-readable string name for a Workers KV namespace.",
 				Required:    true,
 			},
 			"supports_url_encoding": schema.BoolAttribute{

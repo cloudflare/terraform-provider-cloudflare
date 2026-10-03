@@ -19,6 +19,7 @@ type ZeroTrustOrganizationModel struct {
 	DenyUnmatchedRequests                  types.Bool                                        `tfsdk:"deny_unmatched_requests" json:"deny_unmatched_requests,optional"`
 	Name                                   types.String                                      `tfsdk:"name" json:"name,optional"`
 	SessionDuration                        types.String                                      `tfsdk:"session_duration" json:"session_duration,optional"`
+	StrictServiceTokenAuth                 types.Bool                                        `tfsdk:"strict_service_token_auth" json:"strict_service_token_auth,computed_optional"`
 	UserSeatExpirationInactiveTime         types.String                                      `tfsdk:"user_seat_expiration_inactive_time" json:"user_seat_expiration_inactive_time,optional"`
 	WARPAuthSessionDuration                types.String                                      `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration,optional"`
 	DenyUnmatchedRequestsExemptedZoneNames *[]types.String                                   `tfsdk:"deny_unmatched_requests_exempted_zone_names" json:"deny_unmatched_requests_exempted_zone_names,optional"`

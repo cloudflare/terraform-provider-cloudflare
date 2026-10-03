@@ -101,16 +101,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "The name of the PlanetScale database.",
 						Computed:    true,
 					},
-					"integration": schema.StringAttribute{
-						Description: "The database integration used by this operation.\nAvailable values: \"planetscale\".",
+					"organization_name": schema.StringAttribute{
+						Description: "The name of the PlanetScale organization.",
+						Computed:    true,
+					},
+					"hyperdrive_config_provider": schema.StringAttribute{
+						Description: "The database integration provider used by this operation.\nAvailable values: \"planetscale\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("planetscale"),
 						},
-					},
-					"organization_name": schema.StringAttribute{
-						Description: "The name of the PlanetScale organization.",
-						Computed:    true,
 					},
 					"scheme": schema.StringAttribute{
 						Description: "Specifies the URL scheme used to connect to your origin database.\nAvailable values: \"postgres\", \"postgresql\", \"mysql\".",

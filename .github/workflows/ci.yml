@@ -13,6 +13,7 @@ on:
     branches-ignore:
       - 'stl-preview-head/**'
       - 'stl-preview-base/**'
+  workflow_dispatch:
 
 env:
   GOPRIVATE: github.com/cloudflare/cloudflare-go/v7,github.com/stainless-sdks/cloudflare-go/v7
@@ -51,7 +52,7 @@ jobs:
   test:
     name: Unit Tests (shard ${{ matrix.shard }})
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
+    if: github.event_name == 'workflow_dispatch'
     timeout-minutes: 30
     strategy:
       fail-fast: false

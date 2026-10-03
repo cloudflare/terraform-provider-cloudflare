@@ -80,7 +80,7 @@ func (r *WorkersKVResource) Create(ctx context.Context, req resource.CreateReque
 
 	dataBytes, contentType, err := data.MarshalMultipart()
 	if err != nil {
-		resp.Diagnostics.AddError("failed to marshal multipart request", err.Error())
+		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
 		return
 	}
 	res := new(http.Response)
@@ -141,10 +141,9 @@ func (r *WorkersKVResource) Update(ctx context.Context, req resource.UpdateReque
 
 	dataBytes, contentType, err := data.MarshalMultipart()
 	if err != nil {
-		resp.Diagnostics.AddError("failed to marshal multipart request", err.Error())
+		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
 		return
 	}
-
 	res := new(http.Response)
 	env := WorkersKVResultEnvelope{*data}
 	_, err = r.client.KV.Namespaces.Values.Update(

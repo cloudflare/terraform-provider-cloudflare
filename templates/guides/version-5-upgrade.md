@@ -1967,6 +1967,13 @@ resource "cloudflare_list_item" "example" {
 - `ignore = false` is now `include = ["*"]`
 - `cache_ttl_by_status` is now a map (`cache_ttl_by_status = { ... }`) instead of a list of objects (`cache_ttl_by_status = [{ ... }]`)
 
+`ignore` was removed in v5. It is replaced by the `["*"]` wildcard, meaning
+"every query string parameter". `["*"]` is only meaningful on its own: a mixed
+list such as `["*", "session"]` is rejected, because the API cannot express
+"all parameters, plus one named parameter".
+
+`include` and `exclude` are alternatives — set one or the other, not both.
+
 Before
 
 ```
@@ -1976,7 +1983,6 @@ resource "cloudflare_page_rule" "example" {
     cache_key_fields = {
       query_string = {
         ignore = true
-        ignore = false
       }
     }
   }
@@ -1992,12 +1998,22 @@ resource "cloudflare_page_rule" "example" {
     cache_key_fields = {
       query_string = {
         exclude = ["*"]
-        include = ["*"]
       }
     }
   }
 }
 ```
+
+To include every query string parameter instead, `ignore = false` becomes
+`include = ["*"]`.
+
+~> Early v5 releases sent `["*"]` to the API as a one-element list naming a
+parameter literally called `*`, which matches nothing. Rules migrated with one
+of those releases silently drop every query string parameter from the cache
+key. Upgrading the provider does not repair them on its own: `actions` is not
+refreshed from the API, so config and state still agree and the plan is empty.
+Force an update with `terraform apply -replace=ADDRESS`, or make a temporary
+no-op change such as toggling `priority`.
 
 [tf-migrate]: https://github.com/cloudflare/tf-migrate
 [tf-migrate releases]: https://github.com/cloudflare/tf-migrate/releases

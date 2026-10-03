@@ -39,6 +39,7 @@ data "cloudflare_magic_transit_site_wan" "example_magic_transit_site_wan" {
 - `health_check_rate` (String) Magic WAN health check rate for tunnels created on this link. The default value is `mid`.
 Available values: "low", "mid", "high".
 - `id` (String) Identifier
+- `load_balance_inner_flows` (Boolean)
 - `name` (String)
 - `physport` (Number)
 - `priority` (Number) Priority of WAN for traffic loadbalancing.

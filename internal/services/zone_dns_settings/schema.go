@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -42,8 +43,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"foundation_dns": schema.BoolAttribute{
-				Description: "Whether to enable Foundation DNS Advanced Nameservers on the zone.",
-				Optional:    true,
+				Description:        "Deprecated. Use nameservers.type to configure Advanced Nameservers.",
+				Optional:           true,
+				DeprecationMessage: "foundation_dns is deprecated. Use nameservers.type: cloudflare.advanced to turn on Advanced Nameservers and cloudflare.standard to turn it off. This field will be removed in a future API version.\n",
 			},
 			"multi_provider": schema.BoolAttribute{
 				Description: "Whether to enable multi-provider DNS, which causes Cloudflare to activate the zone even when non-Cloudflare NS records exist, and to respect NS records at the zone apex during outbound zone transfers.",
@@ -85,29 +87,40 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"nameservers": schema.SingleNestedAttribute{
-				Description: "Settings determining the nameservers through which the zone should be available.",
+				Description: "Controls the nameservers through which the zone is available.",
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectType[ZoneDNSSettingsNameserversModel](ctx),
 				Attributes: map[string]schema.Attribute{
+					"type": schema.StringAttribute{
+						Description: "Nameserver type.\nAvailable values: \"cloudflare.standard\", \"cloudflare.advanced\", \"custom.account\", \"custom.tenant\", \"custom.zone\", \"custom\".",
+						Required:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"cloudflare.standard",
+								"cloudflare.advanced",
+								"custom.account",
+								"custom.tenant",
+								"custom.zone",
+								"custom",
+							),
+						},
+					},
 					"ns_set": schema.Int64Attribute{
-						Description: "Configured nameserver set to be used for this zone",
+						Description: "Configured nameserver set number to use for this zone.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.Int64{
 							int64validator.Between(1, 5),
 						},
+						// ns_set only applies to custom nameserver types and is
+						// absent from the zone DNS settings response, so a static
+						// default would be re-proposed on every plan.
+						PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 					},
-					"type": schema.StringAttribute{
-						Description: "Nameserver type\nAvailable values: \"cloudflare.standard\", \"custom.account\", \"custom.tenant\", \"custom.zone\".",
+					"nameserver_set_id": schema.StringAttribute{
+						Description: "Identifier of the account-owned Custom Nameserver Set to use for this zone.",
 						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive(
-								"cloudflare.standard",
-								"custom.account",
-								"custom.tenant",
-								"custom.zone",
-							),
-						},
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},

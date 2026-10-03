@@ -27,7 +27,7 @@ data "cloudflare_r2_bucket" "example_r2_bucket" {
 
 ### Optional
 
-- `account_id` (String) Account ID.
+- `account_id` (String) Cloudflare account ID that owns the R2 resource.
 
 ### Read-Only
 

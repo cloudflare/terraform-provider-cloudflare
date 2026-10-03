@@ -69,12 +69,8 @@ Available values: "asc", "desc".
 - `is_trusted_sender` (Boolean) Filter to show only policies where messages from the sender bypass all detections and link following.
 - `order` (String) Field to sort by.
 Available values: "pattern", "created_at".
-- `pattern` (String)
-- `pattern_type` (String) Type of pattern matching.
-- EMAIL: matches a full email address (e.g. `user@example.com`)
-- DOMAIN: matches a domain name (e.g. `example.com`)
-- IP: matches a plain IPv4 or IPv6 address (e.g. `1.2.3.4` or `2606:4700:4700::1111`) or CIDR block (e.g. `1.2.3.0/24` or `2606:4700:4700::/48`). The API rejects private or unique-local, loopback, link-local, unspecified, and IPv4 broadcast addresses, including their IPv4-mapped IPv6 equivalents.
-- UNKNOWN: deprecated; you cannot use this when creating or updating policies, but it may appear on existing entries.
+- `pattern` (String) Filter by exact pattern value.
+- `pattern_type` (String) Filter by pattern type.
 Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
 - `search` (String) Search term for filtering records. Behavior may change.
 - `verify_sender` (Boolean) Filter to show only policies that enforce DMARC, SPF, or DKIM authentication.

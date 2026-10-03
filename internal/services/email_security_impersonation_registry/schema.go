@@ -38,29 +38,36 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"email": schema.StringAttribute{
-				Required: true,
+				Description: "Email address (or pattern) of the protected identity.",
+				Required:    true,
 			},
 			"is_email_regex": schema.BoolAttribute{
-				Required: true,
+				Description: "Whether `email` is a regular expression instead of a literal address.",
+				Required:    true,
 			},
 			"name": schema.StringAttribute{
-				Required: true,
+				Description: "Display name of the protected identity.",
+				Required:    true,
 			},
 			"comments": schema.StringAttribute{
-				Optional: true,
+				Description: "Optional note describing the entry.",
+				Optional:    true,
 			},
 			"directory_id": schema.Int64Attribute{
-				Optional: true,
+				Description: "Identifier of the directory the entry was synced from, when directory-synced.",
+				Optional:    true,
 			},
 			"directory_node_id": schema.Int64Attribute{
-				Optional: true,
+				Description: "Identifier of the directory node the entry was synced from, when directory-synced.",
+				Optional:    true,
 			},
 			"external_directory_node_id": schema.StringAttribute{
+				Description:        "Deprecated. External identifier of the directory node.",
 				Optional:           true,
 				DeprecationMessage: "This field is deprecated.",
 			},
 			"provenance": schema.StringAttribute{
-				Description: `Available values: "A1S_INTERNAL", "SNOOPY-CASB_OFFICE_365", "SNOOPY-OFFICE_365", "SNOOPY-GOOGLE_DIRECTORY".`,
+				Description: "Source the entry was created from.\nAvailable values: \"A1S_INTERNAL\", \"SNOOPY-CASB_OFFICE_365\", \"SNOOPY-OFFICE_365\", \"SNOOPY-GOOGLE_DIRECTORY\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

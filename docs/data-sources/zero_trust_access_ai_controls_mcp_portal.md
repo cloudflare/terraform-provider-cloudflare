@@ -66,7 +66,7 @@ Available values: "oauth", "bearer", "unauthenticated".
 Available values: "not_required", "required", "connected", "stale", "manual".
 - `created_at` (String)
 - `created_by` (String)
-- `default_disabled` (Boolean)
+- `default_disabled` (Boolean) Hide this server's tools and prompts by default. To expose specific capabilities, set enabled: true for them in updated_tools or updated_prompts.
 - `description` (String) Optional description of the MCP server.
 - `error` (String)
 - `error_details` (Attributes) (see [below for nested schema](#nestedatt--servers--error_details))

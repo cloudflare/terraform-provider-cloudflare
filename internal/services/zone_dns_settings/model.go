@@ -38,8 +38,9 @@ type ZoneDNSSettingsInternalDNSModel struct {
 }
 
 type ZoneDNSSettingsNameserversModel struct {
-	NSSet types.Int64  `tfsdk:"ns_set" json:"ns_set,optional"`
-	Type  types.String `tfsdk:"type" json:"type,optional"`
+	Type            types.String `tfsdk:"type" json:"type,required"`
+	NSSet           types.Int64  `tfsdk:"ns_set" json:"ns_set,computed_optional"`
+	NameserverSetID types.String `tfsdk:"nameserver_set_id" json:"nameserver_set_id,optional"`
 }
 
 type ZoneDNSSettingsSOAModel struct {

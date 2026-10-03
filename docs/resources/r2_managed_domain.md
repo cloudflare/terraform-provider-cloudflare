@@ -24,7 +24,7 @@ resource "cloudflare_r2_managed_domain" "example_r2_managed_domain" {
 
 ### Required
 
-- `account_id` (String) Account ID.
+- `account_id` (String) Cloudflare account ID that owns the R2 resource.
 - `bucket_name` (String) Name of the bucket.
 - `enabled` (Boolean) Whether to enable public bucket access at the r2.dev domain.
 

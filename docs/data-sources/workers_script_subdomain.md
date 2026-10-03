@@ -29,7 +29,7 @@ data "cloudflare_workers_script_subdomain" "example_workers_script_subdomain" {
 ### Required
 
 - `account_id` (String) Identifier.
-- `script_name` (String) Name of the script, used in URLs and route configuration.
+- `script_name` (String) Name of the script.
 
 ### Read-Only
 

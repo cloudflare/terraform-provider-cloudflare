@@ -70,8 +70,14 @@ type UserGroupsPoliciesPermissionGroupsDataSourceModel struct {
 }
 
 type UserGroupsPoliciesPermissionGroupsMetaDataSourceModel struct {
-	Key   types.String `tfsdk:"key" json:"key,computed"`
-	Value types.String `tfsdk:"value" json:"value,computed"`
+	Category    types.String      `tfsdk:"category" json:"category,computed"`
+	Deprecated  types.String      `tfsdk:"deprecated" json:"deprecated,computed"`
+	Description types.String      `tfsdk:"description" json:"description,computed"`
+	Editable    types.String      `tfsdk:"editable" json:"editable,computed"`
+	EolAt       timetypes.RFC3339 `tfsdk:"eol_at" json:"eol_at,computed" format:"date-time"`
+	Label       types.String      `tfsdk:"label" json:"label,computed"`
+	Scopes      types.String      `tfsdk:"scopes" json:"scopes,computed"`
+	Visibility  types.String      `tfsdk:"visibility" json:"visibility,computed"`
 }
 
 type UserGroupsPoliciesResourceGroupsDataSourceModel struct {

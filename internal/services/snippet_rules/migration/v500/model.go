@@ -38,16 +38,15 @@ type SourceSnippetRuleModel struct {
 //
 // Types must match the v5 schema exactly so that resp.State.Set() succeeds:
 // - Rules uses *[]*TargetSnippetRuleModel (matches SnippetRulesModel.Rules)
-// - last_updated uses timetypes.RFC3339 (matches schema CustomType)
+//
+// Fields must exactly match the live schema's top-level attributes (id,
+// zone_id, rules only) - a tfsdk-tagged field with no matching schema
+// attribute causes resp.State.Set() to fail with "Struct defines fields
+// not found in object", even if the field's value is always null.
 type TargetSnippetRulesModel struct {
-	ID          types.String               `tfsdk:"id"`
-	ZoneID      types.String               `tfsdk:"zone_id"`
-	Rules       *[]*TargetSnippetRuleModel `tfsdk:"rules"`
-	Description types.String               `tfsdk:"description"`
-	Enabled     types.Bool                 `tfsdk:"enabled"`
-	Expression  types.String               `tfsdk:"expression"`
-	LastUpdated timetypes.RFC3339          `tfsdk:"last_updated"`
-	SnippetName types.String               `tfsdk:"snippet_name"`
+	ID     types.String               `tfsdk:"id"`
+	ZoneID types.String               `tfsdk:"zone_id"`
+	Rules  *[]*TargetSnippetRuleModel `tfsdk:"rules"`
 }
 
 // TargetSnippetRuleModel represents a single rule in the v5 state.

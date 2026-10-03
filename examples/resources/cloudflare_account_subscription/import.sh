@@ -1,1 +1,1 @@
-$ terraform import cloudflare_account_subscription.example '<account_id>'
+$ terraform import cloudflare_account_subscription.example '<account_id>/<subscription_id>'

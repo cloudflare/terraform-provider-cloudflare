@@ -1,0 +1,26 @@
+// File generated to ensure migration target model stays in sync with the live resource schema.
+// If a field is added to the live model/schema without being added to the migration Target struct,
+// this test will fail, catching the drift in CI before it causes a runtime panic.
+
+package v500_test
+
+import (
+	"context"
+	"testing"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_trusted_domains"
+	v500 "github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_trusted_domains/migration/v500"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
+)
+
+// TestEmailSecurityTrustedDomainsMigrationModelSchemaParity verifies that TargetModel
+// (used in the v500 upgrader → resp.State.Set) stays in sync with the live
+// ResourceSchema. Adding a field to the live schema without updating TargetModel
+// will cause this test to fail.
+func TestEmailSecurityTrustedDomainsMigrationModelSchemaParity(t *testing.T) {
+	t.Parallel()
+	model := (*v500.TargetModel)(nil)
+	schema := email_security_trusted_domains.ResourceSchema(context.TODO())
+	errs := test_helpers.ValidateMigrationModelSchemaIntegrity(model, schema)
+	errs.Report(t)
+}

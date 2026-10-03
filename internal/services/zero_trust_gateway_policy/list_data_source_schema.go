@@ -22,7 +22,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Optional: true,
+				Description: "Specify the Cloudflare account identifier.",
+				Optional:    true,
 			},
 			"direction": schema.StringAttribute{
 				Description: "Sort direction. When `order_by` is omitted, this controls the direction\nof the existing precedence ordering. Shared rules remain first in either\ndirection. Accepted values are `asc` and `desc`.\nAvailable values: \"asc\", \"desc\".",
@@ -96,7 +97,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"filters": schema.ListAttribute{
 							Description: "Specify the protocol or layer to evaluate the traffic, identity, and device posture expressions. Can only contain a single value.",
 							Computed:    true,
-							CustomType:  customfield.NewListType[types.String](ctx),
 							Validators: []validator.List{
 								listvalidator.ValueStringsAre(
 									stringvalidator.OneOfCaseInsensitive(
@@ -108,6 +108,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									),
 								),
 							},
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"name": schema.StringAttribute{

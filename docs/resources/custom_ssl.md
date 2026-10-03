@@ -45,6 +45,13 @@ resource "cloudflare_custom_ssl" "example_custom_ssl" {
   -----END CERTIFICATE-----
 
   EOT
+  bundle_method = "ubiquitous"
+  custom_csr_id = "7b163417-1d2b-4c84-a38a-2fb7a0cd7752"
+  deploy = "staging"
+  geo_restrictions = {
+    label = "us"
+  }
+  policy = "(country: US) or (region: EU)"
   private_key = <<EOT
   -----BEGIN RSA PRIVATE KEY-----
   MIIEowIBAAKCAQEAwQHoetcl9+5ikGzV6cMzWtWPJHqXT3wpbEkRU9Yz7lgvddmG
@@ -75,13 +82,6 @@ resource "cloudflare_custom_ssl" "example_custom_ssl" {
   -----END RSA PRIVATE KEY-----
 
   EOT
-  bundle_method = "ubiquitous"
-  custom_csr_id = "7b163417-1d2b-4c84-a38a-2fb7a0cd7752"
-  deploy = "staging"
-  geo_restrictions = {
-    label = "us"
-  }
-  policy = "(country: US) or (region: EU)"
   type = "sni_custom"
 }
 ```
@@ -112,7 +112,7 @@ Available values: "legacy_custom", "sni_custom".
 
 - `expires_on` (String) When the certificate from the authority expires.
 - `hosts` (List of String)
-- `id` (String) Identifier.
+- `id` (String) Custom certificate identifier tag.
 - `issuer` (String) The certificate authority that issued the certificate.
 - `keyless_server` (Attributes) (see [below for nested schema](#nestedatt--keyless_server))
 - `modified_on` (String) When the certificate was last modified.

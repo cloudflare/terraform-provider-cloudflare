@@ -72,11 +72,17 @@ func (r *ZoneHoldResource) Create(ctx context.Context, req resource.CreateReques
 		params.IncludeSubdomains = cloudflare.F(data.IncludeSubdomains.ValueBool())
 	}
 
+	dataBytes, err := data.MarshalJSON()
+	if err != nil {
+		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+		return
+	}
 	res := new(http.Response)
 	env := ZoneHoldResultEnvelope{*data}
-	_, err := r.client.Zones.Holds.New(
+	_, err = r.client.Zones.Holds.New(
 		ctx,
 		params,
+		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

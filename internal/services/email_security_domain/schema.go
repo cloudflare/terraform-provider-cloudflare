@@ -43,33 +43,40 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"domain": schema.StringAttribute{
+				Description:   "The email domain to protect.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"allowed_delivery_modes": schema.SetAttribute{
+				Description: "Delivery modes to onboard the domain through.",
 				Required:    true,
 				ElementType: types.StringType,
 			},
 			"drop_dispositions": schema.SetAttribute{
+				Description: "Dispositions to drop instead of delivering, e.g. `[\"MALICIOUS\", \"SPAM\"]`.",
 				Required:    true,
 				ElementType: types.StringType,
 			},
 			"ip_restrictions": schema.SetAttribute{
+				Description: "Source IP ranges mail is accepted from. Any other source is rejected.",
 				Required:    true,
 				ElementType: types.StringType,
 			},
 			"regions": schema.SetAttribute{
+				Description: "Regions that process messages for this domain, e.g. `[\"GLOBAL\"]` or `[\"US\"]`.",
 				Required:    true,
 				ElementType: types.StringType,
 			},
 			"integration_id": schema.StringAttribute{
-				Optional: true,
+				Description: "Identifier of the CASB integration that authorizes this domain. The integration also enables API scanning, post-delivery actions, and directory sync.",
+				Optional:    true,
 			},
 			"transport": schema.StringAttribute{
-				Optional: true,
+				Description: "The mail transport hostname for MX/Inline delivery — the MX record Cloudflare delivers email to (e.g. `mx.example.com`).",
+				Optional:    true,
 			},
 			"folder": schema.StringAttribute{
-				Description: `Available values: "AllItems", "Inbox".`,
+				Description: "The mailbox folder to scan, for API-scanning domains.\nAvailable values: \"AllItems\", \"Inbox\".",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
@@ -78,19 +85,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"lookback_hops": schema.Int64Attribute{
-				Computed: true,
-				Optional: true,
+				Description: "Number of hops to trace back through received headers when reconstructing the original message (1-20).",
+				Computed:    true,
+				Optional:    true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 20),
 				},
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseNonNullStateForUnknown()},
 			},
 			"require_tls_inbound": schema.BoolAttribute{
+				Description:   "Require TLS on inbound connections.",
 				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"require_tls_outbound": schema.BoolAttribute{
+				Description:   "Require TLS on outbound connections.",
 				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},

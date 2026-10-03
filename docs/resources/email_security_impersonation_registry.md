@@ -18,9 +18,14 @@ Accepted Permissions
 ```terraform
 resource "cloudflare_email_security_impersonation_registry" "example_email_security_impersonation_registry" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  email = "email"
-  is_email_regex = true
-  name = "name"
+  email = "john.doe@example.com"
+  is_email_regex = false
+  name = "John Doe"
+  comments = "comments"
+  directory_id = 0
+  directory_node_id = 0
+  external_directory_node_id = "external_directory_node_id"
+  provenance = "A1S_INTERNAL"
 }
 ```
 
@@ -30,17 +35,18 @@ resource "cloudflare_email_security_impersonation_registry" "example_email_secur
 ### Required
 
 - `account_id` (String) Identifier.
-- `email` (String)
-- `is_email_regex` (Boolean)
-- `name` (String)
+- `email` (String) Email address (or pattern) of the protected identity.
+- `is_email_regex` (Boolean) Whether `email` is a regular expression instead of a literal address.
+- `name` (String) Display name of the protected identity.
 
 ### Optional
 
-- `comments` (String)
-- `directory_id` (Number)
-- `directory_node_id` (Number)
-- `external_directory_node_id` (String, Deprecated)
-- `provenance` (String) Available values: "A1S_INTERNAL", "SNOOPY-CASB_OFFICE_365", "SNOOPY-OFFICE_365", "SNOOPY-GOOGLE_DIRECTORY".
+- `comments` (String) Optional note describing the entry.
+- `directory_id` (Number) Identifier of the directory the entry was synced from, when directory-synced.
+- `directory_node_id` (Number) Identifier of the directory node the entry was synced from, when directory-synced.
+- `external_directory_node_id` (String, Deprecated) Deprecated. External identifier of the directory node.
+- `provenance` (String) Source the entry was created from.
+Available values: "A1S_INTERNAL", "SNOOPY-CASB_OFFICE_365", "SNOOPY-OFFICE_365", "SNOOPY-GOOGLE_DIRECTORY".
 
 ### Read-Only
 
@@ -54,7 +60,7 @@ resource "cloudflare_email_security_impersonation_registry" "example_email_secur
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_email_security_impersonation_registry.example '<account_id>/<display_name_id>'
+$ terraform import cloudflare_email_security_impersonation_registry.example '<account_id>/<impersonation_registry_id>'
 ```
 
 

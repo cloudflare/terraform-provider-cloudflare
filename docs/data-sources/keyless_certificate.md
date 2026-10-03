@@ -52,7 +52,7 @@ Accepted Permissions
 ```terraform
 data "cloudflare_keyless_certificate" "example_keyless_certificate" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  keyless_certificate_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  keyless_certificate_id = "4d2844d2ce78891c34d0b6c0535a291e"
 }
 ```
 
@@ -61,7 +61,7 @@ data "cloudflare_keyless_certificate" "example_keyless_certificate" {
 
 ### Required
 
-- `keyless_certificate_id` (String) Identifier.
+- `keyless_certificate_id` (String) Keyless certificate identifier tag.
 
 ### Optional
 
@@ -72,7 +72,7 @@ data "cloudflare_keyless_certificate" "example_keyless_certificate" {
 - `created_on` (String) When the Keyless SSL was created.
 - `enabled` (Boolean) Whether or not the Keyless SSL is on or off.
 - `host` (String) The keyless SSL name.
-- `id` (String) Identifier.
+- `id` (String) Keyless certificate identifier tag.
 - `modified_on` (String) When the Keyless SSL was last modified.
 - `name` (String) The keyless SSL name.
 - `permissions` (List of String) Available permissions for the Keyless SSL for the current user requesting the item.

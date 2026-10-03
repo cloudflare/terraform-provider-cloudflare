@@ -26,6 +26,7 @@ resource "cloudflare_worker_version" "example_worker_version" {
   }
   assets = {
     config = {
+      base_path = "/docs/"
       html_handling = "auto-trailing-slash"
       not_found_handling = "404-page"
       run_worker_first = []
@@ -52,22 +53,25 @@ resource "cloudflare_worker_version" "example_worker_version" {
       cache = {
         enabled = true
       }
-      renamed_to = "renamed_to"
       state = "created"
+    }
+    Counter = {
       storage = "sqlite"
-      transfer_from = "transfer_from"
-      transferred_to = "transferred_to"
+      type = "durable-object"
+      container = "my-container"
+      state = "created"
+    }
+    OldCounter = {
+      renamed_to = "Counter"
+      state = "renamed"
+      type = "durable-object"
     }
     default = {
       type = "worker"
       cache = {
         enabled = false
       }
-      renamed_to = "renamed_to"
       state = "created"
-      storage = "sqlite"
-      transfer_from = "transfer_from"
-      transferred_to = "transferred_to"
     }
   }
   limits = {
@@ -92,7 +96,7 @@ resource "cloudflare_worker_version" "example_worker_version" {
     }]
   }
   modules = [{
-    content_file = "dist/index.js"
+    content_base64 = "ZXhwb3J0IGRlZmF1bHQgewogIGFzeW5jIGZldGNoKHJlcXVlc3QsIGVudiwgY3R4KSB7CiAgICByZXR1cm4gbmV3IFJlc3BvbnNlKCdIZWxsbyBXb3JsZCEnKQogIH0KfQ=="
     content_type = "application/javascript+module"
     name = "index.js"
   }]
@@ -104,6 +108,7 @@ resource "cloudflare_worker_version" "example_worker_version" {
   placement = {
     mode = "smart"
   }
+  usage_model = "standard"
 }
 ```
 
@@ -160,6 +165,7 @@ Available values: "standard", "bundled", "unbound".
 - `author_email` (String) Email of the user who created the version.
 - `author_id` (String) Identifier of the user who created the version.
 - `created_on` (String) When the version was created.
+- `exports_reconciliation` (Attributes) Summary of the declarative exports reconciliation that ran on this upload. Populated only when the uploaded metadata included an `exports` block. Durable Object entries drive reconciliation; `type: worker` entries do not contribute to this summary. (see [below for nested schema](#nestedatt--exports_reconciliation))
 - `id` (String) Version identifier.
 - `main_script_base64` (String) The base64-encoded main script content. This is only returned for service worker syntax workers (not ES modules). Used when importing existing workers that use the older service worker syntax.
 - `migration_tag` (String) Durable Object migration tag. Set when the version is deployed. Omitted if the version has not been deployed or the Worker does not use Durable Objects.
@@ -215,7 +221,7 @@ Required:
 
 - `name` (String) A JavaScript variable name for the binding.
 - `type` (String) The kind of resource that the binding provides.
-Available values: "ai", "ai_search", "ai_search_namespace", "messaging", "analytics_engine", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "media", "mtls_certificate", "plain_text", "pipelines", "k2", "queue", "ratelimit", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "flagship", "secret_key", "workflow", "wasm_module", "vpc_service", "vpc_network".
+Available values: "ai", "ai_search", "ai_search_namespace", "messaging", "analytics_engine", "artifacts", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "media", "mtls_certificate", "plain_text", "pipelines", "k2", "queue", "ratelimit", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "flagship", "secret_key", "workflow", "wasm_module", "vpc_service", "vpc_network".
 
 Optional:
 
@@ -500,6 +506,73 @@ Optional:
 - `host` (String) TCP host:port for targeted placement.
 - `hostname` (String) HTTP hostname for targeted placement.
 - `region` (String) Cloud region in format 'provider:region'.
+
+
+
+<a id="nestedatt--exports_reconciliation"></a>
+### Nested Schema for `exports_reconciliation`
+
+Read-Only:
+
+- `created` (List of String) Class names for which a new namespace was provisioned.
+- `deleted` (List of String) Class names whose namespace was deleted by a `deleted` tombstone.
+- `info` (Attributes List) Non-blocking info entries (stale tombstones, tombstone applied with class still in code). See `exports_reconciliation_info`. (see [below for nested schema](#nestedatt--exports_reconciliation--info))
+- `removable_entries` (List of String) Source class names whose tombstone entry is now stale and safe to delete from `exports` (no remaining referencing scripts).
+- `renamed` (Attributes List) Applied `renamed` tombstones. (see [below for nested schema](#nestedatt--exports_reconciliation--renamed))
+- `transfer_pending` (Attributes List) Phase-1 transfer hints recorded on the target side. (see [below for nested schema](#nestedatt--exports_reconciliation--transfer_pending))
+- `transferred` (Attributes List) Committed `transferred` tombstones (phase-2). (see [below for nested schema](#nestedatt--exports_reconciliation--transferred))
+- `updated` (List of String) Class names whose provisioned namespace was mutated in place.
+- `warnings` (Attributes List) Non-blocking warnings. See `exports_reconciliation_warning`. (see [below for nested schema](#nestedatt--exports_reconciliation--warnings))
+
+<a id="nestedatt--exports_reconciliation--info"></a>
+### Nested Schema for `exports_reconciliation.info`
+
+Read-Only:
+
+- `class` (String) The class name the info entry is about.
+- `message` (String) Human-readable explanation.
+- `namespace_id` (String) The provisioned namespace the entry relates to, when applicable.
+- `referencing_scripts` (List of String) Other Workers in the account that still bind to the affected class. Advisory: while non-empty the tombstone is not yet safe to remove — redeploy these Workers with bindings re-pointed first.
+- `scenario` (String) Stable, machine-readable tag identifying which reconciliation scenario produced an error, warning, or info entry. Clients may branch on this value instead of parsing `message`.
+
+
+<a id="nestedatt--exports_reconciliation--renamed"></a>
+### Nested Schema for `exports_reconciliation.renamed`
+
+Read-Only:
+
+- `from` (String) The original (source) class name.
+- `to` (String) The new class name (`renamed_to`).
+
+
+<a id="nestedatt--exports_reconciliation--transfer_pending"></a>
+### Nested Schema for `exports_reconciliation.transfer_pending`
+
+Read-Only:
+
+- `class` (String) The target-side class name awaiting transfer.
+- `from` (String) The source script the namespace will be transferred from.
+
+
+<a id="nestedatt--exports_reconciliation--transferred"></a>
+### Nested Schema for `exports_reconciliation.transferred`
+
+Read-Only:
+
+- `class` (String) The source class name that was transferred.
+- `phase` (String) The transfer phase. Currently always `committed`.
+- `to` (String) The destination script that now owns the namespace.
+
+
+<a id="nestedatt--exports_reconciliation--warnings"></a>
+### Nested Schema for `exports_reconciliation.warnings`
+
+Read-Only:
+
+- `class` (String) The class name the warning is about.
+- `message` (String) Human-readable explanation of the warning.
+- `namespace_id` (String) The provisioned namespace the warning relates to, when applicable.
+- `scenario` (String) Stable, machine-readable tag identifying which reconciliation scenario produced an error, warning, or info entry. Clients may branch on this value instead of parsing `message`.
 
 ## Import
 

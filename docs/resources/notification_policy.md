@@ -75,6 +75,7 @@ resource "cloudflare_notification_policy" "example_notification_policy" {
     target_hostname = ["string"]
     target_ip = ["string"]
     target_zone_name = ["string"]
+    token_id = ["x"]
     traffic_exclusions = ["security_events"]
     tunnel_id = ["string"]
     tunnel_name = ["string"]

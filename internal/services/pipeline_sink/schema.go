@@ -45,10 +45,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"type": schema.StringAttribute{
-				Description: "Specifies the type of sink.\nAvailable values: \"r2\", \"r2_data_catalog\".",
+				Description: "Specifies the type of sink.\nAvailable values: \"r2\", \"r2_data_catalog\", \"basin_catalog\".",
 				Required:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("r2", "r2_data_catalog"),
+					stringvalidator.OneOfCaseInsensitive(
+						"r2",
+						"r2_data_catalog",
+						"basin_catalog",
+					),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

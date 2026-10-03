@@ -30,7 +30,7 @@ resource "cloudflare_zero_trust_gateway_pacfile" "example_zero_trust_gateway_pac
 
 ### Required
 
-- `account_id` (String)
+- `account_id` (String) Specify the Cloudflare account identifier.
 - `contents` (String) Actual contents of the PAC file
 - `name` (String) Name of the PAC file.
 

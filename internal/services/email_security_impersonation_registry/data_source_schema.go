@@ -39,27 +39,33 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"comments": schema.StringAttribute{
-				Computed: true,
+				Description: "Optional note describing the entry.",
+				Computed:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"directory_id": schema.Int64Attribute{
-				Computed: true,
+				Description: "Identifier of the directory the entry was synced from, when directory-synced.",
+				Computed:    true,
 			},
 			"directory_node_id": schema.Int64Attribute{
-				Computed: true,
+				Description: "Identifier of the directory node the entry was synced from, when directory-synced.",
+				Computed:    true,
 			},
 			"email": schema.StringAttribute{
-				Computed: true,
+				Description: "Email address (or pattern) of the protected identity.",
+				Computed:    true,
 			},
 			"external_directory_node_id": schema.StringAttribute{
+				Description:        "Deprecated. External identifier of the directory node.",
 				Computed:           true,
 				DeprecationMessage: "This field is deprecated.",
 			},
 			"is_email_regex": schema.BoolAttribute{
-				Computed: true,
+				Description: "Whether `email` is a regular expression instead of a literal address.",
+				Computed:    true,
 			},
 			"last_modified": schema.StringAttribute{
 				Description:        "Deprecated, use `modified_at` instead. End of life: November 1, 2026.",
@@ -72,10 +78,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"name": schema.StringAttribute{
-				Computed: true,
+				Description: "Display name of the protected identity.",
+				Computed:    true,
 			},
 			"provenance": schema.StringAttribute{
-				Description: `Available values: "A1S_INTERNAL", "SNOOPY-CASB_OFFICE_365", "SNOOPY-OFFICE_365", "SNOOPY-GOOGLE_DIRECTORY".`,
+				Description: "Source the entry was created from.\nAvailable values: \"A1S_INTERNAL\", \"SNOOPY-CASB_OFFICE_365\", \"SNOOPY-OFFICE_365\", \"SNOOPY-GOOGLE_DIRECTORY\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

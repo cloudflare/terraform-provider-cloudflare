@@ -22,6 +22,8 @@ resource "cloudflare_magic_transit_site_wan" "example_magic_transit_site_wan" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   site_id = "023e105f4ecef8ad9ca31a8372d0c353"
   physport = 1
+  health_check_rate = "low"
+  load_balance_inner_flows = true
   name = "name"
   priority = 0
   static_addressing = {
@@ -44,6 +46,9 @@ resource "cloudflare_magic_transit_site_wan" "example_magic_transit_site_wan" {
 
 ### Optional
 
+- `health_check_rate` (String) Magic WAN health check rate for tunnels created on this link. The default value is `mid`.
+Available values: "low", "mid", "high".
+- `load_balance_inner_flows` (Boolean)
 - `name` (String)
 - `priority` (Number)
 - `static_addressing` (Attributes) (optional) if omitted, use DHCP. Submit secondary_address when site is in high availability mode. (see [below for nested schema](#nestedatt--static_addressing))
@@ -51,8 +56,6 @@ resource "cloudflare_magic_transit_site_wan" "example_magic_transit_site_wan" {
 
 ### Read-Only
 
-- `health_check_rate` (String) Magic WAN health check rate for tunnels created on this link. The default value is `mid`.
-Available values: "low", "mid", "high".
 - `id` (String) Identifier
 
 <a id="nestedatt--static_addressing"></a>

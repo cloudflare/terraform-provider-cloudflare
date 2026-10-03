@@ -47,12 +47,12 @@ type HyperdriveConfigCachingDataSourceModel struct {
 }
 
 type HyperdriveConfigIntegrationDataSourceModel struct {
-	DatabaseBranchName types.String `tfsdk:"database_branch_name" json:"database_branch_name,computed"`
-	DatabaseName       types.String `tfsdk:"database_name" json:"database_name,computed"`
-	Integration        types.String `tfsdk:"integration" json:"integration,computed"`
-	OrganizationName   types.String `tfsdk:"organization_name" json:"organization_name,computed"`
-	Scheme             types.String `tfsdk:"scheme" json:"scheme,computed"`
-	CustomDatabaseName types.String `tfsdk:"custom_database_name" json:"custom_database_name,computed"`
+	DatabaseBranchName       types.String `tfsdk:"database_branch_name" json:"database_branch_name,computed"`
+	DatabaseName             types.String `tfsdk:"database_name" json:"database_name,computed"`
+	OrganizationName         types.String `tfsdk:"organization_name" json:"organization_name,computed"`
+	HyperdriveConfigProvider types.String `tfsdk:"hyperdrive_config_provider" json:"provider,computed"`
+	Scheme                   types.String `tfsdk:"scheme" json:"scheme,computed"`
+	CustomDatabaseName       types.String `tfsdk:"custom_database_name" json:"custom_database_name,computed"`
 }
 
 type HyperdriveConfigMTLSDataSourceModel struct {

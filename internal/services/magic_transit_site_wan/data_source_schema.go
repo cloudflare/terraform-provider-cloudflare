@@ -53,6 +53,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"load_balance_inner_flows": schema.BoolAttribute{
+				Computed: true,
+			},
 			"name": schema.StringAttribute{
 				Computed: true,
 			},

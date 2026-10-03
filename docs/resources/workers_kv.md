@@ -21,9 +21,7 @@ resource "cloudflare_workers_kv" "example_workers_kv" {
   namespace_id = "0f2ac74b498b48028cb68387c421e279"
   key_name = "My-Key"
   value = "Some Value"
-  metadata = {
-
-  }
+  metadata = jsonencode({})
 }
 ```
 
@@ -32,9 +30,9 @@ resource "cloudflare_workers_kv" "example_workers_kv" {
 
 ### Required
 
-- `account_id` (String) Identifier.
+- `account_id` (String) ID of the Cloudflare account that owns the Workers KV namespaces.
 - `key_name` (String) A key's name. The name may be at most 512 bytes. All printable, non-whitespace characters are valid. Use percent-encoding to define key names as part of a URL.
-- `namespace_id` (String) Namespace identifier tag.
+- `namespace_id` (String) ID of the Workers KV namespace.
 - `value` (String) A byte sequence to be stored, up to 25 MiB in length.
 
 ### Optional

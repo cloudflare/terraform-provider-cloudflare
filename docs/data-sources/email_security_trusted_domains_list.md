@@ -56,10 +56,10 @@ Read-Only:
 - `created_at` (String)
 - `id` (String) Trusted domain identifier
 - `is_recent` (Boolean) Select to prevent recently registered domains from triggering a Suspicious or Malicious disposition.
-- `is_regex` (Boolean)
+- `is_regex` (Boolean) Whether `pattern` is a regular expression instead of a literal domain.
 - `is_similarity` (Boolean) Select for partner or other approved domains that have similar spelling to your connected domains. Prevents listed domains from triggering a Spoof disposition.
 - `last_modified` (String, Deprecated) Deprecated, use `modified_at` instead. End of life: November 1, 2026.
 - `modified_at` (String)
-- `pattern` (String)
+- `pattern` (String) The domain pattern to trust, e.g. `example.com`.
 
 

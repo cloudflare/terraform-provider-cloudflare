@@ -16,6 +16,7 @@ type ZeroTrustDeviceCustomProfileModel struct {
 	ID                         types.String                                                                     `tfsdk:"id" json:"-,computed"`
 	PolicyID                   types.String                                                                     `tfsdk:"policy_id" json:"policy_id,computed"`
 	AccountID                  types.String                                                                     `tfsdk:"account_id" path:"account_id,required"`
+	ProfileType                types.String                                                                     `tfsdk:"profile_type" json:"profile_type,computed_optional"`
 	Match                      types.String                                                                     `tfsdk:"match" json:"match,optional"`
 	Name                       types.String                                                                     `tfsdk:"name" json:"name,required"`
 	Precedence                 types.Float64                                                                    `tfsdk:"precedence" json:"precedence,computed_optional"`
@@ -33,7 +34,6 @@ type ZeroTrustDeviceCustomProfileModel struct {
 	DisableAutoFallback        types.Bool                                                                       `tfsdk:"disable_auto_fallback" json:"disable_auto_fallback,computed_optional"`
 	Enabled                    types.Bool                                                                       `tfsdk:"enabled" json:"enabled,computed_optional"`
 	ExcludeOfficeIPs           types.Bool                                                                       `tfsdk:"exclude_office_ips" json:"exclude_office_ips,computed_optional"`
-	ProfileType                types.String                                                                     `tfsdk:"profile_type" json:"profile_type,computed_optional"`
 	RegisterInterfaceIPWithDNS types.Bool                                                                       `tfsdk:"register_interface_ip_with_dns" json:"register_interface_ip_with_dns,computed_optional"`
 	SccmVpnBoundarySupport     types.Bool                                                                       `tfsdk:"sccm_vpn_boundary_support" json:"sccm_vpn_boundary_support,computed_optional"`
 	SupportURL                 types.String                                                                     `tfsdk:"support_url" json:"support_url,computed_optional"`

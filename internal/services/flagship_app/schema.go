@@ -29,12 +29,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Cloudflare account ID.",
+				Description:   "Cloudflare account ID that owns the Flagship app.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Required: true,
+				Description: "Name of the Flagship app (1–64 letters, numbers, hyphens, or underscores).",
+				Required:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:      true,

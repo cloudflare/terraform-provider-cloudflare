@@ -18,18 +18,21 @@ type APITokenResultDataSourceEnvelope struct {
 }
 
 type APITokenDataSourceModel struct {
-	ID         types.String                                                  `tfsdk:"id" path:"token_id,computed"`
-	TokenID    types.String                                                  `tfsdk:"token_id" path:"token_id,optional"`
-	ExpiresOn  timetypes.RFC3339                                             `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
-	IssuedOn   timetypes.RFC3339                                             `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
-	LastUsedOn timetypes.RFC3339                                             `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
-	ModifiedOn timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Name       types.String                                                  `tfsdk:"name" json:"name,computed"`
-	NotBefore  timetypes.RFC3339                                             `tfsdk:"not_before" json:"not_before,computed" format:"date-time"`
-	Status     types.String                                                  `tfsdk:"status" json:"status,computed"`
-	Condition  customfield.NestedObject[APITokenConditionDataSourceModel]    `tfsdk:"condition" json:"condition,computed"`
-	Policies   customfield.NestedObjectList[APITokenPoliciesDataSourceModel] `tfsdk:"policies" json:"policies,computed"`
-	Filter     *APITokenFindOneByDataSourceModel                             `tfsdk:"filter"`
+	ID                     types.String                                                  `tfsdk:"id" path:"token_id,computed"`
+	TokenID                types.String                                                  `tfsdk:"token_id" path:"token_id,optional"`
+	CreatorEmailAtCreation types.String                                                  `tfsdk:"creator_email_at_creation" json:"creator_email_at_creation,computed"`
+	ExpiresOn              timetypes.RFC3339                                             `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
+	IssuedOn               timetypes.RFC3339                                             `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
+	LastUsedOn             timetypes.RFC3339                                             `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
+	ModifiedOn             timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name                   types.String                                                  `tfsdk:"name" json:"name,computed"`
+	NotBefore              timetypes.RFC3339                                             `tfsdk:"not_before" json:"not_before,computed" format:"date-time"`
+	ProvisionerID          types.String                                                  `tfsdk:"provisioner_id" json:"provisioner_id,computed"`
+	ProvisionerType        types.String                                                  `tfsdk:"provisioner_type" json:"provisioner_type,computed"`
+	Status                 types.String                                                  `tfsdk:"status" json:"status,computed"`
+	Condition              customfield.NestedObject[APITokenConditionDataSourceModel]    `tfsdk:"condition" json:"condition,computed"`
+	Policies               customfield.NestedObjectList[APITokenPoliciesDataSourceModel] `tfsdk:"policies" json:"policies,computed"`
+	Filter                 *APITokenFindOneByDataSourceModel                             `tfsdk:"filter"`
 }
 
 func (m *APITokenDataSourceModel) toListParams(_ context.Context) (params user.TokenListParams, diags diag.Diagnostics) {
@@ -68,8 +71,14 @@ type APITokenPoliciesPermissionGroupsDataSourceModel struct {
 }
 
 type APITokenPoliciesPermissionGroupsMetaDataSourceModel struct {
-	Key   types.String `tfsdk:"key" json:"key,computed"`
-	Value types.String `tfsdk:"value" json:"value,computed"`
+	Category    types.String      `tfsdk:"category" json:"category,computed"`
+	Deprecated  types.String      `tfsdk:"deprecated" json:"deprecated,computed"`
+	Description types.String      `tfsdk:"description" json:"description,computed"`
+	Editable    types.String      `tfsdk:"editable" json:"editable,computed"`
+	EolAt       timetypes.RFC3339 `tfsdk:"eol_at" json:"eol_at,computed" format:"date-time"`
+	Label       types.String      `tfsdk:"label" json:"label,computed"`
+	Scopes      types.String      `tfsdk:"scopes" json:"scopes,computed"`
+	Visibility  types.String      `tfsdk:"visibility" json:"visibility,computed"`
 }
 
 type APITokenFindOneByDataSourceModel struct {
