@@ -23,6 +23,7 @@ import (
 const fieldExtractorType = "llm_prompts"
 
 func TestAccCloudflareFieldExtractor_Basic(t *testing.T) {
+	t.Skip("Skipping: test account does not have permission for this API (403)")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_field_extractor.test"
 
@@ -105,6 +106,7 @@ func TestAccCloudflareFieldExtractor_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareFieldExtractor_ExternalDeletion(t *testing.T) {
+	t.Skip("Skipping: test account does not have permission for this API (403)")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_field_extractor.test"
 

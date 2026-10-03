@@ -21,6 +21,8 @@ type MagicTransitConnectorModel struct {
 	InterruptWindowDurationHours types.Float64                     `tfsdk:"interrupt_window_duration_hours" json:"interrupt_window_duration_hours,computed_optional"`
 	InterruptWindowHourOfDay     types.Float64                     `tfsdk:"interrupt_window_hour_of_day" json:"interrupt_window_hour_of_day,computed_optional"`
 	Notes                        types.String                      `tfsdk:"notes" json:"notes,computed_optional"`
+	Primary                      types.Bool                        `tfsdk:"primary" json:"primary,computed_optional"`
+	SiteID                       types.String                      `tfsdk:"site_id" json:"site_id,computed_optional"`
 	Timezone                     types.String                      `tfsdk:"timezone" json:"timezone,computed_optional"`
 	InterruptWindowDaysOfWeek    customfield.List[types.String]    `tfsdk:"interrupt_window_days_of_week" json:"interrupt_window_days_of_week,computed_optional"`
 	InterruptWindowEmbargoDates  customfield.List[types.String]    `tfsdk:"interrupt_window_embargo_dates" json:"interrupt_window_embargo_dates,computed_optional"`

@@ -63,7 +63,6 @@ type WorkerObservabilityDataSourceModel struct {
 	HeadSamplingRate  types.Float64                                                      `tfsdk:"head_sampling_rate" json:"head_sampling_rate,computed"`
 	Issues            customfield.NestedObject[WorkerObservabilityIssuesDataSourceModel] `tfsdk:"issues" json:"issues,computed"`
 	Logs              customfield.NestedObject[WorkerObservabilityLogsDataSourceModel]   `tfsdk:"logs" json:"logs,computed"`
-	RedactQueryString types.Bool                                                         `tfsdk:"redact_query_string" json:"redact_query_string,computed"`
 	Traces            customfield.NestedObject[WorkerObservabilityTracesDataSourceModel] `tfsdk:"traces" json:"traces,computed"`
 }
 
