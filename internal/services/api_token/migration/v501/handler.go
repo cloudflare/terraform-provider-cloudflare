@@ -26,7 +26,24 @@ func UpgradeFromV500(ctx context.Context, req resource.UpgradeStateRequest, resp
 	// Sort policies and permission_groups canonically for stable List ordering
 	sortPolicies(state.Policies)
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	// Widen to the live v501 schema. Attributes added to the schema after this
+	// migration was written have no v500 counterpart and stay null until the
+	// next Read.
+	upgraded := APITokenModelV501{
+		ID:         state.ID,
+		IssuedOn:   state.IssuedOn,
+		ModifiedOn: state.ModifiedOn,
+		Name:       state.Name,
+		Policies:   state.Policies,
+		Status:     state.Status,
+		Value:      state.Value,
+		NotBefore:  state.NotBefore,
+		ExpiresOn:  state.ExpiresOn,
+		Condition:  state.Condition,
+		LastUsedOn: state.LastUsedOn,
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &upgraded)...)
 	tflog.Info(ctx, "State upgrade from v500 to v501 completed successfully")
 }
 

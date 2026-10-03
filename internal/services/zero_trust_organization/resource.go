@@ -235,7 +235,7 @@ func (r *ZeroTrustOrganizationResource) ImportState(ctx context.Context, req res
 
 	diags := importpath.ParseImportID(
 		req.ID,
-		"{account_id}",
+		"<account_id>",
 		&accID,
 	)
 	resp.Diagnostics.Append(diags...)

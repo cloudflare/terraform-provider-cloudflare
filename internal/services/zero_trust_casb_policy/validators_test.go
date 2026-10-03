@@ -10,14 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConfigValidators(t *testing.T) {
-	t.Parallel()
-
-	validators := (&ZeroTrustCasbPolicyResource{}).ConfigValidators(context.Background())
-	assert.Len(t, validators, 1)
-	assert.IsType(t, integrationScopeValidator{}, validators[0])
-}
-
 func TestIntegrationScopeInvalid(t *testing.T) {
 	t.Parallel()
 	ctx := context.Background()

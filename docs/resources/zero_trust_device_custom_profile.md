@@ -45,7 +45,6 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
     enabled = true
     masque_endpoints = ["198.51.100.1:443"]
     wireguard_endpoints = ["198.51.100.1:2408"]
-    autoswitch = true
   }
   include = [{
     address = "192.0.2.0/24"

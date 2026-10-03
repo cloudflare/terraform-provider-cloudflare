@@ -356,8 +356,50 @@ func TestAccCloudflareAccessMutualTLSHostnameSettings_Import(t *testing.T) {
 				ResourceName:                         name,
 				ImportState:                          true,
 				ImportStateVerify:                    true,
-				ImportStateId:                        accountID,
+				ImportStateId:                        "accounts/" + accountID,
 				ImportStateVerifyIdentifierAttribute: "account_id",
+				ImportStateVerifyIgnore:              []string{"settings"},
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessMutualTLSHostnameSettings_ImportZone(t *testing.T) {
+	t.Skip(`Skipping due to consistent conflicts: "access.api.error.conflict: previous certificate settings still being updated"`)
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_mtls_hostname_settings.%s", rnd)
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessMutualTLSHostnameSettingsConfig(rnd, cfv1.ZoneIdentifier(zoneID), domain),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+				},
+			},
+			{
+				// Zone-scoped import was unreachable before the import ID gained an
+				// explicit accounts/zones discriminator: a 32-character zone ID was
+				// indistinguishable from an account ID by length.
+				ResourceName:                         name,
+				ImportState:                          true,
+				ImportStateVerify:                    true,
+				ImportStateId:                        "zones/" + zoneID,
+				ImportStateVerifyIdentifierAttribute: "zone_id",
 				ImportStateVerifyIgnore:              []string{"settings"},
 			},
 		},

@@ -15,8 +15,8 @@ One change requires a configuration edit. The rest of this release's schema move
 - **magic_transit_site**: changing `ha_mode` no longer forces replacement. The upstream API added update support, so the site is modified in place.
 - **magic_transit_site_lan**: changing `ha_link` no longer forces replacement, for the same reason.
 - **magic_transit_site_wan**: `health_check_rate` is now configurable (previously read-only).
-- **ai_search_instance**: `hybrid_search_enabled` now defaults to `true` instead of `false`, matching the documented API behaviour for new instances.
-- **zone_dns_settings**: `nameservers.ns_set` is now computed with a default of `1`.
+- **ai_search_instance**: `hybrid_search_enabled` now reflects the API default of `true` for newly created instances. Existing instances keep the value already in state, so upgrading does not plan a change.
+- **zone_dns_settings**: `nameservers.ns_set` is now computed. It applies only to custom nameserver types and is preserved from state when the API does not return it.
 - **zone_dns_settings**: `foundation_dns` is deprecated and will be removed in a future API version. Set `nameservers.type` to `cloudflare.advanced` to turn Advanced Nameservers on, or `cloudflare.standard` to turn it off.
 - **ai_gateway**: the default for `spend_limits.rules.id` changed from `865b4d33` to `00000000`. Configurations that do not set `id` explicitly will show a one-time diff on the next plan.
 - **zero_trust_device_custom_profile**: changing an explicitly configured `profile_type` now forces replacement. The field is set when the profile is created and cannot be changed, so an in-place update was never possible. Configurations that omit `profile_type` are unaffected.
@@ -52,7 +52,7 @@ One change requires a configuration edit. The rest of this release's schema move
 
 - bump cloudflare-go to v7.12.0
 - **calls_turn_app**: add support for `terraform import`
-- **zero_trust_casb_policy**: reject at plan time configurations where `applies_to_all_integrations` is `false` and `integration_ids` is empty
+- **zero_trust_casb_policy**: reject at plan time configurations where `applies_to_all_integrations` is `false` and no integration IDs resolve. Existing policies that omit `integration_ids` and retain IDs in state continue to plan normally.
 
 ### Bug Fixes
 
@@ -79,6 +79,7 @@ One change requires a configuration edit. The rest of this release's schema move
 - **workers_script**: add missing `stream` attribute to the bindings schema
 - **workers_script**: add missing `force` field to the legacy V0 migration struct
 - **zero_trust_access_ai_controls_mcp_server**: only send changed fields on update, so unrelated changes no longer resend and rotate `client_secret`; redact `auth_credentials` and `client_secret` from debug logs
+- **zero_trust_access_mtls_hostname_settings**: import now takes an explicit `accounts/<account_id>` or `zones/<zone_id>` prefix. Account and zone IDs are both 32-character hex, so the previous length-based detection always resolved to account scope and zone-scoped resources could not be imported.
 - **zero_trust_device_custom_profile**: stop split tunnel entries inheriting a mutually exclusive field from state, which caused "host and Address both cannot be present" API errors
 - **zero_trust_organization**: add `warp_auth_non_browser_401` to the v4 source model, unblocking v4 to v5 migration
 - **zero_trust_organization**: ignore `mfa_configuration_allowed`/`service_token_inactivity` on import

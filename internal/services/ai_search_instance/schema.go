@@ -52,8 +52,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:           true,
 				Optional:           true,
 				DeprecationMessage: "This attribute is deprecated.",
-				PlanModifiers:      []planmodifier.Bool{boolplanmodifier.RequiresReplaceIfConfigured()},
-				Default:            booldefault.StaticBool(true),
+				PlanModifiers: []planmodifier.Bool{
+					boolplanmodifier.RequiresReplaceIfConfigured(),
+					// Preserve the value already in state. The API applies the
+					// "true" default for new instances, so a provider-side static
+					// default would otherwise plan false->true on upgrade for
+					// instances created before that default existed.
+					boolplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"ai_gateway_id": schema.StringAttribute{
 				Computed: true,
