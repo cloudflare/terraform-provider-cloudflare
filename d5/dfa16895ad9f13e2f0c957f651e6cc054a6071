@@ -1,0 +1,131 @@
+.github/workflows/migration-tests.yml
+  s_0186c0812ecd82::t_64ba4ee18bbc93 227
+CHANGELOG.md
+  s_0186c0812ecd82::t_45065c6bfc6584 18-19,55,82
+docs/data-sources/worker.md
+  s_0186c0812ecd82::t_601dfec6fa0fa2 70
+docs/resources/account_subscription.md
+  s_0186c0812ecd82::t_b2f68a76e591f7 75
+docs/resources/ai_search_instance.md
+  s_0186c0812ecd82::t_c32510878b311c 241-246
+docs/resources/ai_search_token.md
+  s_0186c0812ecd82::t_03f2e95ef910d5 39-44
+docs/resources/hyperdrive_config.md
+  s_0186c0812ecd82::t_98096b9d889421 35
+docs/resources/leaked_credential_check.md
+  s_0186c0812ecd82::t_c9e6779e4c50ab 40-45
+docs/resources/load_balancer.md
+  s_0186c0812ecd82::t_d2f81a7d766ea3 343
+docs/resources/r2_bucket_sippy.md
+  s_0186c0812ecd82::t_9185bedce269ea 23,29
+docs/resources/secrets_store_secret.md
+  s_0186c0812ecd82::t_6eb63393eddeea 22-24
+docs/resources/share.md
+  s_0186c0812ecd82::t_00cd77c965519b 23
+docs/resources/share_resource.md
+  s_0186c0812ecd82::t_b47b3a1962f7a1 18
+docs/resources/stream_live_input.md
+  s_0186c0812ecd82::t_4e1d9cb2797625 24,26
+docs/resources/workers_cron_trigger.md
+  s_0186c0812ecd82::t_8611410b21a0ed 22
+docs/resources/workers_kv.md
+  s_0186c0812ecd82::t_70d3a17abcc850 24
+docs/resources/zero_trust_access_mtls_hostname_settings.md
+  s_0186c0812ecd82::t_b2ba462daccfc9 58-63
+docs/resources/zero_trust_organization.md
+  s_0186c0812ecd82::t_1d322abce5e58f 158-163
+examples/resources/cloudflare_account_subscription/import.sh
+  s_0186c0812ecd82::t_087db95f37cc5a 1
+examples/resources/cloudflare_account_token/resource.tf
+  s_0186c0812ecd82::t_5f130da77ab943 11,13
+examples/resources/cloudflare_ai_search_instance/import.sh
+  s_0186c0812ecd82::t_f9421e2d458c34 1
+examples/resources/cloudflare_ai_search_token/import.sh
+  s_0186c0812ecd82::t_2b5994b49a11ab 1
+examples/resources/cloudflare_api_token/resource.tf
+  s_0186c0812ecd82::t_92d03bdb2fb604 10,12
+examples/resources/cloudflare_hyperdrive_config/resource.tf
+  s_0186c0812ecd82::t_e5780cf2855aae 17
+examples/resources/cloudflare_image/resource.tf
+  s_0186c0812ecd82::t_6bc5cd46e4833d 6
+examples/resources/cloudflare_leaked_credential_check/import.sh
+  s_0186c0812ecd82::t_941a7b9ebfc92c 1
+examples/resources/cloudflare_load_balancer/import.sh
+  s_0186c0812ecd82::t_95e9937cf1ad19 1
+examples/resources/cloudflare_r2_bucket_sippy/resource.tf
+  s_0186c0812ecd82::t_30d949d875004b 6,12
+examples/resources/cloudflare_secrets_store_secret/resource.tf
+  s_0186c0812ecd82::t_93df690963e8b0 4-6
+examples/resources/cloudflare_share/resource.tf
+  s_0186c0812ecd82::t_b9ea7d0b0a7b3a 9
+examples/resources/cloudflare_share_resource/resource.tf
+  s_0186c0812ecd82::t_877d21df2b4f48 4
+examples/resources/cloudflare_stream_live_input/resource.tf
+  s_0186c0812ecd82::t_2a152deff6488f 6,8
+examples/resources/cloudflare_workers_cron_trigger/resource.tf
+  s_0186c0812ecd82::t_1d4879af005d0c 4
+examples/resources/cloudflare_workers_kv/resource.tf
+  s_0186c0812ecd82::t_c3d3bb8976c463 6
+examples/resources/cloudflare_zero_trust_access_mtls_hostname_settings/import.sh
+  s_0186c0812ecd82::t_6163c3bfd06fb8 1
+examples/resources/cloudflare_zero_trust_organization/import.sh
+  s_0186c0812ecd82::t_0d7717d89fb83d 1
+internal/services/account_token/migration/v501/handler.go
+  s_0186c0812ecd82::t_d00ac51329b000 29-47
+internal/services/account_token/migration/v501/migration_model_parity_test.go
+  s_0186c0812ecd82::t_fcea78ed0c97ac 1-26
+internal/services/account_token/migration/v501/model.go
+  s_0186c0812ecd82::t_7661c127dbb0f7 25-56
+internal/services/ai_search_instance/schema.go
+  s_0186c0812ecd82::t_f787bcab123f6d 55-62
+internal/services/api_token/migration/v501/handler.go
+  s_0186c0812ecd82::t_c2c851757217ed 29-46
+internal/services/api_token/migration/v501/migration_model_parity_test.go
+  s_0186c0812ecd82::t_3462b0244ac630 1-26
+internal/services/api_token/migration/v501/model.go
+  s_0186c0812ecd82::t_87c4adb35c28f9 24-54
+internal/services/email_security_block_sender/migration/v500/migration_model_parity_test.go
+  s_0186c0812ecd82::t_2052bc8e80ef7f 1-26
+internal/services/email_security_impersonation_registry/migration/v500/migration_model_parity_test.go
+  s_0186c0812ecd82::t_9257bf6912fd8a 1-26
+internal/services/email_security_trusted_domains/migration/v500/migration_model_parity_test.go
+  s_0186c0812ecd82::t_e55141f5c9bdbd 1-26
+internal/services/worker/data_source_schema.go
+  s_0186c0812ecd82::t_91b8a381d639af 126-129
+internal/services/zero_trust_access_mtls_hostname_settings/custom.go
+  s_0186c0812ecd82::t_7359cdafb7a550 1-36
+internal/services/zero_trust_access_mtls_hostname_settings/import_test.go
+  s_0186c0812ecd82::t_224ecd3592442c 1-106
+internal/services/zero_trust_access_mtls_hostname_settings/resource.go
+  s_0186c0812ecd82::t_0efe430ec63e6e 229-232,245,251,255,258
+internal/services/zero_trust_access_mtls_hostname_settings/resource_test.go
+  s_0186c0812ecd82::t_165a585d99e0e4 359,367-408
+internal/services/zero_trust_casb_policy/resource.go
+  s_0186c0812ecd82::t_665c045c79e0c4 257-258
+internal/services/zero_trust_casb_policy/validators.go
+  s_0186c0812ecd82::t_749bb13e1b442f 7,13-16,19-29,31-32,34-45,47,50-51
+internal/services/zero_trust_organization/model.go
+  s_0186c0812ecd82::t_01b03821f728c5 22
+internal/services/zero_trust_organization/resource.go
+  s_0186c0812ecd82::t_b57fce6dddda49 238
+internal/services/zero_trust_organization/schema.go
+  s_0186c0812ecd82::t_480d4426e7d763 64-67
+internal/services/zone_dns_settings/schema.go
+  s_0186c0812ecd82::t_0c75bc91425a72 15,116-119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d5dfa16895ad9f13e2f0c957f651e6cc054a6071",
+  "prompts": {},
+  "sessions": {
+    "s_0186c0812ecd82": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f07c11118ffev1vfJ7K3Qfqzjz",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
