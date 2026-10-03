@@ -1,0 +1,26 @@
+.github/workflows/migration-tests.yml
+  h_5f12c8df3da73f 227
+CHANGELOG.md
+  s_37f72cfa16146c::t_2de0c30399ef3a 18-19,55,82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e91ad15131309db043e1455efd16d06f88d33c94",
+  "prompts": {},
+  "humans": {
+    "h_5f12c8df3da73f": {
+      "author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  },
+  "sessions": {
+    "s_37f72cfa16146c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f02b60ac5ffeIYp1YVb6EsDEdy",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
