@@ -181,6 +181,19 @@ func (r *ZeroTrustListResource) Read(ctx context.Context, req resource.ReadReque
 	}
 	data = &env.Result
 
+	// The list metadata endpoint above never returns items. See items.go.
+	items, err := fetchItems(ctx, r.client, data.AccountID.ValueString(), data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("failed to fetch list items", err.Error())
+		return
+	}
+	if items == nil {
+		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found when fetching items and will be removed from state.")
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	data.Items = &items
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -254,6 +267,8 @@ func (r *ZeroTrustListResource) ImportState(ctx context.Context, req resource.Im
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustListResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-
+// ModifyPlan suppresses spurious diffs when list items are semantically
+// unchanged.See items.go for the implementation.
+func (r *ZeroTrustListResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	suppressItemsDiff(ctx, req, resp)
 }
