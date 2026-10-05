@@ -62,6 +62,9 @@ func (d *AccountsDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 
 	env := AccountsResultListDataSourceEnvelope{}
+	seenAccountIDs := map[string]struct{}{}
+	var prevPageFirstID string
+	var prevPageLen int
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
 	if maxItems <= 0 {
@@ -74,16 +77,42 @@ func (d *AccountsDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 
 	for page != nil && len(page.Result) > 0 {
+		pageFirstID := ""
+		if len(page.Result) > 0 {
+			pageFirstID = page.Result[0].ID
+		}
+		if prevPageLen == len(page.Result) && prevPageFirstID != "" && prevPageFirstID == pageFirstID {
+			break
+		}
+
 		bytes := []byte(page.JSON.RawJSON())
 		err = apijson.UnmarshalComputed(bytes, &env)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, env.Result.Elements()...)
+
+		pageValues := env.Result.Elements()
+		newItemsOnPage := 0
+		for i, account := range page.Result {
+			if _, ok := seenAccountIDs[account.ID]; ok {
+				continue
+			}
+			seenAccountIDs[account.ID] = struct{}{}
+			acc = append(acc, pageValues[i])
+			newItemsOnPage++
+			if len(acc) >= maxItems {
+				break
+			}
+		}
 		if len(acc) >= maxItems {
 			break
 		}
+		if newItemsOnPage == 0 {
+			break
+		}
+		prevPageFirstID = pageFirstID
+		prevPageLen = len(page.Result)
 		page, err = page.GetNextPage()
 		if err != nil {
 			resp.Diagnostics.AddError("failed to fetch next page", err.Error())
