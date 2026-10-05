@@ -3,6 +3,7 @@ package r2_custom_domain_test
 import (
 	"context"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -12,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
@@ -84,6 +86,18 @@ func TestAccCloudflareR2CustomDomain_Basic(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("min_tls"), knownvalue.Null()),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ciphers"), knownvalue.Null()),
 				},
+			},
+			{
+				ResourceName: resourceName,
+				ImportStateIdFunc: func(*terraform.State) (string, error) {
+					return strings.Join([]string{accountID, rnd, "default", domainName}, "/"), nil
+				},
+				ImportState:       true,
+				ImportStateVerify: true,
+				// status (ssl/ownership) can transition between steps while the
+				// custom domain is being provisioned, so exclude it from the
+				// import verification diff.
+				ImportStateVerifyIgnore: []string{"status"},
 			},
 		},
 	})
