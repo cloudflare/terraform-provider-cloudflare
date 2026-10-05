@@ -14,9 +14,10 @@ var _ resource.ResourceWithUpgradeState = (*RulesetResource)(nil)
 // UpgradeState registers state upgraders for schema version changes.
 //
 // Schema version history:
-// - v4 Plugin Framework: schema_version=0 or 1 (after retiring rule version/time metadata)
-// - v5 production (v5.0-v5.18): schema_version=1 (GetSchemaVersion(1, 500) returned 1)
-// - v5 current: schema_version=500
+//   - v4 Plugin Framework: schema_version=0 (may contain rule version/time metadata)
+//     or 1 (after retiring that metadata)
+//   - v5 production (v5.0-v5.18): schema_version=1 (GetSchemaVersion(1, 500) returned 1)
+//   - v5 current: schema_version=500
 //
 // IMPORTANT: Both v4 and v5 state can be at schema_version=0 or 1, but they have
 // incompatible formats:

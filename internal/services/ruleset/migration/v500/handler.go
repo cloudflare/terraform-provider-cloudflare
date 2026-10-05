@@ -3,6 +3,7 @@ package v500
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -115,7 +116,7 @@ func upgradeFromV4ViaRawState(ctx context.Context, req resource.UpgradeStateRequ
 // to objects. Lists shared by both versions (rules, algorithms, etc.) are not markers.
 func detectV4RulesetState(req resource.UpgradeStateRequest) (bool, error) {
 	if req.RawState == nil || len(req.RawState.JSON) == 0 {
-		return false, fmt.Errorf("raw ruleset state is missing or empty")
+		return false, errors.New("raw ruleset state is missing or empty")
 	}
 
 	var raw map[string]interface{}
@@ -123,7 +124,7 @@ func detectV4RulesetState(req resource.UpgradeStateRequest) (bool, error) {
 		return false, err
 	}
 	if raw == nil {
-		return false, fmt.Errorf("raw ruleset state must be a JSON object")
+		return false, errors.New("raw ruleset state must be a JSON object")
 	}
 
 	if raw["rules"] == nil {
@@ -131,7 +132,7 @@ func detectV4RulesetState(req resource.UpgradeStateRequest) (bool, error) {
 	}
 	rules, ok := raw["rules"].([]interface{})
 	if !ok {
-		return false, fmt.Errorf("rules must be a JSON array")
+		return false, errors.New("rules must be a JSON array")
 	}
 
 	var hasV4, hasV5 bool
@@ -163,7 +164,7 @@ func detectV4RulesetState(req resource.UpgradeStateRequest) (bool, error) {
 		}
 	}
 	if hasV4 && hasV5 {
-		return false, fmt.Errorf("ruleset state mixes v4 list blocks and v5 objects")
+		return false, errors.New("ruleset state mixes v4 list blocks and v5 objects")
 	}
 	return hasV4, nil
 }
