@@ -10,16 +10,16 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// UpgradeFromV4 handles state upgrades from the v4 Plugin Framework provider (schema_version=1) to v5 (version=500).
+// UpgradeFromV4 handles state upgrades from the v4 Plugin Framework provider to v5 (version=500).
 //
 // The v4 provider used Plugin Framework with ListNestedBlock (stored as arrays in state JSON).
 // This function reads the v4 state using the prior schema, transforms to v5 format, and writes v5 state.
 //
 // IMPORTANT: This must only be called when req.State was populated with the v4 PriorSchema.
-// When called from UpgradeFromV1Ambiguous (where PriorSchema is nil), use
+// When called from UpgradeFromAmbiguous (where PriorSchema is nil), use
 // upgradeFromV4ViaRawState instead.
 func UpgradeFromV4(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	tflog.Info(ctx, "Upgrading cloudflare_ruleset state from v4 Plugin Framework provider (schema_version=1)")
+	tflog.Info(ctx, "Upgrading cloudflare_ruleset state from v4 Plugin Framework provider")
 
 	// Parse v4 state using v4 schema
 	var v4State SourceV4RulesetModel
@@ -40,50 +40,32 @@ func UpgradeFromV4(ctx context.Context, req resource.UpgradeStateRequest, resp *
 	tflog.Info(ctx, "State upgrade from v4 to v5 completed successfully")
 }
 
-// UpgradeFromV5 handles state upgrades from v5 Plugin Framework provider (version=0) to v5 (version=500).
-//
-// This is a no-op upgrade since the schema is compatible - just bumps the version.
-func UpgradeFromV5(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	tflog.Info(ctx, "Upgrading cloudflare_ruleset state to version=500 (no-op)")
-	resp.State.Raw = req.State.Raw
-	tflog.Info(ctx, "State version bump to 500 completed")
-}
-
-// UpgradeFromV1Ambiguous handles schema_version=1 state that is AMBIGUOUS between
-// v4 Plugin Framework format and v5 production format.
-//
-// Both v4 and v5 production (v5.0-v5.18 with GetSchemaVersion(1,500)) stored state
-// at schema_version=1, but with incompatible formats:
-//   - v4: rules[].action_parameters is an ARRAY (ListNestedBlock)
-//   - v5: rules[].action_parameters is an OBJECT (SingleNestedAttribute)
+// UpgradeFromAmbiguous handles schema versions 0 and 1, both of which can contain
+// v4 list-block state or v5 object-shaped state.
 //
 // migrations.go registers this with PriorSchema=nil so the framework skips pre-decoding
 // req.State entirely. Both paths operate exclusively on req.RawState.JSON.
 //
-// Detection: inspect rules[0].action_parameters in raw JSON.
-// If array -> v4 format -> transform via raw state.
-// If object (or absent) -> v5 format -> no-op re-decode with target schema.
-func UpgradeFromV1Ambiguous(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-	tflog.Info(ctx, "Upgrading cloudflare_ruleset state from schema_version=1 (detecting v4 vs v5 format)")
+// Detection examines singleton blocks in every rule, not just the first rule's
+// action_parameters. v5 state is re-decoded unchanged with the target schema.
+func UpgradeFromAmbiguous(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+	tflog.Info(ctx, "Upgrading cloudflare_ruleset state (detecting v4 vs v5 format)")
 
 	isV4, err := detectV4RulesetState(req)
 	if err != nil {
-		// Cannot determine format — default to no-op to avoid data loss.
-		tflog.Warn(ctx, "Could not detect ruleset state format, defaulting to no-op", map[string]interface{}{
-			"error": err.Error(),
-		})
-		// Fall through to no-op path
+		resp.Diagnostics.AddError("Failed to detect ruleset state format", err.Error())
+		return
 	}
 
 	if isV4 {
-		tflog.Info(ctx, "Detected v4 ruleset format (action_parameters is array), performing transformation via raw state")
+		tflog.Info(ctx, "Detected v4 ruleset format, performing transformation via raw state")
 		upgradeFromV4ViaRawState(ctx, req, resp)
 		return
 	}
 
 	// v5 production state: re-decode raw JSON with the target schema.
 	// req.State is nil here (PriorSchema=nil), so we must use req.RawState directly.
-	tflog.Info(ctx, "Detected v5 ruleset format (action_parameters is object), performing no-op version bump via raw state")
+	tflog.Info(ctx, "Detected v5 ruleset format, performing no-op version bump via raw state")
 	targetType := resp.State.Schema.Type().TerraformType(ctx)
 	rawValue, unmarshalErr := req.RawState.Unmarshal(targetType)
 	if unmarshalErr != nil {
@@ -94,7 +76,7 @@ func UpgradeFromV1Ambiguous(ctx context.Context, req resource.UpgradeStateReques
 		return
 	}
 	resp.State.Raw = rawValue
-	tflog.Info(ctx, "State version bump from 1 to 500 completed")
+	tflog.Info(ctx, "State version bump to 500 completed")
 }
 
 // upgradeFromV4ViaRawState performs the v4->v5 transformation by parsing req.RawState
@@ -129,42 +111,59 @@ func upgradeFromV4ViaRawState(ctx context.Context, req resource.UpgradeStateRequ
 	UpgradeFromV4(ctx, syntheticReq, resp)
 }
 
-// detectV4RulesetState returns true if the raw state is in v4 format.
-// v4 format: rules[0].action_parameters is a JSON array [].
-// v5 format: rules[0].action_parameters is a JSON object {} or absent.
+// detectV4RulesetState only probes fields that changed from singleton list blocks
+// to objects. Lists shared by both versions (rules, algorithms, etc.) are not markers.
 func detectV4RulesetState(req resource.UpgradeStateRequest) (bool, error) {
 	if req.RawState == nil || len(req.RawState.JSON) == 0 {
-		return false, nil
+		return false, fmt.Errorf("raw ruleset state is missing or empty")
 	}
 
 	var raw map[string]interface{}
 	if err := json.Unmarshal(req.RawState.JSON, &raw); err != nil {
 		return false, err
 	}
+	if raw == nil {
+		return false, fmt.Errorf("raw ruleset state must be a JSON object")
+	}
 
+	if raw["rules"] == nil {
+		return false, nil
+	}
 	rules, ok := raw["rules"].([]interface{})
-	if !ok || len(rules) == 0 {
-		// No rules — cannot determine format, assume v5 (safe default).
-		return false, nil
-	}
-
-	firstRule, ok := rules[0].(map[string]interface{})
 	if !ok {
-		return false, nil
+		return false, fmt.Errorf("rules must be a JSON array")
 	}
 
-	ap, exists := firstRule["action_parameters"]
-	if !exists || ap == nil {
-		// No action_parameters — could be either format; assume v5.
-		return false, nil
+	var hasV4, hasV5 bool
+	for i, value := range rules {
+		if value == nil {
+			continue
+		}
+		rule, ok := value.(map[string]interface{})
+		if !ok {
+			return false, fmt.Errorf("rules[%d] must be a JSON object", i)
+		}
+		// These computed metadata fields existed only in legacy v4 state.
+		if _, exists := rule["version"]; exists {
+			hasV4 = true
+		}
+		if _, exists := rule["last_updated"]; exists {
+			hasV4 = true
+		}
+		for _, field := range []string{"action_parameters", "logging", "ratelimit", "exposed_credential_check"} {
+			switch rule[field].(type) {
+			case nil:
+			case []interface{}:
+				hasV4 = true
+			case map[string]interface{}:
+				hasV5 = true
+			default:
+				return false, fmt.Errorf("rules[%d].%s must be a JSON array, object, or null", i, field)
+			}
+		}
 	}
-
-	switch ap.(type) {
-	case []interface{}:
-		return true, nil // v4: array
-	case map[string]interface{}:
-		return false, nil // v5: object
-	default:
-		return false, nil
+	if hasV4 && hasV5 {
+		return false, fmt.Errorf("ruleset state mixes v4 list blocks and v5 objects")
 	}
+	return hasV4, nil
 }

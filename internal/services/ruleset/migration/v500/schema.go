@@ -6,7 +6,7 @@ import (
 )
 
 // SourceV4RulesetSchema returns the schema for v4 cloudflare_ruleset resources (Plugin Framework format).
-// This schema represents the state structure from the v4 provider (schema_version=1).
+// This schema accepts both v4 state versions, including retired version-0 metadata.
 //
 // In Plugin Framework, ListNestedBlock with SizeAtMost(1) is stored as an array in state JSON.
 // We represent those blocks as ListNestedAttribute here so the framework can deserialize
@@ -63,6 +63,13 @@ func SourceV4RulesetSchema() schema.Schema {
 						"action": schema.StringAttribute{
 							Optional: true,
 						},
+						// Retired by the v4 0→1 upgrader; accepted for direct v4→v5 upgrades.
+						"last_updated": schema.StringAttribute{
+							Optional: true,
+						},
+						"version": schema.StringAttribute{
+							Optional: true,
+						},
 						// action_parameters is a ListNestedBlock MaxItems:1 in v4 — stored as array
 						"action_parameters": schema.ListNestedAttribute{
 							Optional: true,
@@ -92,6 +99,14 @@ func SourceV4RulesetSchema() schema.Schema {
 										Optional: true,
 									},
 									"content": schema.StringAttribute{
+										Optional: true,
+									},
+									// v4.52.9 writes this key even when its value is null (#7373).
+									"content_converter": schema.BoolAttribute{
+										Optional: true,
+									},
+									// Retired version-0 metadata, intentionally discarded by Transform.
+									"version": schema.StringAttribute{
 										Optional: true,
 									},
 									"content_type": schema.StringAttribute{
