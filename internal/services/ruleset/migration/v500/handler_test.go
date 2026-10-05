@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/stretchr/testify/require"
 )
 
@@ -73,14 +74,17 @@ func TestRulesetUpgradeResourceStateV4(t *testing.T) {
 				require.Equal(t, "true", got.Expression.ValueString())
 				require.True(t, got.Enabled.ValueBool())
 				if version == 0 {
-					encoded, err := state.Raw.MarshalJSON()
-					require.NoError(t, err)
-					var decoded map[string]interface{}
-					require.NoError(t, json.Unmarshal(encoded, &decoded))
-					outRule := decoded["rules"].([]interface{})[0].(map[string]interface{})
+					var decoded map[string]tftypes.Value
+					require.NoError(t, state.Raw.As(&decoded))
+					var outRules []tftypes.Value
+					require.NoError(t, decoded["rules"].As(&outRules))
+					var outRule map[string]tftypes.Value
+					require.NoError(t, outRules[0].As(&outRule))
 					require.NotContains(t, outRule, "version")
 					require.NotContains(t, outRule, "last_updated")
-					require.NotContains(t, outRule["action_parameters"], "version")
+					var outParams map[string]tftypes.Value
+					require.NoError(t, outRule["action_parameters"].As(&outParams))
+					require.NotContains(t, outParams, "version")
 				}
 			})
 		}
