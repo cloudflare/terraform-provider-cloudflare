@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/cloudflare-go/v7/queues"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*QueueConsumerResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*QueueConsumerResource)(nil)
+var _ resource.ResourceWithImportState = (*QueueConsumerResource)(nil)
 
 func NewResource() resource.Resource {
 	return &QueueConsumerResource{}
@@ -207,6 +210,54 @@ func (r *QueueConsumerResource) Delete(ctx context.Context, req resource.DeleteR
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *QueueConsumerResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data = new(QueueConsumerModel)
+
+	path_account_id := ""
+	path_queue_id := ""
+	path_consumer_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<queue_id>/<consumer_id>",
+		&path_account_id,
+		&path_queue_id,
+		&path_consumer_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.QueueID = types.StringValue(path_queue_id)
+	data.ConsumerID = types.StringValue(path_consumer_id)
+
+	consumer, err := r.client.Queues.Consumers.Get(
+		ctx,
+		path_queue_id,
+		path_consumer_id,
+		queues.ConsumerGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	err = apijson.UnmarshalRoot([]byte(consumer.JSON.RawJSON()), data)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	if consumer.DeadLetterQueue != "" {
+		data.DeadLetterQueue = types.StringValue(consumer.DeadLetterQueue)
+	}
+	FixInconsistentCRUDResponses(ctx, data)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
