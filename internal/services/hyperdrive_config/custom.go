@@ -129,7 +129,7 @@ func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resou
 	resp.Diagnostics.Append(resp.Plan.Set(ctx, &plan)...)
 }
 
-// originsEqual compares two origin models, ignoring write-only fields
+// originsEqual compares all configurable fields in two origin models.
 func originsEqual(a, b *HyperdriveConfigOriginModel) bool {
 	if a == nil && b == nil {
 		return true
@@ -139,12 +139,13 @@ func originsEqual(a, b *HyperdriveConfigOriginModel) bool {
 	}
 	return a.Database.Equal(b.Database) &&
 		a.Host.Equal(b.Host) &&
+		a.Password.Equal(b.Password) &&
 		a.Port.Equal(b.Port) &&
 		a.Scheme.Equal(b.Scheme) &&
 		a.User.Equal(b.User) &&
-		a.AccessClientID.Equal(b.AccessClientID)
-	// Note: Password and AccessClientSecret are intentionally not compared
-	// as they are write-only and we preserve them from state
+		a.AccessClientID.Equal(b.AccessClientID) &&
+		a.AccessClientSecret.Equal(b.AccessClientSecret) &&
+		a.ServiceID.Equal(b.ServiceID)
 }
 
 // cachingEqual compares two caching models
@@ -183,4 +184,3 @@ func mtlsEqual(a, b *HyperdriveConfigMTLSModel) bool {
 		a.MTLSCertificateID.Equal(b.MTLSCertificateID) &&
 		a.Sslmode.Equal(b.Sslmode)
 }
-
