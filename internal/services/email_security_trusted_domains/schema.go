@@ -37,15 +37,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"is_recent": schema.BoolAttribute{
 				Description: "Select to prevent recently registered domains from triggering a Suspicious or Malicious disposition.",
-				Optional:    true,
+				Required:    true,
 			},
 			"is_regex": schema.BoolAttribute{
-				Optional: true,
 				Description: "Whether `pattern` is a regular expression instead of a literal domain.",
+				Required:    true,
 			},
 			"is_similarity": schema.BoolAttribute{
 				Description: "Select for partner or other approved domains that have similar spelling to your connected domains. Prevents listed domains from triggering a Spoof disposition.",
-				Optional:    true,
+				Required:    true,
 			},
 			"pattern": schema.StringAttribute{
 				Description: "The domain pattern to trust, e.g. `example.com`.",
