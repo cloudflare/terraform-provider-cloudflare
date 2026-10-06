@@ -132,4 +132,4 @@ jobs:
       - name: Run registry sync
         run: ./scripts/trigger-terraform-registry-sync
         env:
-          TERRAFORM_REGISTRY_COOKIE: ${{ secrets.TERRAFORM_REGISTRY_COOKIE }}
+          TERRAFORM_REGISTRY_COOKIE: ${{ secrets.TERRAFORM_REGISTRY_COOKIE_CANDIDATE }}
