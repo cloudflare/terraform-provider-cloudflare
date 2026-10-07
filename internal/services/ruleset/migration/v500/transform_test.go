@@ -97,3 +97,24 @@ func stringSet(values ...string) types.Set {
 	}
 	return types.SetValueMust(types.StringType, attributes)
 }
+
+func TestTransformContentConverterPreservesValues(t *testing.T) {
+	t.Parallel()
+	for name, value := range map[string]types.Bool{
+		"null": types.BoolNull(), "unknown": types.BoolUnknown(),
+		"false": types.BoolValue(false), "true": types.BoolValue(true),
+	} {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			result, diags := transformActionParameters(context.Background(), &SourceV4ActionParametersModel{
+				ContentConverter: value,
+			})
+			if diags.HasError() {
+				t.Fatalf("unexpected diagnostics: %v", diags)
+			}
+			if !value.Equal(result.ContentConverter) {
+				t.Fatalf("content_converter = %v, want %v", result.ContentConverter, value)
+			}
+		})
+	}
+}

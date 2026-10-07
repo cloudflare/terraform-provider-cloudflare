@@ -52,6 +52,72 @@ var v4RatelimitConfig string
 //go:embed testdata/v5_ratelimit.tf
 var v5RatelimitConfig string
 
+// TestMigrateRulesetContentConverter creates real v4.52.9 state, including the
+// asset_name/content_converter null padding that older source versions omit.
+// The ignored-rules case reproduces #7373's externally managed rule configuration.
+func TestMigrateRulesetContentConverter(t *testing.T) {
+	for _, tc := range []struct {
+		name         string
+		value        bool
+		ignoredRules bool
+	}{
+		{name: "enabled", value: true},
+		{name: "disabled", value: false},
+		{name: "ignored_rules", value: true, ignoredRules: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+			rnd := utils.GenerateRandomResourceName()
+			tmpDir := t.TempDir()
+			config := fmt.Sprintf(`resource "cloudflare_ruleset" "%s" {
+  zone_id = "%s"
+  name = "Migration content converter %s"
+  kind = "zone"
+  phase = "http_config_settings"
+  rules {
+    action = "set_config"
+    expression = "true"
+    ref = "migration-content-converter"
+    action_parameters {
+      content_converter = %t
+    }
+  }
+}`, rnd, zoneID, rnd, tc.value)
+			external := map[string]resource.ExternalProvider{
+				"cloudflare": {Source: "cloudflare/cloudflare", VersionConstraint: "4.52.9"},
+			}
+			steps := []resource.TestStep{{ExternalProviders: external, Config: config}}
+			if tc.ignoredRules {
+				config = fmt.Sprintf(`resource "cloudflare_ruleset" "%s" {
+  zone_id = "%s"
+  name = "Migration content converter %s"
+  kind = "zone"
+  phase = "http_config_settings"
+  lifecycle {
+    ignore_changes = [rules]
+  }
+}`, rnd, zoneID, rnd)
+				steps = append(steps, resource.TestStep{ExternalProviders: external, Config: config})
+			}
+			steps = append(steps, acctest.MigrationV2TestStep(t, config, tmpDir, "4.52.9", "v4", "v5", []statecheck.StateCheck{
+				statecheck.ExpectKnownValue("cloudflare_ruleset."+rnd,
+					tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action_parameters").AtMapKey("content_converter"),
+					knownvalue.Bool(tc.value)),
+				statecheck.ExpectKnownValue("cloudflare_ruleset."+rnd,
+					tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("ref"), knownvalue.StringExact("migration-content-converter")),
+			}))
+			resource.Test(t, resource.TestCase{
+				PreCheck: func() {
+					acctest.TestAccPreCheck(t)
+					acctest.TestAccPreCheck_ZoneID(t)
+				},
+				WorkingDir: tmpDir,
+				Steps:      steps,
+			})
+		})
+	}
+}
+
 // TestMigrateRulesetBasic tests migration of a minimal ruleset (no rules).
 // Covers: schema version bump, top-level scalar fields.
 func TestMigrateRulesetBasic(t *testing.T) {

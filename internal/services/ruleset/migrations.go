@@ -14,37 +14,29 @@ var _ resource.ResourceWithUpgradeState = (*RulesetResource)(nil)
 // UpgradeState registers state upgraders for schema version changes.
 //
 // Schema version history:
-// - v4 Plugin Framework: schema_version=1 (after internal V0->V1 ratelimit rename)
-// - v5 production (v5.0-v5.18): schema_version=1 (GetSchemaVersion(1, 500) returned 1)
-// - v5 current: schema_version=500
+//   - v4 Plugin Framework: schema_version=0 (may contain rule version/time metadata)
+//     or 1 (after retiring that metadata)
+//   - v5 production (v5.0-v5.18): schema_version=1 (GetSchemaVersion(1, 500) returned 1)
+//   - v5 current: schema_version=500
 //
-// IMPORTANT: Both v4 and v5 production state are at schema_version=1, but they have
+// IMPORTANT: Both v4 and v5 state can be at schema_version=0 or 1, but they have
 // incompatible formats:
 // - v4: action_parameters stored as ARRAY (ListNestedBlock)
 // - v5: action_parameters stored as OBJECT (SingleNestedAttribute)
 //
 // Upgrade paths:
-// 0: v5 fresh resources (schema_version=0) -> no-op
-// 1: AMBIGUOUS - v4 format (array) or v5 production format (object), detected at runtime
+// 0, 1: AMBIGUOUS - v4 format (array) or v5 format (object), detected at runtime
 func (r *RulesetResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	v5Schema := ResourceSchema(ctx)
-
 	return map[int64]resource.StateUpgrader{
-		// Handle fresh v5 resources (version 0 -> 500): no-op.
+		// Neither version identifies the format. Skip framework pre-decoding so
+		// v4 list blocks are not rejected by the v5 object schema (#7135).
 		0: {
-			PriorSchema:   &v5Schema,
-			StateUpgrader: v500.UpgradeFromV5,
+			PriorSchema:   nil,
+			StateUpgrader: v500.UpgradeFromAmbiguous,
 		},
-
-		// Handle schema_version=1 -- ambiguous between v4 and v5 production.
-		//
-		// PriorSchema is nil so the framework skips pre-decoding req.State entirely.
-		// Both paths are handled via req.RawState.JSON in UpgradeFromV1Ambiguous:
-		// - v4 format (action_parameters is array): full transform via raw state
-		// - v5 format (action_parameters is object): no-op re-decode with target schema
 		1: {
 			PriorSchema:   nil,
-			StateUpgrader: v500.UpgradeFromV1Ambiguous,
+			StateUpgrader: v500.UpgradeFromAmbiguous,
 		},
 	}
 }
