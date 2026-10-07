@@ -220,6 +220,7 @@ func (r *DNSRecordResource) Read(ctx context.Context, req resource.ReadRequest, 
 	}
 
 	deriveAndSaveZoneName(ctx, priorName, data.Name.ValueString(), resp.Private)
+	normalizeIncludeShadowMetadata(data)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
