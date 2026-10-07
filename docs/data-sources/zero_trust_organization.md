@@ -42,8 +42,8 @@ data "cloudflare_zero_trust_organization" "example_zero_trust_organization" {
 - `is_ui_read_only` (Boolean) Lock all settings as Read-Only in the Dashboard, regardless of user permission. Updates may only be made via the API or Terraform for this account when enabled.
 - `login_design` (Attributes) (see [below for nested schema](#nestedatt--login_design))
 - `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings for an organization. (see [below for nested schema](#nestedatt--mfa_config))
+- `mfa_piv_key_requirements` (Attributes) Configures PIV key requirements for MFA using hardware security keys. (see [below for nested schema](#nestedatt--mfa_piv_key_requirements))
 - `mfa_required_for_all_apps` (Boolean) Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured. Note: 'allowed_authenticators' cannot contain only the infrastructure SSH authenticators ('piv_key' and 'ssh_fido2_key') if the organization has any non-infrastructure applications.
-- `mfa_ssh_piv_key_requirements` (Attributes) Configures SSH PIV key requirements for MFA using hardware security keys. (see [below for nested schema](#nestedatt--mfa_ssh_piv_key_requirements))
 - `name` (String) The name of your Zero Trust organization.
 - `service_token_inactivity` (Attributes) Configures automatic enforcement for inactive service tokens. A service token is inactive if no policy references it, and it has not successfully authenticated with an Access application during the selected inactivity period. This setting applies to every service token in your Zero Trust account. (see [below for nested schema](#nestedatt--service_token_inactivity))
 - `session_duration` (String) The amount of time that tokens issued for applications will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.
@@ -86,14 +86,14 @@ Read-Only:
 - `session_duration` (String) Defines the duration of an MFA session. Must be in minutes (m) or hours (h). Minimum: 0m. Maximum: 720h (30 days). Examples:`5m` or `24h`.
 
 
-<a id="nestedatt--mfa_ssh_piv_key_requirements"></a>
-### Nested Schema for `mfa_ssh_piv_key_requirements`
+<a id="nestedatt--mfa_piv_key_requirements"></a>
+### Nested Schema for `mfa_piv_key_requirements`
 
 Read-Only:
 
 - `pin_policy` (String) Defines when a PIN is required to use the SSH key. Valid values: `never` (no PIN required), `once` (PIN required once per session), `always` (PIN required for each use).
 Available values: "never", "once", "always".
-- `require_fips_device` (Boolean) Requires the SSH PIV key to be stored on a FIPS 140-2 Level 1 or higher validated device.
+- `require_fips_device` (Boolean) Requires the PIV key to be stored on a FIPS 140-2 Level 1 or higher validated device.
 - `ssh_key_size` (List of Number) Specifies the allowed SSH key sizes in bits. Valid sizes depend on key type. Ed25519 has a fixed key size and does not accept this parameter.
 - `ssh_key_type` (List of String) Specifies the allowed SSH key types. Valid values are `ecdsa`, `ed25519`, and `rsa`.
 - `touch_policy` (String) Defines when physical touch is required to use the SSH key. Valid values: `never` (no touch required), `always` (touch required for each use), `cached` (touch cached for 15 seconds).
@@ -109,5 +109,4 @@ Read-Only:
 Available values: "disable", "delete".
 - `enabled` (Boolean) Whether automatic enforcement for inactive service tokens is enabled.
 - `inactivity_threshold_days` (Number) The number of days a service token must be inactive before the configured action is applied.
-
 

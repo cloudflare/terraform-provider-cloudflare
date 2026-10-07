@@ -26,12 +26,12 @@ type ZeroTrustOrganizationModel struct {
 	CustomPages                            *ZeroTrustOrganizationCustomPagesModel            `tfsdk:"custom_pages" json:"custom_pages,optional"`
 	LoginDesign                            *ZeroTrustOrganizationLoginDesignModel            `tfsdk:"login_design" json:"login_design,optional"`
 	MfaConfig                              *ZeroTrustOrganizationMfaConfigModel              `tfsdk:"mfa_config" json:"mfa_config,optional"`
-	MfaSSHPivKeyRequirements               *ZeroTrustOrganizationMfaSSHPivKeyRequirementsModel  `tfsdk:"mfa_ssh_piv_key_requirements" json:"mfa_ssh_piv_key_requirements,optional"`
+	MfaPivKeyRequirements                  *ZeroTrustOrganizationMfaPivKeyRequirementsModel  `tfsdk:"mfa_piv_key_requirements" json:"mfa_piv_key_requirements,optional"`
 	ServiceTokenInactivity                 *ZeroTrustOrganizationServiceTokenInactivityModel `tfsdk:"service_token_inactivity" json:"service_token_inactivity,optional"`
 	AllowAuthenticateViaWARP               types.Bool                                        `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp,computed_optional"`
 	AutoRedirectToIdentity                 types.Bool                                        `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed_optional"`
 	IsUIReadOnly                           types.Bool                                        `tfsdk:"is_ui_read_only" json:"is_ui_read_only,computed_optional"`
-	MfaConfigurationAllowed                types.Bool                                          `tfsdk:"mfa_configuration_allowed" json:"mfa_configuration_allowed,computed_optional"`
+	MfaConfigurationAllowed                types.Bool                                        `tfsdk:"mfa_configuration_allowed" json:"mfa_configuration_allowed,computed_optional"`
 	MfaRequiredForAllApps                  types.Bool                                        `tfsdk:"mfa_required_for_all_apps" json:"mfa_required_for_all_apps,computed_optional"`
 	UIReadOnlyToggleReason                 types.String                                      `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason,computed_optional"`
 	WarpAuthNonBrowser401                  types.Bool                                        `tfsdk:"warp_auth_non_browser_401" json:"warp_auth_non_browser_401,computed_optional"`
@@ -66,7 +66,7 @@ type ZeroTrustOrganizationMfaConfigModel struct {
 	SessionDuration            types.String    `tfsdk:"session_duration" json:"session_duration,optional"`
 }
 
-type ZeroTrustOrganizationMfaSSHPivKeyRequirementsModel struct {
+type ZeroTrustOrganizationMfaPivKeyRequirementsModel struct {
 	PinPolicy         types.String    `tfsdk:"pin_policy" json:"pin_policy,optional"`
 	RequireFipsDevice types.Bool      `tfsdk:"require_fips_device" json:"require_fips_device,optional"`
 	SSHKeySize        *[]types.Int64  `tfsdk:"ssh_key_size" json:"ssh_key_size,optional"`
