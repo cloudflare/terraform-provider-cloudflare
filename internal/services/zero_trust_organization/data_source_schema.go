@@ -43,7 +43,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"auth_domain": schema.StringAttribute{
-				Description: "The unique subdomain assigned to your Zero Trust organization. If omitted on creation, a unique subdomain is auto-generated in the format `adjective-noun-hex4` (e.g. `frosty-moon-7a3b.cloudflareaccess.com`).",
+				Description: "The unique subdomain assigned to your Zero Trust organization.",
 				Computed:    true,
 			},
 			"auto_redirect_to_identity": schema.BoolAttribute{
@@ -63,7 +63,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "The name of your Zero Trust organization. When omitted on creation, defaults to the provided auth_domain; when both are omitted, defaults to the auto-generated subdomain slug (e.g. frosty-moon-7a3b).",
+				Description: "The name of your Zero Trust organization.",
 				Computed:    true,
 			},
 			"session_duration": schema.StringAttribute{

@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -72,7 +73,7 @@ type ZeroTrustDLPCustomProfileEntriesDataSourceModel struct {
 	Variant       customfield.NestedObject[ZeroTrustDLPCustomProfileEntriesVariantDataSourceModel]    `tfsdk:"variant" json:"variant,computed"`
 	CaseSensitive types.Bool                                                                          `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	Secret        types.Bool                                                                          `tfsdk:"secret" json:"secret,computed"`
-	WordList      customfield.List[types.String]                                                      `tfsdk:"word_list" json:"word_list,computed"`
+	WordList      jsontypes.Normalized                                                                `tfsdk:"word_list" json:"word_list,computed"`
 }
 
 type ZeroTrustDLPCustomProfileEntriesPatternDataSourceModel struct {
@@ -111,7 +112,7 @@ type ZeroTrustDLPCustomProfileSharedEntriesDataSourceModel struct {
 	Variant       customfield.NestedObject[ZeroTrustDLPCustomProfileSharedEntriesVariantDataSourceModel]    `tfsdk:"variant" json:"variant,computed"`
 	CaseSensitive types.Bool                                                                                `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	Secret        types.Bool                                                                                `tfsdk:"secret" json:"secret,computed"`
-	WordList      customfield.List[types.String]                                                            `tfsdk:"word_list" json:"word_list,computed"`
+	WordList      jsontypes.Normalized                                                                      `tfsdk:"word_list" json:"word_list,computed"`
 }
 
 type ZeroTrustDLPCustomProfileSharedEntriesPatternDataSourceModel struct {

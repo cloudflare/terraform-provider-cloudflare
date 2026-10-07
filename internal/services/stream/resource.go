@@ -74,6 +74,7 @@ func (r *StreamResource) Create(ctx context.Context, req resource.CreateRequest,
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+
 	res := new(http.Response)
 	err = r.client.Stream.New(
 		ctx,

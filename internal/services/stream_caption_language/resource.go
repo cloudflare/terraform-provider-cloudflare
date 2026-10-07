@@ -61,21 +61,15 @@ func (r *StreamCaptionLanguageResource) Create(ctx context.Context, req resource
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
 	res := new(http.Response)
 	env := StreamCaptionLanguageResultEnvelope{*data}
-	_, err = r.client.Stream.Captions.Language.New(
+	_, err := r.client.Stream.Captions.Language.New(
 		ctx,
 		data.Identifier.ValueString(),
 		data.Language.ValueString(),
 		stream.CaptionLanguageNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

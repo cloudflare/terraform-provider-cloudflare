@@ -52,7 +52,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"expiration_ttl": schema.Float64Attribute{
-				Description: "Expires the key after a number of seconds. Must be at least 60.",
+				Description: "Number of seconds until the key expires. Must be at least 60. Takes precedence over `expiration` when both are specified.",
 				Optional:    true,
 				Validators: []validator.Float64{
 					float64validator.AtLeast(60),

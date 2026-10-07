@@ -43,6 +43,5 @@ type WorkersKVNamespacesResultDataSourceModel struct {
 	ID                  types.String `tfsdk:"id" json:"id,computed"`
 	Title               types.String `tfsdk:"title" json:"title,computed"`
 	Jurisdiction        types.String `tfsdk:"jurisdiction" json:"jurisdiction,computed"`
-	Mode                types.String `tfsdk:"mode" json:"mode,computed"`
 	SupportsURLEncoding types.Bool   `tfsdk:"supports_url_encoding" json:"supports_url_encoding,computed"`
 }

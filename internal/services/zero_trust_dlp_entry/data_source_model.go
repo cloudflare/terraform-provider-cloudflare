@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -32,11 +33,11 @@ type ZeroTrustDLPEntryDataSourceModel struct {
 	Type          types.String                                                           `tfsdk:"type" json:"type,computed"`
 	UpdatedAt     timetypes.RFC3339                                                      `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	UploadStatus  types.String                                                           `tfsdk:"upload_status" json:"upload_status,computed"`
-	WordList      customfield.List[types.String]                                         `tfsdk:"word_list" json:"word_list,computed"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPEntryConfidenceDataSourceModel]   `tfsdk:"confidence" json:"confidence,computed"`
 	Pattern       customfield.NestedObject[ZeroTrustDLPEntryPatternDataSourceModel]      `tfsdk:"pattern" json:"pattern,computed"`
 	Profiles      customfield.NestedObjectList[ZeroTrustDLPEntryProfilesDataSourceModel] `tfsdk:"profiles" json:"profiles,computed"`
 	Variant       customfield.NestedObject[ZeroTrustDLPEntryVariantDataSourceModel]      `tfsdk:"variant" json:"variant,computed"`
+	WordList      jsontypes.Normalized                                                   `tfsdk:"word_list" json:"word_list,computed"`
 }
 
 func (m *ZeroTrustDLPEntryDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DLPEntryGetParams, diags diag.Diagnostics) {

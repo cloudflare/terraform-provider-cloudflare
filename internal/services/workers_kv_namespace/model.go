@@ -15,7 +15,6 @@ type WorkersKVNamespaceModel struct {
 	ID                  types.String `tfsdk:"id" json:"id,computed"`
 	AccountID           types.String `tfsdk:"account_id" path:"account_id,required"`
 	Jurisdiction        types.String `tfsdk:"jurisdiction" json:"jurisdiction,optional"`
-	Mode                types.String `tfsdk:"mode" json:"mode,optional"`
 	Title               types.String `tfsdk:"title" json:"title,required"`
 	SupportsURLEncoding types.Bool   `tfsdk:"supports_url_encoding" json:"supports_url_encoding,computed"`
 }

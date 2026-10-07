@@ -81,6 +81,7 @@ func (r *ObservatoryScheduledTestResource) Create(ctx context.Context, req resou
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+
 	res := new(http.Response)
 	env := ObservatoryScheduledTestResultEnvelope{*data}
 	_, err = r.client.Speed.Schedule.New(

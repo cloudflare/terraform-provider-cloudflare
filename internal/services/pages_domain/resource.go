@@ -114,21 +114,15 @@ func (r *PagesDomainResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
 	res := new(http.Response)
 	env := PagesDomainResultEnvelope{*data}
-	_, err = r.client.Pages.Projects.Domains.Edit(
+	_, err := r.client.Pages.Projects.Domains.Edit(
 		ctx,
 		data.ProjectName.ValueString(),
 		data.Name.ValueString(),
 		pages.ProjectDomainEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

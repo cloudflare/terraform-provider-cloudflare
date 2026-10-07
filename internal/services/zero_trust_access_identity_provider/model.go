@@ -69,7 +69,6 @@ type ZeroTrustAccessIdentityProviderConfigModel struct {
 	SSOTargetURL             types.String                                                   `tfsdk:"sso_target_url" json:"sso_target_url,optional"`
 	RedirectURL              types.String                                                   `tfsdk:"redirect_url" json:"redirect_url,computed"`
 	RestrictToAccountMembers types.Bool                                                     `tfsdk:"restrict_to_account_members" json:"restrict_to_account_members,computed_optional"`
-	LoginPageAutoPrompt      types.Bool                                                     `tfsdk:"login_page_auto_prompt" json:"login_page_auto_prompt,computed_optional"`
 }
 
 type ZeroTrustAccessIdentityProviderConfigHeaderAttributesModel struct {

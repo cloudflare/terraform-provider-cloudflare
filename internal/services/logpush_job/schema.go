@@ -192,7 +192,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						ElementType: types.StringType,
 					},
 					"merge_subrequests": schema.BoolAttribute{
-						Description: "If set to true, subrequests will be merged into the parent request. Only supported for the `http_requests` dataset. Not supported for account-scoped jobs.",
+						Description: "If set to true, subrequests will be merged into the parent request. Only supported for the `http_requests` dataset.",
 						Optional:    true,
 					},
 					"output_type": schema.StringAttribute{

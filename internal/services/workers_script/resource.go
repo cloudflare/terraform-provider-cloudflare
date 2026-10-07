@@ -119,14 +119,21 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
 		return
 	}
+	params := workers.ScriptUpdateParams{
+		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	}
+
+	if !data.BindingsInherit.IsNull() && !data.BindingsInherit.IsUnknown() {
+		params.BindingsInherit = cloudflare.F(
+			workers.ScriptUpdateParamsBindingsInherit(data.BindingsInherit.ValueString()),
+		)
+	}
 	res := new(http.Response)
 	env := WorkersScriptResultEnvelope{*data}
 	_, err = r.client.Workers.Scripts.Update(
 		ctx,
 		data.ScriptName.ValueString(),
-		workers.ScriptUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody(formDataContentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -226,14 +233,21 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
 		return
 	}
+	params := workers.ScriptUpdateParams{
+		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	}
+
+	if !data.BindingsInherit.IsNull() && !data.BindingsInherit.IsUnknown() {
+		params.BindingsInherit = cloudflare.F(
+			workers.ScriptUpdateParamsBindingsInherit(data.BindingsInherit.ValueString()),
+		)
+	}
 	res := new(http.Response)
 	env := WorkersScriptResultEnvelope{*data}
 	_, err = r.client.Workers.Scripts.Update(
 		ctx,
 		data.ScriptName.ValueString(),
-		workers.ScriptUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody(formDataContentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
