@@ -24,6 +24,8 @@ const (
 	readTestScriptName = "my-worker"
 	readTestIndexJS    = `import { helper } from "./util.js"; export default { fetch() { return new Response(helper()); } };`
 	readTestUtilJS     = `export function helper() { return "hi"; }`
+
+	readTestServiceWorkerJS = `addEventListener("fetch", (e) => e.respondWith(new Response("hi")));`
 )
 
 type readTestPart struct {
@@ -155,35 +157,96 @@ func assertModuleRead(t *testing.T, result workers_script.WorkersScriptModel) {
 	}
 }
 
-func TestRead_StaleMainModuleUsesEntrypoint(t *testing.T) {
-	ctx := context.Background()
-	state := makeWorkersScriptState(t, ctx, map[string]tftypes.Value{
-		"main_module": tftypes.NewValue(tftypes.String, "worker.js"),
-		"content":     tftypes.NewValue(tftypes.String, "stale"),
-	})
-
-	result := readWorkersScript(t, ctx, "index.js", readTestModuleParts, state)
-	assertModuleRead(t, result)
+func assertServiceWorkerRead(t *testing.T, result workers_script.WorkersScriptModel) {
+	t.Helper()
+	if !result.MainModule.IsNull() {
+		t.Errorf("main_module = %q, want null", result.MainModule.ValueString())
+	}
+	if got := result.BodyPart.ValueString(); got != "worker.js" {
+		t.Errorf("body_part = %q, want %q", got, "worker.js")
+	}
+	if got := result.Content.ValueString(); got != readTestServiceWorkerJS {
+		t.Errorf("content = %q, want worker.js content", got)
+	}
 }
 
-func TestRead_MainModuleMatchesEntrypoint(t *testing.T) {
-	ctx := context.Background()
-	state := makeWorkersScriptState(t, ctx, map[string]tftypes.Value{
-		"main_module": tftypes.NewValue(tftypes.String, "index.js"),
-		"content":     tftypes.NewValue(tftypes.String, readTestIndexJS),
-	})
-
-	result := readWorkersScript(t, ctx, "index.js", readTestModuleParts, state)
-	assertModuleRead(t, result)
+var readTestServiceWorkerParts = []readTestPart{
+	{name: "worker.js", content: readTestServiceWorkerJS, contentType: "application/javascript"},
 }
 
-func TestRead_NoEntrypointUsesStateMainModule(t *testing.T) {
-	ctx := context.Background()
-	state := makeWorkersScriptState(t, ctx, map[string]tftypes.Value{
-		"main_module": tftypes.NewValue(tftypes.String, "index.js"),
-		"content":     tftypes.NewValue(tftypes.String, readTestIndexJS),
-	})
-
-	result := readWorkersScript(t, ctx, "", readTestModuleParts, state)
-	assertModuleRead(t, result)
+func TestRead_MainModule(t *testing.T) {
+	tests := []struct {
+		name       string
+		state      map[string]tftypes.Value
+		entrypoint string
+		parts      []readTestPart
+		assert     func(t *testing.T, result workers_script.WorkersScriptModel)
+	}{
+		{
+			name: "stale main_module uses entrypoint",
+			state: map[string]tftypes.Value{
+				"main_module": tftypes.NewValue(tftypes.String, "worker.js"),
+				"content":     tftypes.NewValue(tftypes.String, "stale"),
+			},
+			entrypoint: "index.js",
+			parts:      readTestModuleParts,
+			assert:     assertModuleRead,
+		},
+		{
+			name: "main_module matches entrypoint",
+			state: map[string]tftypes.Value{
+				"main_module": tftypes.NewValue(tftypes.String, "index.js"),
+				"content":     tftypes.NewValue(tftypes.String, readTestIndexJS),
+			},
+			entrypoint: "index.js",
+			parts:      readTestModuleParts,
+			assert:     assertModuleRead,
+		},
+		{
+			name: "no entrypoint uses state main_module",
+			state: map[string]tftypes.Value{
+				"main_module": tftypes.NewValue(tftypes.String, "index.js"),
+				"content":     tftypes.NewValue(tftypes.String, readTestIndexJS),
+			},
+			parts:  readTestModuleParts,
+			assert: assertModuleRead,
+		},
+		{
+			name: "service worker with entrypoint stays body_part",
+			state: map[string]tftypes.Value{
+				"body_part": tftypes.NewValue(tftypes.String, "worker.js"),
+				"content":   tftypes.NewValue(tftypes.String, readTestServiceWorkerJS),
+			},
+			entrypoint: "worker.js",
+			parts:      readTestServiceWorkerParts,
+			assert:     assertServiceWorkerRead,
+		},
+		{
+			name: "service worker with stale body_part uses entrypoint",
+			state: map[string]tftypes.Value{
+				"body_part": tftypes.NewValue(tftypes.String, "script"),
+				"content":   tftypes.NewValue(tftypes.String, "stale"),
+			},
+			entrypoint: "worker.js",
+			parts:      readTestServiceWorkerParts,
+			assert:     assertServiceWorkerRead,
+		},
+		{
+			name: "service worker without entrypoint uses state body_part",
+			state: map[string]tftypes.Value{
+				"body_part": tftypes.NewValue(tftypes.String, "worker.js"),
+				"content":   tftypes.NewValue(tftypes.String, readTestServiceWorkerJS),
+			},
+			parts:  readTestServiceWorkerParts,
+			assert: assertServiceWorkerRead,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx := context.Background()
+			state := makeWorkersScriptState(t, ctx, tt.state)
+			result := readWorkersScript(t, ctx, tt.entrypoint, tt.parts, state)
+			tt.assert(t, result)
+		})
+	}
 }

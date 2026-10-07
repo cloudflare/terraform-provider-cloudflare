@@ -440,13 +440,15 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 			}
 
 			// Prefer the deployed entrypoint reported by the API so a stale
-			// main_module in state surfaces as drift rather than an error.
+			// main_module or body_part in state surfaces as drift rather than
+			// an error. The header names the part but not the script format,
+			// so a service worker (body_part in state) stays a service worker.
 			var mainPart string
 			var isMainModule bool
 			if entrypoint := scriptContentRes.Header.Get("CF-Entrypoint"); entrypoint != "" {
 				if _, ok := parts[entrypoint]; ok {
 					mainPart = entrypoint
-					isMainModule = true
+					isMainModule = data.MainModule.ValueString() != "" || data.BodyPart.ValueString() == ""
 				}
 			}
 			if mainPart == "" {
