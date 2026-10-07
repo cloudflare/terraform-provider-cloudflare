@@ -1,6 +1,7 @@
 package zero_trust_organization_test
 
 import (
+	"context"
 	"encoding/json"
 	"testing"
 
@@ -10,13 +11,37 @@ import (
 )
 
 const (
-	apiFieldName = "mfa_ssh_piv_key_requirements"
+	apiFieldName   = "mfa_piv_key_requirements"
+	staleFieldName = "mfa_ssh_piv_key_requirements"
 )
 
-func pivRequirements() *zero_trust_organization.ZeroTrustOrganizationMfaSSHPivKeyRequirementsModel {
+func TestPivKeyRequirementsSchemaName(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	t.Run("resource", func(t *testing.T) {
+		schema := zero_trust_organization.ResourceSchema(ctx)
+		if _, ok := schema.Attributes[apiFieldName]; !ok {
+			t.Fatalf("resource schema is missing %q", apiFieldName)
+		}
+		if _, ok := schema.Attributes[staleFieldName]; ok {
+			t.Fatalf("resource schema still accepts %q", staleFieldName)
+		}
+	})
+	t.Run("data source", func(t *testing.T) {
+		schema := zero_trust_organization.DataSourceSchema(ctx)
+		if _, ok := schema.Attributes[apiFieldName]; !ok {
+			t.Fatalf("data source schema is missing %q", apiFieldName)
+		}
+		if _, ok := schema.Attributes[staleFieldName]; ok {
+			t.Fatalf("data source schema still exposes %q", staleFieldName)
+		}
+	})
+}
+
+func pivRequirements() *zero_trust_organization.ZeroTrustOrganizationMfaPivKeyRequirementsModel {
 	keyTypes := []types.String{types.StringValue("ecdsa")}
 	keySizes := []types.Int64{types.Int64Value(256)}
-	return &zero_trust_organization.ZeroTrustOrganizationMfaSSHPivKeyRequirementsModel{
+	return &zero_trust_organization.ZeroTrustOrganizationMfaPivKeyRequirementsModel{
 		PinPolicy:         types.StringValue("once"),
 		RequireFipsDevice: types.BoolValue(true),
 		SSHKeySize:        &keySizes,
@@ -25,11 +50,62 @@ func pivRequirements() *zero_trust_organization.ZeroTrustOrganizationMfaSSHPivKe
 	}
 }
 
+func TestUnmarshalDataSourcePopulatesPivKeyRequirements(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	const apiResponse = `{
+	  "result": {
+	    "mfa_piv_key_requirements": {
+	      "pin_policy": "once",
+	      "require_fips_device": false,
+	      "ssh_key_size": [256],
+	      "ssh_key_type": ["ecdsa"],
+	      "touch_policy": "always"
+	    }
+	  }
+	}`
+
+	var env zero_trust_organization.ZeroTrustOrganizationResultDataSourceEnvelope
+	if err := apijson.Unmarshal([]byte(apiResponse), &env); err != nil {
+		t.Fatalf("Unmarshal: %v", err)
+	}
+	got, diags := env.Result.MfaPivKeyRequirements.Value(ctx)
+	if diags.HasError() {
+		t.Fatalf("decode PIV requirements: %v", diags)
+	}
+	if got == nil {
+		t.Fatalf("%s was not decoded from the API response", apiFieldName)
+	}
+	if got.PinPolicy.ValueString() != "once" || got.TouchPolicy.ValueString() != "always" {
+		t.Errorf("unexpected PIV policies: pin=%q touch=%q", got.PinPolicy.ValueString(), got.TouchPolicy.ValueString())
+	}
+	if !got.RequireFipsDevice.Equal(types.BoolValue(false)) {
+		t.Errorf("require_fips_device = %v, want false", got.RequireFipsDevice)
+	}
+	var keyTypes []types.String
+	if diags := got.SSHKeyType.ElementsAs(ctx, &keyTypes, false); diags.HasError() {
+		t.Fatalf("decode ssh_key_type: %v", diags)
+	}
+	if len(keyTypes) != 1 || keyTypes[0].ValueString() != "ecdsa" {
+		t.Errorf("ssh_key_type = %v, want [ecdsa]", keyTypes)
+	}
+	var keySizes []types.Int64
+	if diags := got.SSHKeySize.ElementsAs(ctx, &keySizes, false); diags.HasError() {
+		t.Fatalf("decode ssh_key_size: %v", diags)
+	}
+	if len(keySizes) != 1 || keySizes[0].ValueInt64() != 256 {
+		t.Errorf("ssh_key_size = %v, want [256]", keySizes)
+	}
+}
+
 func assertPivKey(t *testing.T, raw []byte) {
 	t.Helper()
 	var body map[string]json.RawMessage
 	if err := json.Unmarshal(raw, &body); err != nil {
 		t.Fatalf("body is not valid JSON: %v\nbody: %s", err, raw)
+	}
+	if _, ok := body[staleFieldName]; ok {
+		t.Errorf("body contains stale field %q, which the API ignores", staleFieldName)
 	}
 	if _, ok := body[apiFieldName]; !ok {
 		t.Errorf("body is missing %q; the endpoint is a full-replace PUT, so omitting it clears the live value", apiFieldName)
@@ -43,7 +119,7 @@ func TestMarshalJSONSendsPivKeyRequirements(t *testing.T) {
 	model := zero_trust_organization.ZeroTrustOrganizationModel{
 		Name:                  types.StringValue("Example"),
 		AuthDomain:            types.StringValue("example.cloudflareaccess.com"),
-		MfaSSHPivKeyRequirements: pivRequirements(),
+		MfaPivKeyRequirements: pivRequirements(),
 	}
 
 	raw, err := model.MarshalJSON()
@@ -60,7 +136,7 @@ func TestMarshalJSONForUpdateSendsPivKeyRequirements(t *testing.T) {
 	state := zero_trust_organization.ZeroTrustOrganizationModel{
 		Name:                  types.StringValue("Example"),
 		AuthDomain:            types.StringValue("example.cloudflareaccess.com"),
-		MfaSSHPivKeyRequirements: pivRequirements(),
+		MfaPivKeyRequirements: pivRequirements(),
 	}
 	plan := state
 	plan.Name = types.StringValue("Example Renamed")
@@ -80,7 +156,7 @@ func TestUnmarshalPopulatesPivKeyRequirements(t *testing.T) {
 	  "result": {
 	    "name": "Example",
 	    "auth_domain": "example.cloudflareaccess.com",
-	    "mfa_ssh_piv_key_requirements": {
+	    "mfa_piv_key_requirements": {
 	      "pin_policy": "once",
 	      "require_fips_device": true,
 	      "ssh_key_size": [256],
@@ -95,7 +171,7 @@ func TestUnmarshalPopulatesPivKeyRequirements(t *testing.T) {
 		t.Fatalf("Unmarshal: %v", err)
 	}
 
-	got := env.Result.MfaSSHPivKeyRequirements
+	got := env.Result.MfaPivKeyRequirements
 	if got == nil {
 		t.Fatalf("%s was not decoded from the API response", apiFieldName)
 	}

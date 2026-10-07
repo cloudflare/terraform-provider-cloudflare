@@ -15,25 +15,25 @@ import (
 // Used by both MoveState (Terraform 1.8+) and UpgradeFromLegacyV0 (Terraform < 1.8)
 // to parse legacy state.
 type SourceCloudflareAccessOrganizationModel struct {
-	ID                             types.String             `tfsdk:"id"`
-	AccountID                      types.String             `tfsdk:"account_id"`
-	ZoneID                         types.String             `tfsdk:"zone_id"`
-	AuthDomain                     types.String             `tfsdk:"auth_domain"`
-	Name                           types.String             `tfsdk:"name"`
-	IsUIReadOnly                   types.Bool               `tfsdk:"is_ui_read_only"`
-	UIReadOnlyToggleReason         types.String             `tfsdk:"ui_read_only_toggle_reason"`
-	UserSeatExpirationInactiveTime types.String             `tfsdk:"user_seat_expiration_inactive_time"`
-	AutoRedirectToIdentity         types.Bool               `tfsdk:"auto_redirect_to_identity"`
-	SessionDuration                types.String             `tfsdk:"session_duration"`
-	AllowAuthenticateViaWARP       types.Bool               `tfsdk:"allow_authenticate_via_warp"`
-	WARPAuthSessionDuration        types.String             `tfsdk:"warp_auth_session_duration"`
+	ID                             types.String `tfsdk:"id"`
+	AccountID                      types.String `tfsdk:"account_id"`
+	ZoneID                         types.String `tfsdk:"zone_id"`
+	AuthDomain                     types.String `tfsdk:"auth_domain"`
+	Name                           types.String `tfsdk:"name"`
+	IsUIReadOnly                   types.Bool   `tfsdk:"is_ui_read_only"`
+	UIReadOnlyToggleReason         types.String `tfsdk:"ui_read_only_toggle_reason"`
+	UserSeatExpirationInactiveTime types.String `tfsdk:"user_seat_expiration_inactive_time"`
+	AutoRedirectToIdentity         types.Bool   `tfsdk:"auto_redirect_to_identity"`
+	SessionDuration                types.String `tfsdk:"session_duration"`
+	AllowAuthenticateViaWARP       types.Bool   `tfsdk:"allow_authenticate_via_warp"`
+	WARPAuthSessionDuration        types.String `tfsdk:"warp_auth_session_duration"`
 	// Added to match SourceCloudflareAccessOrganizationSchema (v5.24.0+).
 	// This field did not exist in v4; its value will always be null when
 	// decoded from v4 state. Transform ignores it — the v5 Read populates
 	// the real value from the API after migration.
-	WarpAuthNonBrowser401          types.Bool               `tfsdk:"warp_auth_non_browser_401"`
-	LoginDesign                    []SourceLoginDesignModel `tfsdk:"login_design"`
-	CustomPages                    []SourceCustomPagesModel `tfsdk:"custom_pages"`
+	WarpAuthNonBrowser401 types.Bool               `tfsdk:"warp_auth_non_browser_401"`
+	LoginDesign           []SourceLoginDesignModel `tfsdk:"login_design"`
+	CustomPages           []SourceCustomPagesModel `tfsdk:"custom_pages"`
 }
 
 // SourceLoginDesignModel represents the login_design nested structure in v4.
@@ -68,23 +68,23 @@ type TargetZeroTrustOrganizationModel struct {
 	// value (null), which matches an absent config value and produces no diff.
 	// It must still be declared here: resp.State.Set rejects a struct that
 	// omits schema attributes.
-	StrictServiceTokenAuth                 types.Bool                           `tfsdk:"strict_service_token_auth"`
-	UserSeatExpirationInactiveTime         types.String                         `tfsdk:"user_seat_expiration_inactive_time"`
-	WARPAuthSessionDuration                types.String                         `tfsdk:"warp_auth_session_duration"`
-	DenyUnmatchedRequestsExemptedZoneNames *[]types.String                      `tfsdk:"deny_unmatched_requests_exempted_zone_names"`
-	CustomPages                            *TargetCustomPagesModel              `tfsdk:"custom_pages"`
-	LoginDesign                            *TargetLoginDesignModel              `tfsdk:"login_design"`
-	MfaConfig                              *TargetMfaConfigModel                `tfsdk:"mfa_config"`
-	MfaSSHPivKeyRequirements               *TargetMfaSSHPivKeyRequirementsModel `tfsdk:"mfa_ssh_piv_key_requirements"`
-	ServiceTokenInactivity                 *TargetServiceTokenInactivityModel   `tfsdk:"service_token_inactivity"`
-	TrustedAccounts                        customfield.List[types.String]       `tfsdk:"trusted_accounts"`
-	AllowAuthenticateViaWARP               types.Bool                           `tfsdk:"allow_authenticate_via_warp"`
-	AutoRedirectToIdentity                 types.Bool                           `tfsdk:"auto_redirect_to_identity"`
-	IsUIReadOnly                           types.Bool                           `tfsdk:"is_ui_read_only"`
-	MfaConfigurationAllowed                types.Bool                           `tfsdk:"mfa_configuration_allowed"`
-	MfaRequiredForAllApps                  types.Bool                           `tfsdk:"mfa_required_for_all_apps"`
-	UIReadOnlyToggleReason                 types.String                         `tfsdk:"ui_read_only_toggle_reason"`
-	WarpAuthNonBrowser401                  types.Bool                           `tfsdk:"warp_auth_non_browser_401"`
+	StrictServiceTokenAuth                 types.Bool                         `tfsdk:"strict_service_token_auth"`
+	UserSeatExpirationInactiveTime         types.String                       `tfsdk:"user_seat_expiration_inactive_time"`
+	WARPAuthSessionDuration                types.String                       `tfsdk:"warp_auth_session_duration"`
+	DenyUnmatchedRequestsExemptedZoneNames *[]types.String                    `tfsdk:"deny_unmatched_requests_exempted_zone_names"`
+	CustomPages                            *TargetCustomPagesModel            `tfsdk:"custom_pages"`
+	LoginDesign                            *TargetLoginDesignModel            `tfsdk:"login_design"`
+	MfaConfig                              *TargetMfaConfigModel              `tfsdk:"mfa_config"`
+	MfaPivKeyRequirements                  *TargetMfaPivKeyRequirementsModel  `tfsdk:"mfa_piv_key_requirements"`
+	ServiceTokenInactivity                 *TargetServiceTokenInactivityModel `tfsdk:"service_token_inactivity"`
+	TrustedAccounts                        customfield.List[types.String]     `tfsdk:"trusted_accounts"`
+	AllowAuthenticateViaWARP               types.Bool                         `tfsdk:"allow_authenticate_via_warp"`
+	AutoRedirectToIdentity                 types.Bool                         `tfsdk:"auto_redirect_to_identity"`
+	IsUIReadOnly                           types.Bool                         `tfsdk:"is_ui_read_only"`
+	MfaConfigurationAllowed                types.Bool                         `tfsdk:"mfa_configuration_allowed"`
+	MfaRequiredForAllApps                  types.Bool                         `tfsdk:"mfa_required_for_all_apps"`
+	UIReadOnlyToggleReason                 types.String                       `tfsdk:"ui_read_only_toggle_reason"`
+	WarpAuthNonBrowser401                  types.Bool                         `tfsdk:"warp_auth_non_browser_401"`
 }
 
 // TargetCustomPagesModel represents the custom_pages nested structure in v5.
@@ -121,8 +121,8 @@ type TargetServiceTokenInactivityModel struct {
 	InactivityThresholdDays types.Int64  `tfsdk:"inactivity_threshold_days"`
 }
 
-// TargetMfaSSHPivKeyRequirementsModel represents the mfa_ssh_piv_key_requirements nested structure in v5.
-type TargetMfaSSHPivKeyRequirementsModel struct {
+// TargetMfaPivKeyRequirementsModel represents the mfa_piv_key_requirements nested structure in v5.
+type TargetMfaPivKeyRequirementsModel struct {
 	PinPolicy         types.String    `tfsdk:"pin_policy"`
 	RequireFipsDevice types.Bool      `tfsdk:"require_fips_device"`
 	SSHKeySize        *[]types.Int64  `tfsdk:"ssh_key_size"`

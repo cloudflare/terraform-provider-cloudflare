@@ -570,6 +570,74 @@ func TestAccCloudflareAccessOrganization_MfaConfig(t *testing.T) {
 	})
 }
 
+// PIV requirements must round-trip through the API and survive an unrelated
+// organization update. A successful PUT alone does not prove that the API used
+// the field, since it silently ignores the obsolete JSON key.
+func TestAccCloudflareAccessOrganization_PivKeyRequirements(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_organization.%s", rnd)
+	dataName := fmt.Sprintf("data.cloudflare_zero_trust_organization.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	config := func(orgName string) string {
+		return acctest.LoadTestCase("accessorganizationconfigpiv.tf", rnd, accountID, testAuthDomain(), orgName)
+	}
+	check := resource.ComposeTestCheckFunc(
+		resource.TestCheckResourceAttr(name, "mfa_piv_key_requirements.pin_policy", "once"),
+		resource.TestCheckResourceAttr(name, "mfa_piv_key_requirements.require_fips_device", "true"),
+		resource.TestCheckResourceAttr(name, "mfa_piv_key_requirements.ssh_key_size.0", "256"),
+		resource.TestCheckResourceAttr(name, "mfa_piv_key_requirements.ssh_key_type.0", "ecdsa"),
+		resource.TestCheckResourceAttr(name, "mfa_piv_key_requirements.touch_policy", "always"),
+		resource.TestCheckResourceAttr(dataName, "mfa_piv_key_requirements.pin_policy", "once"),
+		resource.TestCheckResourceAttr(dataName, "mfa_piv_key_requirements.require_fips_device", "true"),
+		resource.TestCheckResourceAttr(dataName, "mfa_piv_key_requirements.ssh_key_size.0", "256"),
+		resource.TestCheckResourceAttr(dataName, "mfa_piv_key_requirements.ssh_key_type.0", "ecdsa"),
+		resource.TestCheckResourceAttr(dataName, "mfa_piv_key_requirements.touch_policy", "always"),
+	)
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{Config: config("PIV organization"), Check: check},
+			{
+				Config: config("PIV organization"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+			{
+				Config: config("PIV organization renamed"),
+				Check: resource.ComposeTestCheckFunc(
+					check,
+					resource.TestCheckResourceAttr(name, "name", "PIV organization renamed"),
+				),
+			},
+			{
+				Config: config("PIV organization renamed"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+			{
+				ResourceName:  name,
+				ImportState:   true,
+				ImportStateId: accountID,
+				ImportStateCheck: func(states []*terraform.InstanceState) error {
+					attrs := states[0].Attributes
+					for key, expected := range map[string]string{
+						"pin_policy": "once", "require_fips_device": "true",
+						"ssh_key_size.0": "256", "ssh_key_type.0": "ecdsa", "touch_policy": "always",
+					} {
+						if got := attrs["mfa_piv_key_requirements."+key]; got != expected {
+							return fmt.Errorf("imported PIV %s = %q, want %q", key, got, expected)
+						}
+					}
+					return nil
+				},
+			},
+		},
+	})
+}
+
 // TestAccCloudflareAccessOrganization_ImportVerifyAll uses ImportStateVerify to
 // automatically compare all state attributes after import. This is the most
 // comprehensive import check available.
@@ -625,7 +693,6 @@ func testAccCloudflareAccessOrganizationConfigDenyUnmatched(rnd, accountID, auth
 func testAccCloudflareAccessOrganizationConfigDenyUnmatchedDisabled(rnd, accountID, authDomain string) string {
 	return acctest.LoadTestCase("accessorganizationconfigdenyunmatcheddisabled.tf", rnd, accountID, authDomain)
 }
-
 
 func testAccCloudflareAccessOrganizationConfigUpdate(rnd, accountID, headerText, authDomain string) string {
 	return acctest.LoadTestCase("accessorganizationconfigupdate.tf", rnd, accountID, authDomain, headerText)
