@@ -684,9 +684,21 @@ type ZeroTrustAccessApplicationSCIMConfigMappingsOperationsDataSourceModel struc
 }
 
 type ZeroTrustAccessApplicationTargetCriteriaDataSourceModel struct {
-	Port             types.Int64                                     `tfsdk:"port" json:"port,computed"`
-	Protocol         types.String                                    `tfsdk:"protocol" json:"protocol,computed"`
-	TargetAttributes customfield.Map[customfield.List[types.String]] `tfsdk:"target_attributes" json:"target_attributes,computed"`
+	Include          customfield.NestedObject[ZeroTrustAccessApplicationTargetRuleDataSourceModel] `tfsdk:"include" json:"include,computed"`
+	Require          customfield.NestedObject[ZeroTrustAccessApplicationTargetRuleDataSourceModel] `tfsdk:"require" json:"require,computed"`
+	Exclude          customfield.NestedObject[ZeroTrustAccessApplicationTargetRuleDataSourceModel] `tfsdk:"exclude" json:"exclude,computed"`
+	Port             types.Int64                                                                   `tfsdk:"port" json:"port,computed"`
+	Protocol         types.String                                                                  `tfsdk:"protocol" json:"protocol,computed"`
+	TargetAttributes customfield.Map[customfield.List[types.String]]                               `tfsdk:"target_attributes" json:"target_attributes,computed"`
+}
+
+type ZeroTrustAccessApplicationTargetRuleDataSourceModel struct {
+	TargetAttributes customfield.NestedObject[ZeroTrustAccessApplicationTargetRuleAttributesDataSourceModel] `tfsdk:"target_attributes" json:"target_attributes,computed"`
+	Tags             customfield.Map[customfield.List[types.String]]                                         `tfsdk:"tags" json:"tags,computed"`
+}
+
+type ZeroTrustAccessApplicationTargetRuleAttributesDataSourceModel struct {
+	Hostname customfield.List[types.String] `tfsdk:"hostname" json:"hostname,computed"`
 }
 
 type ZeroTrustAccessApplicationFindOneByDataSourceModel struct {

@@ -399,9 +399,21 @@ type TargetSCIMOperationsModel struct {
 }
 
 type TargetTargetCriteriaModel struct {
+	Include          *TargetTargetRuleModel      `tfsdk:"include"`
+	Require          *TargetTargetRuleModel      `tfsdk:"require"`
+	Exclude          *TargetTargetRuleModel      `tfsdk:"exclude"`
 	Port             types.Int64                 `tfsdk:"port"`
 	Protocol         types.String                `tfsdk:"protocol"`
 	TargetAttributes *map[string]*[]types.String `tfsdk:"target_attributes"`
+}
+
+type TargetTargetRuleModel struct {
+	TargetAttributes *TargetTargetRuleAttributesModel `tfsdk:"target_attributes"`
+	Tags             *map[string]*[]types.String      `tfsdk:"tags"`
+}
+
+type TargetTargetRuleAttributesModel struct {
+	Hostname *[]types.String `tfsdk:"hostname"`
 }
 
 type TargetDestinationsModel struct {

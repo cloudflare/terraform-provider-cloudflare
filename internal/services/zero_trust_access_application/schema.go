@@ -438,7 +438,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"target_criteria": schema.ListNestedAttribute{
-				Optional: true,
+				Description: "Defines targets covered by the application. Use either the legacy top-level target_attributes format or the rule format, but not both. The rule format requires include; require and exclude are optional. Each rule must contain a non-empty target_attributes or tags selector. Hostname selectors accept 1-5000 non-empty strings. Tag maps accept 1-50 non-empty keys, each with 1-50 non-empty values.",
+				Optional:    true,
 				Validators: []validator.List{
 					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), targetCompatibleAppTypes...),
 				},
@@ -455,13 +456,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								stringvalidator.OneOfCaseInsensitive("SSH", "RDP"),
 							},
 						},
+						// Keep the legacy map unrestricted: Edgeauth grandfathers
+						// unchanged persisted maps, including non-hostname keys.
 						"target_attributes": schema.MapAttribute{
-							Description: "Contains a map of target attribute keys to target attribute values.",
-							Required:    true,
+							Description: "Deprecated: use include.target_attributes for hostname selectors and rule tags for tag-based matching. New or changed maps may contain only hostname. The API accepts unchanged legacy maps on update, including non-hostname keys.",
+							Optional:    true,
 							ElementType: types.ListType{
 								ElemType: types.StringType,
 							},
 						},
+						"include": targetRuleResourceSchema("Target matches when any selector in this rule matches.", "include"),
+						"require": targetRuleResourceSchema("Target matches only when every selector in this rule matches.", "require"),
+						"exclude": targetRuleResourceSchema("Target is excluded when any selector in this rule matches.", "exclude"),
 					},
 				},
 			},
