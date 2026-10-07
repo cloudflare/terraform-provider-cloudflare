@@ -58,7 +58,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).\nAvailable values: \"onetimepin\", \"azureAD\", \"saml\", \"centrify\", \"facebook\", \"github\", \"google-apps\", \"google\", \"linkedin\", \"oidc\", \"okta\", \"onelogin\", \"pingone\", \"yandex\", \"cloudflare\".",
+				Description: "The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).\nAvailable values: \"onetimepin\", \"azureAD\", \"saml\", \"centrify\", \"facebook\", \"github\", \"google-apps\", \"google\", \"linkedin\", \"oidc\", \"okta\", \"onelogin\", \"pingone\", \"yandex\", \"cloudflare\", \"passkeys\".",
 				Required:    true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 				Validators: []validator.String{
@@ -78,6 +78,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"pingone",
 						"yandex",
 						"cloudflare",
+						"passkeys",
 					),
 				},
 			},
@@ -316,6 +317,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:      true,
 						Optional:      true,
 						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
+					},
+					"login_page_auto_prompt": schema.BoolAttribute{
+						Description: "When enabled, the Access login page automatically prompts the user to authenticate with a passkey.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(false),
+					},
+					"login_page_auto_prompt": schema.BoolAttribute{
+						Description: "When enabled, the Access login page automatically prompts the user to authenticate with a passkey.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 				},
 			},

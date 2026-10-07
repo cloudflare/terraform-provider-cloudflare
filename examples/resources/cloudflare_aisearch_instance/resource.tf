@@ -27,6 +27,10 @@ resource "cloudflare_ai_search_instance" "example_ai_search_instance" {
   max_num_results = 1
   metadata = {
     created_from_aisearch_wizard = true
+    created_from_emdash_plugin = {
+      type = "native"
+      version = "version"
+    }
     worker_domain = "worker_domain"
   }
   public_endpoint_params = {

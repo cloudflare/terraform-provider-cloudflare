@@ -62,6 +62,9 @@ func (m *ZeroTrustResourceLibraryApplicationDataSourceModel) toListParams(_ cont
 	if !m.Filter.Limit.IsNull() {
 		params.Limit = cloudflare.F(m.Filter.Limit.ValueInt64())
 	}
+	if !m.Filter.Lookup.IsNull() {
+		params.Lookup = cloudflare.F(m.Filter.Lookup.ValueString())
+	}
 	if !m.Filter.Offset.IsNull() {
 		params.Offset = cloudflare.F(m.Filter.Offset.ValueInt64())
 	}
@@ -79,6 +82,7 @@ type ZeroTrustResourceLibraryApplicationFindOneByDataSourceModel struct {
 	Fields  types.String `tfsdk:"fields" query:"fields,optional"`
 	Filter  types.String `tfsdk:"filter" query:"filter,optional"`
 	Limit   types.Int64  `tfsdk:"limit" query:"limit,computed_optional"`
+	Lookup  types.String `tfsdk:"lookup" query:"lookup,optional"`
 	Offset  types.Int64  `tfsdk:"offset" query:"offset,computed_optional"`
 	OrderBy types.String `tfsdk:"order_by" query:"order_by,optional"`
 	Search  types.String `tfsdk:"search" query:"search,optional"`

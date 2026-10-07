@@ -45,7 +45,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"auth_domain": schema.StringAttribute{
-				Description: "The unique subdomain assigned to your Zero Trust organization.",
+				Description: "The unique subdomain assigned to your Zero Trust organization. If omitted on creation, a unique subdomain is auto-generated in the format `adjective-noun-hex4` (e.g. `frosty-moon-7a3b.cloudflareaccess.com`).",
 				Optional:    true,
 			},
 			"deny_unmatched_requests": schema.BoolAttribute{
@@ -53,7 +53,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "The name of your Zero Trust organization.",
+				Description: "The name of your Zero Trust organization. When omitted on creation, defaults to the provided auth_domain; when both are omitted, defaults to the auto-generated subdomain slug (e.g. frosty-moon-7a3b).",
 				Optional:    true,
 			},
 			"session_duration": schema.StringAttribute{

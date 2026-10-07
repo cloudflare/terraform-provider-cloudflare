@@ -9,6 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -630,6 +631,46 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 							PlanModifiers: []planmodifier.String{
 								UnknownOnlyIf("type", "durable_object_namespace"),
+							},
+						},
+						"retry": schema.SingleNestedAttribute{
+							Description: "Retry policy for calls made to the Durable Object through this binding. Omitted or null properties use the runtime defaults. These limits are upper bounds and do not enable retries for otherwise ineligible calls.",
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"max_attempts": schema.Int64Attribute{
+									Description: "Maximum number of retries after the initial request, not the total number of attempts. Defaults to 4. Zero disables retries.",
+									Optional:    true,
+									Validators: []validator.Int64{
+										int64validator.Between(0, 10),
+									},
+								},
+								"timeout_ms": schema.Int64Attribute{
+									Description: "Retry timeout in milliseconds, measured from the start of the call. No retry starts after it expires, and a retry still running when it expires is cancelled. This is not a request timeout; it does not limit the initial request, which is still subject to any timeouts set by your Worker. Defaults to 10000.",
+									Optional:    true,
+									Validators: []validator.Int64{
+										int64validator.Between(500, 60000),
+									},
+								},
+							},
+						},
+						"retry": schema.SingleNestedAttribute{
+							Description: "Retry policy for calls made to the Durable Object through this binding. Omitted or null properties use the runtime defaults. These limits are upper bounds and do not enable retries for otherwise ineligible calls.",
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"max_attempts": schema.Int64Attribute{
+									Description: "Maximum number of retries after the initial request, not the total number of attempts. Defaults to 4. Zero disables retries.",
+									Optional:    true,
+									Validators: []validator.Int64{
+										int64validator.Between(0, 10),
+									},
+								},
+								"timeout_ms": schema.Int64Attribute{
+									Description: "Retry timeout in milliseconds, measured from the start of the call. No retry starts after it expires, and a retry still running when it expires is cancelled. This is not a request timeout; it does not limit the initial request, which is still subject to any timeouts set by your Worker. Defaults to 10000.",
+									Optional:    true,
+									Validators: []validator.Int64{
+										int64validator.Between(500, 60000),
+									},
+								},
 							},
 						},
 						"script_name": schema.StringAttribute{

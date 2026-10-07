@@ -80,6 +80,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Provide the entire issuer field of the certificate (read-only).",
 							Computed:    true,
 						},
+						"region": schema.StringAttribute{
+							Description: "Indicate the read-only region the certificate authority's key material is pinned to. Omitted for certificates that were created without a region.",
+							Computed:    true,
+						},
 						"type": schema.StringAttribute{
 							Description: "Indicate the read-only certificate type, BYO-PKI (custom) or Gateway-managed.\nAvailable values: \"custom\", \"gateway_managed\".",
 							Computed:    true,
