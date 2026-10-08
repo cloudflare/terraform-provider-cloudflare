@@ -324,12 +324,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Default:     booldefault.StaticBool(false),
 					},
-					"login_page_auto_prompt": schema.BoolAttribute{
-						Description: "When enabled, the Access login page automatically prompts the user to authenticate with a passkey.",
-						Computed:    true,
-						Optional:    true,
-						Default:     booldefault.StaticBool(false),
-					},
 				},
 			},
 			"saml_certificate_set_id": schema.StringAttribute{

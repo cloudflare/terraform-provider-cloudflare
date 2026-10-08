@@ -1,10 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-<<<<<<<< HEAD:internal/services/monetization_rules/data_source.go
 package monetization_rules
-========
-package mtls_certificate
->>>>>>>> db7d2bac00 (Apply custom code):internal/services/mtls_certificate/data_source.go
 
 import (
 	"context"
@@ -19,7 +15,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-<<<<<<<< HEAD:internal/services/monetization_rules/data_source.go
 type MonetizationRulesDataSource struct {
 	client *cloudflare.Client
 }
@@ -35,23 +30,6 @@ func (d *MonetizationRulesDataSource) Metadata(ctx context.Context, req datasour
 }
 
 func (d *MonetizationRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-========
-type MTLSCertificateDataSource struct {
-	client *cloudflare.Client
-}
-
-var _ datasource.DataSourceWithConfigure = (*MTLSCertificateDataSource)(nil)
-
-func NewMTLSCertificateDataSource() datasource.DataSource {
-	return &MTLSCertificateDataSource{}
-}
-
-func (d *MTLSCertificateDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_mtls_certificate"
-}
-
-func (d *MTLSCertificateDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
->>>>>>>> db7d2bac00 (Apply custom code):internal/services/mtls_certificate/data_source.go
 	if req.ProviderData == nil {
 		return
 	}
@@ -70,13 +48,8 @@ func (d *MTLSCertificateDataSource) Configure(ctx context.Context, req datasourc
 	d.client = client
 }
 
-<<<<<<<< HEAD:internal/services/monetization_rules/data_source.go
 func (d *MonetizationRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *MonetizationRulesDataSourceModel
-========
-func (d *MTLSCertificateDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *MTLSCertificateDataSourceModel
->>>>>>>> db7d2bac00 (Apply custom code):internal/services/mtls_certificate/data_source.go
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -91,16 +64,9 @@ func (d *MTLSCertificateDataSource) Read(ctx context.Context, req datasource.Rea
 	}
 
 	res := new(http.Response)
-<<<<<<<< HEAD:internal/services/monetization_rules/data_source.go
 	env := MonetizationRulesResultDataSourceEnvelope{*data}
 	_, err := d.client.Monetization.Rules.Get(
 		ctx,
-========
-	env := MTLSCertificateResultDataSourceEnvelope{*data}
-	_, err := d.client.MTLSCertificates.Get(
-		ctx,
-		data.MTLSCertificateID.ValueString(),
->>>>>>>> db7d2bac00 (Apply custom code):internal/services/mtls_certificate/data_source.go
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -116,11 +82,7 @@ func (d *MTLSCertificateDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 	data = &env.Result
-<<<<<<<< HEAD:internal/services/monetization_rules/data_source.go
 	data.ID = data.ZoneID
-========
-	data.ID = data.MTLSCertificateID
->>>>>>>> db7d2bac00 (Apply custom code):internal/services/mtls_certificate/data_source.go
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
