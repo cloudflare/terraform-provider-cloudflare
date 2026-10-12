@@ -205,7 +205,11 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 		hasChanges := !plan.Name.Equal(state.Name) || !plan.Type.Equal(state.Type) ||
 			contentChanged || !plan.TTL.Equal(state.TTL) ||
 			!plan.Proxied.Equal(state.Proxied) || !plan.Priority.Equal(state.Priority) ||
-			!plan.Comment.Equal(state.Comment) || tagsChanged
+			!plan.Comment.Equal(state.Comment) || !plan.PrivateRouting.Equal(state.PrivateRouting) ||
+			tagsChanged
+
+		// Query-only changes still trigger Update, which can change modified_on.
+		hasChanges = hasChanges || !plan.IncludeShadowMetadata.Equal(state.IncludeShadowMetadata)
 
 		// For Data field (CAA, LOC, etc records), check if it actually changed
 		if (plan.Data == nil) != (state.Data == nil) {
@@ -454,11 +458,10 @@ func normalizeSettings(ctx context.Context, data *DNSRecordModel, diags *diag.Di
 
 // normalizeIncludeShadowMetadata defaults include_shadow_metadata to false when
 // null. It is a query-only parameter (no `json` tag), so the API response never
-// populates it and apijson.Unmarshal silently skips it. Read/Create/Update are
-// unaffected because Terraform resolves the schema's static default before
-// those handlers run, but ImportState builds its model from a zero value with
-// no plan phase involved, so the field is left null after import. This mirrors
-// the schema's Default: booldefault.StaticBool(false).
+// populates it and apijson.Unmarshal silently skips it. Read backfills existing
+// state from before this field was introduced, while ImportState builds a model
+// without a plan phase to resolve the default. Non-null values are preserved.
+// This mirrors the schema's Default: booldefault.StaticBool(false).
 func normalizeIncludeShadowMetadata(data *DNSRecordModel) {
 	if data.IncludeShadowMetadata.IsNull() {
 		data.IncludeShadowMetadata = types.BoolValue(false)

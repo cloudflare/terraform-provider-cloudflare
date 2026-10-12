@@ -43,7 +43,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"auth_domain": schema.StringAttribute{
-				Description: "The unique subdomain assigned to your Zero Trust organization.",
+				Description: "The unique subdomain assigned to your Zero Trust organization. If omitted on creation, a unique subdomain is auto-generated in the format `adjective-noun-hex4` (e.g. `frosty-moon-7a3b.cloudflareaccess.com`).",
 				Computed:    true,
 			},
 			"auto_redirect_to_identity": schema.BoolAttribute{
@@ -63,7 +63,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "The name of your Zero Trust organization.",
+				Description: "The name of your Zero Trust organization. When omitted on creation, defaults to the provided auth_domain; when both are omitted, defaults to the auto-generated subdomain slug (e.g. frosty-moon-7a3b).",
 				Computed:    true,
 			},
 			"session_duration": schema.StringAttribute{
@@ -178,10 +178,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"mfa_ssh_piv_key_requirements": schema.SingleNestedAttribute{
-				Description: "Configures SSH PIV key requirements for MFA using hardware security keys.",
+			"mfa_piv_key_requirements": schema.SingleNestedAttribute{
+				Description: "Configures PIV key requirements for MFA using hardware security keys.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustOrganizationMfaSSHPivKeyRequirementsDataSourceModel](ctx),
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustOrganizationMfaPivKeyRequirementsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"pin_policy": schema.StringAttribute{
 						Description: "Defines when a PIN is required to use the SSH key. Valid values: `never` (no PIN required), `once` (PIN required once per session), `always` (PIN required for each use).\nAvailable values: \"never\", \"once\", \"always\".",
@@ -195,7 +195,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"require_fips_device": schema.BoolAttribute{
-						Description: "Requires the SSH PIV key to be stored on a FIPS 140-2 Level 1 or higher validated device.",
+						Description: "Requires the PIV key to be stored on a FIPS 140-2 Level 1 or higher validated device.",
 						Computed:    true,
 					},
 					"ssh_key_size": schema.ListAttribute{

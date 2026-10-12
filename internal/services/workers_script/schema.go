@@ -9,6 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/resourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -50,6 +51,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "Identifier.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"bindings_inherit": schema.StringAttribute{
+				Description: "When set to \"strict\", the upload will fail if any `inherit` type bindings cannot be resolved against the previous version of the Worker. Without this, unresolvable inherit bindings are silently dropped.\nAvailable values: \"strict\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("strict"),
+				},
 			},
 			"force": schema.BoolAttribute{
 				Description: "If true, delete the Worker even when other Workers still reference it. Service bindings in those Workers may be left broken. Durable Object namespaces implemented by the deleted Worker are deleted even if other Workers reference them.",
@@ -325,6 +333,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 							PlanModifiers: []planmodifier.String{
 								UnknownOnlyIf("type", "durable_object_namespace"),
+							},
+						},
+						"retry": schema.SingleNestedAttribute{
+							Description: "Retry policy for calls made to the Durable Object through this binding. Omitted or null properties use the runtime defaults. These limits are upper bounds and do not enable retries for otherwise ineligible calls.",
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"max_attempts": schema.Int64Attribute{
+									Description: "Maximum number of retries after the initial request, not the total number of attempts. Defaults to 4. Zero disables retries.",
+									Optional:    true,
+									Validators: []validator.Int64{
+										int64validator.Between(0, 10),
+									},
+								},
+								"timeout_ms": schema.Int64Attribute{
+									Description: "Retry timeout in milliseconds, measured from the start of the call. No retry starts after it expires, and a retry still running when it expires is cancelled. This is not a request timeout; it does not limit the initial request, which is still subject to any timeouts set by your Worker. Defaults to 10000.",
+									Optional:    true,
+									Validators: []validator.Int64{
+										int64validator.Between(500, 60000),
+									},
+								},
 							},
 						},
 						"script_name": schema.StringAttribute{

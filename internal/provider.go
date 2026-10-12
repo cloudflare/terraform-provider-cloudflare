@@ -126,6 +126,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_ipsec_tunnel"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_static_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/managed_transforms"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/monetization_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/moq_relay"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate_associations"
@@ -165,7 +166,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/resource_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ruleset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/schema_validation_operation_settings"
@@ -575,8 +575,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		queue.NewResource,
 		queue_consumer.NewResource,
 		api_shield.NewResource,
-		api_shield_operation.NewResource,
 		api_shield_discovery_operation.NewResource,
+		api_shield_operation.NewResource,
 		api_shield_operation_schema_validation_settings.NewResource,
 		api_shield_schema_validation_settings.NewResource,
 		api_shield_schema.NewResource,
@@ -602,9 +602,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		magic_transit_cf1_site.NewResource,
 		magic_network_monitoring_configuration.NewResource,
 		magic_network_monitoring_rule.NewResource,
+		monetization_rules.NewResource,
 		pages_project.NewResource,
 		pages_domain.NewResource,
-		registrar_domain.NewResource,
 		list.NewResource,
 		list_item.NewResource,
 		stream.NewResource,
@@ -964,6 +964,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		magic_network_monitoring_configuration.NewMagicNetworkMonitoringConfigurationDataSource,
 		magic_network_monitoring_rule.NewMagicNetworkMonitoringRuleDataSource,
 		magic_network_monitoring_rule.NewMagicNetworkMonitoringRulesDataSource,
+		monetization_rules.NewMonetizationRulesDataSource,
 		mtls_certificate.NewMTLSCertificateDataSource,
 		mtls_certificate.NewMTLSCertificatesDataSource,
 		mtls_certificate_associations.NewMTLSCertificateAssociationsDataSource,
@@ -971,8 +972,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		pages_project.NewPagesProjectsDataSource,
 		pages_domain.NewPagesDomainDataSource,
 		pages_domain.NewPagesDomainsDataSource,
-		registrar_domain.NewRegistrarDomainDataSource,
-		registrar_domain.NewRegistrarDomainsDataSource,
 		list.NewListDataSource,
 		list.NewListsDataSource,
 		list_item.NewListItemDataSource,

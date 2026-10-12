@@ -160,6 +160,8 @@ resource "cloudflare_workers_script" "example_workers_script" {
 - `annotations` (Attributes) Annotations for the version created by this upload. (see [below for nested schema](#nestedatt--annotations))
 - `assets` (Attributes) Configuration for assets within a Worker. (see [below for nested schema](#nestedatt--assets))
 - `bindings` (Attributes List) List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings. (see [below for nested schema](#nestedatt--bindings))
+- `bindings_inherit` (String) When set to "strict", the upload will fail if any `inherit` type bindings cannot be resolved against the previous version of the Worker. Without this, unresolvable inherit bindings are silently dropped.
+Available values: "strict".
 - `body_part` (String) Name of the uploaded file that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.
 - `cache_options` (Attributes) Global CacheW configuration for the Worker. When caching is on,
 the platform provisions a `cloudflare.app` zone for the Worker.
@@ -288,6 +290,7 @@ Available values: "eu", "fedramp", "fedramp-high".
 - `part` (String) The name of the file containing the data content. Only accepted for `service worker syntax` Workers.
 - `pipeline` (String) Name of the Pipeline to bind to.
 - `queue_name` (String) Name of the Queue to bind to.
+- `retry` (Attributes) Retry policy for calls made to the Durable Object through this binding. Omitted or null properties use the runtime defaults. These limits are upper bounds and do not enable retries for otherwise ineligible calls. (see [below for nested schema](#nestedatt--bindings--retry))
 - `script_name` (String) The script where the Durable Object is defined, if it is external to this Worker.
 - `secret_name` (String) Name of the secret in the store.
 - `service` (String) Name of Worker to bind to.
@@ -317,6 +320,15 @@ Optional:
 - `environment` (String) Environment of the outbound worker.
 - `service` (String) Name of the outbound worker.
 
+
+
+<a id="nestedatt--bindings--retry"></a>
+### Nested Schema for `bindings.retry`
+
+Optional:
+
+- `max_attempts` (Number) Maximum number of retries after the initial request, not the total number of attempts. Defaults to 4. Zero disables retries.
+- `timeout_ms` (Number) Retry timeout in milliseconds, measured from the start of the call. No retry starts after it expires, and a retry still running when it expires is cancelled. This is not a request timeout; it does not limit the initial request, which is still subject to any timeouts set by your Worker. Defaults to 10000.
 
 
 <a id="nestedatt--bindings--simple"></a>

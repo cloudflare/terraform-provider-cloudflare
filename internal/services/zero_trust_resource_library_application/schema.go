@@ -24,7 +24,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
-				Description: "Returns the application ID.",
+				Description: "Numeric identifier for the application.",
 				Computed:    true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 4294967295),
@@ -36,7 +36,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"category_id": schema.Int64Attribute{
-				Description: "Returns the category ID.",
+				Description: "Numeric identifier for an application category.",
 				Optional:    true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 4294967295),
@@ -44,12 +44,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.RequiresReplace()},
 			},
 			"human_id": schema.StringAttribute{
-				Description:   "Returns the human readable ID.",
+				Description:   "Human-readable identifier for the application.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description:   "Returns the application name.",
+				Description:   "Application name.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -64,7 +64,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"port_protocols": schema.SetAttribute{
-				Description: "Port and protocol pairs matched by the application.",
+				Description: "Ports matched by the application, in `protocol/port` or inclusive `protocol/start-end` format (for example, `tcp/443` or `udp/10000-20000`). TCP and UDP ports must be between 0 and 65535.",
 				Optional:    true,
 				ElementType: types.StringType,
 			},

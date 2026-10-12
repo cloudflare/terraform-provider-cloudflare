@@ -21,12 +21,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Required: true,
 			},
 			"limit": schema.Int64Attribute{
-				Description: "Limit of number of results to return.",
+				Description: "Number of results to return. Defaults to 25; values are clamped to 1–250.",
 				Computed:    true,
 				Optional:    true,
 			},
 			"offset": schema.Int64Attribute{
-				Description: "Offset of results to return.",
+				Description: "Number of results to skip. Defaults to 0; negative values are clamped to 0.",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -44,7 +44,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.Int64Attribute{
-							Description: "Returns the category ID.",
+							Description: "Numeric identifier for an application category.",
 							Computed:    true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 4294967295),

@@ -59,18 +59,18 @@ type SourcePagesProjectDeploymentConfigsModelV0 struct {
 }
 
 type SourcePagesProjectDeploymentConfigModelV0 struct {
-	AlwaysUseLatestCompatibilityDate types.Bool                          `tfsdk:"always_use_latest_compatibility_date"`
-	CompatibilityDate                types.String                        `tfsdk:"compatibility_date"`
-	CompatibilityFlags               types.List                          `tfsdk:"compatibility_flags"`
-	UsageModel                       types.String                        `tfsdk:"usage_model"`
-	FailOpen                         types.Bool                          `tfsdk:"fail_open"`
-	EnvironmentVariables             types.Map                           `tfsdk:"environment_variables"`
-	Secrets                          types.Map                           `tfsdk:"secrets"`
-	KVNamespaces                     types.Map                           `tfsdk:"kv_namespaces"`
-	D1Databases                      types.Map                           `tfsdk:"d1_databases"`
-	R2Buckets                        types.Map                           `tfsdk:"r2_buckets"`
-	DurableObjectNamespaces          types.Map                           `tfsdk:"durable_object_namespaces"`
-	ServiceBindings                  types.List                          `tfsdk:"service_binding"`
+	AlwaysUseLatestCompatibilityDate types.Bool                           `tfsdk:"always_use_latest_compatibility_date"`
+	CompatibilityDate                types.String                         `tfsdk:"compatibility_date"`
+	CompatibilityFlags               types.List                           `tfsdk:"compatibility_flags"`
+	UsageModel                       types.String                         `tfsdk:"usage_model"`
+	FailOpen                         types.Bool                           `tfsdk:"fail_open"`
+	EnvironmentVariables             types.Map                            `tfsdk:"environment_variables"`
+	Secrets                          types.Map                            `tfsdk:"secrets"`
+	KVNamespaces                     types.Map                            `tfsdk:"kv_namespaces"`
+	D1Databases                      types.Map                            `tfsdk:"d1_databases"`
+	R2Buckets                        types.Map                            `tfsdk:"r2_buckets"`
+	DurableObjectNamespaces          types.Map                            `tfsdk:"durable_object_namespaces"`
+	ServiceBindings                  types.List                           `tfsdk:"service_binding"`
 	Placement                        []SourcePagesProjectPlacementModelV0 `tfsdk:"placement"`
 }
 
@@ -92,23 +92,29 @@ type SourcePagesProjectServiceBindingModelV0 struct {
 
 // TargetPagesProjectModel represents the v5 state structure.
 type TargetPagesProjectModel struct {
-	ID                   types.String                                                          `tfsdk:"id"`
-	Name                 types.String                                                          `tfsdk:"name"`
-	AccountID            types.String                                                          `tfsdk:"account_id"`
-	ProductionBranch     types.String                                                          `tfsdk:"production_branch"`
-	BuildConfig          customfield.NestedObject[TargetPagesProjectBuildConfigModel]          `tfsdk:"build_config"`
-	Source               *TargetPagesProjectSourceModel                                        `tfsdk:"source"`
-	DeploymentConfigs    customfield.NestedObject[TargetPagesProjectDeploymentConfigsModel]    `tfsdk:"deployment_configs"`
-	CreatedOn            timetypes.RFC3339                                                     `tfsdk:"created_on"`
-	Framework            types.String                                                          `tfsdk:"framework"`
-	FrameworkVersion     types.String                                                          `tfsdk:"framework_version"`
-	PreviewScriptName    types.String                                                          `tfsdk:"preview_script_name"`
-	ProductionScriptName types.String                                                          `tfsdk:"production_script_name"`
-	Subdomain            types.String                                                          `tfsdk:"subdomain"`
-	UsesFunctions        types.Bool                                                            `tfsdk:"uses_functions"`
-	Domains              customfield.List[types.String]                                        `tfsdk:"domains"`
-	CanonicalDeployment  customfield.NestedObject[TargetPagesProjectCanonicalDeploymentModel]  `tfsdk:"canonical_deployment"`
-	LatestDeployment     customfield.NestedObject[TargetPagesProjectLatestDeploymentModel]     `tfsdk:"latest_deployment"`
+	ID                    types.String                                                           `tfsdk:"id"`
+	Name                  types.String                                                           `tfsdk:"name"`
+	AccountID             types.String                                                           `tfsdk:"account_id"`
+	ProductionBranch      types.String                                                           `tfsdk:"production_branch"`
+	BuildConfig           customfield.NestedObject[TargetPagesProjectBuildConfigModel]           `tfsdk:"build_config"`
+	BuildImageAutoUpgrade customfield.NestedObject[TargetPagesProjectBuildImageAutoUpgradeModel] `tfsdk:"build_image_auto_upgrade"`
+	Source                *TargetPagesProjectSourceModel                                         `tfsdk:"source"`
+	DeploymentConfigs     customfield.NestedObject[TargetPagesProjectDeploymentConfigsModel]     `tfsdk:"deployment_configs"`
+	CreatedOn             timetypes.RFC3339                                                      `tfsdk:"created_on"`
+	Framework             types.String                                                           `tfsdk:"framework"`
+	FrameworkVersion      types.String                                                           `tfsdk:"framework_version"`
+	PreviewScriptName     types.String                                                           `tfsdk:"preview_script_name"`
+	ProductionScriptName  types.String                                                           `tfsdk:"production_script_name"`
+	Subdomain             types.String                                                           `tfsdk:"subdomain"`
+	UsesFunctions         types.Bool                                                             `tfsdk:"uses_functions"`
+	Domains               customfield.List[types.String]                                         `tfsdk:"domains"`
+	CanonicalDeployment   customfield.NestedObject[TargetPagesProjectCanonicalDeploymentModel]   `tfsdk:"canonical_deployment"`
+	LatestDeployment      customfield.NestedObject[TargetPagesProjectLatestDeploymentModel]      `tfsdk:"latest_deployment"`
+}
+
+type TargetPagesProjectBuildImageAutoUpgradeModel struct {
+	FromVersion types.Int64 `tfsdk:"from_version"`
+	ToVersion   types.Int64 `tfsdk:"to_version"`
 }
 
 type TargetPagesProjectBuildConfigModel struct {
@@ -327,23 +333,23 @@ type TargetPagesProjectDeploymentConfigsProductionVectorizeBindingsModel struct 
 // =============================================================================
 
 type TargetPagesProjectCanonicalDeploymentModel struct {
-	ID                types.String                                                                       `tfsdk:"id"`
-	Aliases           customfield.List[types.String]                                                     `tfsdk:"aliases"`
-	BuildConfig       customfield.NestedObject[TargetPagesProjectCanonicalDeploymentBuildConfigModel]    `tfsdk:"build_config"`
-	CreatedOn         timetypes.RFC3339                                                                  `tfsdk:"created_on"`
+	ID                types.String                                                                          `tfsdk:"id"`
+	Aliases           customfield.List[types.String]                                                        `tfsdk:"aliases"`
+	BuildConfig       customfield.NestedObject[TargetPagesProjectCanonicalDeploymentBuildConfigModel]       `tfsdk:"build_config"`
+	CreatedOn         timetypes.RFC3339                                                                     `tfsdk:"created_on"`
 	DeploymentTrigger customfield.NestedObject[TargetPagesProjectCanonicalDeploymentDeploymentTriggerModel] `tfsdk:"deployment_trigger"`
-	EnvVars           customfield.NestedObjectMap[TargetPagesProjectCanonicalDeploymentEnvVarsModel]     `tfsdk:"env_vars"`
-	Environment       types.String                                                                       `tfsdk:"environment"`
-	IsSkipped         types.Bool                                                                         `tfsdk:"is_skipped"`
-	LatestStage       customfield.NestedObject[TargetPagesProjectCanonicalDeploymentLatestStageModel]    `tfsdk:"latest_stage"`
-	ModifiedOn        timetypes.RFC3339                                                                  `tfsdk:"modified_on"`
-	ProjectID         types.String                                                                       `tfsdk:"project_id"`
-	ProjectName       types.String                                                                       `tfsdk:"project_name"`
-	ShortID           types.String                                                                       `tfsdk:"short_id"`
-	Source            customfield.NestedObject[TargetPagesProjectCanonicalDeploymentSourceModel]         `tfsdk:"source"`
-	Stages            customfield.NestedObjectList[TargetPagesProjectCanonicalDeploymentStagesModel]     `tfsdk:"stages"`
-	URL               types.String                                                                       `tfsdk:"url"`
-	UsesFunctions     types.Bool                                                                         `tfsdk:"uses_functions"`
+	EnvVars           customfield.NestedObjectMap[TargetPagesProjectCanonicalDeploymentEnvVarsModel]        `tfsdk:"env_vars"`
+	Environment       types.String                                                                          `tfsdk:"environment"`
+	IsSkipped         types.Bool                                                                            `tfsdk:"is_skipped"`
+	LatestStage       customfield.NestedObject[TargetPagesProjectCanonicalDeploymentLatestStageModel]       `tfsdk:"latest_stage"`
+	ModifiedOn        timetypes.RFC3339                                                                     `tfsdk:"modified_on"`
+	ProjectID         types.String                                                                          `tfsdk:"project_id"`
+	ProjectName       types.String                                                                          `tfsdk:"project_name"`
+	ShortID           types.String                                                                          `tfsdk:"short_id"`
+	Source            customfield.NestedObject[TargetPagesProjectCanonicalDeploymentSourceModel]            `tfsdk:"source"`
+	Stages            customfield.NestedObjectList[TargetPagesProjectCanonicalDeploymentStagesModel]        `tfsdk:"stages"`
+	URL               types.String                                                                          `tfsdk:"url"`
+	UsesFunctions     types.Bool                                                                            `tfsdk:"uses_functions"`
 }
 
 type TargetPagesProjectCanonicalDeploymentBuildConfigModel struct {
@@ -408,23 +414,23 @@ type TargetPagesProjectCanonicalDeploymentStagesModel struct {
 }
 
 type TargetPagesProjectLatestDeploymentModel struct {
-	ID                types.String                                                                    `tfsdk:"id"`
-	Aliases           customfield.List[types.String]                                                  `tfsdk:"aliases"`
-	BuildConfig       customfield.NestedObject[TargetPagesProjectLatestDeploymentBuildConfigModel]    `tfsdk:"build_config"`
-	CreatedOn         timetypes.RFC3339                                                               `tfsdk:"created_on"`
+	ID                types.String                                                                       `tfsdk:"id"`
+	Aliases           customfield.List[types.String]                                                     `tfsdk:"aliases"`
+	BuildConfig       customfield.NestedObject[TargetPagesProjectLatestDeploymentBuildConfigModel]       `tfsdk:"build_config"`
+	CreatedOn         timetypes.RFC3339                                                                  `tfsdk:"created_on"`
 	DeploymentTrigger customfield.NestedObject[TargetPagesProjectLatestDeploymentDeploymentTriggerModel] `tfsdk:"deployment_trigger"`
-	EnvVars           customfield.NestedObjectMap[TargetPagesProjectLatestDeploymentEnvVarsModel]     `tfsdk:"env_vars"`
-	Environment       types.String                                                                    `tfsdk:"environment"`
-	IsSkipped         types.Bool                                                                      `tfsdk:"is_skipped"`
-	LatestStage       customfield.NestedObject[TargetPagesProjectLatestDeploymentLatestStageModel]    `tfsdk:"latest_stage"`
-	ModifiedOn        timetypes.RFC3339                                                               `tfsdk:"modified_on"`
-	ProjectID         types.String                                                                    `tfsdk:"project_id"`
-	ProjectName       types.String                                                                    `tfsdk:"project_name"`
-	ShortID           types.String                                                                    `tfsdk:"short_id"`
-	Source            customfield.NestedObject[TargetPagesProjectLatestDeploymentSourceModel]         `tfsdk:"source"`
-	Stages            customfield.NestedObjectList[TargetPagesProjectLatestDeploymentStagesModel]     `tfsdk:"stages"`
-	URL               types.String                                                                    `tfsdk:"url"`
-	UsesFunctions     types.Bool                                                                      `tfsdk:"uses_functions"`
+	EnvVars           customfield.NestedObjectMap[TargetPagesProjectLatestDeploymentEnvVarsModel]        `tfsdk:"env_vars"`
+	Environment       types.String                                                                       `tfsdk:"environment"`
+	IsSkipped         types.Bool                                                                         `tfsdk:"is_skipped"`
+	LatestStage       customfield.NestedObject[TargetPagesProjectLatestDeploymentLatestStageModel]       `tfsdk:"latest_stage"`
+	ModifiedOn        timetypes.RFC3339                                                                  `tfsdk:"modified_on"`
+	ProjectID         types.String                                                                       `tfsdk:"project_id"`
+	ProjectName       types.String                                                                       `tfsdk:"project_name"`
+	ShortID           types.String                                                                       `tfsdk:"short_id"`
+	Source            customfield.NestedObject[TargetPagesProjectLatestDeploymentSourceModel]            `tfsdk:"source"`
+	Stages            customfield.NestedObjectList[TargetPagesProjectLatestDeploymentStagesModel]        `tfsdk:"stages"`
+	URL               types.String                                                                       `tfsdk:"url"`
+	UsesFunctions     types.Bool                                                                         `tfsdk:"uses_functions"`
 }
 
 type TargetPagesProjectLatestDeploymentBuildConfigModel struct {

@@ -60,7 +60,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"finding_type_id": schema.StringAttribute{
-				Description: "The finding type this policy is associated with. Immutable after creation; changing it replaces the policy.",
+				Description: "The finding type this policy is associated with. Immutable after creation; attempts to change it via update are rejected.",
 				Computed:    true,
 			},
 			"last_triggered_at": schema.StringAttribute{

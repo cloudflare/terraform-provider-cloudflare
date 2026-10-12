@@ -1049,9 +1049,61 @@ Read-Only:
 
 Read-Only:
 
+- `exclude` (Attributes) Target is excluded when any selector in this rule matches. (see [below for nested schema](#nestedatt--target_criteria--exclude))
+- `include` (Attributes) Target matches when any selector in this rule matches. (see [below for nested schema](#nestedatt--target_criteria--include))
 - `port` (Number) The port that the targets use for the chosen communication protocol. A port cannot be assigned to multiple protocols.
 - `protocol` (String) The communication protocol your application secures.
 Available values: "SSH", "RDP".
-- `target_attributes` (Map of List of String) Contains a map of target attribute keys to target attribute values.
+- `require` (Attributes) Target matches only when every selector in this rule matches. (see [below for nested schema](#nestedatt--target_criteria--require))
+- `target_attributes` (Map of List of String) Deprecated: use include.target_attributes for hostname selectors and rule tags for tag-based matching. New or changed maps may contain only hostname. The API accepts unchanged legacy maps on update, including non-hostname keys.
+
+<a id="nestedatt--target_criteria--exclude"></a>
+### Nested Schema for `target_criteria.exclude`
+
+Read-Only:
+
+- `tags` (Map of List of String) Map of target tag keys to values. Values within a key are OR'd.
+- `target_attributes` (Attributes) Hostname selector map. Only the hostname key is supported. (see [below for nested schema](#nestedatt--target_criteria--exclude--target_attributes))
+
+<a id="nestedatt--target_criteria--exclude--target_attributes"></a>
+### Nested Schema for `target_criteria.exclude.target_attributes`
+
+Read-Only:
+
+- `hostname` (List of String)
+
+
+
+<a id="nestedatt--target_criteria--include"></a>
+### Nested Schema for `target_criteria.include`
+
+Read-Only:
+
+- `tags` (Map of List of String) Map of target tag keys to values. Values within a key are OR'd.
+- `target_attributes` (Attributes) Hostname selector map. Only the hostname key is supported. (see [below for nested schema](#nestedatt--target_criteria--include--target_attributes))
+
+<a id="nestedatt--target_criteria--include--target_attributes"></a>
+### Nested Schema for `target_criteria.include.target_attributes`
+
+Read-Only:
+
+- `hostname` (List of String)
+
+
+
+<a id="nestedatt--target_criteria--require"></a>
+### Nested Schema for `target_criteria.require`
+
+Read-Only:
+
+- `tags` (Map of List of String) Map of target tag keys to values. Values within a key are OR'd.
+- `target_attributes` (Attributes) Hostname selector map. Only the hostname key is supported. (see [below for nested schema](#nestedatt--target_criteria--require--target_attributes))
+
+<a id="nestedatt--target_criteria--require--target_attributes"></a>
+### Nested Schema for `target_criteria.require.target_attributes`
+
+Read-Only:
+
+- `hostname` (List of String)
 
 

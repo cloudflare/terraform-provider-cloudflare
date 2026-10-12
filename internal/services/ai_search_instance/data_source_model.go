@@ -109,8 +109,14 @@ type AISearchInstanceIndexingOptionsDataSourceModel struct {
 }
 
 type AISearchInstanceMetadataDataSourceModel struct {
-	CreatedFromAISearchWizard types.Bool   `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,computed"`
-	WorkerDomain              types.String `tfsdk:"worker_domain" json:"worker_domain,computed"`
+	CreatedFromAISearchWizard types.Bool                                                                               `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,computed"`
+	CreatedFromEmdashPlugin   customfield.NestedObject[AISearchInstanceMetadataCreatedFromEmdashPluginDataSourceModel] `tfsdk:"created_from_emdash_plugin" json:"created_from_emdash_plugin,computed"`
+	WorkerDomain              types.String                                                                             `tfsdk:"worker_domain" json:"worker_domain,computed"`
+}
+
+type AISearchInstanceMetadataCreatedFromEmdashPluginDataSourceModel struct {
+	Type    types.String `tfsdk:"type" json:"type,computed"`
+	Version types.String `tfsdk:"version" json:"version,computed"`
 }
 
 type AISearchInstancePublicEndpointParamsDataSourceModel struct {

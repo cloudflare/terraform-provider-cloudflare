@@ -118,6 +118,7 @@ func transformActionParameters(ctx context.Context, src *SourceV4ActionParameter
 		HostHeader:              src.HostHeader,
 		Increment:               src.Increment,
 		Content:                 src.Content,
+		ContentConverter:        src.ContentConverter,
 		ContentType:             src.ContentType,
 		StatusCode:              src.StatusCode,
 		AutomaticHTTPSRewrites:  src.AutomaticHTTPSRewrites,
@@ -149,7 +150,6 @@ func transformActionParameters(ctx context.Context, src *SourceV4ActionParameter
 		AssetName: src.AssetName,
 
 		// New v5 fields absent in v4 — set to null
-		ContentConverter:       types.BoolNull(),
 		RequestBodyBuffering:   types.StringNull(),
 		ResponseBodyBuffering:  types.StringNull(),
 		RedirectsForAITraining: types.BoolNull(),

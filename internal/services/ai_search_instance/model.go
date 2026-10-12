@@ -77,8 +77,14 @@ type AISearchInstanceCustomMetadataModel struct {
 }
 
 type AISearchInstanceMetadataModel struct {
-	CreatedFromAISearchWizard types.Bool   `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,optional"`
-	WorkerDomain              types.String `tfsdk:"worker_domain" json:"worker_domain,optional"`
+	CreatedFromAISearchWizard types.Bool                                            `tfsdk:"created_from_aisearch_wizard" json:"created_from_aisearch_wizard,optional"`
+	CreatedFromEmdashPlugin   *AISearchInstanceMetadataCreatedFromEmdashPluginModel `tfsdk:"created_from_emdash_plugin" json:"created_from_emdash_plugin,optional"`
+	WorkerDomain              types.String                                          `tfsdk:"worker_domain" json:"worker_domain,optional"`
+}
+
+type AISearchInstanceMetadataCreatedFromEmdashPluginModel struct {
+	Type    types.String `tfsdk:"type" json:"type,required"`
+	Version types.String `tfsdk:"version" json:"version,required"`
 }
 
 type AISearchInstanceRetrievalOptionsModel struct {

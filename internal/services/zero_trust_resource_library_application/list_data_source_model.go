@@ -21,6 +21,7 @@ type ZeroTrustResourceLibraryApplicationsDataSourceModel struct {
 	AccountID types.String                                                                            `tfsdk:"account_id" path:"account_id,required"`
 	Fields    types.String                                                                            `tfsdk:"fields" query:"fields,optional"`
 	Filter    types.String                                                                            `tfsdk:"filter" query:"filter,optional"`
+	Lookup    types.String                                                                            `tfsdk:"lookup" query:"lookup,optional"`
 	OrderBy   types.String                                                                            `tfsdk:"order_by" query:"order_by,optional"`
 	Search    types.String                                                                            `tfsdk:"search" query:"search,optional"`
 	Limit     types.Int64                                                                             `tfsdk:"limit" query:"limit,computed_optional"`
@@ -42,6 +43,9 @@ func (m *ZeroTrustResourceLibraryApplicationsDataSourceModel) toListParams(_ con
 	}
 	if !m.Limit.IsNull() {
 		params.Limit = cloudflare.F(m.Limit.ValueInt64())
+	}
+	if !m.Lookup.IsNull() {
+		params.Lookup = cloudflare.F(m.Lookup.ValueString())
 	}
 	if !m.Offset.IsNull() {
 		params.Offset = cloudflare.F(m.Offset.ValueInt64())

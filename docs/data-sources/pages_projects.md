@@ -39,6 +39,7 @@ data "cloudflare_pages_projects" "example_pages_projects" {
 Read-Only:
 
 - `build_config` (Attributes) Configs for the project build process. (see [below for nested schema](#nestedatt--result--build_config))
+- `build_image_auto_upgrade` (Attributes) Present when the project is set to a retired build image major version and its builds have been moved to a newer one. `build_image_major_version` in `deployment_configs` then reports the version the builds run on. (see [below for nested schema](#nestedatt--result--build_image_auto_upgrade))
 - `canonical_deployment` (Attributes) Most recent production deployment of the project. (see [below for nested schema](#nestedatt--result--canonical_deployment))
 - `created_on` (String) When the project was created.
 - `deployment_configs` (Attributes) Configs for deployments in a project. (see [below for nested schema](#nestedatt--result--deployment_configs))
@@ -66,6 +67,15 @@ Read-Only:
 - `root_dir` (String) Directory to run the command.
 - `web_analytics_tag` (String) The classifying tag for analytics.
 - `web_analytics_token` (String, Sensitive) The auth token for analytics.
+
+
+<a id="nestedatt--result--build_image_auto_upgrade"></a>
+### Nested Schema for `result.build_image_auto_upgrade`
+
+Read-Only:
+
+- `from_version` (Number) The retired build image major version the project is set to.
+- `to_version` (Number) The build image major version the project's builds run on.
 
 
 <a id="nestedatt--result--canonical_deployment"></a>
@@ -213,7 +223,7 @@ Read-Only:
 - `always_use_latest_compatibility_date` (Boolean) Whether to always use the latest compatibility date for Pages Functions.
 - `analytics_engine_datasets` (Attributes Map) Analytics Engine bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--analytics_engine_datasets))
 - `browsers` (Attributes Map) Browser bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--browsers))
-- `build_image_major_version` (Number) The major version of the build image to use for Pages Functions.
+- `build_image_major_version` (Number) The major version of the build image to use for Pages Functions. Version 1 is retired and its projects are moved to version 3. Once a project's builds have been moved, this is the version the builds run on and `build_image_auto_upgrade` is set on the project.
 - `compatibility_date` (String) Compatibility date used for Pages Functions.
 - `compatibility_flags` (List of String) Compatibility flags used for Pages Functions.
 - `d1_databases` (Attributes Map) D1 databases used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--preview--d1_databases))
@@ -363,7 +373,7 @@ Read-Only:
 - `always_use_latest_compatibility_date` (Boolean) Whether to always use the latest compatibility date for Pages Functions.
 - `analytics_engine_datasets` (Attributes Map) Analytics Engine bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--analytics_engine_datasets))
 - `browsers` (Attributes Map) Browser bindings used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--browsers))
-- `build_image_major_version` (Number) The major version of the build image to use for Pages Functions.
+- `build_image_major_version` (Number) The major version of the build image to use for Pages Functions. Version 1 is retired and its projects are moved to version 3. Once a project's builds have been moved, this is the version the builds run on and `build_image_auto_upgrade` is set on the project.
 - `compatibility_date` (String) Compatibility date used for Pages Functions.
 - `compatibility_flags` (List of String) Compatibility flags used for Pages Functions.
 - `d1_databases` (Attributes Map) D1 databases used for Pages Functions. (see [below for nested schema](#nestedatt--result--deployment_configs--production--d1_databases))

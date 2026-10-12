@@ -31,12 +31,13 @@ func Transform(ctx context.Context, source SourceCloudflareRecordModel) (*Target
 	}
 
 	target := &TargetDNSRecordModel{
-		ID:      source.ID,
-		ZoneID:  source.ZoneID,
-		Name:    source.Name,
-		Type:    source.Type,
-		Comment: migrations.FalseyStringToNull(source.Comment),
-		Proxied: source.Proxied,
+		ID:                    source.ID,
+		ZoneID:                source.ZoneID,
+		Name:                  source.Name,
+		Type:                  source.Type,
+		Comment:               migrations.FalseyStringToNull(source.Comment),
+		Proxied:               source.Proxied,
+		IncludeShadowMetadata: types.BoolValue(false),
 	}
 
 	// TTL: source is Int64, target is Float64

@@ -380,6 +380,57 @@ func TestAccCloudflareWorker_ObservabilityDisabledWithLogs(t *testing.T) {
 	})
 }
 
+// Regression test for APIX-1801: changing only preview configuration must
+// update the Worker and leave an empty plan after the API response is refreshed.
+func TestAccCloudflareWorker_PreviewsBaseConfigOnlyUpdate(t *testing.T) {
+	t.Parallel()
+
+	resourceName := resourcePrefix + utils.GenerateRandomResourceName()
+	name := "cloudflare_worker." + resourceName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	cpuLimitPath := tfjsonpath.New("previews_base_config").AtMapKey("limits").AtMapKey("cpu_ms")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareWorkerPreviewsBaseConfig(resourceName, accountID, 100),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, cpuLimitPath, knownvalue.Int64Exact(100)),
+				},
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+			{
+				// Only previews_base_config.limits.cpu_ms differs from the first step.
+				Config: testAccCloudflareWorkerPreviewsBaseConfig(resourceName, accountID, 200),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, cpuLimitPath, knownvalue.Int64Exact(200)),
+				},
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+					},
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
+					},
+				},
+			},
+		},
+	})
+}
+
+func testAccCloudflareWorkerPreviewsBaseConfig(rnd, accountID string, cpuMs int) string {
+	return acctest.LoadTestCase("previews_base_config.tf", rnd, accountID, cpuMs)
+}
+
 func testAccCloudflareWorkerObservabilityLogs(rnd, accountID string) string {
 	return acctest.LoadTestCase("observability_logs.tf", rnd, accountID)
 }

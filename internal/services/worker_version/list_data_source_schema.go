@@ -283,6 +283,27 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Description: "Namespace identifier tag.",
 										Computed:    true,
 									},
+									"retry": schema.SingleNestedAttribute{
+										Description: "Retry policy for calls made to the Durable Object through this binding. Omitted or null properties use the runtime defaults. These limits are upper bounds and do not enable retries for otherwise ineligible calls.",
+										Computed:    true,
+										CustomType:  customfield.NewNestedObjectType[WorkerVersionsBindingsRetryDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"max_attempts": schema.Int64Attribute{
+												Description: "Maximum number of retries after the initial request, not the total number of attempts. Defaults to 4. Zero disables retries.",
+												Computed:    true,
+												Validators: []validator.Int64{
+													int64validator.Between(0, 10),
+												},
+											},
+											"timeout_ms": schema.Int64Attribute{
+												Description: "Retry timeout in milliseconds, measured from the start of the call. No retry starts after it expires, and a retry still running when it expires is cancelled. This is not a request timeout; it does not limit the initial request, which is still subject to any timeouts set by your Worker. Defaults to 10000.",
+												Computed:    true,
+												Validators: []validator.Int64{
+													int64validator.Between(500, 60000),
+												},
+											},
+										},
+									},
 									"script_name": schema.StringAttribute{
 										Description: "The script where the Durable Object is defined, if it is external to this Worker.",
 										Computed:    true,

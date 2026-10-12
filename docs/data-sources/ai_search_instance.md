@@ -112,7 +112,17 @@ Available values: "porter", "trigram".
 Read-Only:
 
 - `created_from_aisearch_wizard` (Boolean)
+- `created_from_emdash_plugin` (Attributes) (see [below for nested schema](#nestedatt--metadata--created_from_emdash_plugin))
 - `worker_domain` (String)
+
+<a id="nestedatt--metadata--created_from_emdash_plugin"></a>
+### Nested Schema for `metadata.created_from_emdash_plugin`
+
+Read-Only:
+
+- `type` (String) Available values: "native", "rest".
+- `version` (String)
+
 
 
 <a id="nestedatt--public_endpoint_params"></a>

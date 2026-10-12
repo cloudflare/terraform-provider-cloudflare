@@ -249,6 +249,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"created_from_aisearch_wizard": schema.BoolAttribute{
 						Computed: true,
 					},
+					"created_from_emdash_plugin": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[AISearchInstanceMetadataCreatedFromEmdashPluginDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"type": schema.StringAttribute{
+								Description: `Available values: "native", "rest".`,
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("native", "rest"),
+								},
+							},
+							"version": schema.StringAttribute{
+								Computed: true,
+							},
+						},
+					},
 					"worker_domain": schema.StringAttribute{
 						Computed: true,
 					},

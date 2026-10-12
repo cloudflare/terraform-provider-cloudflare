@@ -90,3 +90,32 @@ resource "cloudflare_zero_trust_access_application" "example_zero_trust_access_a
   skip_interstitial = true
   tags = ["engineers"]
 }
+
+resource "cloudflare_zero_trust_access_application" "infrastructure_application_with_tags" {
+  account_id = "account_id"
+  name       = "Production SSH"
+  type       = "infrastructure"
+
+  target_criteria = [{
+    port     = 22
+    protocol = "SSH"
+    include = {
+      target_attributes = {
+        hostname = ["web-*"]
+      }
+      tags = {
+        environment = ["production", "staging"]
+      }
+    }
+    require = {
+      tags = {
+        team = ["engineering"]
+      }
+    }
+    exclude = {
+      tags = {
+        environment = ["development"]
+      }
+    }
+  }]
+}

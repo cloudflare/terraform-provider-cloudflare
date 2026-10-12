@@ -113,6 +113,7 @@ type TargetWorkersScriptModel struct {
 	ID               types.String                                           `tfsdk:"id"`
 	ScriptName       types.String                                           `tfsdk:"script_name"`
 	AccountID        types.String                                           `tfsdk:"account_id"`
+	BindingsInherit  types.String                                           `tfsdk:"bindings_inherit"`
 	Force            types.Bool                                             `tfsdk:"force"`
 	Content          types.String                                           `tfsdk:"content"`
 	ContentFile      types.String                                           `tfsdk:"content_file"`
@@ -173,6 +174,7 @@ type TargetBindingsModel struct {
 	ClassName                   types.String                  `tfsdk:"class_name"`
 	DatabaseID                  types.String                  `tfsdk:"database_id"`
 	NamespaceID                 types.String                  `tfsdk:"namespace_id"`
+	Retry                       *TargetBindingsRetryModel     `tfsdk:"retry"`
 	ScriptName                  types.String                  `tfsdk:"script_name"`
 	Json                        types.String                  `tfsdk:"json"`
 	CertificateID               types.String                  `tfsdk:"certificate_id"`
@@ -224,6 +226,11 @@ type TargetBindingsOutboundModel struct {
 type TargetBindingsOutboundWorkerModel struct {
 	Environment types.String `tfsdk:"environment"`
 	Service     types.String `tfsdk:"service"`
+}
+
+type TargetBindingsRetryModel struct {
+	MaxAttempts types.Int64 `tfsdk:"max_attempts"`
+	TimeoutMs   types.Int64 `tfsdk:"timeout_ms"`
 }
 
 type TargetBindingsSimpleModel struct {
