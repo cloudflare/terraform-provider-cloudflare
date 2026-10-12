@@ -1,0 +1,548 @@
+internal/services/zero_trust_dlp_integration_entry/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 17,107-111
+internal/services/workers_script/read_main_module_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-252
+internal/services/worker/testdata/previews_base_config.tf
+  s_19fb0e9768cd33::t_af767eb51faf07 1-10
+internal/services/logpush_dataset_job/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 229
+docs/data-sources/zero_trust_dlp_entry.md
+  s_19fb0e9768cd33::t_af767eb51faf07 57
+go.mod
+  s_19fb0e9768cd33::t_af767eb51faf07 12
+internal/services/zero_trust_organization/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 46,66,181-182,184,198
+docs/data-sources/zero_trust_access_applications.md
+  s_19fb0e9768cd33::t_af767eb51faf07 1055-1056,1060-1110
+internal/services/zero_trust_casb_policy/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 63
+docs/data-sources/zero_trust_organization.md
+  s_19fb0e9768cd33::t_af767eb51faf07 37,45,47,89-90,96
+internal/services/stream_key/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 69
+internal/services/zero_trust_dlp_integration_entry/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 16,165-168
+docs/data-sources/zero_trust_resource_library_application.md
+  s_19fb0e9768cd33::t_af767eb51faf07 31,40,44,46-47,59,63-64,73-90,94
+examples/resources/cloudflare_monetization_rules/import.sh
+  s_19fb0e9768cd33::t_af767eb51faf07 1
+docs/data-sources/worker_versions.md
+  s_19fb0e9768cd33::t_af767eb51faf07 163,206-212
+  s_19fb0e9768cd33::t_44369a3d31146d 213-214
+internal/services/zero_trust_device_custom_profile/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 200,252-254
+docs/data-sources/zero_trust_device_custom_profiles.md
+  s_19fb0e9768cd33::t_af767eb51faf07 58,69
+internal/services/worker_version/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 12,636-653
+  s_19fb0e9768cd33::t_4704c82433dde2 654-655
+internal/services/zero_trust_device_custom_profile/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 138,358-360
+internal/services/ruleset/migration/v500/handler_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-210
+internal/services/zero_trust_access_identity_provider/migration/v500/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 128
+internal/services/zero_trust_dlp_predefined_entry/list_data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 50
+internal/services/zero_trust_dlp_predefined_entry/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 16,165-168
+docs/resources/logpush_job.md
+  s_19fb0e9768cd33::t_af767eb51faf07 96
+docs/data-sources/zero_trust_dlp_custom_entry.md
+  s_19fb0e9768cd33::t_af767eb51faf07 57
+docs/data-sources/zero_trust_dlp_custom_entries.md
+  s_19fb0e9768cd33::t_af767eb51faf07 59
+internal/services/logpush_job/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 190
+internal/services/monetization_rules/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-41
+CHANGELOG.md
+  s_19fb0e9768cd33::t_af767eb51faf07 3-59
+internal/services/zero_trust_gateway_certificate/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 83-86
+internal/services/zero_trust_organization/normalizations.go
+  s_19fb0e9768cd33::t_af767eb51faf07 102-104
+internal/services/monetization_rules/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-86
+docs/data-sources/hyperdrive_config.md
+  s_19fb0e9768cd33::t_af767eb51faf07 41
+internal/services/zero_trust_access_application/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 441-442,459-460,462-463,468-470
+internal/services/zero_trust_dlp_integration_entry/list_data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 50
+internal/services/api_shield_discovery_operation/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 15-16
+internal/services/dns_record/shadow_metadata_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-191
+examples/resources/cloudflare_api_shield_discovery_operation/resource.tf
+  s_19fb0e9768cd33::t_af767eb51faf07 3
+internal/services/zero_trust_access_application/target_rule_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-263
+internal/services/ruleset/migration/v500/migrations_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 55-120
+internal/services/zero_trust_organization/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 48,56,154-155,170
+internal/services/worker_version/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 12,326-345
+  s_19fb0e9768cd33::t_4902d854a55025 346
+internal/services/zero_trust_dlp_custom_profile/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 75,114
+internal/services/ai_search_instance/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 139-153
+internal/services/zero_trust_dlp_entry/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 31
+internal/services/worker/resource_modifyplan_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-186
+internal/services/zero_trust_access_application/migration/v500/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 402-404,410-417
+  s_19fb0e9768cd33::t_e06aaeb0235d9e 418
+internal/services/zero_trust_access_application/target_rule_refresh_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-111
+internal/services/workers_kv_namespace/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 51-58
+internal/services/ai_search_instance/list_data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 113-120
+docs/resources/worker_version.md
+  s_19fb0e9768cd33::t_af767eb51faf07 261,302-308
+  s_19fb0e9768cd33::t_ed75233d4961ee 309-310
+docs/data-sources/zero_trust_dlp_entries.md
+  s_19fb0e9768cd33::t_af767eb51faf07 59
+internal/services/monetization_rules/data_source_schema_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-19
+internal/services/zero_trust_dlp_custom_entry/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 31
+internal/services/zero_trust_access_application/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 205-219
+internal/services/zero_trust_gateway_certificate/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 31
+docs/resources/zero_trust_dlp_integration_entry.md
+  s_19fb0e9768cd33::t_af767eb51faf07 60
+internal/services/zero_trust_dlp_custom_profile/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 242-245,375-378
+internal/services/workers_kv_namespace/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 78-84
+internal/services/ruleset/migration/v500/transform.go
+  s_19fb0e9768cd33::t_af767eb51faf07 121
+docs/data-sources/workers_kv_namespace.md
+  s_19fb0e9768cd33::t_af767eb51faf07 39-40
+internal/services/zero_trust_access_identity_provider/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 61-62,81,162,321-325
+  s_19fb0e9768cd33::t_6259c8987eef33 326
+internal/services/zero_trust_gateway_certificate/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 72-75
+internal/services/ai_search_instance/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 80-87
+docs/resources/zero_trust_gateway_certificate.md
+  s_19fb0e9768cd33::t_af767eb51faf07 45
+internal/services/email_security_trusted_domains/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 40,44,48
+docs/resources/email_security_trusted_domains.md
+  s_19fb0e9768cd33::t_af767eb51faf07 35-37
+internal/services/ruleset/migration/v500/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 9,66-72,104-111
+internal/services/hyperdrive_config/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 139
+internal/services/zero_trust_dlp_entry/list_data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 50
+internal/provider.go
+  s_19fb0e9768cd33::t_af767eb51faf07 129,579,605,967
+internal/services/email_security_trusted_domains/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 18-20
+examples/resources/cloudflare_workers_kv_namespace/resource.tf
+  s_19fb0e9768cd33::t_af767eb51faf07 5
+internal/services/zero_trust_dlp_predefined_entry/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 17,108-112
+docs/resources/zero_trust_organization.md
+  s_19fb0e9768cd33::t_af767eb51faf07 75,84,86,132-133,139
+internal/services/pages_domain/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 119
+internal/services/zero_trust_dlp_predefined_entry/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 35
+templates/resources/zone_setting.md.tmpl
+  s_19fb0e9768cd33::t_af767eb51faf07 85
+internal/services/worker_version/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 97,146-148
+  s_19fb0e9768cd33::t_36e16c6d19c1e2 149-150
+internal/services/zero_trust_access_application/list_data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 683-688
+internal/services/workers_script/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 43,190,236-238
+  s_19fb0e9768cd33::t_ec3fd614b55032 239-240
+internal/services/workers_script/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 12,55-61,338-355
+  s_19fb0e9768cd33::t_8ad850571ab68b 356-357
+internal/services/zero_trust_resource_library_application/list_data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 24,47-48
+  s_19fb0e9768cd33::t_d82e92a8bfd876 49
+docs/resources/workers_kv.md
+  s_19fb0e9768cd33::t_af767eb51faf07 41
+internal/services/zero_trust_gateway_certificate/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 28
+docs/data-sources/ai_search_instance.md
+  s_19fb0e9768cd33::t_af767eb51faf07 115,118-125
+  s_19fb0e9768cd33::t_ffaa0222286695 126
+internal/services/turnstile_widget/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 60
+internal/services/workers_kv_namespace/list_data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 46
+internal/services/zero_trust_tunnel_warp_connector_config/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 48
+examples/resources/cloudflare_zero_trust_resource_library_application/resource.tf
+  s_19fb0e9768cd33::t_af767eb51faf07 8
+docs/data-sources/zero_trust_gateway_certificates.md
+  s_19fb0e9768cd33::t_af767eb51faf07 47
+.stats.yml
+  s_19fb0e9768cd33::t_af767eb51faf07 1
+internal/services/worker/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 334-344,352
+internal/services/zero_trust_dlp_entry/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 16,165-168
+docs/resources/zero_trust_tunnel_warp_connector_config.md
+  s_19fb0e9768cd33::t_af767eb51faf07 37
+internal/services/zero_trust_resource_library_application/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 27,39,47,52,67
+internal/services/dns_record/migration/v500/shadow_metadata_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-31
+internal/services/zero_trust_dlp_custom_entry/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 35
+internal/services/zero_trust_dlp_custom_entry/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 17,118-122
+internal/services/workers_kv_namespace/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 51-57
+templates/data-sources/zone_setting.md.tmpl
+  s_19fb0e9768cd33::t_af767eb51faf07 83
+docs/data-sources/zero_trust_dlp_predefined_profile.md
+  s_19fb0e9768cd33::t_af767eb51faf07 70
+internal/services/ruleset/migration/v500/transform_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 100-120
+.github/workflows/publish-release.yml
+  s_19fb0e9768cd33::t_af767eb51faf07 135
+internal/services/zero_trust_dlp_predefined_entry/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 31
+docs/resources/api_shield_discovery_operation.md
+  s_19fb0e9768cd33::t_af767eb51faf07 21,31-32
+internal/services/hostname_tls_setting/resource_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 8,11-12,17,100-103,106-114,136-141,144-152,157-197
+  s_19fb0e9768cd33::t_c3ff0a0be07285 198
+internal/services/zero_trust_dlp_entry/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 15,98-102
+internal/services/zero_trust_dlp_integration_entry/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 31
+internal/services/zero_trust_organization/resource_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 573-640
+internal/services/workers_script/migration/v500/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 116,177,231-233
+  s_19fb0e9768cd33::t_bcdc5d17fc337e 234-235
+internal/services/stream/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 77
+internal/services/stream_download/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 66
+internal/services/workers_kv_namespace/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 18
+internal/services/dns_record/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 223
+internal/services/ruleset/migration/v500/detection_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-59
+internal/services/zero_trust_resource_library_application/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 27,31-35,39,47,52,70,98,119,129,133
+internal/services/zero_trust_access_identity_provider/list_data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 90
+docs/resources/zero_trust_dlp_predefined_entry.md
+  s_19fb0e9768cd33::t_af767eb51faf07 60
+internal/services/hostname_tls_setting/resource_import_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-113
+internal/services/zero_trust_dlp_predefined_profile/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 176-179
+internal/services/zero_trust_organization/model_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 4,14-15,18-41,44,53-100,107-109,122,139,159,174
+docs/data-sources/ai_search_instances.md
+  s_19fb0e9768cd33::t_af767eb51faf07 114,117-124
+  s_19fb0e9768cd33::t_6d6b6f39ae4091 125
+examples/data-sources/cloudflare_monetization_rules/data-source.tf
+  s_19fb0e9768cd33::t_af767eb51faf07 1-3
+internal/services/monetization_rules/resource_schema_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-19
+internal/services/zero_trust_gateway_certificate/migration/v500/transform.go
+  s_19fb0e9768cd33::t_af767eb51faf07 62
+docs/data-sources/zero_trust_gateway_certificate.md
+  s_19fb0e9768cd33::t_af767eb51faf07 44
+internal/services/zero_trust_dlp_custom_entry/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 15,98-102
+internal/services/zero_trust_dlp_entry/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 17,114-118
+docs/data-sources/zero_trust_resource_library_categories.md
+  s_19fb0e9768cd33::t_af767eb51faf07 29,31,44
+examples/resources/cloudflare_zero_trust_access_application/resource.tf
+  s_19fb0e9768cd33::t_af767eb51faf07 93-121
+internal/services/hyperdrive_config/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 92
+internal/services/zero_trust_access_identity_provider/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 62,81,254-255
+  s_19fb0e9768cd33::t_4b1b8b4d6ed1fe 256-257
+docs/data-sources/hyperdrive_configs.md
+  s_19fb0e9768cd33::t_af767eb51faf07 44
+internal/services/ai_search_instance/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 276-291
+docs/data-sources/zero_trust_dlp_integration_entries.md
+  s_19fb0e9768cd33::t_af767eb51faf07 59
+internal/services/dns_record/custom.go
+  s_19fb0e9768cd33::t_af767eb51faf07 208-212,461-464
+internal/services/zero_trust_dlp_predefined_entry/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 15,98-102
+internal/services/d1_database/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 7-8,103,105
+docs/data-sources/worker_version.md
+  s_19fb0e9768cd33::t_af767eb51faf07 160,203-209
+  s_19fb0e9768cd33::t_ba049268e10ed1 210-211
+internal/services/zero_trust_organization/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 39-40,76
+internal/services/hostname_tls_setting/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 241
+internal/services/workers_kv_namespace/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 23
+internal/services/zero_trust_access_identity_provider/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 98
+docs/resources/workers_kv_namespace.md
+  s_19fb0e9768cd33::t_af767eb51faf07 23,39-40
+internal/services/zero_trust_access_application/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1751-1753,1766
+internal/services/monetization_rules/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-257
+internal/services/pages_project/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 266,521,790-802
+  s_19fb0e9768cd33::t_7593d99f700c4b 803-804
+internal/services/pages_project/list_data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 35-51,408-410
+  s_19fb0e9768cd33::t_87ffcd460f978c 411-412
+internal/services/dns_record/migration/v500/transform.go
+  s_19fb0e9768cd33::t_af767eb51faf07 34-40
+internal/services/dns_record/private_routing_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-93
+internal/services/zero_trust_resource_library_application/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 65-67,85
+internal/services/zero_trust_access_application/target_rule_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-82
+docs/resources/zero_trust_device_custom_profile.md
+  s_19fb0e9768cd33::t_af767eb51faf07 101,121
+internal/services/zero_trust_resource_library_category/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 24,29,47
+internal/services/zero_trust_gateway_certificate/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 88-91
+docs/data-sources/monetization_rules.md
+  s_19fb0e9768cd33::t_af767eb51faf07 1-4,6-44
+  s_19fb0e9768cd33::t_481420b080b6ba 5
+internal/services/zero_trust_dlp_entry/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 35
+docs/resources/pages_project.md
+  s_19fb0e9768cd33::t_af767eb51faf07 243,286,442,622-628
+  s_19fb0e9768cd33::t_dffbd787f88e0c 629-630
+internal/services/zero_trust_dlp_custom_entry/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 16,165-168
+docs/resources/zero_trust_resource_library_application.md
+  s_19fb0e9768cd33::t_af767eb51faf07 22,36,38,40-41,53
+docs/resources/zero_trust_access_application.md
+  s_19fb0e9768cd33::t_af767eb51faf07 107-135,186,1201-1256
+internal/services/zero_trust_device_custom_profile/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 85,241-243
+docs/data-sources/zero_trust_access_application.md
+  s_19fb0e9768cd33::t_af767eb51faf07 1052-1053,1057-1107
+docs/data-sources/zero_trust_resource_library_category.md
+  s_19fb0e9768cd33::t_af767eb51faf07 27
+internal/services/zero_trust_access_application/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1721-1723,1736
+internal/services/logpush_job/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 196
+internal/services/pages_project/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 21-39,59-61
+  s_19fb0e9768cd33::t_e3574b125d483d 62-63
+internal/services/worker/resource_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 383-433
+internal/services/zero_trust_access_ai_controls_mcp_server/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 65,70
+internal/services/zero_trust_access_identity_provider/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 227-230,238,257
+examples/data-sources/cloudflare_zero_trust_resource_library_applications/data-source.tf
+  s_19fb0e9768cd33::t_af767eb51faf07 5
+docs/data-sources/pages_projects.md
+  s_19fb0e9768cd33::t_af767eb51faf07 42,72-80,226,376
+docs/resources/zero_trust_dlp_custom_entry.md
+  s_19fb0e9768cd33::t_af767eb51faf07 63
+internal/services/zero_trust_dlp_custom_entry/list_data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 50
+docs/data-sources/pages_project.md
+  s_19fb0e9768cd33::t_af767eb51faf07 39,69-77,223,373
+docs/resources/zero_trust_access_identity_provider.md
+  s_19fb0e9768cd33::t_af767eb51faf07 51,101
+docs/data-sources/logpush_jobs.md
+  s_19fb0e9768cd33::t_af767eb51faf07 72
+internal/services/ruleset/migrations.go
+  s_19fb0e9768cd33::t_af767eb51faf07 17-20,22,28,31-32,34-35,39
+docs/data-sources/zero_trust_resource_library_applications.md
+  s_19fb0e9768cd33::t_af767eb51faf07 19,35,39-40,49-65,67,71,88,92-93,95-96
+docs/resources/ai_search_instance.md
+  s_19fb0e9768cd33::t_af767eb51faf07 109,112-119
+  s_19fb0e9768cd33::t_ffce73c18a876f 120
+internal/services/zero_trust_gateway_certificate/list_data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 44
+internal/services/monetization_rules/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-36
+internal/services/ai_search_instance/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 252-267
+internal/services/api_shield_operation/migration_v501_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 43-47
+internal/services/ruleset/migration/v500/handler.go
+  s_19fb0e9768cd33::t_af767eb51faf07 6,14,20,23,44-45,50-53,57-58,62,69,80,115-116,119,126-128,130,133,135,138-164,166-167,169
+docs/data-sources/zero_trust_tunnel_warp_connector_config.md
+  s_19fb0e9768cd33::t_af767eb51faf07 40
+internal/services/pages_project/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 17-34,256-258
+  s_19fb0e9768cd33::t_c52eb188039341 259-260
+internal/services/zero_trust_access_application/target_rule_validator.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-37
+docs/data-sources/logpush_job.md
+  s_19fb0e9768cd33::t_af767eb51faf07 69
+docs/data-sources/zero_trust_casb_policy.md
+  s_19fb0e9768cd33::t_af767eb51faf07 43
+docs/data-sources/workers_kv_namespaces.md
+  s_19fb0e9768cd33::t_af767eb51faf07 50-51
+internal/services/pages_project/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 116-130,491,738
+internal/services/zero_trust_dlp_integration_entry/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 15,98-102
+docs/resources/monetization_rules.md
+  s_19fb0e9768cd33::t_481420b080b6ba 5
+  s_19fb0e9768cd33::t_af767eb51faf07 1-4,6-64
+internal/services/zone_hold/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 76-80
+internal/services/api_shield_discovery_operation/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 28,30,33,37
+internal/services/worker_version/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 180,229-231
+  s_19fb0e9768cd33::t_6a2c50f803e804 232-233
+internal/services/api_shield_discovery_operation/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 11-13,73,122
+docs/data-sources/zero_trust_access_identity_providers.md
+  s_19fb0e9768cd33::t_af767eb51faf07 56,90
+docs/data-sources/zero_trust_dlp_predefined_entries.md
+  s_19fb0e9768cd33::t_af767eb51faf07 59
+docs/resources/zone_setting.md
+  s_19fb0e9768cd33::t_af767eb51faf07 89
+internal/services/ruleset/migration/v500/migration_model_parity_test.go
+  s_19fb0e9768cd33::t_af767eb51faf07 27-34
+internal/services/ruleset/migration/v500/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 13-14,41-42,58,104
+internal/services/zero_trust_access_application/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 215-218
+internal/services/zero_trust_organization/testdata/accessorganizationconfigpiv.tf
+  s_19fb0e9768cd33::t_af767eb51faf07 1-18
+docs/data-sources/logpush_dataset_job.md
+  s_19fb0e9768cd33::t_af767eb51faf07 67
+.github/workflows/trigger-terraform-registry-sync.yml
+  s_19fb0e9768cd33::t_af767eb51faf07 13
+docs/data-sources/zone_setting.md
+  s_19fb0e9768cd33::t_af767eb51faf07 87
+internal/services/zero_trust_gateway_certificate/migration/v500/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 54
+docs/data-sources/zero_trust_dlp_integration_entry.md
+  s_19fb0e9768cd33::t_af767eb51faf07 57
+docs/data-sources/zero_trust_casb_policies.md
+  s_19fb0e9768cd33::t_af767eb51faf07 52
+internal/services/zero_trust_access_application/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 687-701
+docs/data-sources/zero_trust_dlp_predefined_entry.md
+  s_19fb0e9768cd33::t_af767eb51faf07 57
+internal/services/worker/previews_base_config.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-80
+docs/data-sources/zero_trust_device_custom_profile.md
+  s_19fb0e9768cd33::t_af767eb51faf07 51,61
+internal/services/zero_trust_casb_policy/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 116
+internal/services/zero_trust_tunnel_warp_connector_config/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 48
+internal/services/monetization_rules/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-80
+docs/data-sources/zero_trust_access_identity_provider.md
+  s_19fb0e9768cd33::t_af767eb51faf07 49,91
+internal/services/workers_kv/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 55
+internal/services/zero_trust_resource_library_category/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 23
+examples/resources/cloudflare_zero_trust_casb_webhook/resource.tf
+  s_19fb0e9768cd33::t_af767eb51faf07 3
+internal/services/d1_database/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 9,17-28
+docs/resources/turnstile_widget.md
+  s_19fb0e9768cd33::t_af767eb51faf07 57-58
+internal/services/r2_data_catalog/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 69
+internal/services/workers_kv_namespace/migration/v500/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 23
+docs/resources/workers_script.md
+  s_19fb0e9768cd33::t_af767eb51faf07 163-164,293,325-331
+  s_19fb0e9768cd33::t_eae889d275015d 332-333
+examples/resources/cloudflare_aisearch_instance/resource.tf
+  s_19fb0e9768cd33::t_af767eb51faf07 30-33
+internal/services/observatory_scheduled_test/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 84
+internal/services/zero_trust_access_identity_provider/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 72
+internal/services/workers_script/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 122-130,136,236-244,250,442-453,455-460,463-467
+internal/services/zero_trust_dlp_predefined_profile/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 57
+internal/services/pages_project/migration/v500/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 62-73,95-117,336-339,341-352,417-420,422-433
+internal/services/worker_version/list_data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 96,145-147
+  s_19fb0e9768cd33::t_9d8e903ecb0949 148-149
+internal/services/monetization_rules/data_source.go
+  s_19fb0e9768cd33::t_af767eb51faf07 1-88
+internal/services/worker_version/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 286-306
+internal/services/logpush_job/schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 195
+docs/resources/zero_trust_dlp_entry.md
+  s_19fb0e9768cd33::t_af767eb51faf07 63
+internal/services/pages_project/list_data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 416,663,1304-1318
+internal/services/ai_search_instance/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 112-119
+internal/services/stream_caption_language/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 66
+internal/services/zero_trust_access_short_lived_certificate/resource.go
+  s_19fb0e9768cd33::t_af767eb51faf07 77
+internal/services/zero_trust_organization/migration/v500/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 71-87,124-125
+docs/resources/zero_trust_access_ai_controls_mcp_server.md
+  s_19fb0e9768cd33::t_af767eb51faf07 74-75
+examples/resources/cloudflare_monetization_rules/resource.tf
+  s_19fb0e9768cd33::t_af767eb51faf07 1-12
+docs/resources/zero_trust_casb_webhook.md
+  s_19fb0e9768cd33::t_af767eb51faf07 21
+internal/services/zero_trust_dlp_integration_entry/data_source_model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 35
+docs/data-sources/zero_trust_dlp_custom_profile.md
+  s_19fb0e9768cd33::t_af767eb51faf07 96,158
+internal/services/zero_trust_organization/model.go
+  s_19fb0e9768cd33::t_af767eb51faf07 29,34,69
+internal/services/zero_trust_resource_library_application/data_source_schema.go
+  s_19fb0e9768cd33::t_af767eb51faf07 25,52,67,71,95,121,125,129,133-136,138,143
+go.sum
+  s_19fb0e9768cd33::t_11721dd3dc5218 74-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "fbd26da663874593c4c6ea0283b6c2198993a086",
+  "prompts": {},
+  "sessions": {
+    "s_19fb0e9768cd33": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ece43ebb9ffePt0q9ohBbACgWB",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
