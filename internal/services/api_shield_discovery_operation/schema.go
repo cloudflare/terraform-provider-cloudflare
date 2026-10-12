@@ -24,22 +24,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				"Domain API Gateway",
 			},
 		}.String(),
-		Version: 500,
 		DeprecationMessage: "This resource is no longer supported. It cannot be imported.",
+		Version:            500,
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description:   "UUID.",
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
-			},
-			"operation_id": schema.StringAttribute{
+			"discovery_id": schema.StringAttribute{
 				Description:   "UUID.",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier.",
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"state": schema.StringAttribute{
