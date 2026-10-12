@@ -46,7 +46,7 @@ Only present for SAML identity providers with encryption configured.
 Create a certificate set via POST to `/identity_providers/{id}/saml_certificate`.
 - `scim_config` (Attributes) The configuration settings for enabling a System for Cross-Domain Identity Management (SCIM) with the identity provider. (see [below for nested schema](#nestedatt--scim_config))
 - `type` (String) The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).
-Available values: "onetimepin", "azureAD", "saml", "centrify", "facebook", "github", "google-apps", "google", "linkedin", "oidc", "okta", "onelogin", "pingone", "yandex", "cloudflare".
+Available values: "onetimepin", "azureAD", "saml", "centrify", "facebook", "github", "google-apps", "google", "linkedin", "oidc", "okta", "onelogin", "pingone", "yandex", "cloudflare", "passkeys".
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -88,6 +88,7 @@ Note: Requires `saml_certificate_set_id` to be set when `true`.
 - `header_attributes` (Attributes List) Add a list of attribute names that will be returned in the response header from the Access callback. (see [below for nested schema](#nestedatt--config--header_attributes))
 - `idp_public_certs` (List of String) X509 certificate to verify the signature in the SAML authentication response
 - `issuer_url` (String) IdP Entity ID or Issuer URL
+- `login_page_auto_prompt` (Boolean) When enabled, the Access login page automatically prompts the user to authenticate with a passkey.
 - `max_sso_url_length` (Number) The maximum URL length the IdP accepts for the SSO redirect URL.
 When the constructed SSO URL would exceed this length, the RelayState
 is stored server-side and a short nonce is passed to the IdP instead.

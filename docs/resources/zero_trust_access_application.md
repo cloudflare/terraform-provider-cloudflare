@@ -1221,6 +1221,8 @@ Required:
 
 - `hostname` (List of String)
 
+
+
 <a id="nestedatt--target_criteria--include"></a>
 ### Nested Schema for `target_criteria.include`
 
@@ -1235,6 +1237,8 @@ Optional:
 Required:
 
 - `hostname` (List of String)
+
+
 
 <a id="nestedatt--target_criteria--require"></a>
 ### Nested Schema for `target_criteria.require`
@@ -1258,3 +1262,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_zero_trust_access_application.example '<{accounts|zones}/{account_id|zone_id}>/<app_id>'
 ```
+
+

@@ -44,6 +44,7 @@ Available values: "pending_deployment", "available", "pending_deletion", "inacti
 - `in_use` (Boolean) Indicate whether Gateway TLS interception uses this certificate (read-only). You cannot set this value directly. To configure interception, use the Gateway configuration setting named `certificate` (read-only).
 - `issuer_org` (String) Indicate the organization that issued the certificate (read-only).
 - `issuer_raw` (String) Provide the entire issuer field of the certificate (read-only).
+- `region` (String) Indicate the read-only region the certificate authority's key material is pinned to. Omitted for certificates that were created without a region.
 - `type` (String) Indicate the read-only certificate type, BYO-PKI (custom) or Gateway-managed.
 Available values: "custom", "gateway_managed".
 - `updated_at` (String)

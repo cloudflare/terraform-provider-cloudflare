@@ -19,7 +19,7 @@ resource "cloudflare_zero_trust_resource_library_application" "example_zero_trus
   human_id = "HR"
   ip_subnets = ["192.168.1.0/24", "2001:db8::/48"]
   name = "HR"
-  port_protocols = ["tcp/80", "tcp/443"]
+  port_protocols = ["tcp/443", "udp/10000-20000"]
   support_domains = ["example.com", "foo.com"]
 }
 ```
@@ -33,12 +33,12 @@ resource "cloudflare_zero_trust_resource_library_application" "example_zero_trus
 
 ### Optional
 
-- `category_id` (Number) Returns the category ID.
+- `category_id` (Number) Numeric identifier for an application category.
 - `hostnames` (Set of String) Hostnames matched by the application.
-- `human_id` (String) Returns the human readable ID.
+- `human_id` (String) Human-readable identifier for the application.
 - `ip_subnets` (Set of String) IP subnets for this application. Custom application create and update requests accept IPv4 prefix lengths /8 through /32 and IPv6 prefix lengths /32 through /128.
-- `name` (String) Returns the application name.
-- `port_protocols` (Set of String) Port and protocol pairs matched by the application.
+- `name` (String) Application name.
+- `port_protocols` (Set of String) Ports matched by the application, in `protocol/port` or inclusive `protocol/start-end` format (for example, `tcp/443` or `udp/10000-20000`). TCP and UDP ports must be between 0 and 65535.
 - `support_domains` (Set of String) Support domains matched by the application.
 
 ### Read-Only
@@ -50,7 +50,7 @@ resource "cloudflare_zero_trust_resource_library_application" "example_zero_trus
 - `application_type_description` (String) Returns the application type description.
 - `created_at` (String) Returns the application creation time.
 - `gen_ai_score` (Number) GenAI score for the application. Returns -1 when no score is available.
-- `id` (Number) Returns the application ID.
+- `id` (Number) Numeric identifier for the application.
 - `supported` (Set of String) Cloudflare products that support this application.
 - `updated_at` (String) Returns the application update time.
 - `version` (String) Returns the application version.

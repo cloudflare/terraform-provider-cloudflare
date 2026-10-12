@@ -37,7 +37,7 @@ data "cloudflare_zero_trust_tunnel_warp_connector_config" "example_zero_trust_tu
 - `config` (Attributes) Provider-specific configuration. Present for `aws` and `local` modes. (see [below for nested schema](#nestedatt--config))
 - `configuration_version` (Number) Monotonically increasing configuration version, incremented on each PUT.
 - `created_at` (String) Timestamp of when the resource was created.
-- `ha_mode` (String) High-availability mode for the WARP Connector tunnel. `none` means HA is enabled but no provider is configured yet (newly created tunnels default to this). `disabled` means HA is explicitly turned off. `aws` uses AWS ENI move for failover. `local` uses virtual IPs (VIPs) on the local interface.
+- `ha_mode` (String) High-availability mode for the Mesh node. `none` means HA is enabled but no provider is configured yet (newly created nodes default to this). `disabled` means HA is explicitly turned off. `aws` uses AWS ENI move for failover. `local` uses virtual IPs (VIPs) on the local interface.
 Available values: "none", "disabled", "aws", "local".
 - `updated_at` (String) Timestamp of the last update. Null if never updated.
 

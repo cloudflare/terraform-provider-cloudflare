@@ -238,6 +238,7 @@ func (r *HostnameTLSSettingResource) ImportState(ctx context.Context, req resour
 
 	data.ZoneID = types.StringValue(path_zone_id)
 	data.ID = types.StringValue(path_setting_id)
+	data.SettingID = types.StringValue(path_setting_id)
 	data.Hostname = types.StringValue(path_hostname)
 
 	res := new(http.Response)

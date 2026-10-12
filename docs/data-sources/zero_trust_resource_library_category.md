@@ -24,7 +24,7 @@ data "cloudflare_zero_trust_resource_library_category" "example_zero_trust_resou
 ### Required
 
 - `account_id` (String)
-- `id` (Number) Returns the category ID.
+- `id` (Number) Numeric identifier for an application category.
 
 ### Read-Only
 
