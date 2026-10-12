@@ -205,7 +205,8 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 		hasChanges := !plan.Name.Equal(state.Name) || !plan.Type.Equal(state.Type) ||
 			contentChanged || !plan.TTL.Equal(state.TTL) ||
 			!plan.Proxied.Equal(state.Proxied) || !plan.Priority.Equal(state.Priority) ||
-			!plan.Comment.Equal(state.Comment) || tagsChanged
+			!plan.Comment.Equal(state.Comment) || !plan.PrivateRouting.Equal(state.PrivateRouting) ||
+			tagsChanged
 
 		// Query-only changes still trigger Update, which can change modified_on.
 		hasChanges = hasChanges || !plan.IncludeShadowMetadata.Equal(state.IncludeShadowMetadata)
