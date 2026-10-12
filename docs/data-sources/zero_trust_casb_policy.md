@@ -40,7 +40,7 @@ data "cloudflare_zero_trust_casb_policy" "example_zero_trust_casb_policy" {
 is enabled.
 - `display_name` (String) Display name for the policy configuration. Limited to 255 characters.
 - `enabled` (Boolean) Whether the policy is enabled. Derived from disabled_at (enabled when disabled_at is unset).
-- `finding_type_id` (String) The finding type this policy is associated with. Immutable after creation; changing it replaces the policy.
+- `finding_type_id` (String) The finding type this policy is associated with. Immutable after creation; attempts to change it via update are rejected.
 - `id` (String) The ID of this resource.
 - `integration_ids` (List of String) The integrations this policy applies to.
 - `last_triggered_at` (String) Timestamp of the most recent successful policy invocation. Omitted

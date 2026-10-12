@@ -48,7 +48,7 @@ resource "cloudflare_zero_trust_access_identity_provider" "example_zero_trust_ac
 - `config` (Attributes) The configuration parameters for the identity provider. To view the required parameters for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/). (see [below for nested schema](#nestedatt--config))
 - `name` (String) The name of the identity provider, shown to users on the login page.
 - `type` (String) The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).
-Available values: "onetimepin", "azureAD", "saml", "centrify", "facebook", "github", "google-apps", "google", "linkedin", "oidc", "okta", "onelogin", "pingone", "yandex", "cloudflare".
+Available values: "onetimepin", "azureAD", "saml", "centrify", "facebook", "github", "google-apps", "google", "linkedin", "oidc", "okta", "onelogin", "pingone", "yandex", "cloudflare", "passkeys".
 
 ### Optional
 
@@ -98,6 +98,7 @@ Note: Requires `saml_certificate_set_id` to be set when `true`.
 - `header_attributes` (Attributes List) Add a list of attribute names that will be returned in the response header from the Access callback. (see [below for nested schema](#nestedatt--config--header_attributes))
 - `idp_public_certs` (List of String) X509 certificate to verify the signature in the SAML authentication response
 - `issuer_url` (String) IdP Entity ID or Issuer URL
+- `login_page_auto_prompt` (Boolean) When enabled, the Access login page automatically prompts the user to authenticate with a passkey.
 - `max_sso_url_length` (Number) The maximum URL length the IdP accepts for the SSO redirect URL.
 When the constructed SSO URL would exceed this length, the RelayState
 is stored server-side and a short nonce is passed to the IdP instead.

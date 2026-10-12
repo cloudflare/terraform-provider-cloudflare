@@ -34,7 +34,7 @@ data "cloudflare_zero_trust_organization" "example_zero_trust_organization" {
 ### Read-Only
 
 - `allow_authenticate_via_warp` (Boolean) When set to true, users can authenticate via WARP for any application in your organization. Application settings will take precedence over this value.
-- `auth_domain` (String) The unique subdomain assigned to your Zero Trust organization.
+- `auth_domain` (String) The unique subdomain assigned to your Zero Trust organization. If omitted on creation, a unique subdomain is auto-generated in the format `adjective-noun-hex4` (e.g. `frosty-moon-7a3b.cloudflareaccess.com`).
 - `auto_redirect_to_identity` (Boolean) When set to `true`, users skip the identity provider selection step during login.
 - `custom_pages` (Attributes) (see [below for nested schema](#nestedatt--custom_pages))
 - `deny_unmatched_requests` (Boolean) Determines whether to deny all requests to Cloudflare-protected resources that lack an associated Access application. If enabled, you must explicitly configure an Access application and policy to allow traffic to your Cloudflare-protected resources. For domains you want to be public across all subdomains, add the domain to the `deny_unmatched_requests_exempted_zone_names` array.
@@ -44,7 +44,7 @@ data "cloudflare_zero_trust_organization" "example_zero_trust_organization" {
 - `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings for an organization. (see [below for nested schema](#nestedatt--mfa_config))
 - `mfa_piv_key_requirements` (Attributes) Configures PIV key requirements for MFA using hardware security keys. (see [below for nested schema](#nestedatt--mfa_piv_key_requirements))
 - `mfa_required_for_all_apps` (Boolean) Determines whether global MFA settings apply to applications by default. The organization must have MFA enabled with at least one authentication method and a session duration configured. Note: 'allowed_authenticators' cannot contain only the infrastructure SSH authenticators ('piv_key' and 'ssh_fido2_key') if the organization has any non-infrastructure applications.
-- `name` (String) The name of your Zero Trust organization.
+- `name` (String) The name of your Zero Trust organization. When omitted on creation, defaults to the provided auth_domain; when both are omitted, defaults to the auto-generated subdomain slug (e.g. frosty-moon-7a3b).
 - `service_token_inactivity` (Attributes) Configures automatic enforcement for inactive service tokens. A service token is inactive if no policy references it, and it has not successfully authenticated with an Access application during the selected inactivity period. This setting applies to every service token in your Zero Trust account. (see [below for nested schema](#nestedatt--service_token_inactivity))
 - `session_duration` (String) The amount of time that tokens issued for applications will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.
 - `strict_service_token_auth` (Boolean) Enables new behaviors for requests made with Access service tokens. Unauthorized requests emit audit logs, and return a 401 or 403 status code in the response instead of redirecting to the login page. Successful requests no longer receive a CF_Authorization cookie in the response. Zero Trust organizations created on or after October 5, 2026 will have this setting enabled by default, and cannot disable it.
@@ -109,4 +109,5 @@ Read-Only:
 Available values: "disable", "delete".
 - `enabled` (Boolean) Whether automatic enforcement for inactive service tokens is enabled.
 - `inactivity_threshold_days` (Number) The number of days a service token must be inactive before the configured action is applied.
+
 

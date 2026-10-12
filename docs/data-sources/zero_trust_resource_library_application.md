@@ -28,7 +28,7 @@ data "cloudflare_zero_trust_resource_library_application" "example_zero_trust_re
 ### Optional
 
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `id` (Number) Returns the application ID.
+- `id` (Number) Numeric identifier for the application.
 
 ### Read-Only
 
@@ -37,14 +37,14 @@ data "cloudflare_zero_trust_resource_library_application" "example_zero_trust_re
 - `application_source` (String) Returns the application source.
 - `application_type` (String) Returns the application type.
 - `application_type_description` (String) Returns the application type description.
-- `category_id` (Number) Returns the category ID.
+- `category_id` (Number) Numeric identifier for an application category.
 - `created_at` (String) Returns the application creation time.
 - `gen_ai_score` (Number) GenAI score for the application. Returns -1 when no score is available.
 - `hostnames` (Set of String) Hostnames matched by the application.
-- `human_id` (String) Returns the human readable ID.
+- `human_id` (String) Human-readable identifier for the application.
 - `ip_subnets` (Set of String) IP subnets for this application. Custom application create and update requests accept IPv4 prefix lengths /8 through /32 and IPv6 prefix lengths /32 through /128.
-- `name` (String) Returns the application name.
-- `port_protocols` (Set of String) Port and protocol pairs matched by the application.
+- `name` (String) Application name.
+- `port_protocols` (Set of String) Ports matched by the application, in `protocol/port` or inclusive `protocol/start-end` format (for example, `tcp/443` or `udp/10000-20000`). TCP and UDP ports must be between 0 and 65535.
 - `support_domains` (Set of String) Support domains matched by the application.
 - `supported` (Set of String) Cloudflare products that support this application.
 - `updated_at` (String) Returns the application update time.
@@ -56,11 +56,12 @@ data "cloudflare_zero_trust_resource_library_application" "example_zero_trust_re
 Optional:
 
 - `fields` (String) Return only the listed properties on each application, as a comma-separated list.
-Use this to keep responses small when you only need part of each application — for
+Use this to keep responses small when you only need part of each application, for
 example populating a picker with `fields=id,name` instead of downloading every
 hostname and IP subnet.
 
-Omit this parameter to receive the full application object.
+Omit this parameter to receive the full application object, including
+when lookup is used.
 
 `id` is always returned.
 
@@ -69,24 +70,28 @@ Selectable properties: `id`, `name`, `human_id`, `version`, `hostnames`,
 `application_confidence_score`, `created_at`, `updated_at`, `review_status`.
 
 Unknown or empty property names return `400`.
-- `filter` (String) Filter applications using key:value format. Supported filter keys:
-- name: Filter by application name (e.g., name:HR)
-- id: Filter by application ID (e.g., id:498)
-- human_id: Filter by human-readable ID (e.g., human_id:HR)
-- hostname: Filter by hostname or support domain (e.g., hostname:portal.example.com)
-- source: Filter by application source name (e.g., source:cloudflare)
-- ip_subnet: Filter by IP subnet using CIDR containment — returns applications where any stored subnet contains the search value (e.g., ip_subnet:10.0.1.5/32 matches apps with 10.0.0.0/16)
-- category_id: Filter by category ID (e.g., category_id:12).
-- category_name: Filter by category name (e.g., category_name:HR).
-- supported: Filter by supported Cloudflare product (e.g., supported:ACCESS). Values: GATEWAY, ACCESS, CASB.
-- review_status: Filter by the account's Gateway review status. Values: approved, unapproved, in_review, unreviewed.
-.
-- `limit` (Number) Limit of number of results to return (max 250).
-- `offset` (Number) Offset of results to return.
+- `filter` (String) Filter applications using `key:value` format. Supported filter keys:
+- `name`: application name (for example, `name:HR`).
+- `id`: application ID (for example, `id:498`).
+- `human_id`: human-readable ID (for example, `human_id:HR`).
+- `hostname`: hostname or support domain (for example, `hostname:portal.example.com`).
+- `source`: application source name (for example, `source:cloudflare`).
+- `ip_subnet`: CIDR containment; returns applications where a stored subnet contains the search value (for example, `ip_subnet:10.0.1.5/32` matches `10.0.0.0/16`).
+- `category_id`: category ID (for example, `category_id:12`).
+- `category_name`: category name (for example, `category_name:HR`).
+- `supported`: supported Cloudflare product. Values: `GATEWAY`, `ACCESS`, `CASB`.
+- `review_status`: account-specific Gateway review status. Values: `approved`, `unapproved`, `in_review`, `unreviewed`.
+- `limit` (Number) Number of results to return. Defaults to 25; values are clamped to 1–250.
+- `lookup` (String) Find complete, case-insensitive application name mentions in a phrase or
+rule sentence. Misspelled names do not match. Returns matching applications
+ranked by relevance. Must be between 2 and 1000 characters. Uses the same
+filters, fields, and pagination as listing. `search` cannot be combined
+with lookup. Results are ranked by relevance, so `order_by` is ignored.
+- `offset` (Number) Number of results to skip. Defaults to 0; negative values are clamped to 0.
 - `order_by` (String) Order results using field:direction format. Supported fields are name, id, human_id,
 category_id, application_type, application_confidence_score, and gen_ai_score.
 Supported directions are asc and desc. Ignored when search is provided; results are
-ranked by relevance instead.
+ranked by relevance instead. Also ignored when lookup is provided.
 - `search` (String) Fuzzy search across application name and hostnames. Results are ranked by relevance. Must be between 2 and 200 characters. Can be combined with filter parameters.
 
 

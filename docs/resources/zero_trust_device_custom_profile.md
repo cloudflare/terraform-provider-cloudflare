@@ -98,7 +98,7 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 - `include` (Attributes List) List of routes included in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request. (see [below for nested schema](#nestedatt--include))
 - `lan_allow_minutes` (Number) The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.
 - `lan_allow_subnet_size` (Number) The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.
-- `match` (String) The wirefilter expression to match devices. Available values: "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.service_token_uuid", "identity.saml_attributes", "network", "os.name", "os.version".
+- `match` (String) The wirefilter expression to match devices. Available values: "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.service_token_uuid", "identity.saml_attributes", "network", "os.name", "os.version", "device.tags".
 - `precedence` (Number) The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.
 - `profile_type` (String) The client type to which the device settings profile applies. This field is set when the profile is created and cannot be changed.
 Available values: "warp", "browser_extension".
@@ -118,7 +118,7 @@ Available values: "warp", "browser_extension".
 - `gateway_unique_id` (String)
 - `id` (String) The ID of this resource.
 - `policy_id` (String)
-- `target_tests` (Attributes List) (see [below for nested schema](#nestedatt--target_tests))
+- `target_tests` (Attributes List, Deprecated) (see [below for nested schema](#nestedatt--target_tests))
 
 <a id="nestedatt--browser_extension_config"></a>
 ### Nested Schema for `browser_extension_config`

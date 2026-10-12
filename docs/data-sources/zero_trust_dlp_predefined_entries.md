@@ -56,7 +56,7 @@ emitted only when true.
 - `updated_at` (String)
 - `upload_status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
 - `variant` (Attributes) A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--result--variant))
-- `word_list` (String)
+- `word_list` (List of String)
 
 <a id="nestedatt--result--confidence"></a>
 ### Nested Schema for `result.confidence`
