@@ -202,9 +202,21 @@ type ZeroTrustAccessApplicationSCIMConfigMappingsOperationsModel struct {
 }
 
 type ZeroTrustAccessApplicationTargetCriteriaModel struct {
-	Port             types.Int64                 `tfsdk:"port" json:"port,required"`
-	Protocol         types.String                `tfsdk:"protocol" json:"protocol,required"`
-	TargetAttributes *map[string]*[]types.String `tfsdk:"target_attributes" json:"target_attributes,required"`
+	Port             types.Int64                                `tfsdk:"port" json:"port,required"`
+	Protocol         types.String                               `tfsdk:"protocol" json:"protocol,required"`
+	TargetAttributes *map[string]*[]types.String                `tfsdk:"target_attributes" json:"target_attributes,optional"`
+	Include          *ZeroTrustAccessApplicationTargetRuleModel `tfsdk:"include" json:"include,optional"`
+	Require          *ZeroTrustAccessApplicationTargetRuleModel `tfsdk:"require" json:"require,optional"`
+	Exclude          *ZeroTrustAccessApplicationTargetRuleModel `tfsdk:"exclude" json:"exclude,optional"`
+}
+
+type ZeroTrustAccessApplicationTargetRuleModel struct {
+	TargetAttributes *ZeroTrustAccessApplicationTargetRuleAttributesModel `tfsdk:"target_attributes" json:"target_attributes,optional"`
+	Tags             *map[string]*[]types.String                          `tfsdk:"tags" json:"tags,optional"`
+}
+
+type ZeroTrustAccessApplicationTargetRuleAttributesModel struct {
+	Hostname *[]types.String `tfsdk:"hostname" json:"hostname,required"`
 }
 
 type ZeroTrustAccessApplicationDestinationsModel struct {

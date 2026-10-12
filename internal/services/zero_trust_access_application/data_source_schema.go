@@ -1718,6 +1718,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationTargetCriteriaDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"include": targetRuleDataSourceSchema(ctx, "Target matches when any selector in this rule matches."),
+						"require": targetRuleDataSourceSchema(ctx, "Target matches only when every selector in this rule matches."),
+						"exclude": targetRuleDataSourceSchema(ctx, "Target is excluded when any selector in this rule matches."),
 						"port": schema.Int64Attribute{
 							Description: "The port that the targets use for the chosen communication protocol. A port cannot be assigned to multiple protocols.",
 							Computed:    true,
@@ -1730,7 +1733,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"target_attributes": schema.MapAttribute{
-							Description: "Contains a map of target attribute keys to target attribute values.",
+							Description: "Deprecated: use include.target_attributes for hostname selectors and rule tags for tag-based matching. New or changed maps may contain only hostname. The API accepts unchanged legacy maps on update, including non-hostname keys.",
 							Computed:    true,
 							CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 							ElementType: types.ListType{

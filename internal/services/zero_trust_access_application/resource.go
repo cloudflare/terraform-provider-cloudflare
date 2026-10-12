@@ -212,6 +212,10 @@ func (r *ZeroTrustAccessApplicationResource) Read(ctx context.Context, req resou
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	// Target criteria are returned in full. Decode them without the prior
+	// pointers so omitted rules and selectors become null rather than empty
+	// objects retained from state.
+	env.Result.TargetCriteria = nil
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
