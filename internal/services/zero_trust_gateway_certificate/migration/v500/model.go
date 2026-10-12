@@ -51,6 +51,7 @@ type TargetZeroTrustGatewayCertificateModel struct {
 	InUse              types.Bool        `tfsdk:"in_use"`
 	IssuerOrg          types.String      `tfsdk:"issuer_org"`
 	IssuerRaw          types.String      `tfsdk:"issuer_raw"`
+	Region             types.String      `tfsdk:"region"`
 	Type               types.String      `tfsdk:"type"`
 	UpdatedAt          timetypes.RFC3339 `tfsdk:"updated_at"`
 	UploadedOn         timetypes.RFC3339 `tfsdk:"uploaded_on"`
