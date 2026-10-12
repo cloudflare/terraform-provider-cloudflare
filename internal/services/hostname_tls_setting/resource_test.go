@@ -94,7 +94,16 @@ func TestAccCloudflareHostnameTLSSetting_Basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareHostnameTLSSettingExists(resourceName, &htlss),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "id", "min_tls_version"),
+					resource.TestCheckResourceAttr(resourceName, "setting_id", "min_tls_version"),
+					resource.TestCheckResourceAttr(resourceName, "value", "1.2"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: testAccHostnameTLSSettingImportStateID(resourceName),
 			},
 		},
 	})
@@ -117,10 +126,31 @@ func TestAccCloudflareHostnameTLSSetting_ListOfStrings(t *testing.T) {
 				Config: testAccCheckCloudflareHostnameTLSSettingConfig_Ciphers(zoneID, fmt.Sprintf("%s.%s", rnd, hostname), "ciphers", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "id", "ciphers"),
+					resource.TestCheckResourceAttr(resourceName, "setting_id", "ciphers"),
+					resource.TestCheckResourceAttr(resourceName, "value.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "value.0", "AES128-SHA"),
+					resource.TestCheckResourceAttr(resourceName, "value.1", "ECDHE-RSA-AES256-SHA"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: testAccHostnameTLSSettingImportStateID(resourceName),
 			},
 		},
 	})
+}
+
+func testAccHostnameTLSSettingImportStateID(resourceName string) resource.ImportStateIdFunc {
+	return func(state *terraform.State) (string, error) {
+		rs, ok := state.RootModule().Resources[resourceName]
+		if !ok {
+			return "", fmt.Errorf("not found: %s", resourceName)
+		}
+		return fmt.Sprintf("%s/%s/%s", rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.Attributes["setting_id"], rs.Primary.Attributes["hostname"]), nil
+	}
 }
 
 func testAccCheckCloudflareHostnameTLSSettingConfig(zoneID, hostname, setting, value, rnd string) string {
