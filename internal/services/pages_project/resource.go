@@ -100,7 +100,7 @@ func (r *PagesProjectResource) Create(ctx context.Context, req resource.CreateRe
 
 	// Normalize empty build_config and empty pointer slices to null before preserving env vars
 	var normDiags diag.Diagnostics
-	data, normDiags = NormalizeDeploymentConfigs(ctx, data)
+	data, normDiags = normalizeDeploymentConfigs(ctx, data, planDeploymentConfigs)
 	if normDiags.HasError() {
 		resp.Diagnostics.Append(normDiags...)
 		return
@@ -174,7 +174,7 @@ func (r *PagesProjectResource) Update(ctx context.Context, req resource.UpdateRe
 
 	// Normalize empty pointer slices and structs to null before preserving env vars
 	var normDiags diag.Diagnostics
-	data, normDiags = NormalizeDeploymentConfigs(ctx, data)
+	data, normDiags = normalizeDeploymentConfigs(ctx, data, planDeploymentConfigs)
 	if normDiags.HasError() {
 		resp.Diagnostics.Append(normDiags...)
 		return
@@ -240,7 +240,7 @@ func (r *PagesProjectResource) Read(ctx context.Context, req resource.ReadReques
 
 	// Normalize empty pointer slices to null before preserving env vars
 	var normDiags diag.Diagnostics
-	data, normDiags = NormalizeDeploymentConfigs(ctx, data)
+	data, normDiags = normalizeDeploymentConfigs(ctx, data, stateDeploymentConfigs)
 	if normDiags.HasError() {
 		resp.Diagnostics.Append(normDiags...)
 		return
@@ -450,6 +450,10 @@ func mergeBuildConfigFromState(plan, state *PagesProjectBuildConfigModel) {
 // NormalizeDeploymentConfigs normalizes empty pointer slices to null
 // to match API behavior and prevent drift during import/refresh
 func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*PagesProjectModel, diag.Diagnostics) {
+	return normalizeDeploymentConfigs(ctx, data, customfield.NullObject[PagesProjectDeploymentConfigsModel](ctx))
+}
+
+func normalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel, sourceConfigs customfield.NestedObject[PagesProjectDeploymentConfigsModel]) (*PagesProjectModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	if data == nil {
@@ -519,6 +523,31 @@ func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*
 
 		previewModified := false
 		productionModified := false
+		var sourcePreview *PagesProjectDeploymentConfigsPreviewModel
+		var sourceProduction *PagesProjectDeploymentConfigsProductionModel
+
+		if !sourceConfigs.IsNull() && !sourceConfigs.IsUnknown() {
+			source, d := sourceConfigs.Value(ctx)
+			diags.Append(d...)
+
+			if diags.HasError() {
+				return data, diags
+			}
+
+			if !source.Preview.IsNull() && !source.Preview.IsUnknown() {
+				sourcePreview, d = source.Preview.Value(ctx)
+				diags.Append(d...)
+			}
+
+			if !source.Production.IsNull() && !source.Production.IsUnknown() {
+				sourceProduction, d = source.Production.Value(ctx)
+				diags.Append(d...)
+			}
+
+			if diags.HasError() {
+				return data, diags
+			}
+		}
 
 		// Normalize Preview config
 		if !configsValue.Preview.IsNull() && !configsValue.Preview.IsUnknown() {
@@ -533,9 +562,13 @@ func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*
 				previewModified = true
 			}
 
-			// Normalize empty placement to null
-			if previewValue.Placement != nil && (previewValue.Placement.Mode.IsNull() || previewValue.Placement.Mode.ValueString() == "") {
+			if previewValue.Placement == nil || previewValue.Placement.Mode.IsNull() || previewValue.Placement.Mode.ValueString() == "" {
 				previewValue.Placement = nil
+
+				if sourcePreview != nil && sourcePreview.Placement != nil && sourcePreview.Placement.Mode.IsNull() {
+					previewValue.Placement = sourcePreview.Placement
+				}
+
 				previewModified = true
 			}
 
@@ -566,9 +599,13 @@ func NormalizeDeploymentConfigs(ctx context.Context, data *PagesProjectModel) (*
 				productionModified = true
 			}
 
-			// Normalize empty placement to null
-			if productionValue.Placement != nil && (productionValue.Placement.Mode.IsNull() || productionValue.Placement.Mode.ValueString() == "") {
+			if productionValue.Placement == nil || productionValue.Placement.Mode.IsNull() || productionValue.Placement.Mode.ValueString() == "" {
 				productionValue.Placement = nil
+
+				if sourceProduction != nil && sourceProduction.Placement != nil && sourceProduction.Placement.Mode.IsNull() {
+					productionValue.Placement = sourceProduction.Placement
+				}
+
 				productionModified = true
 			}
 
