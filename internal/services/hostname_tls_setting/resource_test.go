@@ -5,12 +5,16 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	cloudflarev7 "github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/hostnames"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
@@ -18,7 +22,6 @@ import (
 func TestMain(m *testing.M) {
 	resource.TestMain(m)
 }
-
 
 func init() {
 	resource.AddTestSweepers("cloudflare_hostname_tls_setting", &resource.Sweeper{
@@ -97,7 +100,11 @@ func TestAccCloudflareHostnameTLSSetting_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", "min_tls_version"),
 					resource.TestCheckResourceAttr(resourceName, "setting_id", "min_tls_version"),
 					resource.TestCheckResourceAttr(resourceName, "value", "1.2"),
+					testAccCheckHostnameTLSSettingDeployed(resourceName),
 				),
+			},
+			{
+				RefreshState: true,
 			},
 			{
 				ResourceName:      resourceName,
@@ -131,7 +138,11 @@ func TestAccCloudflareHostnameTLSSetting_ListOfStrings(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "value.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "value.0", "AES128-SHA"),
 					resource.TestCheckResourceAttr(resourceName, "value.1", "ECDHE-RSA-AES256-SHA"),
+					testAccCheckHostnameTLSSettingDeployed(resourceName),
 				),
+			},
+			{
+				RefreshState: true,
 			},
 			{
 				ResourceName:      resourceName,
@@ -141,6 +152,38 @@ func TestAccCloudflareHostnameTLSSetting_ListOfStrings(t *testing.T) {
 			},
 		},
 	})
+}
+
+// Deployment is asynchronous; wait before import comparison and test cleanup.
+func testAccCheckHostnameTLSSettingDeployed(resourceName string) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		rs, ok := state.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("not found: %s", resourceName)
+		}
+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+		defer cancel()
+		client := acctest.SharedClient()
+		err := retry.RetryContext(ctx, 2*time.Minute, func() *retry.RetryError {
+			setting, err := client.Hostnames.Settings.TLS.Get(
+				ctx,
+				hostnames.SettingTLSGetParamsSettingID(rs.Primary.Attributes["setting_id"]),
+				rs.Primary.Attributes["hostname"],
+				hostnames.SettingTLSGetParams{ZoneID: cloudflarev7.F(rs.Primary.Attributes[consts.ZoneIDSchemaKey])},
+			)
+			if err != nil {
+				return retry.NonRetryableError(fmt.Errorf("get TLS deployment status: %w", err))
+			}
+			if setting.Status == "pending_deployment" {
+				return retry.RetryableError(fmt.Errorf("TLS setting %s is still pending deployment", resourceName))
+			}
+			return nil
+		})
+		if err != nil {
+			return fmt.Errorf("waiting for TLS setting %s deployment: %w", resourceName, err)
+		}
+		return nil
+	}
 }
 
 func testAccHostnameTLSSettingImportStateID(resourceName string) resource.ImportStateIdFunc {

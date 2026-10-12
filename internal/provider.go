@@ -577,7 +577,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		api_shield.NewResource,
 		api_shield_discovery_operation.NewResource,
 		api_shield_operation.NewResource,
-		api_shield_discovery_operation.NewResource,
 		api_shield_operation_schema_validation_settings.NewResource,
 		api_shield_schema_validation_settings.NewResource,
 		api_shield_schema.NewResource,
