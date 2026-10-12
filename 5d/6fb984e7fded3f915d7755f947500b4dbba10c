@@ -1,0 +1,23 @@
+.release-please-manifest.json
+  s_19fb0e9768cd33::t_c4fddbdb51fa78 2
+README.md
+  s_19fb0e9768cd33::t_c4fddbdb51fa78 23
+internal/version.go
+  s_19fb0e9768cd33::t_c4fddbdb51fa78 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5d6fb984e7fded3f915d7755f947500b4dbba10c",
+  "prompts": {},
+  "sessions": {
+    "s_19fb0e9768cd33": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ece43ebb9ffePt0q9ohBbACgWB",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
