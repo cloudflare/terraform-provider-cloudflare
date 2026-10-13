@@ -1,5 +1,63 @@
 # Changelog
 
+## 5.28.0 (2026-10-12)
+
+Full Changelog: [v5.27.0...v5.28.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.27.0...v5.28.0)
+
+### ⚠ BREAKING CHANGES
+
+- **api_shield_discovery_operation**: `operation_id` has been renamed to `discovery_id`, `zone_id` is now required, and the computed `id` attribute has been removed. Update resource arguments and any expressions referencing `id`. This resource remains deprecated and cannot be imported. No new state upgrader is included for these schema changes.
+- **email_security_trusted_domains**: `is_recent`, `is_regex`, and `is_similarity` are now required instead of optional. Set all three explicitly, using `false` for protections that should not be bypassed.
+- **registrar_domain, registrar_domains**: the `cloudflare_registrar_domain` resource and data source, and the `cloudflare_registrar_domains` list data source, have been removed. Configurations using these types must be updated before upgrading; this release does not provide a replacement Terraform resource or data source.
+- **zero_trust_dlp_custom_entry, zero_trust_dlp_entry, zero_trust_dlp_integration_entry, zero_trust_dlp_predefined_entry**: the computed `word_list` attribute is now a list of strings instead of a JSON-encoded string, on resources and their data sources. The same change applies to nested `word_list` values in the `zero_trust_dlp_custom_profile` and `zero_trust_dlp_predefined_profile` data sources. Remove `jsondecode(...)` around these values and update expressions expecting a string. No new state upgrader is included for this type change.
+- **zero_trust_organization**: `mfa_ssh_piv_key_requirements` has been replaced with `mfa_piv_key_requirements` on the resource and data source, restoring the field name accepted by the API. Rename the argument and any references to it; the nested attributes are unchanged. No new state upgrader is included for this rename. This also restores API serialization and empty-list normalization, so PIV requirements use the correct API field name and empty SSH key lists do not cause perpetual diffs.
+
+### Notes
+
+- **pages_project**: the API documentation now clarifies that build image version 1 is retired and affected projects are moved to version 3. Once a project's builds have moved, requests setting `deployment_configs.preview.build_image_major_version` or `deployment_configs.production.build_image_major_version` to 1 are rejected. Use version 3 for those projects.
+- **zero_trust_device_custom_profile**: the read-only `target_tests` attribute is deprecated on the resource and its data sources.
+- **zero_trust_dlp_custom_entry, zero_trust_dlp_entry, zero_trust_dlp_integration_entry, zero_trust_dlp_predefined_entry**: the computed `deprecated` attribute no longer defaults to `false`.
+
+### Features
+
+#### New Resources
+
+- **cloudflare_monetization_rules**: manage a zone's Payment Required ruleset, including `exact`, `upto`, and `origin_controlled` payment schemes. Supports `terraform import` using the zone ID.
+
+#### New Data Sources
+
+- **cloudflare_monetization_rules**: read a zone's Payment Required ruleset.
+
+#### New Attributes
+
+- **ai_search_instance, ai_search_instances**: `metadata.created_from_emdash_plugin`, with `type` (`native` or `rest`) and `version`.
+- **pages_project, pages_projects**: read-only `build_image_auto_upgrade.from_version` and `build_image_auto_upgrade.to_version`, identifying projects moved from a retired build image.
+- **worker_version, worker_versions, workers_script**: Durable Object binding retry settings, `bindings.retry.max_attempts` and `bindings.retry.timeout_ms`. `max_attempts` counts retries after the initial request and accepts 0–10; zero disables retries. `timeout_ms` accepts 500–60000 and controls the retry window, not the initial-request timeout.
+- **workers_kv_namespace, workers_kv_namespaces**: `mode`; set `mode = "instant"` when creating a namespace to use KV Instant, or omit it for a classic namespace. Changing the resource's mode forces replacement.
+- **workers_script**: `bindings_inherit = "strict"` makes uploads fail when an inherited binding cannot be resolved, instead of silently dropping that binding.
+- **zero_trust_access_application, zero_trust_access_applications**: `target_criteria.include`, `target_criteria.require`, and `target_criteria.exclude`, supporting hostname and tag selectors for infrastructure targets. The rule format requires `include`; `require` and `exclude` are optional. Each rule must contain a hostname selector or tags, with selector sizes and empty values validated at plan time. The legacy `target_criteria.target_attributes` format remains supported for unchanged persisted maps, including non-hostname keys. For new or changed criteria, prefer the rule format. The legacy format and rule format cannot be combined in the same criterion.
+- **zero_trust_access_identity_provider, zero_trust_access_identity_providers**: `config.login_page_auto_prompt`, defaulting to `false` on the resource, to automatically prompt for passkey authentication on the Access login page.
+- **zero_trust_gateway_certificate, zero_trust_gateway_certificates**: read-only `region`, identifying where the certificate authority's key material is pinned.
+- **zero_trust_resource_library_application, zero_trust_resource_library_applications**: `lookup` query support for finding complete application name mentions in a phrase. Use `filter.lookup` on the singular data source or `lookup` on the list data source. It cannot be combined with `search`.
+
+#### New Accepted Values
+
+- **zero_trust_access_application**: `session_duration` is now supported for infrastructure applications and defaults to `24h`, fixing creation failures when the API returns this default. It sets the maximum connection duration and must use `s`, `m`, or `h` in whole seconds.
+- **zero_trust_access_identity_provider**: `type` accepts `passkeys`.
+- **zero_trust_device_custom_profile**: `match` expressions support `device.tags`.
+
+### Bug Fixes
+
+- **d1_database**: make `read_replication` optional and computed with a nested custom type, allowing API-returned replication settings to populate state when the block is omitted.
+- **dns_record**: default missing `include_shadow_metadata` to `false` during refresh and v4 to v5 migration, avoiding spurious updates for older state. Allow `modified_on` to change when `private_routing` or `include_shadow_metadata` changes, preventing inconsistent-result errors after updates.
+- **hostname_tls_setting**: populate the required `setting_id` during import, so imported hostname TLS settings can be refreshed and managed.
+- **pages_domain, r2_data_catalog, stream_caption_language, stream_download, stream_key, zero_trust_access_short_lived_certificate**: stop sending JSON request bodies to API operations that do not accept a body.
+- **pages_project, workers_kv_namespace, workers_script, zero_trust_access_application, zero_trust_access_identity_provider, zero_trust_gateway_certificate**: add newly introduced attributes to the v500 migration target models so existing state upgraders match the current schemas.
+- **ruleset**: improve legacy v4 state detection and migration at schema versions 0 and 1, including nested blocks, retired metadata, and v4.52.9 `content_converter` fields. Preserve configured `content_converter` values and existing v5 state, including rules managed with `lifecycle.ignore_changes`.
+- **worker**: preserve changes made only to `previews_base_config`, including configuration-derived unknown values, so preview-only updates do not incorrectly retain the previous `updated_on` value or suppress the planned change.
+- **workers_script**: prefer the API's `CF-Entrypoint` header when refreshing multipart script content, allowing renamed entrypoints to surface as drift instead of failing to find a stale module name. Preserve service-worker `body_part` format during refresh.
+- **zero_trust_access_application**: clear prior target criteria before decoding refresh responses, so removed rules and selectors become null instead of retaining stale objects in state.
+
 ## 5.27.0 (2026-10-03)
 
 Full Changelog: [v5.26.0...v5.27.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.26.0...v5.27.0)

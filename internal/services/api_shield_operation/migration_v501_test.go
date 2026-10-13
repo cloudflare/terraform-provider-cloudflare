@@ -40,6 +40,11 @@ func TestUpgradeAPIShieldOperationV500ToV501(t *testing.T) {
 	}`)}
 
 	targetSchema := ResourceSchema(ctx)
+	for _, name := range []string{"feature", "with_schemas"} {
+		if _, exists := targetSchema.Attributes[name]; exists {
+			t.Fatalf("query parameter %q must not be a v501 resource attribute", name)
+		}
+	}
 	req := resource.UpgradeStateRequest{RawState: rawState}
 	resp := resource.UpgradeStateResponse{State: tfsdk.State{Schema: targetSchema}}
 

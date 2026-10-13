@@ -40,6 +40,7 @@ type WorkersScriptModel struct {
 	ID               types.String                                                  `tfsdk:"id" json:"-,computed"`
 	ScriptName       types.String                                                  `tfsdk:"script_name" path:"script_name,required"`
 	AccountID        types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
+	BindingsInherit    types.String                                                `tfsdk:"bindings_inherit" query:"bindings_inherit,optional"`
 	Force            types.Bool                                                    `tfsdk:"force" query:"force,optional"`
 	Content          types.String                                                  `tfsdk:"content" json:"-"`
 	ContentFile      types.String                                                  `tfsdk:"content_file" json:"-"`
@@ -186,6 +187,7 @@ type WorkersScriptMetadataBindingsModel struct {
 	Outbound                    *WorkersScriptMetadataBindingsOutboundModel `tfsdk:"outbound" json:"outbound,optional"`
 	ClassName                   types.String                                `tfsdk:"class_name" json:"class_name,computed_optional"`
 	NamespaceID                 types.String                                `tfsdk:"namespace_id" json:"namespace_id,computed_optional"`
+	Retry                       *WorkersScriptMetadataBindingsRetryModel    `tfsdk:"retry" json:"retry,optional"`
 	ScriptName                  types.String                                `tfsdk:"script_name" json:"script_name,optional"`
 	Json                        jsontypes.Normalized                        `tfsdk:"json" json:"json,optional"`
 	CertificateID               types.String                                `tfsdk:"certificate_id" json:"certificate_id,optional"`
@@ -229,6 +231,11 @@ type WorkersScriptMetadataBindingsOutboundModel struct {
 type WorkersScriptMetadataBindingsOutboundWorkerModel struct {
 	Environment types.String `tfsdk:"environment" json:"environment,optional"`
 	Service     types.String `tfsdk:"service" json:"service,optional"`
+}
+
+type WorkersScriptMetadataBindingsRetryModel struct {
+	MaxAttempts types.Int64 `tfsdk:"max_attempts" json:"max_attempts,optional"`
+	TimeoutMs   types.Int64 `tfsdk:"timeout_ms" json:"timeout_ms,optional"`
 }
 
 type WorkersScriptMetadataBindingsSimpleModel struct {

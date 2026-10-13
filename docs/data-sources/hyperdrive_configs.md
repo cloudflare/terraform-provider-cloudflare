@@ -41,7 +41,7 @@ Read-Only:
 - `caching` (Attributes) (see [below for nested schema](#nestedatt--result--caching))
 - `created_on` (String) Defines the creation time of the Hyperdrive configuration.
 - `id` (String) Define configurations using a unique string identifier.
-- `integration` (Attributes) Connects to a PlanetScale database using credentials managed by Cloudflare. The Cloudflare account must already be linked to PlanetScale in the Hyperdrive dashboard. (see [below for nested schema](#nestedatt--result--integration))
+- `integration` (Attributes) Selects a PlanetScale database and provisions credentials managed by Cloudflare when creating a Hyperdrive configuration. The Cloudflare account must already be linked to PlanetScale in the Hyperdrive dashboard. The selection is returned as read-only metadata and cannot be changed with replace or update operations. (see [below for nested schema](#nestedatt--result--integration))
 - `modified_on` (String) Defines the last modified time of the Hyperdrive configuration.
 - `mtls` (Attributes) mTLS configuration for the origin connection. Cannot be used with VPC Service origins; TLS must be managed on the VPC Service. (see [below for nested schema](#nestedatt--result--mtls))
 - `name` (String) The name of the Hyperdrive configuration. Used to identify the configuration in the Cloudflare dashboard and API.

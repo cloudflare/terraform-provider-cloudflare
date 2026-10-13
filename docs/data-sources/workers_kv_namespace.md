@@ -36,6 +36,8 @@ data "cloudflare_workers_kv_namespace" "example_workers_kv_namespace" {
 - `id` (String) ID of the Workers KV namespace.
 - `jurisdiction` (String) Specify the jurisdiction to restrict the KV namespace to durably store data within. Can only be set at namespace creation time.
 Available values: "eu", "fedramp", "us".
+- `mode` (String) The mode of the Workers KV namespace. Specify `instant` when creating a namespace to create a KV Instant namespace. Omit this field when creating a namespace to create a classic namespace. Currently, `instant` is the only supported explicit value.
+Available values: "instant".
 - `supports_url_encoding` (Boolean) True if keys written on the URL will be URL-decoded before storing. For example, if set to "true", a key written on the URL as "%3F" will be stored as "?".
 - `title` (String) Human-readable string name for a Workers KV namespace.
 

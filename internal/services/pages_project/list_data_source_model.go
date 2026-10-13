@@ -32,22 +32,23 @@ func (m *PagesProjectsDataSourceModel) toListParams(_ context.Context) (params p
 }
 
 type PagesProjectsResultDataSourceModel struct {
-	ID                   types.String                                                              `tfsdk:"id" json:"id,computed"`
-	CanonicalDeployment  customfield.NestedObject[PagesProjectsCanonicalDeploymentDataSourceModel] `tfsdk:"canonical_deployment" json:"canonical_deployment,computed"`
-	CreatedOn            timetypes.RFC3339                                                         `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	DeploymentConfigs    customfield.NestedObject[PagesProjectsDeploymentConfigsDataSourceModel]   `tfsdk:"deployment_configs" json:"deployment_configs,computed"`
-	Framework            types.String                                                              `tfsdk:"framework" json:"framework,computed"`
-	FrameworkVersion     types.String                                                              `tfsdk:"framework_version" json:"framework_version,computed"`
-	LatestDeployment     customfield.NestedObject[PagesProjectsLatestDeploymentDataSourceModel]    `tfsdk:"latest_deployment" json:"latest_deployment,computed"`
-	Name                 types.String                                                              `tfsdk:"name" json:"name,computed"`
-	PreviewScriptName    types.String                                                              `tfsdk:"preview_script_name" json:"preview_script_name,computed"`
-	ProductionBranch     types.String                                                              `tfsdk:"production_branch" json:"production_branch,computed"`
-	ProductionScriptName types.String                                                              `tfsdk:"production_script_name" json:"production_script_name,computed"`
-	UsesFunctions        types.Bool                                                                `tfsdk:"uses_functions" json:"uses_functions,computed"`
-	BuildConfig          customfield.NestedObject[PagesProjectsBuildConfigDataSourceModel]         `tfsdk:"build_config" json:"build_config,computed"`
-	Domains              customfield.List[types.String]                                            `tfsdk:"domains" json:"domains,computed"`
-	Source               customfield.NestedObject[PagesProjectsSourceDataSourceModel]              `tfsdk:"source" json:"source,computed"`
-	Subdomain            types.String                                                              `tfsdk:"subdomain" json:"subdomain,computed"`
+	ID                    types.String                                                                `tfsdk:"id" json:"id,computed"`
+	CanonicalDeployment   customfield.NestedObject[PagesProjectsCanonicalDeploymentDataSourceModel]   `tfsdk:"canonical_deployment" json:"canonical_deployment,computed"`
+	CreatedOn             timetypes.RFC3339                                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	DeploymentConfigs     customfield.NestedObject[PagesProjectsDeploymentConfigsDataSourceModel]     `tfsdk:"deployment_configs" json:"deployment_configs,computed"`
+	Framework             types.String                                                                `tfsdk:"framework" json:"framework,computed"`
+	FrameworkVersion      types.String                                                                `tfsdk:"framework_version" json:"framework_version,computed"`
+	LatestDeployment      customfield.NestedObject[PagesProjectsLatestDeploymentDataSourceModel]      `tfsdk:"latest_deployment" json:"latest_deployment,computed"`
+	Name                  types.String                                                                `tfsdk:"name" json:"name,computed"`
+	PreviewScriptName     types.String                                                                `tfsdk:"preview_script_name" json:"preview_script_name,computed"`
+	ProductionBranch      types.String                                                                `tfsdk:"production_branch" json:"production_branch,computed"`
+	ProductionScriptName  types.String                                                                `tfsdk:"production_script_name" json:"production_script_name,computed"`
+	UsesFunctions         types.Bool                                                                  `tfsdk:"uses_functions" json:"uses_functions,computed"`
+	BuildConfig           customfield.NestedObject[PagesProjectsBuildConfigDataSourceModel]           `tfsdk:"build_config" json:"build_config,computed"`
+	BuildImageAutoUpgrade customfield.NestedObject[PagesProjectsBuildImageAutoUpgradeDataSourceModel] `tfsdk:"build_image_auto_upgrade" json:"build_image_auto_upgrade,computed"`
+	Domains               customfield.List[types.String]                                              `tfsdk:"domains" json:"domains,computed"`
+	Source                customfield.NestedObject[PagesProjectsSourceDataSourceModel]                `tfsdk:"source" json:"source,computed"`
+	Subdomain             types.String                                                                `tfsdk:"subdomain" json:"subdomain,computed"`
 }
 
 type PagesProjectsCanonicalDeploymentDataSourceModel struct {
@@ -402,6 +403,11 @@ type PagesProjectsBuildConfigDataSourceModel struct {
 	BuildCommand      types.String `tfsdk:"build_command" json:"build_command,computed"`
 	DestinationDir    types.String `tfsdk:"destination_dir" json:"destination_dir,computed"`
 	RootDir           types.String `tfsdk:"root_dir" json:"root_dir,computed"`
+}
+
+type PagesProjectsBuildImageAutoUpgradeDataSourceModel struct {
+	FromVersion types.Int64 `tfsdk:"from_version" json:"from_version,computed"`
+	ToVersion   types.Int64 `tfsdk:"to_version" json:"to_version,computed"`
 }
 
 type PagesProjectsSourceDataSourceModel struct {

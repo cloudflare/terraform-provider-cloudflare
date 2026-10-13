@@ -108,6 +108,7 @@ func upgradeStateFromV0(ctx context.Context, req resource.UpgradeStateRequest, r
 		ID:               priorStateData.ID,
 		ScriptName:       priorStateData.ScriptName,
 		AccountID:        priorStateData.AccountID,
+		BindingsInherit:  priorStateData.BindingsInherit,
 		Content:          priorStateData.Content,
 		ContentFile:      priorStateData.ContentFile,
 		ContentSHA256:    priorStateData.ContentSHA256,
@@ -172,6 +173,7 @@ type resourceModelV0 struct {
 	ID               types.String                                                  `tfsdk:"id" json:"-,computed"`
 	ScriptName       types.String                                                  `tfsdk:"script_name" path:"script_name,required"`
 	AccountID        types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
+	BindingsInherit  types.String                                                  `tfsdk:"bindings_inherit" query:"bindings_inherit,optional"`
 	Force            types.Bool                                                    `tfsdk:"force" query:"force,optional"`
 	Content          types.String                                                  `tfsdk:"content" json:"-"`
 	ContentFile      types.String                                                  `tfsdk:"content_file" json:"-"`

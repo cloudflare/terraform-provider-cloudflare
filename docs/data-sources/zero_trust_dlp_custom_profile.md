@@ -93,7 +93,7 @@ emitted only when true.
 - `type` (String) Available values: "custom", "custom_prompt_topic", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
 - `variant` (Attributes) A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--entries--variant))
-- `word_list` (String)
+- `word_list` (List of String)
 
 <a id="nestedatt--entries--confidence"></a>
 ### Nested Schema for `entries.confidence`
@@ -155,7 +155,7 @@ emitted only when true.
 - `type` (String) Available values: "custom", "custom_prompt_topic", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
 - `variant` (Attributes) A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--shared_entries--variant))
-- `word_list` (String)
+- `word_list` (List of String)
 
 <a id="nestedatt--shared_entries--confidence"></a>
 ### Nested Schema for `shared_entries.confidence`

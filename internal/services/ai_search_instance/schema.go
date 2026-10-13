@@ -136,6 +136,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"created_from_aisearch_wizard": schema.BoolAttribute{
 						Optional: true,
 					},
+					"created_from_emdash_plugin": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"type": schema.StringAttribute{
+								Description: `Available values: "native", "rest".`,
+								Required:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("native", "rest"),
+								},
+							},
+							"version": schema.StringAttribute{
+								Required: true,
+							},
+						},
+					},
 					"worker_domain": schema.StringAttribute{
 						Optional: true,
 					},

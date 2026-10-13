@@ -125,6 +125,7 @@ type TargetConfigModel struct {
 	SSOTargetURL             types.String                    `tfsdk:"sso_target_url"`
 	RedirectURL              types.String                    `tfsdk:"redirect_url"`
 	RestrictToAccountMembers types.Bool                      `tfsdk:"restrict_to_account_members"`
+	LoginPageAutoPrompt      types.Bool                      `tfsdk:"login_page_auto_prompt"`
 }
 
 type TargetHeaderAttributesModel struct {

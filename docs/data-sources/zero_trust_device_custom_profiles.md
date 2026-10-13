@@ -55,7 +55,7 @@ Read-Only:
 - `include` (Attributes List) List of routes included in the WARP client's tunnel. (see [below for nested schema](#nestedatt--result--include))
 - `lan_allow_minutes` (Number) The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.
 - `lan_allow_subnet_size` (Number) The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.
-- `match` (String) The wirefilter expression to match devices. Available values: "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.service_token_uuid", "identity.saml_attributes", "network", "os.name", "os.version".
+- `match` (String) The wirefilter expression to match devices. Available values: "identity.email", "identity.groups.id", "identity.groups.name", "identity.groups.email", "identity.service_token_uuid", "identity.saml_attributes", "network", "os.name", "os.version", "device.tags".
 - `name` (String) The name of the device settings profile.
 - `policy_id` (String)
 - `precedence` (Number) The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.
@@ -66,7 +66,7 @@ Available values: "warp", "browser_extension".
 - `service_mode_v2` (Attributes) (see [below for nested schema](#nestedatt--result--service_mode_v2))
 - `support_url` (String) The URL to launch when the Send Feedback button is clicked.
 - `switch_locked` (Boolean) Whether to allow the user to turn off the WARP switch and disconnect the client.
-- `target_tests` (Attributes List) (see [below for nested schema](#nestedatt--result--target_tests))
+- `target_tests` (Attributes List, Deprecated) (see [below for nested schema](#nestedatt--result--target_tests))
 - `tunnel_protocol` (String) Determines which tunnel protocol to use.
 - `uninstall_protection` (Boolean) Determines whether uninstalling the WARP client requires an override code. (Windows only).
 - `virtual_networks` (Attributes) Virtual network access settings for the device. (see [below for nested schema](#nestedatt--result--virtual_networks))

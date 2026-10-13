@@ -36,8 +36,8 @@ type ZeroTrustOrganizationDataSourceModel struct {
 	CustomPages                            customfield.NestedObject[ZeroTrustOrganizationCustomPagesDataSourceModel]            `tfsdk:"custom_pages" json:"custom_pages,computed"`
 	LoginDesign                            customfield.NestedObject[ZeroTrustOrganizationLoginDesignDataSourceModel]            `tfsdk:"login_design" json:"login_design,computed"`
 	MfaConfig                              customfield.NestedObject[ZeroTrustOrganizationMfaConfigDataSourceModel]              `tfsdk:"mfa_config" json:"mfa_config,computed"`
-	MfaSSHPivKeyRequirements               customfield.NestedObject[ZeroTrustOrganizationMfaSSHPivKeyRequirementsDataSourceModel] `tfsdk:"mfa_ssh_piv_key_requirements" json:"mfa_ssh_piv_key_requirements,computed"`
-	WarpAuthNonBrowser401                  types.Bool  `tfsdk:"warp_auth_non_browser_401" json:"warp_auth_non_browser_401,computed"`
+	MfaPivKeyRequirements                  customfield.NestedObject[ZeroTrustOrganizationMfaPivKeyRequirementsDataSourceModel]  `tfsdk:"mfa_piv_key_requirements" json:"mfa_piv_key_requirements,computed"`
+	WarpAuthNonBrowser401                  types.Bool                                                                           `tfsdk:"warp_auth_non_browser_401" json:"warp_auth_non_browser_401,computed"`
 	ServiceTokenInactivity                 customfield.NestedObject[ZeroTrustOrganizationServiceTokenInactivityDataSourceModel] `tfsdk:"service_token_inactivity" json:"service_token_inactivity,computed"`
 }
 
@@ -73,7 +73,7 @@ type ZeroTrustOrganizationMfaConfigDataSourceModel struct {
 	SessionDuration            types.String                   `tfsdk:"session_duration" json:"session_duration,computed"`
 }
 
-type ZeroTrustOrganizationMfaSSHPivKeyRequirementsDataSourceModel struct {
+type ZeroTrustOrganizationMfaPivKeyRequirementsDataSourceModel struct {
 	PinPolicy         types.String                   `tfsdk:"pin_policy" json:"pin_policy,computed"`
 	RequireFipsDevice types.Bool                     `tfsdk:"require_fips_device" json:"require_fips_device,computed"`
 	SSHKeySize        customfield.List[types.Int64]  `tfsdk:"ssh_key_size" json:"ssh_key_size,computed"`

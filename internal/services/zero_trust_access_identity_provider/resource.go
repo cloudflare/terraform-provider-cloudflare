@@ -307,6 +307,11 @@ func (r *ZeroTrustAccessIdentityProviderResource) ImportState(ctx context.Contex
 	}
 	data = &env.Result
 
+	// Import does not apply schema defaults, and the API can omit this field.
+	if data.Config != nil && data.Config.LoginPageAutoPrompt.IsNull() {
+		data.Config.LoginPageAutoPrompt = types.BoolValue(false)
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

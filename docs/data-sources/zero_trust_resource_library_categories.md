@@ -26,9 +26,9 @@ data "cloudflare_zero_trust_resource_library_categories" "example_zero_trust_res
 
 ### Optional
 
-- `limit` (Number) Limit of number of results to return.
+- `limit` (Number) Number of results to return. Defaults to 25; values are clamped to 1–250.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `offset` (Number) Offset of results to return.
+- `offset` (Number) Number of results to skip. Defaults to 0; negative values are clamped to 0.
 
 ### Read-Only
 
@@ -41,7 +41,7 @@ Read-Only:
 
 - `created_at` (String) Returns the category creation time.
 - `description` (String) Returns the category description.
-- `id` (Number) Returns the category ID.
+- `id` (Number) Numeric identifier for an application category.
 - `name` (String) Returns the category name.
 
 

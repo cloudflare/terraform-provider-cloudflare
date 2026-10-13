@@ -54,7 +54,8 @@ Available values: "no_clearance", "jschallenge", "managed", "interactive".
 - `direction` (String) Direction to order widgets.
 Available values: "asc", "desc".
 - `ephemeral_id` (Boolean) Return the Ephemeral ID in /siteverify (ENT only).
-- `filter` (String) Filter widgets by field using case-insensitive substring matching.
+- `filter` (String) Filter widgets by field. The `name` field uses case-insensitive
+substring matching; `sitekey` uses exact matching.
 Format: `field:value`
 
 Supported fields:

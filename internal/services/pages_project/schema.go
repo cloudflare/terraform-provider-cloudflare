@@ -263,7 +263,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"build_image_major_version": schema.Int64Attribute{
-								Description: "The major version of the build image to use for Pages Functions.",
+								Description: "The major version of the build image to use for Pages Functions. Version 1 is retired and its projects are moved to version 3. Once a project's builds have been moved, a request that sets version 1 is rejected.",
 								Computed:    true,
 								Optional:    true,
 								Default:     int64default.StaticInt64(3),
@@ -518,7 +518,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"build_image_major_version": schema.Int64Attribute{
-								Description: "The major version of the build image to use for Pages Functions.",
+								Description: "The major version of the build image to use for Pages Functions. Version 1 is retired and its projects are moved to version 3. Once a project's builds have been moved, a request that sets version 1 is rejected.",
 								Computed:    true,
 								Optional:    true,
 								Default:     int64default.StaticInt64(3),
@@ -785,6 +785,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 				PlanModifiers: []planmodifier.List{
 					listplanmodifier.UseStateForUnknown(),
+				},
+			},
+			"build_image_auto_upgrade": schema.SingleNestedAttribute{
+				Description: "Present when the project is set to a retired build image major version and its builds have been moved to a newer one. `build_image_major_version` in `deployment_configs` then reports the version the builds run on.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[PagesProjectBuildImageAutoUpgradeModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"from_version": schema.Int64Attribute{
+						Description: "The retired build image major version the project is set to.",
+						Computed:    true,
+					},
+					"to_version": schema.Int64Attribute{
+						Description: "The build image major version the project's builds run on.",
+						Computed:    true,
+					},
 				},
 			},
 			"canonical_deployment": schema.SingleNestedAttribute{

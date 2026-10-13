@@ -41,6 +41,7 @@ type ZeroTrustGatewayCertificatesResultDataSourceModel struct {
 	InUse         types.Bool        `tfsdk:"in_use" json:"in_use,computed"`
 	IssuerOrg     types.String      `tfsdk:"issuer_org" json:"issuer_org,computed"`
 	IssuerRaw     types.String      `tfsdk:"issuer_raw" json:"issuer_raw,computed"`
+	Region        types.String      `tfsdk:"region" json:"region,computed"`
 	Type          types.String      `tfsdk:"type" json:"type,computed"`
 	UpdatedAt     timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	UploadedOn    timetypes.RFC3339 `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`

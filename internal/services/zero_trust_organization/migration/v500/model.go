@@ -68,23 +68,23 @@ type TargetZeroTrustOrganizationModel struct {
 	// value (null), which matches an absent config value and produces no diff.
 	// It must still be declared here: resp.State.Set rejects a struct that
 	// omits schema attributes.
-	StrictServiceTokenAuth                 types.Bool                           `tfsdk:"strict_service_token_auth"`
-	UserSeatExpirationInactiveTime         types.String                         `tfsdk:"user_seat_expiration_inactive_time"`
-	WARPAuthSessionDuration                types.String                         `tfsdk:"warp_auth_session_duration"`
-	DenyUnmatchedRequestsExemptedZoneNames *[]types.String                      `tfsdk:"deny_unmatched_requests_exempted_zone_names"`
-	CustomPages                            *TargetCustomPagesModel              `tfsdk:"custom_pages"`
-	LoginDesign                            *TargetLoginDesignModel              `tfsdk:"login_design"`
-	MfaConfig                              *TargetMfaConfigModel                `tfsdk:"mfa_config"`
-	MfaSSHPivKeyRequirements               *TargetMfaSSHPivKeyRequirementsModel `tfsdk:"mfa_ssh_piv_key_requirements"`
-	ServiceTokenInactivity                 *TargetServiceTokenInactivityModel   `tfsdk:"service_token_inactivity"`
-	TrustedAccounts                        customfield.List[types.String]       `tfsdk:"trusted_accounts"`
-	AllowAuthenticateViaWARP               types.Bool                           `tfsdk:"allow_authenticate_via_warp"`
-	AutoRedirectToIdentity                 types.Bool                           `tfsdk:"auto_redirect_to_identity"`
-	IsUIReadOnly                           types.Bool                           `tfsdk:"is_ui_read_only"`
-	MfaConfigurationAllowed                types.Bool                           `tfsdk:"mfa_configuration_allowed"`
-	MfaRequiredForAllApps                  types.Bool                           `tfsdk:"mfa_required_for_all_apps"`
-	UIReadOnlyToggleReason                 types.String                         `tfsdk:"ui_read_only_toggle_reason"`
-	WarpAuthNonBrowser401                  types.Bool                           `tfsdk:"warp_auth_non_browser_401"`
+	StrictServiceTokenAuth                 types.Bool                         `tfsdk:"strict_service_token_auth"`
+	UserSeatExpirationInactiveTime         types.String                       `tfsdk:"user_seat_expiration_inactive_time"`
+	WARPAuthSessionDuration                types.String                       `tfsdk:"warp_auth_session_duration"`
+	DenyUnmatchedRequestsExemptedZoneNames *[]types.String                    `tfsdk:"deny_unmatched_requests_exempted_zone_names"`
+	CustomPages                            *TargetCustomPagesModel            `tfsdk:"custom_pages"`
+	LoginDesign                            *TargetLoginDesignModel            `tfsdk:"login_design"`
+	MfaConfig                              *TargetMfaConfigModel              `tfsdk:"mfa_config"`
+	MfaPivKeyRequirements                  *TargetMfaPivKeyRequirementsModel  `tfsdk:"mfa_piv_key_requirements"`
+	ServiceTokenInactivity                 *TargetServiceTokenInactivityModel `tfsdk:"service_token_inactivity"`
+	TrustedAccounts                        customfield.List[types.String]     `tfsdk:"trusted_accounts"`
+	AllowAuthenticateViaWARP               types.Bool                         `tfsdk:"allow_authenticate_via_warp"`
+	AutoRedirectToIdentity                 types.Bool                         `tfsdk:"auto_redirect_to_identity"`
+	IsUIReadOnly                           types.Bool                         `tfsdk:"is_ui_read_only"`
+	MfaConfigurationAllowed                types.Bool                         `tfsdk:"mfa_configuration_allowed"`
+	MfaRequiredForAllApps                  types.Bool                         `tfsdk:"mfa_required_for_all_apps"`
+	UIReadOnlyToggleReason                 types.String                       `tfsdk:"ui_read_only_toggle_reason"`
+	WarpAuthNonBrowser401                  types.Bool                         `tfsdk:"warp_auth_non_browser_401"`
 }
 
 // TargetCustomPagesModel represents the custom_pages nested structure in v5.
@@ -121,8 +121,8 @@ type TargetServiceTokenInactivityModel struct {
 	InactivityThresholdDays types.Int64  `tfsdk:"inactivity_threshold_days"`
 }
 
-// TargetMfaSSHPivKeyRequirementsModel represents the mfa_ssh_piv_key_requirements nested structure in v5.
-type TargetMfaSSHPivKeyRequirementsModel struct {
+// TargetMfaPivKeyRequirementsModel represents the mfa_piv_key_requirements nested structure in v5.
+type TargetMfaPivKeyRequirementsModel struct {
 	PinPolicy         types.String    `tfsdk:"pin_policy"`
 	RequireFipsDevice types.Bool      `tfsdk:"require_fips_device"`
 	SSHKeySize        *[]types.Int64  `tfsdk:"ssh_key_size"`

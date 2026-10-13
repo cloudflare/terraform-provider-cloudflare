@@ -10,7 +10,8 @@ import (
 // ============================================================================
 
 // SourceV4RulesetModel represents the ruleset state from the v4 Plugin Framework provider.
-// Schema version: 1 (v4 had an in-provider V0→V1 migration for ratelimit field rename)
+// Accepts schema versions 0 and 1. Retired version-0 metadata is decoded but
+// intentionally not copied to the v5 target, matching the v4 0→1 upgrader.
 //
 // In Plugin Framework, ListNestedBlock with SizeAtMost(1) is stored as an array
 // with 0 or 1 elements in state. []*T captures this correctly.
@@ -37,6 +38,8 @@ type SourceV4RuleModel struct {
 	Logging                []*SourceV4LoggingModel                `tfsdk:"logging"`
 	Ratelimit              []*SourceV4RatelimitModel              `tfsdk:"ratelimit"`
 	Ref                    types.String                           `tfsdk:"ref"`
+	LastUpdated            types.String                           `tfsdk:"last_updated"`
+	Version                types.String                           `tfsdk:"version"`
 }
 
 // SourceV4ActionParametersModel represents the action_parameters block in v4.
@@ -52,6 +55,7 @@ type SourceV4ActionParametersModel struct {
 	CacheKey                 []*SourceV4CacheKeyModel     `tfsdk:"cache_key"`
 	CacheReserve             []*SourceV4CacheReserveModel `tfsdk:"cache_reserve"`
 	Content                  types.String                 `tfsdk:"content"`
+	ContentConverter         types.Bool                   `tfsdk:"content_converter"`
 	ContentType              types.String                 `tfsdk:"content_type"`
 	CookieFields             types.Set                    `tfsdk:"cookie_fields"`
 	DisableApps              types.Bool                   `tfsdk:"disable_apps"`
@@ -97,6 +101,7 @@ type SourceV4ActionParametersModel struct {
 	SXG                      types.Bool                   `tfsdk:"sxg"`
 	URI                      []*SourceV4URIModel          `tfsdk:"uri"`
 	Algorithms               []*SourceV4AlgorithmModel    `tfsdk:"algorithms"`
+	Version                  types.String                 `tfsdk:"version"`
 }
 
 type SourceV4AutoMinifyModel struct {

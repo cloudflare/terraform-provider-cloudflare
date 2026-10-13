@@ -59,6 +59,7 @@ func Transform(_ context.Context, source SourceCloudflareZeroTrustGatewayCertifi
 	target.Fingerprint = types.StringNull()
 	target.IssuerOrg = types.StringNull()
 	target.IssuerRaw = types.StringNull()
+	target.Region = types.StringNull()
 	target.Type = types.StringNull()
 	target.UpdatedAt = timetypes.NewRFC3339Null()
 

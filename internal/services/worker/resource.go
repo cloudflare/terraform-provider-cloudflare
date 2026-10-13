@@ -331,6 +331,17 @@ func (r *WorkerResource) ModifyPlan(ctx context.Context, req resource.ModifyPlan
 		(!planObsLogs.IsUnknown() && !planObsLogs.Equal(stateObsLogs)) ||
 		(!planObsTraces.IsUnknown() && !planObsTraces.Equal(stateObsTraces))
 
+	var configuredPreviews customfield.NestedObject[WorkerPreviewsBaseConfigModel]
+	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("previews_base_config"), &configuredPreviews)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	previewsChanged, err := previewsBaseConfigChanged(ctx, plan.PreviewsBaseConfig, state.PreviewsBaseConfig, configuredPreviews)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to compare preview configuration", err.Error())
+		return
+	}
+
 	// If there are any meaningful changes to user-configurable attributes, do
 	// nothing so that updated_on can legitimately change on update.
 	if (!plan.Name.IsUnknown() && !plan.Name.Equal(state.Name)) ||
@@ -338,6 +349,7 @@ func (r *WorkerResource) ModifyPlan(ctx context.Context, req resource.ModifyPlan
 		(!plan.Tags.IsUnknown() && !plan.Tags.Equal(state.Tags)) ||
 		observabilityChanged ||
 		subdomainChanged ||
+		previewsChanged ||
 		(!plan.TailConsumers.IsUnknown() && !plan.TailConsumers.Equal(state.TailConsumers)) {
 		return
 	}

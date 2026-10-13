@@ -119,14 +119,21 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
 		return
 	}
+	params := workers.ScriptUpdateParams{
+		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	}
+
+	if !data.BindingsInherit.IsNull() && !data.BindingsInherit.IsUnknown() {
+		params.BindingsInherit = cloudflare.F(
+			workers.ScriptUpdateParamsBindingsInherit(data.BindingsInherit.ValueString()),
+		)
+	}
 	res := new(http.Response)
 	env := WorkersScriptResultEnvelope{*data}
 	_, err = r.client.Workers.Scripts.Update(
 		ctx,
 		data.ScriptName.ValueString(),
-		workers.ScriptUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody(formDataContentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -226,14 +233,21 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
 		return
 	}
+	params := workers.ScriptUpdateParams{
+		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	}
+
+	if !data.BindingsInherit.IsNull() && !data.BindingsInherit.IsUnknown() {
+		params.BindingsInherit = cloudflare.F(
+			workers.ScriptUpdateParamsBindingsInherit(data.BindingsInherit.ValueString()),
+		)
+	}
 	res := new(http.Response)
 	env := WorkersScriptResultEnvelope{*data}
 	_, err = r.client.Workers.Scripts.Update(
 		ctx,
 		data.ScriptName.ValueString(),
-		workers.ScriptUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithRequestBody(formDataContentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -425,14 +439,32 @@ func (r *WorkersScriptResource) Read(ctx context.Context, req resource.ReadReque
 				}
 			}
 
-			mainPart := data.MainModule.ValueString()
-			isMainModule := mainPart != ""
-			if mainPart == "" {
-				mainPart = data.BodyPart.ValueString()
+			// Prefer the deployed entrypoint reported by the API so a stale
+			// main_module or body_part in state surfaces as drift rather than
+			// an error. The header names the part but not the script format,
+			// so a service worker (body_part in state) stays a service worker.
+			var mainPart string
+			var isMainModule bool
+			if entrypoint := scriptContentRes.Header.Get("CF-Entrypoint"); entrypoint != "" {
+				if _, ok := parts[entrypoint]; ok {
+					mainPart = entrypoint
+					isMainModule = data.MainModule.ValueString() != "" || data.BodyPart.ValueString() == ""
+				}
 			}
 			if mainPart == "" {
-				mainPart = scriptContentRes.Header.Get("CF-Entrypoint")
-				isMainModule = mainPart != ""
+				if name := data.MainModule.ValueString(); name != "" {
+					if _, ok := parts[name]; ok {
+						mainPart = name
+						isMainModule = true
+					}
+				}
+			}
+			if mainPart == "" {
+				if name := data.BodyPart.ValueString(); name != "" {
+					if _, ok := parts[name]; ok {
+						mainPart = name
+					}
+				}
 			}
 			if mainPart == "" {
 				if metadataPart, ok := parts["metadata"]; ok {

@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/api_gateway"
-	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v7"
+	"github.com/cloudflare/cloudflare-go/v7/api_gateway"
+	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -70,7 +70,7 @@ func (r *APIShieldDiscoveryOperationResource) Create(ctx context.Context, req re
 	env := APIShieldDiscoveryOperationResultEnvelope{*data}
 	_, err = r.client.APIGateway.Discovery.Operations.Edit(
 		ctx,
-		data.OperationID.ValueString(),
+		data.DiscoveryID.ValueString(),
 		api_gateway.DiscoveryOperationEditParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -89,7 +89,6 @@ func (r *APIShieldDiscoveryOperationResource) Create(ctx context.Context, req re
 		return
 	}
 	data = &env.Result
-	data.ID = data.OperationID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -120,7 +119,7 @@ func (r *APIShieldDiscoveryOperationResource) Update(ctx context.Context, req re
 	env := APIShieldDiscoveryOperationResultEnvelope{*data}
 	_, err = r.client.APIGateway.Discovery.Operations.Edit(
 		ctx,
-		data.OperationID.ValueString(),
+		data.DiscoveryID.ValueString(),
 		api_gateway.DiscoveryOperationEditParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -139,7 +138,6 @@ func (r *APIShieldDiscoveryOperationResource) Update(ctx context.Context, req re
 		return
 	}
 	data = &env.Result
-	data.ID = data.OperationID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -7,15 +7,14 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ZeroTrustDLPPredefinedEntryResource)(nil)
@@ -63,7 +62,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"deprecated": schema.BoolAttribute{
 				Description: "Whether this entry is deprecated for new use. This is computed from the static catalog and\nemitted only when true.",
 				Computed:    true,
-				Default:     booldefault.StaticBool(false),
 			},
 			"description": schema.StringAttribute{
 				Computed: true,
@@ -106,6 +104,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"complete",
 					),
 				},
+			},
+			"word_list": schema.ListAttribute{
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 			"confidence": schema.SingleNestedAttribute{
 				Computed:   true,
@@ -176,10 +179,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 				},
-			},
-			"word_list": schema.StringAttribute{
-				Computed:   true,
-				CustomType: jsontypes.NormalizedType{},
 			},
 		},
 	}

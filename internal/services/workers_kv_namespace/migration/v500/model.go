@@ -20,4 +20,5 @@ type TargetWorkersKVNamespaceModel struct {
 	Title               types.String `tfsdk:"title"`
 	SupportsURLEncoding types.Bool   `tfsdk:"supports_url_encoding"`
 	Jurisdiction        types.String `tfsdk:"jurisdiction"`
+	Mode                types.String `tfsdk:"mode"`
 }

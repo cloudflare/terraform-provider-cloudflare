@@ -24,3 +24,11 @@ func TestRulesetMigrationModelSchemaParity(t *testing.T) {
 	errs := test_helpers.ValidateMigrationModelSchemaIntegrity(model, schema)
 	errs.Report(t)
 }
+
+func TestRulesetMigrationSourceModelSchemaParity(t *testing.T) {
+	t.Parallel()
+	errs := test_helpers.ValidateMigrationModelSchemaIntegrity(
+		(*v500.SourceV4RulesetModel)(nil), v500.SourceV4RulesetSchema(),
+	)
+	errs.Report(t)
+}

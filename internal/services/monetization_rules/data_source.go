@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package registrar_domain
+package monetization_rules
 
 import (
 	"context"
@@ -15,21 +15,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type RegistrarDomainDataSource struct {
+type MonetizationRulesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*RegistrarDomainDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*MonetizationRulesDataSource)(nil)
 
-func NewRegistrarDomainDataSource() datasource.DataSource {
-	return &RegistrarDomainDataSource{}
+func NewMonetizationRulesDataSource() datasource.DataSource {
+	return &MonetizationRulesDataSource{}
 }
 
-func (d *RegistrarDomainDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_registrar_domain"
+func (d *MonetizationRulesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_monetization_rules"
 }
 
-func (d *RegistrarDomainDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *MonetizationRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -48,8 +48,8 @@ func (d *RegistrarDomainDataSource) Configure(ctx context.Context, req datasourc
 	d.client = client
 }
 
-func (d *RegistrarDomainDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *RegistrarDomainDataSourceModel
+func (d *MonetizationRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *MonetizationRulesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -64,10 +64,9 @@ func (d *RegistrarDomainDataSource) Read(ctx context.Context, req datasource.Rea
 	}
 
 	res := new(http.Response)
-	env := RegistrarDomainResultDataSourceEnvelope{*data}
-	_, err := d.client.Registrar.Domains.Get(
+	env := MonetizationRulesResultDataSourceEnvelope{*data}
+	_, err := d.client.Monetization.Rules.Get(
 		ctx,
-		data.DomainName.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -83,6 +82,7 @@ func (d *RegistrarDomainDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
