@@ -51,6 +51,7 @@ func normalizeReadZeroTrustIDPConfigData(_ context.Context, dataValue, stateValu
 	normalizeFalseAndNullBool(&dataValue.Config.SignRequest, stateValue.Config.SignRequest)
 	normalizeFalseAndNullBool(&dataValue.Config.ConditionalAccessEnabled, stateValue.Config.ConditionalAccessEnabled)
 	normalizeFalseAndNullBool(&dataValue.Config.SupportGroups, stateValue.Config.SupportGroups)
+	normalizeFalseAndNullBool(&dataValue.Config.LoginPageAutoPrompt, stateValue.Config.LoginPageAutoPrompt)
 
 	if dataValue.Config != nil && stateValue.Config != nil && dataValue.Config.ClientSecret.IsNull() {
 		dataValue.Config.ClientSecret = stateValue.Config.ClientSecret

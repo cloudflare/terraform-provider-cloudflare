@@ -506,11 +506,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"session_duration": schema.StringAttribute{
-				Description: "The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. Note: unsupported for infrastructure type applications.",
+				Description: "The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. For infrastructure applications, this is the maximum connection duration; connections are terminated once it elapses. Infrastructure durations must use s, m, or h and resolve to whole seconds. Defaults to `24h` for supported application types.",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(durationRegex, `"session_duration" only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units`),
+					infrastructureSessionDurationValidator{},
 					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), sessionDurationCompatibleAppTypes...),
 				},
 			},

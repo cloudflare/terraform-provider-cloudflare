@@ -42,6 +42,7 @@ Full Changelog: [v5.27.0...v5.28.0](https://github.com/cloudflare/terraform-prov
 
 #### New Accepted Values
 
+- **zero_trust_access_application**: `session_duration` is now supported for infrastructure applications and defaults to `24h`, fixing creation failures when the API returns this default. It sets the maximum connection duration and must use `s`, `m`, or `h` in whole seconds.
 - **zero_trust_access_identity_provider**: `type` accepts `passkeys`.
 - **zero_trust_device_custom_profile**: `match` expressions support `device.tags`.
 

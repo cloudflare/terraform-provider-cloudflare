@@ -1321,10 +1321,10 @@ func TestAccCloudflareAccessApplication_Infrastructure(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessApplicationInfrastructure(rnd, accountID),
+				Config: testAccCloudflareAccessApplicationInfrastructure(rnd, accountID, ""),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckNoResourceAttr(name, "session_duration"),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "type", "infrastructure"),
 					resource.TestCheckResourceAttr(name, "target_criteria.#", "1"),
 					resource.TestCheckResourceAttr(name, "target_criteria.0.port", "22"),
@@ -1338,7 +1338,15 @@ func TestAccCloudflareAccessApplication_Infrastructure(t *testing.T) {
 			},
 			{
 				// Ensures no diff on last plan
-				Config:   testAccCloudflareAccessApplicationInfrastructure(rnd, accountID),
+				Config:   testAccCloudflareAccessApplicationInfrastructure(rnd, accountID, ""),
+				PlanOnly: true,
+			},
+			{
+				Config: testAccCloudflareAccessApplicationInfrastructure(rnd, accountID, "8h"),
+				Check:  resource.TestCheckResourceAttr(name, "session_duration", "8h"),
+			},
+			{
+				Config:   testAccCloudflareAccessApplicationInfrastructure(rnd, accountID, "8h"),
 				PlanOnly: true,
 			},
 		},
@@ -1392,8 +1400,12 @@ func testAccCloudflareAccessApplicationConfigWithCORS(rnd, zoneID, domain string
 	return acctest.LoadTestCase("accessapplicationconfigwithcors.tf", rnd, zoneID, domain)
 }
 
-func testAccCloudflareAccessApplicationInfrastructure(rnd, accID string) string {
-	return acctest.LoadTestCase("accessapplicationconfiginfrastructure.tf", rnd, accID)
+func testAccCloudflareAccessApplicationInfrastructure(rnd, accID, duration string) string {
+	durationConfig := ""
+	if duration != "" {
+		durationConfig = fmt.Sprintf("session_duration = %q", duration)
+	}
+	return acctest.LoadTestCase("accessapplicationconfiginfrastructure.tf", rnd, accID, durationConfig)
 }
 
 func testAccCloudflareAccessApplicationRDP(rnd, accID, domain string) string {
