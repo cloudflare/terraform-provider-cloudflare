@@ -139,6 +139,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_cookies"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_scripts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_project"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pipeline"
@@ -561,6 +562,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		api_shield_schema.NewResource,
 		managed_transforms.NewResource,
 		page_shield_policy.NewResource,
+		page_shield_settings.NewResource,
 		url_normalization_settings.NewResource,
 		spectrum_application.NewResource,
 		regional_hostname.NewResource,
@@ -890,6 +892,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		page_shield_scripts.NewPageShieldScriptsListDataSource,
 		page_shield_cookies.NewPageShieldCookiesDataSource,
 		page_shield_cookies.NewPageShieldCookiesListDataSource,
+		page_shield_settings.NewPageShieldSettingsDataSource,
 		url_normalization_settings.NewURLNormalizationSettingsDataSource,
 		spectrum_application.NewSpectrumApplicationDataSource,
 		spectrum_application.NewSpectrumApplicationsDataSource,
