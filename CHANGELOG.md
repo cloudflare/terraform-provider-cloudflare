@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.28.1 (2026-10-20)
+
+Full Changelog: [v5.28.0...v5.28.1](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.28.0...v5.28.1)
+
+### Changes
+
+- the provider is now built with Go 1.27.3, which distrusts a set of intermediate certificate authorities that have been revoked for CA compromise. The distrust list is compiled into the provider binary, so affected chains are rejected regardless of the host's system trust store. Upgrade to this release to pick up the change; no configuration changes are required.
+- **cloudflare-go**: the Go SDK dependency is updated to v7.13.1.
+- **cloudflare-go**: the unused v6 Go SDK dependency is removed. The `api_shield_discovery_operation` list data source now uses v7.
+
 ## 5.28.0 (2026-10-12)
 
 Full Changelog: [v5.27.0...v5.28.0](https://github.com/cloudflare/terraform-provider-cloudflare/compare/v5.27.0...v5.28.0)
