@@ -1,0 +1,19 @@
+.release-please-manifest.json
+  s_4c5d44d23c942e::t_129f113ed9d341 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "7c517ef92eb21545d494473156071984db963840",
+  "prompts": {},
+  "sessions": {
+    "s_4c5d44d23c942e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ea968d001fferruRmj7FJbJRep",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
