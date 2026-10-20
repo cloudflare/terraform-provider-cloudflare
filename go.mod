@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.20.5
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.113.2
 	github.com/cloudflare/cloudflare-go v0.118.0
-	github.com/cloudflare/cloudflare-go/v7 v7.13.1-0.20261020214022-ff809ac3140c
+	github.com/cloudflare/cloudflare-go/v7 v7.13.1
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/terraform-plugin-docs v0.24.0
