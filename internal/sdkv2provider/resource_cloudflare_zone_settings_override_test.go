@@ -130,7 +130,7 @@ func testAccGetInitialZoneSettings(t *testing.T, zoneID string, settings map[str
 
 		foundZone, err := client.ZoneSettings(context.Background(), zoneID)
 		if err != nil {
-			t.Fatalf(err.Error())
+			t.Fatal(err)
 		}
 
 		if foundZone.Result == nil || len(foundZone.Result) == 0 {

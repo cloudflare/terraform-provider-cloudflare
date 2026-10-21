@@ -31,7 +31,11 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: "go.mod"
+          # Pinned ahead of the go.mod directive: 1.27.3 distrusts a set of
+          # revoked intermediate CAs, and the distrust list is compiled into
+          # the released binary. Kept out of go.mod so the module's language
+          # version (and therefore the lint toolchain) is unaffected.
+          go-version: "1.27.3"
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v6

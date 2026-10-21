@@ -1,3 +1,14 @@
+## 4.52.10 (October 21st, 2026)
+
+BUG FIXES:
+
+* resource/cloudflare_logpush_job: error and log messages now render the numeric job ID correctly instead of as a Unicode character literal ([#7433](https://github.com/cloudflare/terraform-provider-cloudflare/pull/7433))
+* resource/cloudflare_workers_secret: the "secret not found" error no longer garbles secret or script names containing a `%` ([#7433](https://github.com/cloudflare/terraform-provider-cloudflare/pull/7433))
+
+DEPENDENCIES:
+
+* provider: build with Go 1.27.3, which distrusts a set of intermediate certificate authorities that have been revoked for CA compromise. The distrust list is compiled into the binary, so affected chains are rejected regardless of the host's system trust store. ([#7433](https://github.com/cloudflare/terraform-provider-cloudflare/pull/7433))
+
 ## 4.52.9 (September 1st, 2026)
 
 ENHANCEMENTS:
