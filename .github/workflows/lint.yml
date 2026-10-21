@@ -16,11 +16,15 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: 'tools/go.mod'
+          # Must track the provider module: golangci-lint loads packages with
+          # this toolchain, so it has to satisfy go.mod's directive.
+          go-version-file: 'go.mod'
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v8
         with:
-          version: latest
+          # v2 is required to analyze a module targeting Go 1.27; the v1 line
+          # is built with Go 1.24 and refuses newer targets.
+          version: v2.15.0
           args: "--config .golintci.yml"
           only-new-issues: true
 
@@ -35,5 +39,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: 'tools/go.mod'
+          # tfproviderlintx analyzes the provider module, so the toolchain must
+          # satisfy go.mod's directive and understand its export data.
+          go-version-file: 'go.mod'
       - run: make terraform-provider-lint
