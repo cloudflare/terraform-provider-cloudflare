@@ -1,0 +1,29 @@
+.github/workflows/release.yml
+  s_4c5d44d23c942e::t_9098f806ceef63 34
+.golintci.yml
+  s_4c5d44d23c942e::t_37b26bcdb571be 1,3,6-34,36,38,40-46
+GNUmakefile
+  s_4c5d44d23c942e::t_2f6a21bcd37e46 37,100-106,115
+go.mod
+  s_4c5d44d23c942e::t_01f8673cf9a02a 3
+tools/go.mod
+  s_4c5d44d23c942e::t_c2926724ca4948 3,6,241,244-248,250
+tools/go.sum
+  s_4c5d44d23c942e::t_270a6e0fbfbc53 145-146,995-998,1047-1050,1103-1106,1134-1137,1214-1217,1226-1227,1243-1246,1331-1334
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1f53ef27ae38207f1c0500ff1c59dd116a229381",
+  "prompts": {},
+  "sessions": {
+    "s_4c5d44d23c942e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ea968d001fferruRmj7FJbJRep",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
