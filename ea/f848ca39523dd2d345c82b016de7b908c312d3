@@ -1,0 +1,19 @@
+go.mod
+  s_4c5d44d23c942e::t_95787e6353d834 3-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "eaf848ca39523dd2d345c82b016de7b908c312d3",
+  "prompts": {},
+  "sessions": {
+    "s_4c5d44d23c942e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ea968d001fferruRmj7FJbJRep",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
