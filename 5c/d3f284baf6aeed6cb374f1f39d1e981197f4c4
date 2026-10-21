@@ -1,0 +1,19 @@
+go.mod
+  s_4c5d44d23c942e::t_8e2b2063549c5d 3,11,14,18,21,24,26,31,49,53,55-58,60,63,69,72,74-76,78,88-89,92-94
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5cd3f284baf6aeed6cb374f1f39d1e981197f4c4",
+  "prompts": {},
+  "sessions": {
+    "s_4c5d44d23c942e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ea968d001fferruRmj7FJbJRep",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vaishak Dinesh <vaishak@cloudflare.com>"
+    }
+  }
+}
