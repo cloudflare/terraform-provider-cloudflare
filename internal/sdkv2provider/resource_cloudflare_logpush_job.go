@@ -68,11 +68,11 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
-			tflog.Info(ctx, fmt.Sprintf("Could not find LogpushJob for %s with id: %q", identifier, jobID))
+			tflog.Info(ctx, fmt.Sprintf("Could not find LogpushJob for %s with id: %d", identifier, jobID))
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("error reading logpush job %q for %s: %w", jobID, identifier, err))
+		return diag.FromErr(fmt.Errorf("error reading logpush job %d for %s: %w", jobID, identifier, err))
 	}
 
 	if job.ID == 0 {
@@ -302,7 +302,7 @@ func resourceCloudflareLogpushJobUpdate(ctx context.Context, d *schema.ResourceD
 	err = client.UpdateLogpushJob(ctx, identifier, job)
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating logpush job id %q for %s: %w", job.ID, identifier, err))
+		return diag.FromErr(fmt.Errorf("error updating logpush job id %d for %s: %w", job.ID, identifier, err))
 	}
 
 	return resourceCloudflareLogpushJobRead(ctx, d, meta)

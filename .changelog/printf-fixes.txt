@@ -1,0 +1,7 @@
+```release-note:bug
+resource/cloudflare_logpush_job: error and log messages now render the numeric job ID correctly instead of as a Unicode character literal
+```
+
+```release-note:bug
+resource/cloudflare_workers_secret: the "secret not found" error no longer garbles secret or script names containing a `%`
+```
