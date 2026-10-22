@@ -2,7 +2,7 @@
 
 DEPENDENCIES:
 
-* provider: build with Go 1.27.3, which distrusts a set of intermediate certificate authorities that have been revoked for CA compromise. The distrust list is compiled into the binary, so affected chains are rejected regardless of the host's system trust store.
+* provider: build with Go 1.27.3, which distrusts a set of intermediate certificate authorities that have been revoked for CA compromise. The distrust list is compiled into the binary, so affected chains are rejected regardless of the host's system trust store. ([#7437](https://github.com/cloudflare/terraform-provider-cloudflare/pull/7437))
 
 NOTES:
 
