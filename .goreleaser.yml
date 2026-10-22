@@ -1,3 +1,4 @@
+version: 2
 builds:
 - env:
     # goreleaser does not work with CGO, it could also complicate
@@ -7,6 +8,7 @@ builds:
   mod_timestamp: '{{ .CommitTimestamp }}'
   flags:
     - -trimpath
+    - -mod=readonly
   ldflags:
     - '-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}'
   goos:
@@ -22,9 +24,12 @@ builds:
   ignore:
     - goos: darwin
       goarch: '386'
+    # Windows ARM32 was removed from Go; retain Windows ARM64 builds.
+    - goos: windows
+      goarch: arm
   binary: '{{ .ProjectName }}_v{{ .Version }}'
 archives:
-- format: zip
+- formats: [zip]
   name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
 checksum:
   name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
@@ -43,13 +48,14 @@ signs:
       - "--detach-sign"
       - "${artifact}"
 release:
+  make_latest: false
   extra_files:
     - glob: 'terraform-registry-manifest.json'
       name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
 changelog:
-  skip: true
+  disable: true
 snapshot:
-    name_template: '{{.ShortCommit}}-dev'
+    version_template: '{{.ShortCommit}}-dev'
 
 announce:
   discord:
