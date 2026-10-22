@@ -1,4 +1,4 @@
-## 3.35.1 (Unreleased)
+## 3.35.1 (October 22nd, 2026)
 
 BUG FIXES:
 
