@@ -1,0 +1,23 @@
+.changelog/7437.txt
+  s_56eb84c85bed5e::t_61983c6af6fefb 1-6
+CHANGELOG.md
+  s_56eb84c85bed5e::t_61983c6af6fefb 3,5,9
+scripts/release-notes.md
+  s_56eb84c85bed5e::t_61983c6af6fefb 3-5,7-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4d4da4f4e265c09c1f71119f94e33fc2c7600003",
+  "prompts": {},
+  "sessions": {
+    "s_56eb84c85bed5e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e9aab2e5fffenExHpQ5HYWMdtY",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
