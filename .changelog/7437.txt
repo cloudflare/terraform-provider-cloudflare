@@ -1,3 +1,7 @@
-```release-note:dependency
-provider: build with Go 1.27.3, which distrusts a set of intermediate certificate authorities that have been revoked for CA compromise. The distrust list is compiled into the binary, so affected chains are rejected regardless of the host's system trust store.
+```release-note:bug
+provider: updated certificate validation to reject chains containing intermediate certificate authorities revoked following CA compromise. Upgrade to v3.35.1 to receive this fix.
+```
+
+```release-note:note
+Windows ARM32 binaries are no longer provided. Windows ARM64 remains supported.
 ```
