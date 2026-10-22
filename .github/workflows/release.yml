@@ -6,27 +6,57 @@ on:
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
-          go-version-file: 'go.mod'
+          # The revoked-intermediate-CA distrust list is compiled into the
+          # binary. Pin the release compiler without changing go.mod's Go 1.20
+          # language version or the module's dependencies.
+          go-version: '1.27.3'
+      - name: Verify release compiler
+        run: |
+          go version
+          test "$(go env GOVERSION)" = go1.27.3
+      - name: Extract release notes from changelog
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          version = os.environ["GITHUB_REF_NAME"].removeprefix("v")
+          sections = re.split(r"(?m)^## ", Path("CHANGELOG.md").read_text())
+          for section in sections[1:]:
+              heading, _, body = section.partition("\n")
+              if heading.split(" ", 1)[0] == version:
+                  if not body.strip():
+                      raise SystemExit(f"Empty changelog entry for {version}")
+                  notes = Path(os.environ["RUNNER_TEMP"]) / "release-notes.md"
+                  notes.write_text("## " + section.strip() + "\n")
+                  break
+          else:
+              raise SystemExit(f"No changelog entry for {version}")
+          PY
       - name: Import GPG key
         id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@v5
+        uses: crazy-max/ghaction-import-gpg@v6
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v4.2.0
+        uses: goreleaser/goreleaser-action@v6.1.0
         with:
-          version: latest
-          args: release --rm-dist
+          version: v2.18.3
+          args: release --clean --release-notes "${{ runner.temp }}/release-notes.md"
         env:
+          GOTOOLCHAIN: local
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DISCORD_WEBHOOK_ID: ${{ secrets.DISCORD_WEBHOOK_ID }}

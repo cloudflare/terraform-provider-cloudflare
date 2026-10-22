@@ -1,4 +1,12 @@
-## 4.0.0 (Unreleased)
+## 3.35.1 (October 22nd, 2026)
+
+BUG FIXES:
+
+* provider: updated certificate validation to reject chains containing intermediate certificate authorities revoked following CA compromise. Upgrade to v3.35.1 to receive this fix. ([#7437](https://github.com/cloudflare/terraform-provider-cloudflare/pull/7437))
+
+NOTES:
+
+* Windows ARM32 binaries are no longer provided. Windows ARM64 remains supported.
 
 ## 3.35.0 (February 20th, 2023)
 
