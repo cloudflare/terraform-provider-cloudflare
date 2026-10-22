@@ -1,0 +1,19 @@
+CHANGELOG.md
+  s_56eb84c85bed5e::t_ac55ff1eb696e1 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2f029ee1346c5ec7e9333500dbada6dd89e0a608",
+  "prompts": {},
+  "sessions": {
+    "s_56eb84c85bed5e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e9aab2e5fffenExHpQ5HYWMdtY",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
