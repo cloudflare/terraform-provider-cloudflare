@@ -1,0 +1,19 @@
+.github/workflows/release.yml
+  s_56eb84c85bed5e::t_217066e95150aa 27-46,57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8114e590fe7f7f1554992ffc7333189ea40d3181",
+  "prompts": {},
+  "sessions": {
+    "s_56eb84c85bed5e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e9aab2e5fffenExHpQ5HYWMdtY",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
