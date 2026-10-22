@@ -24,6 +24,26 @@ jobs:
         run: |
           go version
           test "$(go env GOVERSION)" = go1.27.3
+      - name: Extract release notes from changelog
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          version = os.environ["GITHUB_REF_NAME"].removeprefix("v")
+          sections = re.split(r"(?m)^## ", Path("CHANGELOG.md").read_text())
+          for section in sections[1:]:
+              heading, _, body = section.partition("\n")
+              if heading.split(" ", 1)[0] == version:
+                  if not body.strip():
+                      raise SystemExit(f"Empty changelog entry for {version}")
+                  notes = Path(os.environ["RUNNER_TEMP"]) / "release-notes.md"
+                  notes.write_text("## " + section.strip() + "\n")
+                  break
+          else:
+              raise SystemExit(f"No changelog entry for {version}")
+          PY
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v6
@@ -34,7 +54,7 @@ jobs:
         uses: goreleaser/goreleaser-action@v6.1.0
         with:
           version: v2.18.3
-          args: release --clean --release-notes scripts/release-notes.md
+          args: release --clean --release-notes "${{ runner.temp }}/release-notes.md"
         env:
           GOTOOLCHAIN: local
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
