@@ -1,0 +1,29 @@
+scripts/release-notes.md
+  s_56eb84c85bed5e::t_94dfdfa87a16ce 1-14
+.changelog/go-1-27-3.txt
+  s_56eb84c85bed5e::t_94dfdfa87a16ce 1-3
+RELEASING.md
+  s_56eb84c85bed5e::t_94dfdfa87a16ce 1-76
+.github/workflows/release.yml
+  s_56eb84c85bed5e::t_94dfdfa87a16ce 9-10,13,17,19-26,29,34,36-37,39
+CHANGELOG.md
+  s_56eb84c85bed5e::t_94dfdfa87a16ce 1-10
+.goreleaser.yml
+  s_56eb84c85bed5e::t_94dfdfa87a16ce 1,11,27-29,32,51,56,58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3e409fd137a539fab69326a40e53b879329015c4",
+  "prompts": {},
+  "sessions": {
+    "s_56eb84c85bed5e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e9aab2e5fffenExHpQ5HYWMdtY",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "rotem <rotem@cloudflare.com>"
+    }
+  }
+}
