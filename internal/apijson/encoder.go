@@ -141,7 +141,12 @@ func (e *encoder) typeEncoder(t reflect.Type) encoderFunc {
 	}
 
 	// Compute the real encoder and replace the indirect func with it.
-	f = e.newTypeEncoder(t)
+	// Build the encoder on a private copy. The closures capture and temporarily mutate the encoder
+	// (e.g. patch=false for nested values), so sharing the caller's instance would let a cached
+	// encoder for one (patch, root) key observe the settings of another.
+	cp := *e
+	cp.dateFormat, cp.root, cp.patch = entry.dateFormat, entry.root, entry.patch
+	f = cp.newTypeEncoder(t)
 	wg.Done()
 	encoders.Store(entry, f)
 	return f

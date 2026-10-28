@@ -2986,3 +2986,36 @@ func TestCustomMarshalerForUpdate(t *testing.T) {
 		})
 	}
 }
+
+type patchLeakInner struct {
+	Name    string `json:"name"`
+	Enabled bool   `json:"enabled"`
+}
+
+type patchLeakOuter struct {
+	Inner *patchLeakInner `json:"inner"`
+}
+
+// TestMarshalForPatch_DoesNotLeakIntoFullEncoders tests that a patch marshal which
+// forces a non-patch encode of a nested value (plan set, state nil) does not
+// cause the cached non-patch encoder for that type to behave as a patch encoder
+// in later calls, which dropped fields that were equal in plan and state.
+func TestMarshalForPatch_DoesNotLeakIntoFullEncoders(t *testing.T) {
+	plan := patchLeakOuter{Inner: &patchLeakInner{Name: "tool", Enabled: true}}
+	if _, err := MarshalForPatch(plan, patchLeakOuter{}); err != nil {
+		t.Fatalf("MarshalForPatch failed: %v", err)
+	}
+
+	value := patchLeakOuter{Inner: &patchLeakInner{Name: "tool", Enabled: true}}
+	raw, err := MarshalRoot(value)
+	if err != nil {
+		t.Fatalf("MarshalRoot failed: %v", err)
+	}
+	var got patchLeakOuter
+	if err := json.Unmarshal(raw, &got); err != nil {
+		t.Fatalf("invalid JSON %s: %v", raw, err)
+	}
+	if got.Inner == nil || *got.Inner != *value.Inner {
+		t.Fatalf("expected %+v but got %s", *value.Inner, raw)
+	}
+}
