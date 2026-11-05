@@ -180,6 +180,11 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 		}
 	}
 
+	// The API returns `landing_page_design` with every field null when no design is set
+	// (for example on accounts without App Launcher customization). Treat that as null so a
+	// configuration that omits the attribute does not plan a change on every run.
+	data.LandingPageDesign = customfield.NullifyEmptyObject(ctx, data.LandingPageDesign)
+
 	normalizeFalseAndNullBool(&data.ServiceAuth401Redirect, stateData.ServiceAuth401Redirect)
 	normalizeFalseAndNullBool(&data.EnableBindingCookie, stateData.EnableBindingCookie)
 	normalizeFalseAndNullBool(&data.OptionsPreflightBypass, stateData.OptionsPreflightBypass)
