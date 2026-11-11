@@ -701,4 +701,21 @@ func (r *WorkersScriptResource) ModifyPlan(ctx context.Context, req resource.Mod
 	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("modified_on"), timetypes.NewRFC3339Unknown())...)
 	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("has_assets"), types.BoolUnknown())...)
 	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("startup_time_ms"), types.Int64Unknown())...)
+
+	// Update always persists body_part = "script" for service workers (see Update).
+	// State can hold a body_part other than "script" (null or "worker.js" when upgraded
+	// from v4; Read never corrects it because the content API returns a non-multipart
+	// body), and UseStateForUnknown carries it into the plan. When body_part is not
+	// configured, plan the value Update will write so the result is consistent.
+	var mainModule, configBodyPart, content, contentFile types.String
+	resp.Diagnostics.Append(resp.Plan.GetAttribute(ctx, path.Root("main_module"), &mainModule)...)
+	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("body_part"), &configBodyPart)...)
+	resp.Diagnostics.Append(resp.Plan.GetAttribute(ctx, path.Root("content"), &content)...)
+	resp.Diagnostics.Append(resp.Plan.GetAttribute(ctx, path.Root("content_file"), &contentFile)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	if mainModule.IsNull() && configBodyPart.IsNull() && (!content.IsNull() || !contentFile.IsNull()) {
+		resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("body_part"), types.StringValue("script"))...)
+	}
 }

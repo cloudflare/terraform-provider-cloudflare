@@ -40,8 +40,9 @@ func TestModifyPlanAssetsOnlyChangeMarksDeployComputedUnknown(t *testing.T) {
 	plan := build("new")
 
 	req := resource.ModifyPlanRequest{
-		State: tfsdk.State{Schema: s, Raw: state.Raw},
-		Plan:  plan,
+		Config: tfsdk.Config{Schema: s, Raw: plan.Raw},
+		State:  tfsdk.State{Schema: s, Raw: state.Raw},
+		Plan:   plan,
 	}
 	resp := &resource.ModifyPlanResponse{Plan: plan}
 	(&WorkersScriptResource{}).ModifyPlan(ctx, req, resp)
@@ -87,5 +88,76 @@ func TestModifyPlanNoChangeKeepsStartupTime(t *testing.T) {
 	}
 	if startupTime.IsUnknown() || startupTime.ValueInt64() != 10 {
 		t.Errorf("startup_time_ms = %s, want 10 when nothing changes", startupTime)
+	}
+}
+
+// Service workers upgraded from v4 carry a null (module unset) or "worker.js"
+// (module = false) body_part, and Read never corrects it because the content API
+// returns a non-multipart body. Update always writes "script", so the plan must too.
+func TestModifyPlanServiceWorkerBodyPart(t *testing.T) {
+	ctx := context.Background()
+	s := ResourceSchema(ctx)
+
+	build := func(t *testing.T, attrs map[string]types.String) tftypes.Value {
+		t.Helper()
+		p := tfsdk.Plan{Schema: s, Raw: tftypes.NewValue(s.Type().TerraformType(ctx), nil)}
+		base := map[string]types.String{
+			"account_id":  types.StringValue("account"),
+			"script_name": types.StringValue("app"),
+			"id":          types.StringValue("app"),
+			"content":     types.StringValue("addEventListener('fetch', () => {})"),
+		}
+		for k, v := range attrs {
+			base[k] = v
+		}
+		for k, v := range base {
+			if diags := p.SetAttribute(ctx, path.Root(k), v); diags.HasError() {
+				t.Fatalf("setting %s: %v", k, diags)
+			}
+		}
+		return p.Raw
+	}
+
+	cases := []struct {
+		name       string
+		state      map[string]types.String
+		config     map[string]types.String
+		wantBodyPt types.String
+	}{
+		{"upgraded v4 module unset", map[string]types.String{"body_part": types.StringNull()}, nil, types.StringValue("script")},
+		{"upgraded v4 module false", map[string]types.String{"body_part": types.StringValue("worker.js")}, nil, types.StringValue("script")},
+		{"configured body_part kept", map[string]types.String{"body_part": types.StringNull()}, map[string]types.String{"body_part": types.StringValue("index.js")}, types.StringValue("index.js")},
+		{"module worker untouched", map[string]types.String{"main_module": types.StringValue("worker.js")}, map[string]types.String{"main_module": types.StringValue("worker.js")}, types.StringNull()},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			state := build(t, tc.state)
+			// plan/config differ from state (new binding-like change) via content.
+			planAttrs := map[string]types.String{"content": types.StringValue("addEventListener('fetch', () => { /* v2 */ })")}
+			for k, v := range tc.state {
+				planAttrs[k] = v
+			}
+			cfgAttrs := map[string]types.String{"content": planAttrs["content"]}
+			for k, v := range tc.config {
+				planAttrs[k] = v
+				cfgAttrs[k] = v
+			}
+			plan := tfsdk.Plan{Schema: s, Raw: build(t, planAttrs)}
+			req := resource.ModifyPlanRequest{
+				Config: tfsdk.Config{Schema: s, Raw: build(t, cfgAttrs)},
+				State:  tfsdk.State{Schema: s, Raw: state},
+				Plan:   plan,
+			}
+			resp := &resource.ModifyPlanResponse{Plan: plan}
+			(&WorkersScriptResource{}).ModifyPlan(ctx, req, resp)
+			var got types.String
+			resp.Diagnostics.Append(resp.Plan.GetAttribute(ctx, path.Root("body_part"), &got)...)
+			if resp.Diagnostics.HasError() {
+				t.Fatalf("ModifyPlan: %v", resp.Diagnostics)
+			}
+			if !got.Equal(tc.wantBodyPt) {
+				t.Errorf("body_part = %s, want %s", got, tc.wantBodyPt)
+			}
+		})
 	}
 }
