@@ -2452,7 +2452,11 @@ func TestAccCloudflareAccessApplication_InfrastructureWithPolicyMFAConfig(t *tes
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 	dataName := fmt.Sprintf("data.cloudflare_zero_trust_access_application.%s", rnd)
-	policyMFA := tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("mfa_config")
+	// tfjsonpath.Path.AtMapKey appends to a shared backing array without copying, so a
+	// reused base path aliases across derivations. Return a fresh path each call.
+	policyMFA := func() tfjsonpath.Path {
+		return tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("mfa_config")
+	}
 	appAuthenticators := knownvalue.ListExact([]knownvalue.Check{
 		knownvalue.StringExact("piv_key"),
 	})
@@ -2476,14 +2480,14 @@ func TestAccCloudflareAccessApplication_InfrastructureWithPolicyMFAConfig(t *tes
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("infrastructure")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("mfa_config").AtMapKey("allowed_authenticators"), appAuthenticators),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("mfa_config").AtMapKey("session_duration"), knownvalue.StringExact("24h")),
-					statecheck.ExpectKnownValue(resourceName, policyMFA.AtMapKey("allowed_authenticators"), policyAuthenticators),
-					statecheck.ExpectKnownValue(resourceName, policyMFA.AtMapKey("mfa_disabled"), knownvalue.Bool(false)),
-					statecheck.ExpectKnownValue(resourceName, policyMFA.AtMapKey("session_duration"), knownvalue.StringExact("12h")),
+					statecheck.ExpectKnownValue(resourceName, policyMFA().AtMapKey("allowed_authenticators"), policyAuthenticators),
+					statecheck.ExpectKnownValue(resourceName, policyMFA().AtMapKey("mfa_disabled"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, policyMFA().AtMapKey("session_duration"), knownvalue.StringExact("12h")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("connection_rules").AtMapKey("ssh").AtMapKey("usernames"), knownvalue.ListExact([]knownvalue.Check{
 						knownvalue.StringExact("root"),
 					})),
 					statecheck.ExpectKnownValue(dataName, tfjsonpath.New("mfa_config").AtMapKey("allowed_authenticators"), appAuthenticators),
-					statecheck.ExpectKnownValue(dataName, policyMFA.AtMapKey("allowed_authenticators"), policyAuthenticators),
+					statecheck.ExpectKnownValue(dataName, policyMFA().AtMapKey("allowed_authenticators"), policyAuthenticators),
 				},
 			},
 		},

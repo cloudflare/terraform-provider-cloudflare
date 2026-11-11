@@ -73,6 +73,8 @@ func TestAccCloudflarePipelineSink_R2(t *testing.T) {
 }
 
 func TestAccCloudflarePipelineSink_R2DataCatalog(t *testing.T) {
+	t.Skip("Skipping: r2_data_catalog sink create returns 422 (Basin Catalog table validation 403); tracked in a follow-up issue.")
+
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_pipeline_sink." + rnd

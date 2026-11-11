@@ -227,6 +227,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"anthropic_agent": schema.StringAttribute{
 						Description: "Action to apply to one supported personal AI agent.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -238,6 +239,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"google_agent": schema.StringAttribute{
 						Description: "Action to apply to one supported personal AI agent.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -249,6 +251,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"instinct": schema.StringAttribute{
 						Description: "Action to apply to one supported personal AI agent.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -260,6 +263,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"muse": schema.StringAttribute{
 						Description: "Action to apply to one supported personal AI agent.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -271,6 +275,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"openai_agent": schema.StringAttribute{
 						Description: "Action to apply to one supported personal AI agent.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(

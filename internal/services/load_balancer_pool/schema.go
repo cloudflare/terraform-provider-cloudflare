@@ -170,7 +170,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"networks": schema.ListAttribute{
 				Description: "List of networks where Load Balancer or Pool is enabled.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"description": schema.StringAttribute{
