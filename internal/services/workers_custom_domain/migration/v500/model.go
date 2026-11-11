@@ -16,12 +16,14 @@ type SourceV4WorkersCustomDomainModel struct {
 
 // TargetWorkersCustomDomainModel represents v5 cloudflare_workers_custom_domain state.
 type TargetWorkersCustomDomainModel struct {
-	ID          types.String `tfsdk:"id"`
-	AccountID   types.String `tfsdk:"account_id"`
-	Hostname    types.String `tfsdk:"hostname"`
-	Service     types.String `tfsdk:"service"`
-	ZoneID      types.String `tfsdk:"zone_id"`
-	Environment types.String `tfsdk:"environment"`
-	ZoneName    types.String `tfsdk:"zone_name"`
-	CertId      types.String `tfsdk:"cert_id"`
+	ID              types.String `tfsdk:"id"`
+	AccountID       types.String `tfsdk:"account_id"`
+	Hostname        types.String `tfsdk:"hostname"`
+	Service         types.String `tfsdk:"service"`
+	ZoneID          types.String `tfsdk:"zone_id"`
+	Environment     types.String `tfsdk:"environment"`
+	ZoneName        types.String `tfsdk:"zone_name"`
+	CertId          types.String `tfsdk:"cert_id"`
+	Enabled         types.Bool   `tfsdk:"enabled"`
+	PreviewsEnabled types.Bool   `tfsdk:"previews_enabled"`
 }

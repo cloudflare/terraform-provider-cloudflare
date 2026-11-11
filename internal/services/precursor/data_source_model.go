@@ -17,10 +17,11 @@ type PrecursorResultDataSourceEnvelope struct {
 }
 
 type PrecursorDataSourceModel struct {
-	ID               types.String                                                           `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID           types.String                                                           `tfsdk:"zone_id" path:"zone_id,required"`
-	DefaultMode      types.String                                                           `tfsdk:"default_mode" json:"default_mode,computed"`
-	EnforcementRules customfield.NestedObjectList[PrecursorEnforcementRulesDataSourceModel] `tfsdk:"enforcement_rules" json:"enforcement_rules,computed"`
+	ID               types.String                                                `tfsdk:"id" path:"zone_id,computed"`
+	ZoneID           types.String                                                `tfsdk:"zone_id" path:"zone_id,required"`
+	Mode             types.String                                                `tfsdk:"mode" json:"mode,computed"`
+	ShowInterstitial types.Bool                                                  `tfsdk:"show_interstitial" json:"show_interstitial,computed"`
+	Rules            customfield.NestedObjectList[PrecursorRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
 }
 
 func (m *PrecursorDataSourceModel) toReadParams(_ context.Context) (params precursor.PrecursorGetParams, diags diag.Diagnostics) {
@@ -31,10 +32,10 @@ func (m *PrecursorDataSourceModel) toReadParams(_ context.Context) (params precu
 	return
 }
 
-type PrecursorEnforcementRulesDataSourceModel struct {
-	Expression  types.String `tfsdk:"expression" json:"expression,computed"`
-	Mode        types.String `tfsdk:"mode" json:"mode,computed"`
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
-	Enabled     types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
+type PrecursorRulesDataSourceModel struct {
+	Expression       types.String `tfsdk:"expression" json:"expression,computed"`
+	ShowInterstitial types.Bool   `tfsdk:"show_interstitial" json:"show_interstitial,computed"`
+	ID               types.String `tfsdk:"id" json:"id,computed"`
+	Description      types.String `tfsdk:"description" json:"description,computed"`
+	Enabled          types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
 }

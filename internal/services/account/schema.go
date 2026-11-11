@@ -69,11 +69,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown(), boolplanmodifier.RequiresReplaceIfConfigured()},
 			},
-		"unit": schema.SingleNestedAttribute{
-			Description: "Information related to the tenant unit. Provide its ID and omit `standalone` to create the Account within an Organization. See https://developers.cloudflare.com/tenant/how-to/manage-accounts/.",
-			Computed:    true,
-			Optional:    true,
-			CustomType:  customfield.NewNestedObjectType[AccountUnitModel](ctx),
+			"unit": schema.SingleNestedAttribute{
+				Description: "Information related to the tenant unit. Provide its ID and omit `standalone` to create the Account within an Organization. See https://developers.cloudflare.com/tenant/how-to/manage-accounts/.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[AccountUnitModel](ctx),
 				PlanModifiers: []planmodifier.Object{
 					objectplanmodifier.UseStateForUnknown(),
 					objectplanmodifier.RequiresReplaceIfConfigured(),
@@ -91,11 +91,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Account name",
+				Description: "Account name, limited to 65 UTF-8 bytes.",
 				Required:    true,
 			},
 			"type": schema.StringAttribute{
-				Description:        `Available values: "standard", "enterprise".`,
+				Description:        "the type of account being created. For self-serve customers, use standard. for enterprise customers, use enterprise.\nAvailable values: \"standard\", \"enterprise\".",
 				Optional:           true,
 				Computed:           true,
 				DeprecationMessage: "The 'type' field should no longer be set through the API.",
@@ -118,6 +118,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"parent_org_name": schema.StringAttribute{
 						Description: "Name of the parent Organization, if one exists",
+						Computed:    true,
+					},
+					"root_org_id": schema.StringAttribute{
+						Description: "ID of the root Organization, if one exists",
+						Computed:    true,
+					},
+					"should_display_parent_orgs": schema.BoolAttribute{
+						Description: "Indicates whether the parent Organization hierarchy should be displayed",
 						Computed:    true,
 					},
 				},
@@ -147,6 +155,32 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				CustomType:    timetypes.RFC3339Type{},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"legacy_flags": schema.SingleNestedAttribute{
+				Description: "Legacy account flags.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[AccountLegacyFlagsModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"enterprise_zone_quota": schema.SingleNestedAttribute{
+						Description: "Enterprise zone quota for standard and enterprise accounts. Accounts without a quota have a maximum of 0.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[AccountLegacyFlagsEnterpriseZoneQuotaModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"available": schema.Int64Attribute{
+								Description: "Number of additional Enterprise zones available. Returns 0 if the quota is not allocated or is exhausted.",
+								Computed:    true,
+							},
+							"current": schema.Int64Attribute{
+								Description: "Current number of Enterprise zones.",
+								Computed:    true,
+							},
+							"maximum": schema.Int64Attribute{
+								Description: "Maximum number of Enterprise zones allowed.",
+								Computed:    true,
+							},
+						},
+					},
+				},
 			},
 		},
 	}

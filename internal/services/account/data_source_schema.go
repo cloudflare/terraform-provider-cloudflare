@@ -78,6 +78,32 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("standard", "enterprise"),
 				},
 			},
+			"legacy_flags": schema.SingleNestedAttribute{
+				Description: "Legacy account flags.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[AccountLegacyFlagsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"enterprise_zone_quota": schema.SingleNestedAttribute{
+						Description: "Enterprise zone quota for standard and enterprise accounts. Accounts without a quota have a maximum of 0.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[AccountLegacyFlagsEnterpriseZoneQuotaDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"available": schema.Int64Attribute{
+								Description: "Number of additional Enterprise zones available. Returns 0 if the quota is not allocated or is exhausted.",
+								Computed:    true,
+							},
+							"current": schema.Int64Attribute{
+								Description: "Current number of Enterprise zones.",
+								Computed:    true,
+							},
+							"maximum": schema.Int64Attribute{
+								Description: "Maximum number of Enterprise zones allowed.",
+								Computed:    true,
+							},
+						},
+					},
+				},
+			},
 			"managed_by": schema.SingleNestedAttribute{
 				Description: "Parent container details",
 				Computed:    true,
@@ -89,6 +115,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 					"parent_org_name": schema.StringAttribute{
 						Description: "Name of the parent Organization, if one exists",
+						Computed:    true,
+					},
+					"root_org_id": schema.StringAttribute{
+						Description: "ID of the root Organization, if one exists",
+						Computed:    true,
+					},
+					"should_display_parent_orgs": schema.BoolAttribute{
+						Description: "Indicates whether the parent Organization hierarchy should be displayed",
 						Computed:    true,
 					},
 				},

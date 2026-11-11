@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
@@ -144,9 +145,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     stringdefault.StaticString(""),
 					},
 					"expected_codes": schema.ListAttribute{
-						Description: `The expected HTTP response codes (e.g. "200") or code ranges (e.g. "2xx" for all codes starting with 2) of the health check.`,
-						Optional:    true,
-						ElementType: types.StringType,
+						Description:   `The expected HTTP response codes (e.g. "200") or code ranges (e.g. "2xx" for all codes starting with 2) of the health check.`,
+						Computed:      true,
+						Optional:      true,
+						CustomType:    customfield.NewListType[types.String](ctx),
+						ElementType:   types.StringType,
+						PlanModifiers: []planmodifier.List{listplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"follow_redirects": schema.BoolAttribute{
 						Description: "Follow redirects if the origin returns a 3xx status code.",

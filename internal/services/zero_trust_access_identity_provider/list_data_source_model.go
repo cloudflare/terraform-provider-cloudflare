@@ -71,6 +71,7 @@ type ZeroTrustAccessIdentityProvidersConfigDataSourceModel struct {
 	PKCEEnabled              types.Bool                                                                                          `tfsdk:"pkce_enabled" json:"pkce_enabled,computed"`
 	Scopes                   customfield.List[types.String]                                                                      `tfsdk:"scopes" json:"scopes,computed"`
 	TokenURL                 types.String                                                                                        `tfsdk:"token_url" json:"token_url,computed"`
+	IssuerURL                types.String                                                                                        `tfsdk:"issuer_url" json:"issuer_url,computed"`
 	AuthorizationServerID    types.String                                                                                        `tfsdk:"authorization_server_id" json:"authorization_server_id,computed"`
 	OktaAccount              types.String                                                                                        `tfsdk:"okta_account" json:"okta_account,computed"`
 	OneloginAccount          types.String                                                                                        `tfsdk:"onelogin_account" json:"onelogin_account,computed"`
@@ -81,7 +82,6 @@ type ZeroTrustAccessIdentityProvidersConfigDataSourceModel struct {
 	ForceAuthn               types.Bool                                                                                          `tfsdk:"force_authn" json:"force_authn,computed"`
 	HeaderAttributes         customfield.NestedObjectList[ZeroTrustAccessIdentityProvidersConfigHeaderAttributesDataSourceModel] `tfsdk:"header_attributes" json:"header_attributes,computed"`
 	IdPPublicCERTs           customfield.List[types.String]                                                                      `tfsdk:"idp_public_certs" json:"idp_public_certs,computed"`
-	IssuerURL                types.String                                                                                        `tfsdk:"issuer_url" json:"issuer_url,computed"`
 	MaxSSOURLLength          types.Int64                                                                                         `tfsdk:"max_sso_url_length" json:"max_sso_url_length,computed"`
 	SignRequest              types.Bool                                                                                          `tfsdk:"sign_request" json:"sign_request,computed"`
 	SSOTargetURL             types.String                                                                                        `tfsdk:"sso_target_url" json:"sso_target_url,computed"`

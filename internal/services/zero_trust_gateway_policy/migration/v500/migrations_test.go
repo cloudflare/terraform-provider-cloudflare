@@ -20,6 +20,7 @@ var (
 )
 
 // Embed test configs
+//
 //go:embed testdata/v4_minimal.tf
 var v4MinimalConfig string
 
@@ -124,9 +125,9 @@ func TestMigrateZeroTrustGatewayPolicy_V4ToV5_Minimal(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("tf-test-minimal-%s", rnd))),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("Minimal policy for migration testing")),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("action"), knownvalue.StringExact("block")),
-							// Precedence is auto-calculated by API, just verify it exists
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.NotNull()),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Int64Exact(10000)),
 						},
+						gatewayPolicyPrecedenceChanges(tc.useDevProvider, resourceName, fmt.Sprintf("tf-test-minimal-%s", rnd)),
 					),
 				},
 			})
@@ -208,13 +209,14 @@ func TestMigrateZeroTrustGatewayPolicy_V4ToV5_RuleSettings(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("action"), knownvalue.StringExact("block")),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.NotNull()),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Int64Exact(10000)),
 							// Rule settings should be converted from block to attribute
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("block_page_enabled"), knownvalue.Bool(true)),
 							// Field rename: block_page_reason → block_reason
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("block_reason"), knownvalue.StringExact("Access blocked by company policy")),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("ip_categories"), knownvalue.Bool(true)),
 						},
+						gatewayPolicyPrecedenceChanges(tc.useDevProvider, resourceName, fmt.Sprintf("tf-test-settings-%s", rnd)),
 					),
 				},
 			})
@@ -295,7 +297,7 @@ func TestMigrateZeroTrustGatewayPolicy_V4ToV5_Nested(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("action"), knownvalue.StringExact("block")),
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.NotNull()),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Int64Exact(10000)),
 							// block_page_enabled should be present
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("block_page_enabled"), knownvalue.Bool(true)),
 							// Nested notification_settings block should be converted to attribute
@@ -304,6 +306,7 @@ func TestMigrateZeroTrustGatewayPolicy_V4ToV5_Nested(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("notification_settings").AtMapKey("msg"), knownvalue.StringExact("Connection blocked")),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("notification_settings").AtMapKey("support_url"), knownvalue.StringExact("https://support.example.com/")),
 						},
+						gatewayPolicyPrecedenceChanges(tc.useDevProvider, resourceName, fmt.Sprintf("tf-test-nested-%s", rnd)),
 					),
 				},
 			})
@@ -383,7 +386,7 @@ func TestMigrateZeroTrustGatewayPolicy_V4ToV5_ComplexSettings(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("action"), knownvalue.StringExact("allow")),
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.NotNull()),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Int64Exact(10000)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("traffic"), knownvalue.StringExact("http.request.uri matches \".*api.*\"")),
 							// All nested blocks should be converted to attributes
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("check_session").AtMapKey("enforce"), knownvalue.Bool(true)),
@@ -391,6 +394,7 @@ func TestMigrateZeroTrustGatewayPolicy_V4ToV5_ComplexSettings(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("check_session").AtMapKey("duration"), knownvalue.StringExact("24h0m0s")),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("payload_log").AtMapKey("enabled"), knownvalue.Bool(true)),
 						},
+						gatewayPolicyPrecedenceChanges(tc.useDevProvider, resourceName, fmt.Sprintf("tf-test-complex-%s", rnd)),
 					),
 				},
 			})
@@ -468,12 +472,21 @@ func TestMigrateZeroTrustGatewayPolicy_V4ToV5_EmptyRuleSettings(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("action"), knownvalue.StringExact("block")),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(false)),
-							// Precedence is auto-calculated by API
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.NotNull()),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Int64Exact(10000)),
 						},
+						gatewayPolicyPrecedenceChanges(tc.useDevProvider, resourceName, fmt.Sprintf("tf-test-empty-%s", rnd)),
 					),
 				},
 			})
 		})
+	}
+}
+
+func gatewayPolicyPrecedenceChanges(fromV5 bool, address, ruleName string) map[string]acctest.GatewayPolicyPrecedenceChange {
+	if fromV5 {
+		return nil // Explicit v5 precedence must not change during a v5 upgrade.
+	}
+	return map[string]acctest.GatewayPolicyPrecedenceChange{
+		address: acctest.GatewayPolicyV4PrecedenceChange(ruleName, 10000),
 	}
 }

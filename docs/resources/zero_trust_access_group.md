@@ -88,6 +88,7 @@ Optional:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--include--service_token))
+- `service_token_tag` (Attributes) (see [below for nested schema](#nestedatt--include--service_token_tag))
 - `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--include--user_risk_score))
 
 <a id="nestedatt--include--any_valid_service_token"></a>
@@ -297,6 +298,15 @@ Required:
 - `token_id` (String) The ID of a Service Token.
 
 
+<a id="nestedatt--include--service_token_tag"></a>
+### Nested Schema for `include.service_token_tag`
+
+Required:
+
+- `key` (String) The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.
+- `value` (String) The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.
+
+
 <a id="nestedatt--include--user_risk_score"></a>
 ### Nested Schema for `include.user_risk_score`
 
@@ -336,6 +346,7 @@ Optional:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--exclude--service_token))
+- `service_token_tag` (Attributes) (see [below for nested schema](#nestedatt--exclude--service_token_tag))
 - `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--exclude--user_risk_score))
 
 <a id="nestedatt--exclude--any_valid_service_token"></a>
@@ -545,6 +556,15 @@ Required:
 - `token_id` (String) The ID of a Service Token.
 
 
+<a id="nestedatt--exclude--service_token_tag"></a>
+### Nested Schema for `exclude.service_token_tag`
+
+Required:
+
+- `key` (String) The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.
+- `value` (String) The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.
+
+
 <a id="nestedatt--exclude--user_risk_score"></a>
 ### Nested Schema for `exclude.user_risk_score`
 
@@ -584,6 +604,7 @@ Optional:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--require--service_token))
+- `service_token_tag` (Attributes) (see [below for nested schema](#nestedatt--require--service_token_tag))
 - `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--require--user_risk_score))
 
 <a id="nestedatt--require--any_valid_service_token"></a>
@@ -791,6 +812,15 @@ Required:
 Required:
 
 - `token_id` (String) The ID of a Service Token.
+
+
+<a id="nestedatt--require--service_token_tag"></a>
+### Nested Schema for `require.service_token_tag`
+
+Required:
+
+- `key` (String) The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.
+- `value` (String) The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.
 
 
 <a id="nestedatt--require--user_risk_score"></a>

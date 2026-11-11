@@ -7,8 +7,10 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ByoIPPrefixDataSource)(nil)
@@ -50,12 +52,35 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:         timetypes.RFC3339Type{},
 			},
 			"approved": schema.StringAttribute{
-				Description: "Approval state of the prefix (P = pending, V = active).",
+				Description: "Approval state of the prefix (P = pending, V = approved). Approval does not advertise the prefix or activate traffic.",
 				Computed:    true,
 			},
 			"asn": schema.Int64Attribute{
-				Description: "Autonomous System Number (ASN) the prefix will be advertised under.",
+				Description: "Autonomous System Number (ASN) the prefix will be advertised under. Use 13335 for Cloudflare's ASN, or your own ASN as an integer without the AS prefix. The IRR route and RPKI ROA must authorize this ASN.",
 				Computed:    true,
+			},
+			"asn_ownership_validation_state": schema.StringAttribute{
+				Description: "State of ASN ownership validation for a customer-owned Autonomous System Number (ASN). Returned when an ASN ownership validation result exists. Omitted when validation does not apply, such as for Cloudflare-owned ASNs. Verification is reused for prefixes with the same account and ASN. Refer to [ASN ownership validation states](https://developers.cloudflare.com/byoip/troubleshooting/prefix-validation/#asn-ownership-validation) for state meanings and resolutions.\nAvailable values: \"pending\", \"valid\", \"missing\", \"invalid\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"pending",
+						"valid",
+						"missing",
+						"invalid",
+					),
+				},
+			},
+			"aspa_validation_state": schema.StringAttribute{
+				Description: "State of Autonomous System Provider Authorization (ASPA) validation for a customer-owned ASN. Returned when an ASPA validation result exists. Publishing an ASPA is optional. A published ASPA must authorize AS13335 as a provider. An invalid result blocks approval. If omitted, no ASPA validation result is available. Omission does not indicate successful validation or confirm that no ASPA exists. Refer to [ASPA validation states](https://developers.cloudflare.com/byoip/troubleshooting/prefix-validation/#aspa-validation) for state meanings and resolutions, and [ASPA authorization](https://developers.cloudflare.com/byoip/concepts/route-filtering-rpki/#aspa-authorization) for publication guidance.\nAvailable values: \"pending\", \"valid\", \"invalid\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"pending",
+						"valid",
+						"invalid",
+					),
+				},
 			},
 			"cidr": schema.StringAttribute{
 				Description: "IP Prefix in Classless Inter-Domain Routing format.",
@@ -100,7 +125,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"ownership_validation_token": schema.StringAttribute{
-				Description: "Token provided to demonstrate ownership of the prefix.",
+				Description: "Token used to verify ownership of the prefix and, when applicable, its ASN. Use the same token for both checks. Refer to the [BYOIP onboarding guide](https://developers.cloudflare.com/byoip/get-started/) for verification instructions.",
 				Computed:    true,
 			},
 			"rpki_validation_state": schema.StringAttribute{

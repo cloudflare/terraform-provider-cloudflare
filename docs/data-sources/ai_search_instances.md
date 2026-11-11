@@ -17,9 +17,9 @@ description: |-
 ### Optional
 
 - `account_id` (String)
-- `hostname` (String) Filter by exact Search for Agents hostname (case-insensitive).
+- `hostname` (String) Return only instances with this exact Search for Agents hostname (case-insensitive).
 - `max_items` (Number) Max items to fetch, default: 1000
-- `namespace` (String) Filter by namespace.
+- `namespace` (String)
 - `order_by` (String) Field to order results by.
 Available values: "created_at".
 - `order_by_direction` (String) Order direction.
@@ -36,23 +36,23 @@ Available values: "asc", "desc".
 Read-Only:
 
 - `ai_gateway_id` (String)
-- `aisearch_model` (String) Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "@cf/google/gemma-4-26b-a4b-it", "@cf/moonshotai/kimi-k2.5", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".
+- `aisearch_model` (String)
 - `cache` (Boolean)
 - `cache_threshold` (String) Available values: "super_strict_match", "close_enough", "flexible_friend", "anything_goes".
-- `cache_ttl` (Number) Cache entry TTL in seconds. Allowed values: 600 (10min), 1800 (30min), 3600 (1h), 7200 (2h), 21600 (6h), 43200 (12h), 86400 (24h), 172800 (48h), 259200 (72h), 518400 (6d).
-Available values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 518400.
+- `cache_ttl` (Number) Available values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 518400.
+- `chunk` (Boolean)
 - `chunk_overlap` (Number)
 - `chunk_size` (Number)
 - `created_at` (String)
 - `created_by` (String)
 - `custom_metadata` (Attributes List) (see [below for nested schema](#nestedatt--result--custom_metadata))
-- `embedding_model` (String) Available values: "@cf/qwen/qwen3-embedding-0.6b", "@cf/baai/bge-m3", "@cf/baai/bge-large-en-v1.5", "@cf/google/embeddinggemma-300m", "google-ai-studio/gemini-embedding-001", "google-ai-studio/gemini-embedding-2-preview", "google-ai-studio/gemini-embedding-2", "openai/text-embedding-3-small", "openai/text-embedding-3-large", "".
+- `embedding_model` (String)
 - `enable` (Boolean)
 - `engine_version` (Number)
 - `fusion_method` (String) Available values: "max", "rrf".
-- `hybrid_search_enabled` (Boolean, Deprecated) Deprecated — use index_method instead.
-- `id` (String) AI Search instance ID. Lowercase alphanumeric, hyphens, and underscores.
-- `index_method` (Attributes) Controls which storage backends are used during indexing. Defaults to vector-only. (see [below for nested schema](#nestedatt--result--index_method))
+- `hybrid_search_enabled` (Boolean)
+- `id` (String)
+- `index_method` (Attributes) (see [below for nested schema](#nestedatt--result--index_method))
 - `indexing_options` (Attributes) (see [below for nested schema](#nestedatt--result--indexing_options))
 - `last_activity` (String)
 - `max_num_results` (Number)
@@ -64,16 +64,20 @@ Available values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 51
 - `public_endpoint_id` (String)
 - `public_endpoint_params` (Attributes) (see [below for nested schema](#nestedatt--result--public_endpoint_params))
 - `reranking` (Boolean)
-- `reranking_model` (String) Available values: "@cf/baai/bge-reranker-base", "".
+- `reranking_model` (String)
 - `retrieval_options` (Attributes) (see [below for nested schema](#nestedatt--result--retrieval_options))
-- `rewrite_model` (String) Available values: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/zai-org/glm-4.7-flash", "@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-4-scout-17b-16e-instruct", "@cf/qwen/qwen3-30b-a3b-fp8", "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", "@cf/moonshotai/kimi-k2-instruct", "@cf/google/gemma-3-12b-it", "@cf/google/gemma-4-26b-a4b-it", "@cf/moonshotai/kimi-k2.5", "anthropic/claude-3-7-sonnet", "anthropic/claude-sonnet-4", "anthropic/claude-opus-4", "anthropic/claude-3-5-haiku", "cerebras/qwen-3-235b-a22b-instruct", "cerebras/qwen-3-235b-a22b-thinking", "cerebras/llama-3.3-70b", "cerebras/llama-4-maverick-17b-128e-instruct", "cerebras/llama-4-scout-17b-16e-instruct", "cerebras/gpt-oss-120b", "google-ai-studio/gemini-2.5-flash", "google-ai-studio/gemini-2.5-pro", "grok/grok-4", "groq/llama-3.3-70b-versatile", "groq/llama-3.1-8b-instant", "openai/gpt-5", "openai/gpt-5-mini", "openai/gpt-5-nano", "".
+- `rewrite_model` (String)
 - `rewrite_query` (Boolean)
 - `score_threshold` (Number)
 - `source` (String)
 - `source_params` (Attributes) (see [below for nested schema](#nestedatt--result--source_params))
 - `status` (String)
-- `sync_interval` (Number) Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).
-Available values: 900, 1800, 3600, 7200, 14400, 21600, 43200, 86400.
+- `summarization` (Boolean)
+- `summarization_model` (String)
+- `sync_interval` (Number) Available values: 900, 1800, 3600, 7200, 14400, 21600, 43200, 86400.
+- `system_prompt_aisearch` (String)
+- `system_prompt_index_summarization` (String)
+- `system_prompt_rewrite_query` (String)
 - `token_id` (String)
 - `type` (String) Available values: "r2", "web-crawler".
 
@@ -91,8 +95,8 @@ Read-Only:
 
 Read-Only:
 
-- `keyword` (Boolean) Enable keyword (BM25) storage backend.
-- `vector` (Boolean) Enable vector (embedding) storage backend.
+- `keyword` (Boolean)
+- `vector` (Boolean)
 
 
 <a id="nestedatt--result--indexing_options"></a>
@@ -100,8 +104,7 @@ Read-Only:
 
 Read-Only:
 
-- `keyword_tokenizer` (String) Tokenizer used for keyword search indexing. porter provides word-level tokenization with Porter stemming (good for natural language queries). trigram enables character-level substring matching (good for partial matches, code, identifiers). Changing this triggers a full re-index. Defaults to porter.
-Available values: "porter", "trigram".
+- `keyword_tokenizer` (String) Available values: "porter", "trigram".
 - `use_ocr` (Boolean)
 
 
@@ -131,8 +134,8 @@ Read-Only:
 
 - `authorized_hosts` (List of String)
 - `chat_completions_endpoint` (Attributes) (see [below for nested schema](#nestedatt--result--public_endpoint_params--chat_completions_endpoint))
-- `custom_domains` (List of String) Custom domain hostnames that alias this public endpoint. GET and create responses return the current set; on update (PUT) this field is only echoed back when supplied in the request body, otherwise it is null (omit it to leave domains unchanged).
-- `default_domain_enabled` (Boolean) When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
+- `custom_domains` (List of String)
+- `default_domain_enabled` (Boolean)
 - `enabled` (Boolean)
 - `mcp` (Attributes) (see [below for nested schema](#nestedatt--result--public_endpoint_params--mcp))
 - `rate_limit` (Attributes) (see [below for nested schema](#nestedatt--result--public_endpoint_params--rate_limit))
@@ -143,7 +146,7 @@ Read-Only:
 
 Read-Only:
 
-- `disabled` (Boolean) Disable chat completions endpoint for this public endpoint
+- `disabled` (Boolean)
 
 
 <a id="nestedatt--result--public_endpoint_params--mcp"></a>
@@ -152,7 +155,7 @@ Read-Only:
 Read-Only:
 
 - `description` (String)
-- `disabled` (Boolean) Disable MCP endpoint for this public endpoint
+- `disabled` (Boolean)
 
 
 <a id="nestedatt--result--public_endpoint_params--rate_limit"></a>
@@ -170,7 +173,7 @@ Read-Only:
 
 Read-Only:
 
-- `disabled` (Boolean) Disable search endpoint for this public endpoint
+- `disabled` (Boolean)
 
 
 
@@ -179,18 +182,17 @@ Read-Only:
 
 Read-Only:
 
-- `boost_by` (Attributes List) Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric/datetime fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field. (see [below for nested schema](#nestedatt--result--retrieval_options--boost_by))
-- `keyword_match_mode` (String) Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. Defaults to 'and'.
-Available values: "and", "or".
+- `boost_by` (Attributes List) (see [below for nested schema](#nestedatt--result--retrieval_options--boost_by))
+- `keyword_match_mode` (String) Available values: "and", "or".
 
 <a id="nestedatt--result--retrieval_options--boost_by"></a>
 ### Nested Schema for `result.retrieval_options.boost_by`
 
 Read-Only:
 
-- `direction` (String) Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional — defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.
-Available values: "asc", "desc", "exists", "not_exists".
-- `field` (String) Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.
+- `data_type` (String) Available values: "number", "datetime", "text", "boolean".
+- `direction` (String) Available values: "asc", "desc", "exists", "not_exists".
+- `field` (String)
 
 
 
@@ -199,8 +201,8 @@ Available values: "asc", "desc", "exists", "not_exists".
 
 Read-Only:
 
-- `exclude_items` (List of String) List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced)
-- `include_items` (List of String) List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post)
+- `exclude_items` (List of String)
+- `include_items` (List of String)
 - `prefix` (String)
 - `r2_jurisdiction` (String)
 - `web_crawler` (Attributes) (see [below for nested schema](#nestedatt--result--source_params--web_crawler))
@@ -212,8 +214,7 @@ Read-Only:
 
 - `discover_options` (Attributes) (see [below for nested schema](#nestedatt--result--source_params--web_crawler--discover_options))
 - `parse_options` (Attributes) (see [below for nested schema](#nestedatt--result--source_params--web_crawler--parse_options))
-- `parse_type` (String) Available values: "sitemap", "feed-rss", "crawl".
-- `store_options` (Attributes) (see [below for nested schema](#nestedatt--result--source_params--web_crawler--store_options))
+- `parse_type` (String) Available values: "sitemap", "discover".
 
 <a id="nestedatt--result--source_params--web_crawler--discover_options"></a>
 ### Nested Schema for `result.source_params.web_crawler.discover_options`
@@ -223,7 +224,7 @@ Read-Only:
 - `depth` (Number)
 - `include_external_links` (Boolean)
 - `include_subdomains` (Boolean)
-- `limit` (Number) Maximum number of pages to crawl. New values are capped at 100000; instances configured before that cap may report a higher stored value, which the crawler clamps at run time.
+- `limit` (Number) Maximum number of pages to crawl. New values have a maximum of 100000; instances configured before that cap may report a higher stored value, which the crawler clamps at run time.
 - `max_age` (Number)
 - `source` (String) Available values: "all", "sitemaps", "links".
 
@@ -233,10 +234,10 @@ Read-Only:
 
 Read-Only:
 
-- `content_selector` (Attributes List) List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed. Omit the field to disable content selection — empty arrays are rejected. (see [below for nested schema](#nestedatt--result--source_params--web_crawler--parse_options--content_selector))
-- `include_headers` (Map of String) Up to 5 custom HTTP headers sent with each crawl request. Names must be RFC-7230 token characters (no spaces, colons, or control characters); values must be HTAB + printable ASCII (no CR/LF).
+- `content_selector` (Attributes List) (see [below for nested schema](#nestedatt--result--source_params--web_crawler--parse_options--content_selector))
+- `include_headers` (Map of String)
 - `include_images` (Boolean)
-- `specific_sitemaps` (List of String) List of specific sitemap URLs to use for crawling. Only valid when parse_type is 'sitemap'.
+- `specific_sitemaps` (List of String)
 - `use_browser_rendering` (Boolean)
 
 <a id="nestedatt--result--source_params--web_crawler--parse_options--content_selector"></a>
@@ -244,18 +245,7 @@ Read-Only:
 
 Read-Only:
 
-- `path` (String) Glob pattern to match against the page URL path. Uses standard glob syntax: * matches within a segment, ** crosses directories.
-- `selector` (String) CSS selector to extract content from pages matching the path pattern. Must not contain disallowed characters (;, `, $, {, }, \). Must target a single element; if multiple elements match, the selector is ignored and the full page is used.
-
-
-
-<a id="nestedatt--result--source_params--web_crawler--store_options"></a>
-### Nested Schema for `result.source_params.web_crawler.store_options`
-
-Read-Only:
-
-- `r2_jurisdiction` (String)
-- `storage_id` (String)
-- `storage_type` (String) Available values: "r2".
+- `path` (String)
+- `selector` (String)
 
 

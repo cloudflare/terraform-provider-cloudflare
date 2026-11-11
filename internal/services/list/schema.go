@@ -9,7 +9,6 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -85,18 +84,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"items": schema.SetNestedAttribute{
 				Description:   "The items in the list. If set, this overwrites all items in the list. Do not use with `cloudflare_list_item`.",
 				Optional:      true,
-				CustomType:    customfield.NewNestedObjectSetType[ListItemModel](ctx),
+				CustomType:    NewListItemsSetType(ctx),
 				PlanModifiers: []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"asn": schema.Int64Attribute{
 							Description: "A non-negative 32 bit integer",
 							Optional:    true,
-							Validators: []validator.Int64{
-								int64validator.ConflictsWith(path.MatchRelative().AtParent().AtName("ip")),
-								int64validator.ConflictsWith(path.MatchRelative().AtParent().AtName("hostname")),
-								int64validator.ConflictsWith(path.MatchRelative().AtParent().AtName("redirect")),
-							},
+							// Conflicts with ip, hostname and redirect are checked
+							// by listItemConflictsValidator (item_conflicts.go).
 						},
 						"comment": schema.StringAttribute{
 							Description: "An informative summary of the list item.",
@@ -106,11 +102,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-).",
 							Optional:    true,
 							CustomType:  customfield.NewNestedObjectType[ListItemHostnameModel](ctx),
-							Validators: []validator.Object{
-								objectvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("ip")),
-								objectvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("asn")),
-								objectvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("redirect")),
-							},
+							// Conflicts with ip, asn and redirect are checked by
+							// listItemConflictsValidator (item_conflicts.go).
 							Attributes: map[string]schema.Attribute{
 								"url_hostname": schema.StringAttribute{
 									Required: true,
@@ -124,10 +117,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"ip": schema.StringAttribute{
 							Description: "An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.",
 							Optional:    true,
+							// Conflicts with asn, hostname and redirect are checked
+							// by listItemConflictsValidator (item_conflicts.go).
 							Validators: []validator.String{
-								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("asn")),
-								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("hostname")),
-								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("redirect")),
 								ipValidator(),
 							},
 						},
@@ -135,11 +127,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The definition of the redirect.",
 							Optional:    true,
 							CustomType:  customfield.NewNestedObjectType[ListItemRedirectModel](ctx),
-							Validators: []validator.Object{
-								objectvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("ip")),
-								objectvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("asn")),
-								objectvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("hostname")),
-							},
+							// Conflicts with ip, asn and hostname are checked by
+							// listItemConflictsValidator (item_conflicts.go).
 							Attributes: map[string]schema.Attribute{
 								"source_url": schema.StringAttribute{
 									Required: true,
@@ -190,6 +179,7 @@ func (r *ListResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 func (r *ListResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
 	return []resource.ConfigValidator{
 		ListValidator{},
+		listItemConflictsValidator{},
 	}
 }
 

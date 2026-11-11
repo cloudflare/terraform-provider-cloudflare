@@ -3,13 +3,21 @@ page_title: "cloudflare_worker Data Source - Cloudflare"
 subcategory: ""
 description: |-
   Accepted Permissions
-  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
+  Individual Workers AdminIndividual Workers Content Read-OnlyIndividual Workers EditorIndividual Workers Metadata Read-OnlyWorkers AdminWorkers Content Read-OnlyWorkers EditorWorkers Metadata Read-OnlyWorkers Scripts ReadWorkers Scripts WriteWorkers Tail Read
 ---
 
 # cloudflare_worker (Data Source)
 
 Accepted Permissions
 
+- `Individual Workers Admin`
+- `Individual Workers Content Read-Only`
+- `Individual Workers Editor`
+- `Individual Workers Metadata Read-Only`
+- `Workers Admin`
+- `Workers Content Read-Only`
+- `Workers Editor`
+- `Workers Metadata Read-Only`
 - `Workers Scripts Read`
 - `Workers Scripts Write`
 - `Workers Tail Read`
@@ -200,6 +208,8 @@ Read-Only:
 - `host` (String) TCP host and port for targeted placement.
 - `hostname` (String) HTTP hostname for targeted placement.
 - `mode` (String) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+
+Targeted placement mode.
 Available values: "smart", "targeted".
 - `region` (String) Cloud region for targeted placement in format 'provider:region'.
 - `target` (Attributes List) Array of placement targets (currently limited to single target). (see [below for nested schema](#nestedatt--previews_base_config--placement--target))

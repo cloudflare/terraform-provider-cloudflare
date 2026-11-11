@@ -45,6 +45,7 @@ type ZeroTrustAccessPoliciesResultDataSourceModel struct {
 	IsolationRequired            types.Bool                                                                        `tfsdk:"isolation_required" json:"isolation_required,computed"`
 	MfaConfig                    customfield.NestedObject[ZeroTrustAccessPoliciesMfaConfigDataSourceModel]         `tfsdk:"mfa_config" json:"mfa_config,computed"`
 	Name                         types.String                                                                      `tfsdk:"name" json:"name,computed"`
+	PolicyResolutionAccountID    types.String                                                                      `tfsdk:"policy_resolution_account_id" json:"policy_resolution_account_id,computed"`
 	PurposeJustificationPrompt   types.String                                                                      `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,computed"`
 	PurposeJustificationRequired types.Bool                                                                        `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
 	Require                      customfield.NestedObjectSet[ZeroTrustAccessPoliciesRequireDataSourceModel]        `tfsdk:"require" json:"require,computed"`
@@ -92,6 +93,7 @@ type ZeroTrustAccessPoliciesExcludeDataSourceModel struct {
 	SAML                    customfield.NestedObject[ZeroTrustAccessPoliciesExcludeSAMLDataSourceModel]                    `tfsdk:"saml" json:"saml,computed"`
 	OIDC                    customfield.NestedObject[ZeroTrustAccessPoliciesExcludeOIDCDataSourceModel]                    `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken            customfield.NestedObject[ZeroTrustAccessPoliciesExcludeServiceTokenDataSourceModel]            `tfsdk:"service_token" json:"service_token,computed"`
+	ServiceTokenTag         customfield.NestedObject[ZeroTrustAccessPoliciesExcludeServiceTokenTagDataSourceModel]         `tfsdk:"service_token_tag" json:"service_token_tag,computed"`
 	LinkedAppToken          customfield.NestedObject[ZeroTrustAccessPoliciesExcludeLinkedAppTokenDataSourceModel]          `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
 	UserRiskScore           customfield.NestedObject[ZeroTrustAccessPoliciesExcludeUserRiskScoreDataSourceModel]           `tfsdk:"user_risk_score" json:"user_risk_score,computed"`
 	CloudflareAccountMember customfield.NestedObject[ZeroTrustAccessPoliciesExcludeCloudflareAccountMemberDataSourceModel] `tfsdk:"cloudflare_account_member" json:"cloudflare_account_member,computed"`
@@ -199,6 +201,11 @@ type ZeroTrustAccessPoliciesExcludeServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
+type ZeroTrustAccessPoliciesExcludeServiceTokenTagDataSourceModel struct {
+	Key   types.String `tfsdk:"key" json:"key,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
+}
+
 type ZeroTrustAccessPoliciesExcludeLinkedAppTokenDataSourceModel struct {
 	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
 }
@@ -235,6 +242,7 @@ type ZeroTrustAccessPoliciesIncludeDataSourceModel struct {
 	SAML                    customfield.NestedObject[ZeroTrustAccessPoliciesIncludeSAMLDataSourceModel]                    `tfsdk:"saml" json:"saml,computed"`
 	OIDC                    customfield.NestedObject[ZeroTrustAccessPoliciesIncludeOIDCDataSourceModel]                    `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken            customfield.NestedObject[ZeroTrustAccessPoliciesIncludeServiceTokenDataSourceModel]            `tfsdk:"service_token" json:"service_token,computed"`
+	ServiceTokenTag         customfield.NestedObject[ZeroTrustAccessPoliciesIncludeServiceTokenTagDataSourceModel]         `tfsdk:"service_token_tag" json:"service_token_tag,computed"`
 	LinkedAppToken          customfield.NestedObject[ZeroTrustAccessPoliciesIncludeLinkedAppTokenDataSourceModel]          `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
 	UserRiskScore           customfield.NestedObject[ZeroTrustAccessPoliciesIncludeUserRiskScoreDataSourceModel]           `tfsdk:"user_risk_score" json:"user_risk_score,computed"`
 	CloudflareAccountMember customfield.NestedObject[ZeroTrustAccessPoliciesIncludeCloudflareAccountMemberDataSourceModel] `tfsdk:"cloudflare_account_member" json:"cloudflare_account_member,computed"`
@@ -342,6 +350,11 @@ type ZeroTrustAccessPoliciesIncludeServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
+type ZeroTrustAccessPoliciesIncludeServiceTokenTagDataSourceModel struct {
+	Key   types.String `tfsdk:"key" json:"key,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
+}
+
 type ZeroTrustAccessPoliciesIncludeLinkedAppTokenDataSourceModel struct {
 	AppUID types.String `tfsdk:"app_uid" json:"app_uid,computed"`
 }
@@ -384,6 +397,7 @@ type ZeroTrustAccessPoliciesRequireDataSourceModel struct {
 	SAML                    customfield.NestedObject[ZeroTrustAccessPoliciesRequireSAMLDataSourceModel]                    `tfsdk:"saml" json:"saml,computed"`
 	OIDC                    customfield.NestedObject[ZeroTrustAccessPoliciesRequireOIDCDataSourceModel]                    `tfsdk:"oidc" json:"oidc,computed"`
 	ServiceToken            customfield.NestedObject[ZeroTrustAccessPoliciesRequireServiceTokenDataSourceModel]            `tfsdk:"service_token" json:"service_token,computed"`
+	ServiceTokenTag         customfield.NestedObject[ZeroTrustAccessPoliciesRequireServiceTokenTagDataSourceModel]         `tfsdk:"service_token_tag" json:"service_token_tag,computed"`
 	LinkedAppToken          customfield.NestedObject[ZeroTrustAccessPoliciesRequireLinkedAppTokenDataSourceModel]          `tfsdk:"linked_app_token" json:"linked_app_token,computed"`
 	UserRiskScore           customfield.NestedObject[ZeroTrustAccessPoliciesRequireUserRiskScoreDataSourceModel]           `tfsdk:"user_risk_score" json:"user_risk_score,computed"`
 	CloudflareAccountMember customfield.NestedObject[ZeroTrustAccessPoliciesRequireCloudflareAccountMemberDataSourceModel] `tfsdk:"cloudflare_account_member" json:"cloudflare_account_member,computed"`
@@ -489,6 +503,11 @@ type ZeroTrustAccessPoliciesRequireOIDCDataSourceModel struct {
 
 type ZeroTrustAccessPoliciesRequireServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
+}
+
+type ZeroTrustAccessPoliciesRequireServiceTokenTagDataSourceModel struct {
+	Key   types.String `tfsdk:"key" json:"key,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type ZeroTrustAccessPoliciesRequireLinkedAppTokenDataSourceModel struct {

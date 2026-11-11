@@ -5,6 +5,7 @@ package flagship_flag
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -239,11 +240,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 																						NestedObject: schema.NestedAttributeObject{
 																							Attributes: map[string]schema.Attribute{
 																								"attribute": schema.StringAttribute{
-																									Optional: true,
+																									Required: true,
 																								},
 																								"operator": schema.StringAttribute{
 																									Description: `Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".`,
-																									Optional:    true,
+																									Required:    true,
 																									Validators: []validator.String{
 																										stringvalidator.OneOfCaseInsensitive(
 																											"equals",
@@ -264,19 +265,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 																								},
 																								"value": schema.StringAttribute{
 																									Description: "Value to compare against the context attribute. Must be an array for `in` and `not_in`; numeric and ISO-8601 datetime strings are accepted by the ordering operators.",
-																									Optional:    true,
+																									Required:    true,
 																									CustomType:  jsontypes.NormalizedType{},
-																								},
-																								"clauses": schema.ListAttribute{
-																									Optional:    true,
-																									ElementType: types.StringType,
-																								},
-																								"logical_operator": schema.StringAttribute{
-																									Description: `Available values: "AND", "OR".`,
-																									Optional:    true,
-																									Validators: []validator.String{
-																										stringvalidator.OneOfCaseInsensitive("AND", "OR"),
-																									},
 																								},
 																							},
 																						},
@@ -364,6 +354,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"description": schema.StringAttribute{
 				Description: "Optional operator-facing description. It does not affect flag evaluation.",
 				Optional:    true,
+			},
+			"metadata": schema.DynamicAttribute{
+				Description:   "Key-value metadata associated with the flag. `null` or an empty object clears existing metadata; omission semantics depend on the endpoint (PUT clears it, PATCH preserves it).",
+				Optional:      true,
+				CustomType:    customfield.NormalizedDynamicType{},
+				PlanModifiers: []planmodifier.Dynamic{customfield.NormalizeDynamicPlanModifier()},
 			},
 			"type": schema.StringAttribute{
 				Description:        "Deprecated compatibility field. Omit it; the API ignores this value and infers the type from the flag's variations.\nAvailable values: \"boolean\", \"string\", \"number\", \"json\".",

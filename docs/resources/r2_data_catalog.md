@@ -19,6 +19,9 @@ Accepted Permissions
 resource "cloudflare_r2_data_catalog" "example_r2_data_catalog" {
   account_id = "0123456789abcdef0123456789abcdef"
   bucket_name = "my-data-bucket"
+  credential = {
+    token = "your-cloudflare-api-token-here"
+  }
 }
 ```
 
@@ -30,16 +33,29 @@ resource "cloudflare_r2_data_catalog" "example_r2_data_catalog" {
 - `account_id` (String) Use this to identify the account.
 - `bucket_name` (String) Specifies the R2 bucket name.
 
+### Optional
+
+- `credential` (Attributes) Contains request to store catalog credentials. (see [below for nested schema](#nestedatt--credential))
+
 ### Read-Only
 
 - `bucket` (String) Specifies the associated R2 bucket name.
 - `credential_status` (String) Shows the credential configuration status.
 Available values: "present", "absent".
 - `id` (String) Use this to uniquely identify the activated catalog.
+- `jurisdiction` (String) Specifies the data-locality jurisdiction of the catalog. The first enable sets it, and it cannot change. Currently always `default`.
 - `maintenance_config` (Attributes) Configures maintenance for the catalog. (see [below for nested schema](#nestedatt--maintenance_config))
 - `name` (String) Specifies the catalog name (generated from account and bucket name).
 - `status` (String) Indicates the status of the catalog.
 Available values: "active", "inactive".
+
+<a id="nestedatt--credential"></a>
+### Nested Schema for `credential`
+
+Required:
+
+- `token` (String, Sensitive) Provides the Cloudflare API token for accessing R2.
+
 
 <a id="nestedatt--maintenance_config"></a>
 ### Nested Schema for `maintenance_config`

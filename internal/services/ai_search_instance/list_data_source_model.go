@@ -19,8 +19,8 @@ type AISearchInstancesResultListDataSourceEnvelope struct {
 
 type AISearchInstancesDataSourceModel struct {
 	AccountID        types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
+	Namespace        types.String                                                         `tfsdk:"namespace" path:"namespace,computed_optional"`
 	Hostname         types.String                                                         `tfsdk:"hostname" query:"hostname,optional"`
-	Namespace        types.String                                                         `tfsdk:"namespace" query:"namespace,optional"`
 	Search           types.String                                                         `tfsdk:"search" query:"search,optional"`
 	OrderBy          types.String                                                         `tfsdk:"order_by" query:"order_by,computed_optional"`
 	OrderByDirection types.String                                                         `tfsdk:"order_by_direction" query:"order_by_direction,computed_optional"`
@@ -28,22 +28,19 @@ type AISearchInstancesDataSourceModel struct {
 	Result           customfield.NestedObjectList[AISearchInstancesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *AISearchInstancesDataSourceModel) toListParams(_ context.Context) (params ai_search.InstanceListParams, diags diag.Diagnostics) {
-	params = ai_search.InstanceListParams{
+func (m *AISearchInstancesDataSourceModel) toListParams(_ context.Context) (params ai_search.NamespaceInstanceListParams, diags diag.Diagnostics) {
+	params = ai_search.NamespaceInstanceListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	if !m.Hostname.IsNull() {
 		params.Hostname = cloudflare.F(m.Hostname.ValueString())
 	}
-	if !m.Namespace.IsNull() {
-		params.Namespace = cloudflare.F(m.Namespace.ValueString())
-	}
 	if !m.OrderBy.IsNull() {
-		params.OrderBy = cloudflare.F(ai_search.InstanceListParamsOrderBy(m.OrderBy.ValueString()))
+		params.OrderBy = cloudflare.F(ai_search.NamespaceInstanceListParamsOrderBy(m.OrderBy.ValueString()))
 	}
 	if !m.OrderByDirection.IsNull() {
-		params.OrderByDirection = cloudflare.F(ai_search.InstanceListParamsOrderByDirection(m.OrderByDirection.ValueString()))
+		params.OrderByDirection = cloudflare.F(ai_search.NamespaceInstanceListParamsOrderByDirection(m.OrderByDirection.ValueString()))
 	}
 	if !m.Search.IsNull() {
 		params.Search = cloudflare.F(m.Search.ValueString())
@@ -53,45 +50,51 @@ func (m *AISearchInstancesDataSourceModel) toListParams(_ context.Context) (para
 }
 
 type AISearchInstancesResultDataSourceModel struct {
-	ID                   types.String                                                                   `tfsdk:"id" json:"id,computed"`
-	CreatedAt            timetypes.RFC3339                                                              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	ModifiedAt           timetypes.RFC3339                                                              `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
-	AIGatewayID          types.String                                                                   `tfsdk:"ai_gateway_id" json:"ai_gateway_id,computed"`
-	AISearchModel        types.String                                                                   `tfsdk:"aisearch_model" json:"ai_search_model,computed"`
-	Cache                types.Bool                                                                     `tfsdk:"cache" json:"cache,computed"`
-	CacheThreshold       types.String                                                                   `tfsdk:"cache_threshold" json:"cache_threshold,computed"`
-	CacheTTL             types.Float64                                                                  `tfsdk:"cache_ttl" json:"cache_ttl,computed"`
-	ChunkOverlap         types.Int64                                                                    `tfsdk:"chunk_overlap" json:"chunk_overlap,computed"`
-	ChunkSize            types.Int64                                                                    `tfsdk:"chunk_size" json:"chunk_size,computed"`
-	CreatedBy            types.String                                                                   `tfsdk:"created_by" json:"created_by,computed"`
-	CustomMetadata       customfield.NestedObjectList[AISearchInstancesCustomMetadataDataSourceModel]   `tfsdk:"custom_metadata" json:"custom_metadata,computed"`
-	EmbeddingModel       types.String                                                                   `tfsdk:"embedding_model" json:"embedding_model,computed"`
-	Enable               types.Bool                                                                     `tfsdk:"enable" json:"enable,computed"`
-	EngineVersion        types.Float64                                                                  `tfsdk:"engine_version" json:"engine_version,computed"`
-	FusionMethod         types.String                                                                   `tfsdk:"fusion_method" json:"fusion_method,computed"`
-	HybridSearchEnabled  types.Bool                                                                     `tfsdk:"hybrid_search_enabled" json:"hybrid_search_enabled,computed"`
-	IndexMethod          customfield.NestedObject[AISearchInstancesIndexMethodDataSourceModel]          `tfsdk:"index_method" json:"index_method,computed"`
-	IndexingOptions      customfield.NestedObject[AISearchInstancesIndexingOptionsDataSourceModel]      `tfsdk:"indexing_options" json:"indexing_options,computed"`
-	LastActivity         timetypes.RFC3339                                                              `tfsdk:"last_activity" json:"last_activity,computed" format:"date-time"`
-	MaxNumResults        types.Int64                                                                    `tfsdk:"max_num_results" json:"max_num_results,computed"`
-	Metadata             customfield.NestedObject[AISearchInstancesMetadataDataSourceModel]             `tfsdk:"metadata" json:"metadata,computed"`
-	ModifiedBy           types.String                                                                   `tfsdk:"modified_by" json:"modified_by,computed"`
-	Namespace            types.String                                                                   `tfsdk:"namespace" json:"namespace,computed"`
-	Paused               types.Bool                                                                     `tfsdk:"paused" json:"paused,computed"`
-	PublicEndpointID     types.String                                                                   `tfsdk:"public_endpoint_id" json:"public_endpoint_id,computed"`
-	PublicEndpointParams customfield.NestedObject[AISearchInstancesPublicEndpointParamsDataSourceModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed"`
-	Reranking            types.Bool                                                                     `tfsdk:"reranking" json:"reranking,computed"`
-	RerankingModel       types.String                                                                   `tfsdk:"reranking_model" json:"reranking_model,computed"`
-	RetrievalOptions     customfield.NestedObject[AISearchInstancesRetrievalOptionsDataSourceModel]     `tfsdk:"retrieval_options" json:"retrieval_options,computed"`
-	RewriteModel         types.String                                                                   `tfsdk:"rewrite_model" json:"rewrite_model,computed"`
-	RewriteQuery         types.Bool                                                                     `tfsdk:"rewrite_query" json:"rewrite_query,computed"`
-	ScoreThreshold       types.Float64                                                                  `tfsdk:"score_threshold" json:"score_threshold,computed"`
-	Source               types.String                                                                   `tfsdk:"source" json:"source,computed"`
-	SourceParams         customfield.NestedObject[AISearchInstancesSourceParamsDataSourceModel]         `tfsdk:"source_params" json:"source_params,computed"`
-	Status               types.String                                                                   `tfsdk:"status" json:"status,computed"`
-	SyncInterval         types.Float64                                                                  `tfsdk:"sync_interval" json:"sync_interval,computed"`
-	TokenID              types.String                                                                   `tfsdk:"token_id" json:"token_id,computed"`
-	Type                 types.String                                                                   `tfsdk:"type" json:"type,computed"`
+	ID                             types.String                                                                   `tfsdk:"id" json:"id,computed"`
+	AIGatewayID                    types.String                                                                   `tfsdk:"ai_gateway_id" json:"ai_gateway_id,computed"`
+	AISearchModel                  types.String                                                                   `tfsdk:"aisearch_model" json:"ai_search_model,computed"`
+	Cache                          types.Bool                                                                     `tfsdk:"cache" json:"cache,computed"`
+	CacheThreshold                 types.String                                                                   `tfsdk:"cache_threshold" json:"cache_threshold,computed"`
+	CacheTTL                       types.Float64                                                                  `tfsdk:"cache_ttl" json:"cache_ttl,computed"`
+	Chunk                          types.Bool                                                                     `tfsdk:"chunk" json:"chunk,computed"`
+	ChunkOverlap                   types.Float64                                                                  `tfsdk:"chunk_overlap" json:"chunk_overlap,computed"`
+	ChunkSize                      types.Float64                                                                  `tfsdk:"chunk_size" json:"chunk_size,computed"`
+	CreatedAt                      timetypes.RFC3339                                                              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	CreatedBy                      types.String                                                                   `tfsdk:"created_by" json:"created_by,computed"`
+	CustomMetadata                 customfield.NestedObjectList[AISearchInstancesCustomMetadataDataSourceModel]   `tfsdk:"custom_metadata" json:"custom_metadata,computed"`
+	EmbeddingModel                 types.String                                                                   `tfsdk:"embedding_model" json:"embedding_model,computed"`
+	Enable                         types.Bool                                                                     `tfsdk:"enable" json:"enable,computed"`
+	EngineVersion                  types.Float64                                                                  `tfsdk:"engine_version" json:"engine_version,computed"`
+	FusionMethod                   types.String                                                                   `tfsdk:"fusion_method" json:"fusion_method,computed"`
+	HybridSearchEnabled            types.Bool                                                                     `tfsdk:"hybrid_search_enabled" json:"hybrid_search_enabled,computed"`
+	IndexMethod                    customfield.NestedObject[AISearchInstancesIndexMethodDataSourceModel]          `tfsdk:"index_method" json:"index_method,computed"`
+	IndexingOptions                customfield.NestedObject[AISearchInstancesIndexingOptionsDataSourceModel]      `tfsdk:"indexing_options" json:"indexing_options,computed"`
+	LastActivity                   timetypes.RFC3339                                                              `tfsdk:"last_activity" json:"last_activity,computed" format:"date-time"`
+	MaxNumResults                  types.Float64                                                                  `tfsdk:"max_num_results" json:"max_num_results,computed"`
+	Metadata                       customfield.NestedObject[AISearchInstancesMetadataDataSourceModel]             `tfsdk:"metadata" json:"metadata,computed"`
+	ModifiedAt                     timetypes.RFC3339                                                              `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
+	ModifiedBy                     types.String                                                                   `tfsdk:"modified_by" json:"modified_by,computed"`
+	Namespace                      types.String                                                                   `tfsdk:"namespace" json:"namespace,computed"`
+	Paused                         types.Bool                                                                     `tfsdk:"paused" json:"paused,computed"`
+	PublicEndpointID               types.String                                                                   `tfsdk:"public_endpoint_id" json:"public_endpoint_id,computed"`
+	PublicEndpointParams           customfield.NestedObject[AISearchInstancesPublicEndpointParamsDataSourceModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed"`
+	Reranking                      types.Bool                                                                     `tfsdk:"reranking" json:"reranking,computed"`
+	RerankingModel                 types.String                                                                   `tfsdk:"reranking_model" json:"reranking_model,computed"`
+	RetrievalOptions               customfield.NestedObject[AISearchInstancesRetrievalOptionsDataSourceModel]     `tfsdk:"retrieval_options" json:"retrieval_options,computed"`
+	RewriteModel                   types.String                                                                   `tfsdk:"rewrite_model" json:"rewrite_model,computed"`
+	RewriteQuery                   types.Bool                                                                     `tfsdk:"rewrite_query" json:"rewrite_query,computed"`
+	ScoreThreshold                 types.Float64                                                                  `tfsdk:"score_threshold" json:"score_threshold,computed"`
+	Source                         types.String                                                                   `tfsdk:"source" json:"source,computed"`
+	SourceParams                   customfield.NestedObject[AISearchInstancesSourceParamsDataSourceModel]         `tfsdk:"source_params" json:"source_params,computed"`
+	Status                         types.String                                                                   `tfsdk:"status" json:"status,computed"`
+	Summarization                  types.Bool                                                                     `tfsdk:"summarization" json:"summarization,computed"`
+	SummarizationModel             types.String                                                                   `tfsdk:"summarization_model" json:"summarization_model,computed"`
+	SyncInterval                   types.Float64                                                                  `tfsdk:"sync_interval" json:"sync_interval,computed"`
+	SystemPromptAISearch           types.String                                                                   `tfsdk:"system_prompt_aisearch" json:"system_prompt_ai_search,computed"`
+	SystemPromptIndexSummarization types.String                                                                   `tfsdk:"system_prompt_index_summarization" json:"system_prompt_index_summarization,computed"`
+	SystemPromptRewriteQuery       types.String                                                                   `tfsdk:"system_prompt_rewrite_query" json:"system_prompt_rewrite_query,computed"`
+	TokenID                        types.String                                                                   `tfsdk:"token_id" json:"token_id,computed"`
+	Type                           types.String                                                                   `tfsdk:"type" json:"type,computed"`
 }
 
 type AISearchInstancesCustomMetadataDataSourceModel struct {
@@ -157,6 +160,7 @@ type AISearchInstancesRetrievalOptionsDataSourceModel struct {
 
 type AISearchInstancesRetrievalOptionsBoostByDataSourceModel struct {
 	Field     types.String `tfsdk:"field" json:"field,computed"`
+	DataType  types.String `tfsdk:"data_type" json:"dataType,computed"`
 	Direction types.String `tfsdk:"direction" json:"direction,computed"`
 }
 
@@ -172,7 +176,6 @@ type AISearchInstancesSourceParamsWebCrawlerDataSourceModel struct {
 	DiscoverOptions customfield.NestedObject[AISearchInstancesSourceParamsWebCrawlerDiscoverOptionsDataSourceModel] `tfsdk:"discover_options" json:"discover_options,computed"`
 	ParseOptions    customfield.NestedObject[AISearchInstancesSourceParamsWebCrawlerParseOptionsDataSourceModel]    `tfsdk:"parse_options" json:"parse_options,computed"`
 	ParseType       types.String                                                                                    `tfsdk:"parse_type" json:"parse_type,computed"`
-	StoreOptions    customfield.NestedObject[AISearchInstancesSourceParamsWebCrawlerStoreOptionsDataSourceModel]    `tfsdk:"store_options" json:"store_options,computed"`
 }
 
 type AISearchInstancesSourceParamsWebCrawlerDiscoverOptionsDataSourceModel struct {
@@ -195,10 +198,4 @@ type AISearchInstancesSourceParamsWebCrawlerParseOptionsDataSourceModel struct {
 type AISearchInstancesSourceParamsWebCrawlerParseOptionsContentSelectorDataSourceModel struct {
 	Path     types.String `tfsdk:"path" json:"path,computed"`
 	Selector types.String `tfsdk:"selector" json:"selector,computed"`
-}
-
-type AISearchInstancesSourceParamsWebCrawlerStoreOptionsDataSourceModel struct {
-	StorageID      types.String `tfsdk:"storage_id" json:"storage_id,computed"`
-	R2Jurisdiction types.String `tfsdk:"r2_jurisdiction" json:"r2_jurisdiction,computed"`
-	StorageType    types.String `tfsdk:"storage_type" json:"storage_type,computed"`
 }

@@ -153,6 +153,8 @@ Available values: "off", "flexible", "full", "strict", "origin_pull".
 - `uri` (Attributes) A URI rewrite. (see [below for nested schema](#nestedatt--rules--action_parameters--uri))
 - `values` (List of String) The cache tag values for set_cache_tags action.
 - `vary` (Attributes) Controls how cached responses vary based on request headers. `default` is required and applies to any Vary response header that does not have a per-header override. (see [below for nested schema](#nestedatt--rules--action_parameters--vary))
+- `webmcp_enabled` (Boolean) Whether to serve the WebMCP bridge script, which exposes the page's tools to browser AI agents.
+- `webmcp_packs` (List of String) Bundled WebMCP tool packs to activate for matching requests. An empty list disables all packs. Omitting this parameter leaves the pack selection unchanged. Does not enable the WebMCP bridge itself.
 
 <a id="nestedatt--rules--action_parameters--algorithms"></a>
 ### Nested Schema for `rules.action_parameters.algorithms`

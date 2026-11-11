@@ -5,6 +5,7 @@ package share
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -14,12 +15,18 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ShareResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Resource Sharing Read",
+			},
+		}.String(),
 		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -32,8 +39,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"excluded_recipients": schema.ListNestedAttribute{
+				Description: "Accounts to exclude from an organization-targeted share. Only allowed when `recipients` contains no account entries. The share owner cannot be excluded. Duplicate entries are ignored.",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"account_id": schema.StringAttribute{
+							Description: "The account to exclude from the organization-targeted share.",
+							Required:    true,
+						},
+					},
+				},
+				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
+			},
 			"recipients": schema.ListNestedAttribute{
-				Required: true,
+				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"organization_id": schema.StringAttribute{
@@ -49,7 +69,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"resources": schema.ListNestedAttribute{
-				Required: true,
+				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"meta": schema.StringAttribute{
@@ -58,11 +78,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  jsontypes.NormalizedType{},
 						},
 						"resource_account_id": schema.StringAttribute{
-							Description: "Account identifier.",
+							Description: "The account that owns the resource. Must match the `account_id` in the path.",
 							Required:    true,
 						},
 						"resource_id": schema.StringAttribute{
-							Description: "Share Resource identifier.",
+							Description: "Identifier assigned by the service that owns the shared resource.",
 							Required:    true,
 						},
 						"resource_type": schema.StringAttribute{
@@ -92,9 +112,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Include resources in the response.",
 				Optional:    true,
 			},
+			"include_tags_from": schema.StringAttribute{
+				Description: "Include share tags in the response. `api` reads tags from the tag service; `mirror` reads a local, eventually consistent replica. If the tag lookup fails, the response omits `tags`.\nAvailable values: \"api\", \"mirror\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("api", "mirror"),
+				},
+			},
 			"name": schema.StringAttribute{
 				Description: "The name of the share.",
 				Required:    true,
+			},
+			"tags": schema.MapAttribute{
+				Description: "Tags associated with the share.",
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"account_name": schema.StringAttribute{
 				Description: "The display name of an account.",
@@ -109,7 +141,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"created": schema.StringAttribute{
-				Description:   "When the share was created.",
+				Description:   "When the object was created.",
 				Computed:      true,
 				CustomType:    timetypes.RFC3339Type{},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
@@ -130,7 +162,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"modified": schema.StringAttribute{
-				Description: "When the share was modified.",
+				Description: "When the object was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},

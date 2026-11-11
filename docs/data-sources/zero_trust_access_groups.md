@@ -81,6 +81,7 @@ Read-Only:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--service_token))
+- `service_token_tag` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--service_token_tag))
 - `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--user_risk_score))
 
 <a id="nestedatt--result--exclude--any_valid_service_token"></a>
@@ -284,6 +285,15 @@ Read-Only:
 - `token_id` (String) The ID of a Service Token.
 
 
+<a id="nestedatt--result--exclude--service_token_tag"></a>
+### Nested Schema for `result.exclude.service_token_tag`
+
+Read-Only:
+
+- `key` (String) The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.
+- `value` (String) The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.
+
+
 <a id="nestedatt--result--exclude--user_risk_score"></a>
 ### Nested Schema for `result.exclude.user_risk_score`
 
@@ -323,6 +333,7 @@ Read-Only:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--include--service_token))
+- `service_token_tag` (Attributes) (see [below for nested schema](#nestedatt--result--include--service_token_tag))
 - `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--result--include--user_risk_score))
 
 <a id="nestedatt--result--include--any_valid_service_token"></a>
@@ -526,6 +537,15 @@ Read-Only:
 - `token_id` (String) The ID of a Service Token.
 
 
+<a id="nestedatt--result--include--service_token_tag"></a>
+### Nested Schema for `result.include.service_token_tag`
+
+Read-Only:
+
+- `key` (String) The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.
+- `value` (String) The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.
+
+
 <a id="nestedatt--result--include--user_risk_score"></a>
 ### Nested Schema for `result.include.user_risk_score`
 
@@ -565,6 +585,7 @@ Read-Only:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--service_token))
+- `service_token_tag` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--service_token_tag))
 - `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--user_risk_score))
 
 <a id="nestedatt--result--is_default--any_valid_service_token"></a>
@@ -768,6 +789,15 @@ Read-Only:
 - `token_id` (String) The ID of a Service Token.
 
 
+<a id="nestedatt--result--is_default--service_token_tag"></a>
+### Nested Schema for `result.is_default.service_token_tag`
+
+Read-Only:
+
+- `key` (String) The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.
+- `value` (String) The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.
+
+
 <a id="nestedatt--result--is_default--user_risk_score"></a>
 ### Nested Schema for `result.is_default.user_risk_score`
 
@@ -807,6 +837,7 @@ Read-Only:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--require--service_token))
+- `service_token_tag` (Attributes) (see [below for nested schema](#nestedatt--result--require--service_token_tag))
 - `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--result--require--user_risk_score))
 
 <a id="nestedatt--result--require--any_valid_service_token"></a>
@@ -1008,6 +1039,15 @@ Read-Only:
 Read-Only:
 
 - `token_id` (String) The ID of a Service Token.
+
+
+<a id="nestedatt--result--require--service_token_tag"></a>
+### Nested Schema for `result.require.service_token_tag`
+
+Read-Only:
+
+- `key` (String) The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.
+- `value` (String) The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.
 
 
 <a id="nestedatt--result--require--user_risk_score"></a>

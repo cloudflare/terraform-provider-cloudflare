@@ -153,6 +153,7 @@ func transformActionParameters(ctx context.Context, src *SourceV4ActionParameter
 		RequestBodyBuffering:   types.StringNull(),
 		ResponseBodyBuffering:  types.StringNull(),
 		RedirectsForAITraining: types.BoolNull(),
+		WebMCPEnabled:          types.BoolNull(),
 
 		// New v5 list fields absent in v4 — set to empty
 		RawResponseFields:        nil,

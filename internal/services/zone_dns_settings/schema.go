@@ -42,11 +42,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Whether to flatten all CNAME records in the zone. Note that, due to DNS limitations, a CNAME record at the zone apex will always be flattened.",
 				Optional:    true,
 			},
-			"foundation_dns": schema.BoolAttribute{
-				Description:        "Deprecated. Use nameservers.type to configure Advanced Nameservers.",
-				Optional:           true,
-				DeprecationMessage: "foundation_dns is deprecated. Use nameservers.type: cloudflare.advanced to turn on Advanced Nameservers and cloudflare.standard to turn it off. This field will be removed in a future API version.\n",
-			},
 			"multi_provider": schema.BoolAttribute{
 				Description: "Whether to enable multi-provider DNS, which causes Cloudflare to activate the zone even when non-Cloudflare NS records exist, and to respect NS records at the zone apex during outbound zone transfers.",
 				Optional:    true,
@@ -107,7 +102,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"ns_set": schema.Int64Attribute{
-						Description: "Configured nameserver set number to use for this zone.",
+						Description: "For `type: custom.account` or `type: custom.tenant` or `type: custom.zone`: Configured nameserver set number to use for this zone.",
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.Int64{
@@ -119,7 +114,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 					},
 					"nameserver_set_id": schema.StringAttribute{
-						Description: "Identifier of the account-owned Custom Nameserver Set to use for this zone.",
+						Description: "For `type: custom`: Identifier of the account-owned Custom Nameserver Set to use for this zone.",
 						Optional:    true,
 					},
 				},

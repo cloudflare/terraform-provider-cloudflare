@@ -3,13 +3,21 @@ page_title: "cloudflare_workers_deployment Resource - Cloudflare"
 subcategory: ""
 description: |-
   Accepted Permissions
-  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
+  Individual Workers AdminIndividual Workers Content Read-OnlyIndividual Workers EditorIndividual Workers Metadata Read-OnlyWorkers AdminWorkers Content Read-OnlyWorkers EditorWorkers Metadata Read-OnlyWorkers Scripts ReadWorkers Scripts WriteWorkers Tail Read
 ---
 
 # cloudflare_workers_deployment (Resource)
 
 Accepted Permissions
 
+- `Individual Workers Admin`
+- `Individual Workers Content Read-Only`
+- `Individual Workers Editor`
+- `Individual Workers Metadata Read-Only`
+- `Workers Admin`
+- `Workers Content Read-Only`
+- `Workers Editor`
+- `Workers Metadata Read-Only`
 - `Workers Scripts Read`
 - `Workers Scripts Write`
 - `Workers Tail Read`
@@ -28,6 +36,9 @@ resource "cloudflare_workers_deployment" "example_workers_deployment" {
   annotations = {
     workers_message = "Deploy bug fix."
   }
+  code_update_strategy = {
+    mode = "immediate"
+  }
 }
 ```
 
@@ -38,12 +49,14 @@ resource "cloudflare_workers_deployment" "example_workers_deployment" {
 
 - `account_id` (String) Identifier.
 - `script_name` (String) Name of the script.
-- `strategy` (String) Available values: "percentage".
+- `strategy` (String) Strategy for routing traffic across the listed versions. `percentage` splits traffic according to each version's `percentage`.
+Available values: "percentage".
 - `versions` (Attributes List) Worker versions included in this deployment. Each object must contain a `version_id` UUID and a `percentage`; percentages across all objects must total 100. In the `cf` CLI, pass the entire array as one JSON value to `--versions`, either inline, for example `--versions '[{"version_id":"023e105f-2a42-4f8b-a1c1-73f6a2a30c0f","percentage":100}]'`, or from a JSON file with `--versions @versions.json`. (see [below for nested schema](#nestedatt--versions))
 
 ### Optional
 
-- `annotations` (Attributes) (see [below for nested schema](#nestedatt--annotations))
+- `annotations` (Attributes) Metadata attached to the deployment. (see [below for nested schema](#nestedatt--annotations))
+- `code_update_strategy` (Attributes) Choose whether to apply Durable Object code updates immediately or defer them. When omitted, the default strategy applies. (see [below for nested schema](#nestedatt--code_update_strategy))
 - `force` (Boolean) If set to true, the deployment will be created even if normally blocked by something such rolling back to an older version when a secret has changed.
 
 ### Read-Only
@@ -72,6 +85,21 @@ Optional:
 Read-Only:
 
 - `workers_triggered_by` (String) Operation that triggered the creation of the deployment.
+
+
+<a id="nestedatt--code_update_strategy"></a>
+### Nested Schema for `code_update_strategy`
+
+Required:
+
+- `mode` (String) For `mode: immediate`: Apply Durable Object code updates immediately.
+
+For `mode: deferred`: Allow active Durable Objects to hibernate before updating their code.
+Available values: "immediate", "deferred".
+
+Optional:
+
+- `max_delay` (Number) For `mode: deferred`: Set the maximum number of seconds to wait before forcing the update. When omitted, the default maximum delay applies.
 
 ## Import
 

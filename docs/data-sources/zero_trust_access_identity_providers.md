@@ -53,7 +53,7 @@ Only present for SAML identity providers with encryption configured.
 Create a certificate set via POST to `/identity_providers/{id}/saml_certificate`.
 - `scim_config` (Attributes) The configuration settings for enabling a System for Cross-Domain Identity Management (SCIM) with the identity provider. (see [below for nested schema](#nestedatt--result--scim_config))
 - `type` (String) The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).
-Available values: "onetimepin", "azureAD", "saml", "centrify", "facebook", "github", "google-apps", "google", "linkedin", "oidc", "okta", "onelogin", "pingone", "yandex", "cloudflare", "passkeys".
+Available values: "onetimepin", "azureAD", "saml", "centrify", "facebook", "github", "google-apps", "google", "linkedin", "oidc", "duo", "okta", "onelogin", "pingone", "yandex", "cloudflare", "passkeys".
 
 <a id="nestedatt--result--config"></a>
 ### Nested Schema for `result.config`
@@ -69,7 +69,11 @@ Read-Only:
 - `certs_url` (String) The jwks_uri endpoint of your IdP to allow the IdP keys to sign the tokens
 - `claims` (List of String) Custom claims
 - `client_id` (String) Your OAuth Client ID
+
+The client ID from the Duo Generic OIDC Relying Party metadata.
 - `client_secret` (String, Sensitive) Your OAuth Client Secret
+
+The client secret from the Duo Generic OIDC Relying Party metadata.
 - `conditional_access_enabled` (Boolean) Should Cloudflare try to load authentication contexts from your account
 - `directory_id` (String) Your Azure directory uuid
 - `email_attribute_name` (String) The attribute name for email in the SAML response.
@@ -86,7 +90,9 @@ Note: Requires `saml_certificate_set_id` to be set when `true`.
 - `force_authn` (Boolean) Asks the IdP to reauthenticate the user for each SAML authentication request.
 - `header_attributes` (Attributes List) Add a list of attribute names that will be returned in the response header from the Access callback. (see [below for nested schema](#nestedatt--result--config--header_attributes))
 - `idp_public_certs` (List of String) X509 certificate to verify the signature in the SAML authentication response
-- `issuer_url` (String) IdP Entity ID or Issuer URL
+- `issuer_url` (String) The issuer URL from the Duo Generic OIDC Relying Party metadata.
+
+IdP Entity ID or Issuer URL
 - `login_page_auto_prompt` (Boolean) When enabled, the Access login page automatically prompts the user to authenticate with a passkey.
 - `max_sso_url_length` (Number) The maximum URL length the IdP accepts for the SSO redirect URL.
 When the constructed SSO URL would exceed this length, the RelayState
@@ -97,6 +103,8 @@ Set this if your IdP enforces a URL length limit.
 - `ping_env_id` (String) Your PingOne environment identifier
 - `pkce_enabled` (Boolean) Enable Proof Key for Code Exchange (PKCE)
 - `prompt` (String) Indicates the type of user interaction that is required. prompt=login forces the user to enter their credentials on that request, negating single-sign on. prompt=none is the opposite. It ensures that the user isn't presented with any interactive prompt. If the request can't be completed silently by using single-sign on, the Microsoft identity platform returns an interaction_required error. prompt=select_account interrupts single sign-on providing account selection experience listing all the accounts either in session or any remembered account or an option to choose to use a different account altogether.
+
+Configures the prompt behavior for Google authentication.
 Available values: "login", "select_account", "none", "consent".
 - `redirect_url` (String)
 - `restrict_to_account_members` (Boolean) When enabled, only users who are members of your Cloudflare account can authenticate through this identity provider. When disabled, any user with a Cloudflare account can authenticate, subject to your Access policies.
@@ -104,7 +112,7 @@ Available values: "login", "select_account", "none", "consent".
 - `sign_request` (Boolean) Sign the SAML authentication request with Access credentials. To verify the signature, use the public key from the Access certs endpoints.
 - `sso_target_url` (String) URL to send the SAML authentication requests to
 - `support_groups` (Boolean) Should Cloudflare try to load groups from your account
-- `token_url` (String) The token_endpoint URL of your IdP
+- `token_url` (String) The token_endpoint URL of your IdP. Updates that change its origin (scheme, host, or port) require client_secret in the request. Path-only changes do not require client_secret.
 - `use_login_hint` (Boolean) Whether to use a previously authenticated Access email as a Google login hint when exactly one email matches the Workspace domain.
 
 <a id="nestedatt--result--config--header_attributes"></a>

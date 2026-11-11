@@ -27,11 +27,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Version: 500,
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			"id": schema.StringAttribute{
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
+			"account_id": schema.StringAttribute{
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -54,7 +58,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType: customfield.NewNestedObjectType[AISearchNamespacePublicEndpointParamsChatCompletionsEndpointModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"disabled": schema.BoolAttribute{
-								Description: "Disable chat completions endpoint for this public endpoint",
+								Description: "Disable chat completions endpoint for this public endpoint.",
 								Computed:    true,
 								Optional:    true,
 								Default:     booldefault.StaticBool(false),
@@ -79,7 +83,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:  booldefault.StaticBool(false),
 					},
 					"instances_allowed": schema.ListAttribute{
-						Description:   "Instance IDs exposed through the namespace public endpoint. Empty means nothing is searchable. Every ID must be an existing instance in this namespace, and the list cannot exceed the account's multi-instance search limit.",
+						Description:   "Instance IDs exposed through the namespace public endpoint. Empty means nothing is searchable. Every ID must reference an existing instance in this namespace, and the list must stay within the account's multi-instance search limit.",
 						Computed:      true,
 						Optional:      true,
 						CustomType:    customfield.NewListType[types.String](ctx),
@@ -97,7 +101,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:  stringdefault.StaticString("Finds exactly what you're looking for"),
 							},
 							"disabled": schema.BoolAttribute{
-								Description: "Disable MCP endpoint for this public endpoint",
+								Description: "Disable MCP endpoint for this public endpoint.",
 								Computed:    true,
 								Optional:    true,
 								Default:     booldefault.StaticBool(false),
@@ -135,7 +139,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType: customfield.NewNestedObjectType[AISearchNamespacePublicEndpointParamsSearchEndpointModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"disabled": schema.BoolAttribute{
-								Description: "Disable search endpoint for this public endpoint",
+								Description: "Disable search endpoint for this public endpoint.",
 								Computed:    true,
 								Optional:    true,
 								Default:     booldefault.StaticBool(false),

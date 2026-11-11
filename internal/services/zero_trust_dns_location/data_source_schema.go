@@ -56,6 +56,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Specify the UUID of the IPv6 block brought to the gateway so that this location's IPv6 address is allocated from the Bring Your Own IPv6 (BYOIPv6) block rather than the standard Cloudflare IPv6 block.",
 				Computed:    true,
 			},
+			"dns64_enabled": schema.BoolAttribute{
+				Description: "Enable DNS64 synthesis for DNS queries matched to this location. When updating a location, omitting this field resets it to false.",
+				Computed:    true,
+			},
 			"doh_subdomain": schema.StringAttribute{
 				Description: "Specify the DNS over HTTPS domain that receives DNS requests. Gateway automatically generates this value.",
 				Computed:    true,

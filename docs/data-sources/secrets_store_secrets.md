@@ -56,7 +56,7 @@ Read-Only:
 - `id` (String) Secret identifier tag.
 - `modified` (String) When the secret was modified.
 - `name` (String) The name of the secret.
-- `scopes` (List of String) The list of services that can use this secret.
+- `scopes` (List of String) The list of services that can use this secret, or null when the secret inherits its store's scopes. Set it to null in a patch to inherit again. An empty list lets no service use the secret.
 - `status` (String) Available values: "pending", "active", "deleted".
 - `store_id` (String) Store Identifier.
 

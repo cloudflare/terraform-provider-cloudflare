@@ -20,7 +20,9 @@ type PipelineStreamsResultListDataSourceEnvelope struct {
 type PipelineStreamsDataSourceModel struct {
 	AccountID  types.String                                                       `tfsdk:"account_id" path:"account_id,optional"`
 	Name       types.String                                                       `tfsdk:"name" query:"name,optional"`
+	OrderBy    types.String                                                       `tfsdk:"order_by" query:"order_by,optional"`
 	PipelineID types.String                                                       `tfsdk:"pipeline_id" query:"pipeline_id,optional"`
+	Direction  types.String                                                       `tfsdk:"direction" query:"direction,computed_optional"`
 	MaxItems   types.Int64                                                        `tfsdk:"max_items"`
 	Result     customfield.NestedObjectList[PipelineStreamsResultDataSourceModel] `tfsdk:"result"`
 }
@@ -30,8 +32,14 @@ func (m *PipelineStreamsDataSourceModel) toListParams(_ context.Context) (params
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
+	if !m.Direction.IsNull() {
+		params.Direction = cloudflare.F(pipelines.StreamListParamsDirection(m.Direction.ValueString()))
+	}
 	if !m.Name.IsNull() {
 		params.Name = cloudflare.F(m.Name.ValueString())
+	}
+	if !m.OrderBy.IsNull() {
+		params.OrderBy = cloudflare.F(pipelines.StreamListParamsOrderBy(m.OrderBy.ValueString()))
 	}
 	if !m.PipelineID.IsNull() {
 		params.PipelineID = cloudflare.F(m.PipelineID.ValueString())

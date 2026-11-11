@@ -19,6 +19,7 @@ Accepted Permissions
 data "cloudflare_pipeline_streams" "example_pipeline_streams" {
   account_id = "0123105f4ecef8ad9ca31a8372d0c353"
   name = "x"
+  order_by = "name"
   pipeline_id = "043e105f4ecef8ad9ca31a8372d0c353"
 }
 ```
@@ -29,8 +30,12 @@ data "cloudflare_pipeline_streams" "example_pipeline_streams" {
 ### Optional
 
 - `account_id` (String) Specifies the public ID of the account.
+- `direction` (String) Sort direction.
+Available values: "asc", "desc".
 - `max_items` (Number) Max items to fetch, default: 1000
 - `name` (String) Filters streams by name (case-insensitive substring).
+- `order_by` (String) Sorts streams by this field. Defaults to `created_at`.
+Available values: "name", "created_at".
 - `pipeline_id` (String) Specifies the public ID of the pipeline.
 
 ### Read-Only

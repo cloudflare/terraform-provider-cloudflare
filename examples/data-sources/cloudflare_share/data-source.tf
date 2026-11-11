@@ -3,4 +3,5 @@ data "cloudflare_share" "example_share" {
   share_id = "3fd85f74b32742f1bff64a85009dda07"
   include_recipient_counts = true
   include_resources = true
+  include_tags_from = "api"
 }

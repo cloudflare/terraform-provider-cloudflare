@@ -23,6 +23,7 @@ type WorkflowDataSourceModel struct {
 	AccountID     types.String                                                   `tfsdk:"account_id" path:"account_id,optional"`
 	ClassName     types.String                                                   `tfsdk:"class_name" json:"class_name,computed"`
 	CreatedOn     timetypes.RFC3339                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Jurisdiction  types.String                                                   `tfsdk:"jurisdiction" json:"jurisdiction,computed"`
 	ModifiedOn    timetypes.RFC3339                                              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name          types.String                                                   `tfsdk:"name" json:"name,computed"`
 	ScriptDeleted types.Bool                                                     `tfsdk:"script_deleted" json:"script_deleted,computed"`

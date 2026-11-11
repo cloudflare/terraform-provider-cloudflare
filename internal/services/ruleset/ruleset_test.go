@@ -7584,6 +7584,60 @@ func TestAccCloudflareRuleset_SetConfigRules(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_SetConfigWebMCPRules(t *testing.T) {
+	webMCPRulesCheck := func(enabled, packs knownvalue.Check) knownvalue.Check {
+		return knownvalue.ListExact([]knownvalue.Check{
+			knownvalue.ObjectPartial(map[string]knownvalue.Check{
+				"action": knownvalue.StringExact("set_config"),
+				"action_parameters": knownvalue.ObjectPartial(map[string]knownvalue.Check{
+					"webmcp_enabled": enabled,
+					"webmcp_packs":   packs,
+				}),
+			}),
+		})
+	}
+
+	step := func(file string, action plancheck.ResourceActionType, enabled, packs knownvalue.Check) resource.TestStep {
+		return resource.TestStep{
+			ConfigFile:      config.TestNameFile(file),
+			ConfigVariables: configVariables,
+			ConfigPlanChecks: resource.ConfigPlanChecks{
+				PreApply: []plancheck.PlanCheck{
+					plancheck.ExpectResourceAction("cloudflare_ruleset.my_ruleset", action),
+					plancheck.ExpectKnownValue("cloudflare_ruleset.my_ruleset", tfjsonpath.New("rules"), webMCPRulesCheck(enabled, packs)),
+				},
+			},
+			ConfigStateChecks: []statecheck.StateCheck{
+				statecheck.ExpectKnownValue("cloudflare_ruleset.my_ruleset", tfjsonpath.New("rules"), webMCPRulesCheck(enabled, packs)),
+				statecheck.ExpectKnownValue("data.cloudflare_ruleset.my_ruleset", tfjsonpath.New("rules"), webMCPRulesCheck(enabled, packs)),
+			},
+		}
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			step("1.tf", plancheck.ResourceActionCreate,
+				knownvalue.Bool(true),
+				knownvalue.ListExact([]knownvalue.Check{
+					knownvalue.StringExact("c2pa"),
+					knownvalue.StringExact("mcp-server-client"),
+				}),
+			),
+			// An empty pack list is an explicit opt-out and must not collapse to null.
+			step("2.tf", plancheck.ResourceActionUpdate,
+				knownvalue.Bool(false),
+				knownvalue.ListExact([]knownvalue.Check{}),
+			),
+			step("3.tf", plancheck.ResourceActionUpdate,
+				knownvalue.Null(),
+				knownvalue.Null(),
+			),
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_SkipRules(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },

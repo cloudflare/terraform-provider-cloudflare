@@ -35,8 +35,9 @@ Hostnames must be fully qualified domain names (FQDNs) belonging to zones on you
 - `id` (String) The x509 serial number of the Origin CA certificate.
 - `request_type` (String) Signature type desired on certificate ("origin-rsa" (rsa), "origin-ecc" (ecdsa), or "keyless-certificate" (for Keyless SSL servers).
 Available values: "origin-rsa", "origin-ecc", "keyless-certificate".
-- `requested_validity` (Number) The number of days for which the certificate should be valid.
+- `requested_validity` (Number) The number of days for which the certificate was requested to be valid. Only returned in the Create Certificate response, where it echoes the requested value. Not returned when getting or listing certificates.
 Available values: 7, 30, 90, 365, 730, 1095, 5475.
+- `revoked_at` (String) When the certificate was revoked.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -44,10 +45,5 @@ Available values: 7, 30, 90, 365, 730, 1095, 5475.
 Required:
 
 - `zone_id` (String) Identifier.
-
-Optional:
-
-- `limit` (Number) Limit to the number of records returned.
-- `offset` (Number) Offset the results.
 
 

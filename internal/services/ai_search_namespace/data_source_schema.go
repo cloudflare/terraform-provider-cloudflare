@@ -7,10 +7,12 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -20,10 +22,14 @@ var _ datasource.DataSourceWithConfigValidators = (*AISearchNamespaceDataSource)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Required: true,
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
 			"name": schema.StringAttribute{
+				Computed: true,
+				Optional: true,
+			},
+			"account_id": schema.StringAttribute{
 				Required: true,
 			},
 			"created_at": schema.StringAttribute{
@@ -51,7 +57,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType: customfield.NewNestedObjectType[AISearchNamespacePublicEndpointParamsChatCompletionsEndpointDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"disabled": schema.BoolAttribute{
-								Description: "Disable chat completions endpoint for this public endpoint",
+								Description: "Disable chat completions endpoint for this public endpoint.",
 								Computed:    true,
 							},
 						},
@@ -70,7 +76,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"instances_allowed": schema.ListAttribute{
-						Description: "Instance IDs exposed through the namespace public endpoint. Empty means nothing is searchable. Every ID must be an existing instance in this namespace, and the list cannot exceed the account's multi-instance search limit.",
+						Description: "Instance IDs exposed through the namespace public endpoint. Empty means nothing is searchable. Every ID must reference an existing instance in this namespace, and the list must stay within the account's multi-instance search limit.",
 						Computed:    true,
 						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
@@ -83,7 +89,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed: true,
 							},
 							"disabled": schema.BoolAttribute{
-								Description: "Disable MCP endpoint for this public endpoint",
+								Description: "Disable MCP endpoint for this public endpoint.",
 								Computed:    true,
 							},
 						},
@@ -118,10 +124,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType: customfield.NewNestedObjectType[AISearchNamespacePublicEndpointParamsSearchEndpointDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"disabled": schema.BoolAttribute{
-								Description: "Disable search endpoint for this public endpoint",
+								Description: "Disable search endpoint for this public endpoint.",
 								Computed:    true,
 							},
 						},
+					},
+				},
+			},
+			"filter": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"search": schema.StringAttribute{
+						Description: "Filter namespaces whose name or description contains this string (case-insensitive).",
+						Optional:    true,
 					},
 				},
 			},
@@ -134,5 +149,7 @@ func (d *AISearchNamespaceDataSource) Schema(ctx context.Context, req datasource
 }
 
 func (d *AISearchNamespaceDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("name"), path.MatchRoot("filter")),
+	}
 }

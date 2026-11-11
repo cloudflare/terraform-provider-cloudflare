@@ -45,12 +45,12 @@ Available values: "active", "deleting", "deleted".
 
 Read-Only:
 
-- `created` (String) When the share was created.
+- `created` (String) When the object was created.
 - `id` (String) Share Resource identifier.
 - `meta` (String) Resource Metadata.
-- `modified` (String) When the share was modified.
+- `modified` (String) When the object was last modified.
 - `resource_account_id` (String) Account identifier.
-- `resource_id` (String) Share Resource identifier.
+- `resource_id` (String) Identifier assigned by the service that owns the shared resource.
 - `resource_type` (String) Resource Type.
 Available values: "custom-ruleset", "gateway-policy", "gateway-destination-ip", "gateway-block-page-settings", "gateway-extended-email-matching", "idp-federation-grant", "trust-grant".
 - `resource_version` (Number) Resource Version.

@@ -62,8 +62,9 @@ resource "cloudflare_teams_rule" "%[1]s" {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(fmt.Sprintf("tf-test-minimal-%s", rnd))),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("description"), knownvalue.StringExact("Minimal policy for migration testing")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("action"), knownvalue.StringExact("block")),
-				// Precedence is auto-calculated by API, just verify it exists and is float64
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.NotNull()),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Int64Exact(10000)),
+			}, map[string]acctest.GatewayPolicyPrecedenceChange{
+				resourceName: acctest.GatewayPolicyV4PrecedenceChange(fmt.Sprintf("tf-test-minimal-%s", rnd), 10000),
 			}),
 		},
 	})
@@ -121,13 +122,14 @@ resource "cloudflare_teams_rule" "%[1]s" {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("action"), knownvalue.StringExact("block")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(true)),
-				// Precedence is auto-calculated by API
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.NotNull()),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Int64Exact(10000)),
 				// Rule settings should be converted from block to attribute
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("block_page_enabled"), knownvalue.Bool(true)),
 				// Field rename: block_page_reason → block_reason
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("block_reason"), knownvalue.StringExact("Access blocked by company policy")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("ip_categories"), knownvalue.Bool(true)),
+			}, map[string]acctest.GatewayPolicyPrecedenceChange{
+				resourceName: acctest.GatewayPolicyV4PrecedenceChange(fmt.Sprintf("tf-test-settings-%s", rnd), 10000),
 			}),
 		},
 	})
@@ -188,8 +190,7 @@ resource "cloudflare_teams_rule" "%[1]s" {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("action"), knownvalue.StringExact("block")),
-				// Precedence is auto-calculated by API
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.NotNull()),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Int64Exact(10000)),
 				// block_page_enabled should be present
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("block_page_enabled"), knownvalue.Bool(true)),
 				// Nested notification_settings block should be converted to attribute
@@ -197,6 +198,8 @@ resource "cloudflare_teams_rule" "%[1]s" {
 				// Field rename: message → msg
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("notification_settings").AtMapKey("msg"), knownvalue.StringExact("Connection blocked")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("notification_settings").AtMapKey("support_url"), knownvalue.StringExact("https://support.example.com/")),
+			}, map[string]acctest.GatewayPolicyPrecedenceChange{
+				resourceName: acctest.GatewayPolicyV4PrecedenceChange(fmt.Sprintf("tf-test-nested-%s", rnd), 10000),
 			}),
 		},
 	})
@@ -259,14 +262,15 @@ resource "cloudflare_teams_rule" "%[1]s" {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("id"), knownvalue.NotNull()),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("action"), knownvalue.StringExact("allow")),
-				// Precedence is auto-calculated by API
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.NotNull()),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Int64Exact(10000)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("traffic"), knownvalue.StringExact("http.request.uri matches \".*api.*\"")),
 				// All nested blocks should be converted to attributes
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("check_session").AtMapKey("enforce"), knownvalue.Bool(true)),
 				// Duration should be "24h0m0s"
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("check_session").AtMapKey("duration"), knownvalue.StringExact("24h0m0s")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("rule_settings").AtMapKey("payload_log").AtMapKey("enabled"), knownvalue.Bool(true)),
+			}, map[string]acctest.GatewayPolicyPrecedenceChange{
+				resourceName: acctest.GatewayPolicyV4PrecedenceChange(fmt.Sprintf("tf-test-complex-%s", rnd), 10000),
 			}),
 		},
 	})
@@ -316,8 +320,9 @@ resource "cloudflare_teams_rule" "%[1]s" {
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_id"), knownvalue.StringExact(accountID)),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("action"), knownvalue.StringExact("block")),
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enabled"), knownvalue.Bool(false)),
-				// Precedence is auto-calculated by API
-				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.NotNull()),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("precedence"), knownvalue.Int64Exact(10000)),
+			}, map[string]acctest.GatewayPolicyPrecedenceChange{
+				resourceName: acctest.GatewayPolicyV4PrecedenceChange(fmt.Sprintf("tf-test-empty-%s", rnd), 10000),
 			}),
 		},
 	})

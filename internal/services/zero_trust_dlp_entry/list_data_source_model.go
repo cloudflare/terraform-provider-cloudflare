@@ -42,6 +42,7 @@ type ZeroTrustDLPEntriesResultDataSourceModel struct {
 	Description   types.String                                                           `tfsdk:"description" json:"description,computed"`
 	ProfileID     types.String                                                           `tfsdk:"profile_id" json:"profile_id,computed"`
 	UploadStatus  types.String                                                           `tfsdk:"upload_status" json:"upload_status,computed"`
+	ValidatorIDs  customfield.Set[types.String]                                          `tfsdk:"validator_ids" json:"validator_ids,computed"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPEntriesConfidenceDataSourceModel] `tfsdk:"confidence" json:"confidence,computed"`
 	Deprecated    types.Bool                                                             `tfsdk:"deprecated" json:"deprecated,computed"`
 	Variant       customfield.NestedObject[ZeroTrustDLPEntriesVariantDataSourceModel]    `tfsdk:"variant" json:"variant,computed"`

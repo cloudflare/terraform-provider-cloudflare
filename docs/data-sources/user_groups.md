@@ -51,7 +51,7 @@ Available values: "asc", "desc".
 Read-Only:
 
 - `created_on` (String) Timestamp for the creation of the user group
-- `id` (String) User Group identifier tag.
+- `id` (String) Identifier of the user group.
 - `modified_on` (String) Last time the user group was modified.
 - `name` (String) Name of the user group.
 - `policies` (Attributes List) Policies attached to the User group (see [below for nested schema](#nestedatt--result--policies))

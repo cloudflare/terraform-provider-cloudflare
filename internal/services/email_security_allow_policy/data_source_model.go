@@ -22,6 +22,7 @@ type EmailSecurityAllowPolicyDataSourceModel struct {
 	AccountID          types.String                                      `tfsdk:"account_id" path:"account_id,required"`
 	Comments           types.String                                      `tfsdk:"comments" json:"comments,computed"`
 	CreatedAt          timetypes.RFC3339                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	ExpiresAt          timetypes.RFC3339                                 `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
 	IsAcceptableSender types.Bool                                        `tfsdk:"is_acceptable_sender" json:"is_acceptable_sender,computed"`
 	IsExemptRecipient  types.Bool                                        `tfsdk:"is_exempt_recipient" json:"is_exempt_recipient,computed"`
 	IsRecipient        types.Bool                                        `tfsdk:"is_recipient" json:"is_recipient,computed"`
@@ -53,6 +54,9 @@ func (m *EmailSecurityAllowPolicyDataSourceModel) toListParams(_ context.Context
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(email_security.SettingAllowPolicyListParamsDirection(m.Filter.Direction.ValueString()))
 	}
+	if !m.Filter.Expired.IsNull() {
+		params.Expired = cloudflare.F(m.Filter.Expired.ValueBool())
+	}
 	if !m.Filter.IsAcceptableSender.IsNull() {
 		params.IsAcceptableSender = cloudflare.F(m.Filter.IsAcceptableSender.ValueBool())
 	}
@@ -83,6 +87,7 @@ func (m *EmailSecurityAllowPolicyDataSourceModel) toListParams(_ context.Context
 
 type EmailSecurityAllowPolicyFindOneByDataSourceModel struct {
 	Direction          types.String `tfsdk:"direction" query:"direction,optional"`
+	Expired            types.Bool   `tfsdk:"expired" query:"expired,optional"`
 	IsAcceptableSender types.Bool   `tfsdk:"is_acceptable_sender" query:"is_acceptable_sender,optional"`
 	IsExemptRecipient  types.Bool   `tfsdk:"is_exempt_recipient" query:"is_exempt_recipient,optional"`
 	IsTrustedSender    types.Bool   `tfsdk:"is_trusted_sender" query:"is_trusted_sender,optional"`

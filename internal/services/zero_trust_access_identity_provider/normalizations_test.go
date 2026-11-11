@@ -17,8 +17,8 @@ func TestNormalizeReadZeroTrustIDPConfigLoginPageAutoPrompt(t *testing.T) {
 		want  types.Bool
 	}{
 		{"omitted_preserves_false", types.BoolNull(), types.BoolValue(false), types.BoolValue(false)},
-		{"false_preserves_null", types.BoolValue(false), types.BoolNull(), types.BoolNull()},
-		{"null_stays_null", types.BoolNull(), types.BoolNull(), types.BoolNull()},
+		{"false_fills_null", types.BoolValue(false), types.BoolNull(), types.BoolValue(false)},
+		{"omitted_fills_null", types.BoolNull(), types.BoolNull(), types.BoolValue(false)},
 		{"false_stays_false", types.BoolValue(false), types.BoolValue(false), types.BoolValue(false)},
 		{"enable_drift_is_visible", types.BoolValue(true), types.BoolValue(false), types.BoolValue(true)},
 		{"disable_drift_is_visible", types.BoolValue(false), types.BoolValue(true), types.BoolValue(false)},

@@ -213,9 +213,24 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
+					"direction": schema.StringAttribute{
+						Description: "Sort direction.\nAvailable values: \"asc\", \"desc\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+						},
+					},
 					"name": schema.StringAttribute{
 						Description: "Filters streams by name (case-insensitive substring).",
 						Optional:    true,
+					},
+					"order_by": schema.StringAttribute{
+						Description: "Sorts streams by this field. Defaults to `created_at`.\nAvailable values: \"name\", \"created_at\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("name", "created_at"),
+						},
 					},
 					"pipeline_id": schema.StringAttribute{
 						Description: "Specifies the public ID of the pipeline.",

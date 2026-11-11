@@ -22,7 +22,7 @@ func modifyPlan(ctx context.Context, req resource.ModifyPlanRequest, res *resour
 		planModel, _ := planApp.SCIMConfig.Value(ctx)
 
 		// Check if enabled is changing from false/null to true - regenerate secret
-		enabledChangingToTrue := (stateModel.Enabled.IsNull() || !stateModel.Enabled.ValueBool()) && 
+		enabledChangingToTrue := (stateModel.Enabled.IsNull() || !stateModel.Enabled.ValueBool()) &&
 			planModel.Enabled.ValueBool()
 
 		if enabledChangingToTrue {

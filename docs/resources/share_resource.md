@@ -17,7 +17,7 @@ resource "cloudflare_share_resource" "example_share_resource" {
   share_id = "3fd85f74b32742f1bff64a85009dda07"
   meta = jsonencode({})
   resource_account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  resource_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  resource_id = "0a679032-bbb2-4b7e-9acc-dd5c5cb27a17"
   resource_type = "custom-ruleset"
 }
 ```
@@ -29,17 +29,17 @@ resource "cloudflare_share_resource" "example_share_resource" {
 
 - `account_id` (String) Account identifier.
 - `meta` (String) Resource Metadata.
-- `resource_account_id` (String) Account identifier.
-- `resource_id` (String) Share Resource identifier.
+- `resource_account_id` (String) The account that owns the resource. Must match the `account_id` in the path.
+- `resource_id` (String) Identifier assigned by the service that owns the shared resource.
 - `resource_type` (String) Resource Type.
 Available values: "custom-ruleset", "gateway-policy", "gateway-destination-ip", "gateway-block-page-settings", "gateway-extended-email-matching", "idp-federation-grant", "trust-grant".
 - `share_id` (String) Share identifier tag.
 
 ### Read-Only
 
-- `created` (String) When the share was created.
+- `created` (String) When the object was created.
 - `id` (String) Share Resource identifier.
-- `modified` (String) When the share was modified.
+- `modified` (String) When the object was last modified.
 - `resource_version` (Number) Resource Version.
 - `status` (String) Resource Status.
 Available values: "active", "deleting", "deleted".

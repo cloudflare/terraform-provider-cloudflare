@@ -114,7 +114,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"script_name": schema.StringAttribute{
-							Description: "Name of a Worker",
+							Description: "For `type: worker`: Name of a Worker",
 							Computed:    true,
 						},
 						"settings": schema.SingleNestedAttribute{

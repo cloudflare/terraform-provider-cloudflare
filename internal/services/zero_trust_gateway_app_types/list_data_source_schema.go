@@ -43,7 +43,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.Int64Attribute{
-							Description: "Identify this application. Only one application per ID.",
+							Description: "Identify this application. Only one application per ID.\n\nIdentify the type of this application. Multiple applications can share the same type. Refers to the `id` of a returned application type.",
 							Computed:    true,
 						},
 						"application_type_id": schema.Int64Attribute{

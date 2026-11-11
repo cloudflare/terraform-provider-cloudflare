@@ -64,6 +64,7 @@ func (r *EmailRoutingSettingsResource) Create(ctx context.Context, req resource.
 		return
 	}
 
+	requestedSubaddress := data.SupportSubaddress
 	res := new(http.Response)
 	env := EmailRoutingSettingsResultEnvelope{*data}
 	_, err := r.client.EmailRouting.Enable(
@@ -79,18 +80,69 @@ func (r *EmailRoutingSettingsResource) Create(ctx context.Context, req resource.
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
 	data = &env.Result
 
+	// Preserve the enabled resource in state if applying the optional setting fails.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	if resp.Diagnostics.HasError() || requestedSubaddress.IsNull() || requestedSubaddress.IsUnknown() {
+		return
+	}
+
+	data.SupportSubaddress = requestedSubaddress
+	updated, err := r.editSettings(ctx, data)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to update email routing settings", err.Error())
+		return
+	}
+	resp.Diagnostics.Append(resp.State.Set(ctx, updated)...)
 }
 
 func (r *EmailRoutingSettingsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	// Update is not supported for this resource
+	var data *EmailRoutingSettingsModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	updated, err := r.editSettings(ctx, data)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to update email routing settings", err.Error())
+		return
+	}
+	resp.Diagnostics.Append(resp.State.Set(ctx, updated)...)
+}
+
+func (r *EmailRoutingSettingsResource) editSettings(ctx context.Context, data *EmailRoutingSettingsModel) (*EmailRoutingSettingsModel, error) {
+	params := email_routing.EmailRoutingEditParams{
+		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	}
+	if !data.SupportSubaddress.IsNull() && !data.SupportSubaddress.IsUnknown() {
+		params.SupportSubaddress = cloudflare.F(email_routing.EmailRoutingEditParamsSupportSubaddress(data.SupportSubaddress.ValueBool()))
+	}
+
+	res := new(http.Response)
+	_, err := r.client.EmailRouting.Edit(ctx, params,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	env := EmailRoutingSettingsResultEnvelope{*data}
+	if err := apijson.Unmarshal(body, &env); err != nil {
+		return nil, err
+	}
+	return &env.Result, nil
 }
 
 func (r *EmailRoutingSettingsResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {

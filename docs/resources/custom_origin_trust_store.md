@@ -43,7 +43,7 @@ resource "cloudflare_custom_origin_trust_store" "example_custom_origin_trust_sto
 - `signature` (String) The type of hash used for the certificate.
 - `status` (String) Status of the zone's custom SSL.
 Available values: "initializing", "pending_deployment", "active", "pending_deletion", "deleted", "expired".
-- `updated_at` (String) When the certificate was last modified.
+- `updated_at` (String) When the certificate was last modified. Only returned when uploading a certificate.
 - `uploaded_on` (String) When the certificate was uploaded to Cloudflare.
 
 ## Import

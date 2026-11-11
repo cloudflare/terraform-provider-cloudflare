@@ -30,6 +30,7 @@ type ZeroTrustOrganizationModel struct {
 	ServiceTokenInactivity                 *ZeroTrustOrganizationServiceTokenInactivityModel `tfsdk:"service_token_inactivity" json:"service_token_inactivity,optional"`
 	AllowAuthenticateViaWARP               types.Bool                                        `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp,computed_optional"`
 	AutoRedirectToIdentity                 types.Bool                                        `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed_optional"`
+	DisableEndUserAppCreation              types.Bool                                        `tfsdk:"disable_end_user_app_creation" json:"disable_end_user_app_creation,computed_optional"`
 	IsUIReadOnly                           types.Bool                                        `tfsdk:"is_ui_read_only" json:"is_ui_read_only,computed_optional"`
 	MfaConfigurationAllowed                types.Bool                                        `tfsdk:"mfa_configuration_allowed" json:"mfa_configuration_allowed,computed_optional"`
 	MfaRequiredForAllApps                  types.Bool                                        `tfsdk:"mfa_required_for_all_apps" json:"mfa_required_for_all_apps,computed_optional"`

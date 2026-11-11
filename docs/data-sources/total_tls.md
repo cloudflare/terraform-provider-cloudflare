@@ -30,11 +30,11 @@ data "cloudflare_total_tls" "example_total_tls" {
 
 ### Read-Only
 
-- `certificate_authority` (String) The Certificate Authority that Total TLS certificates will be issued through.
+- `certificate_authority` (String) The Certificate Authority that Total TLS certificates will be issued through. Not returned in responses when Total TLS is disabled.
 Available values: "google", "lets_encrypt", "ssl_com".
 - `enabled` (Boolean) If enabled, Total TLS will order a hostname specific TLS certificate for any proxied A, AAAA, or CNAME record in your zone.
 - `id` (String) Identifier.
-- `validity_period` (Number) The validity period in days for the certificates ordered via Total TLS.
+- `validity_period` (Number) The validity period in days for the certificates ordered via Total TLS. Not returned when Total TLS is disabled.
 Available values: 90.
 
 

@@ -127,13 +127,11 @@ type TargetAPIShieldOperationFeaturesConfidenceIntervalsSuggestedThresholdConfid
 
 type TargetAPIShieldOperationFeaturesSchemaInfoModel struct {
 	ActiveSchema     customfield.NestedObject[TargetAPIShieldOperationFeaturesSchemaInfoActiveSchemaModel] `tfsdk:"active_schema"`
-	LearnedAvailable types.Bool                                                                            `tfsdk:"learned_available"`
 	MitigationAction types.String                                                                          `tfsdk:"mitigation_action"`
 }
 
 type TargetAPIShieldOperationFeaturesSchemaInfoActiveSchemaModel struct {
 	ID        types.String      `tfsdk:"id"`
 	CreatedAt timetypes.RFC3339 `tfsdk:"created_at"`
-	IsLearned types.Bool        `tfsdk:"is_learned"`
 	Name      types.String      `tfsdk:"name"`
 }

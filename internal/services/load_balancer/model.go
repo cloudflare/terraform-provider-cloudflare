@@ -31,6 +31,7 @@ type LoadBalancerModel struct {
 	SteeringPolicy            types.String                                                         `tfsdk:"steering_policy" json:"steering_policy,computed_optional"`
 	AdaptiveRouting           customfield.NestedObject[LoadBalancerAdaptiveRoutingModel]           `tfsdk:"adaptive_routing" json:"adaptive_routing,computed_optional"`
 	LocationStrategy          customfield.NestedObject[LoadBalancerLocationStrategyModel]          `tfsdk:"location_strategy" json:"location_strategy,computed_optional"`
+	PoolSets                  customfield.NestedObjectList[LoadBalancerPoolSetsModel]              `tfsdk:"pool_sets" json:"pool_sets,computed_optional"`
 	RandomSteering            customfield.NestedObject[LoadBalancerRandomSteeringModel]            `tfsdk:"random_steering" json:"random_steering,computed_optional"`
 	Rules                     customfield.NestedObjectList[LoadBalancerRulesModel]                 `tfsdk:"rules" json:"rules,computed_optional"`
 	SessionAffinityAttributes customfield.NestedObject[LoadBalancerSessionAffinityAttributesModel] `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes,computed_optional"`
@@ -54,6 +55,40 @@ type LoadBalancerAdaptiveRoutingModel struct {
 type LoadBalancerLocationStrategyModel struct {
 	Mode      types.String `tfsdk:"mode" json:"mode,computed_optional"`
 	PreferECS types.String `tfsdk:"prefer_ecs" json:"prefer_ecs,computed_optional"`
+}
+
+type LoadBalancerPoolSetsModel struct {
+	Disabled      types.Bool                                                   `tfsdk:"disabled" json:"disabled,computed_optional"`
+	FixedResponse *LoadBalancerPoolSetsFixedResponseModel                      `tfsdk:"fixed_response" json:"fixed_response,optional"`
+	Match         customfield.NestedObject[LoadBalancerPoolSetsMatchModel]     `tfsdk:"match" json:"match,computed_optional"`
+	Name          types.String                                                 `tfsdk:"name" json:"name,optional"`
+	Overrides     customfield.NestedObject[LoadBalancerPoolSetsOverridesModel] `tfsdk:"overrides" json:"overrides,computed_optional"`
+}
+
+type LoadBalancerPoolSetsFixedResponseModel struct {
+	ContentType types.String `tfsdk:"content_type" json:"content_type,optional"`
+	Location    types.String `tfsdk:"location" json:"location,optional"`
+	MessageBody types.String `tfsdk:"message_body" json:"message_body,optional"`
+	StatusCode  types.Int64  `tfsdk:"status_code" json:"status_code,optional"`
+}
+
+type LoadBalancerPoolSetsMatchModel struct {
+	Default  types.Bool                                                       `tfsdk:"default" json:"default,computed_optional"`
+	Topology customfield.NestedObject[LoadBalancerPoolSetsMatchTopologyModel] `tfsdk:"topology" json:"topology,computed_optional"`
+}
+
+type LoadBalancerPoolSetsMatchTopologyModel struct {
+	Countries *[]types.String `tfsdk:"countries" json:"countries,optional"`
+	POPs      *[]types.String `tfsdk:"pops" json:"pops,optional"`
+	Regions   *[]types.String `tfsdk:"regions" json:"regions,optional"`
+}
+
+type LoadBalancerPoolSetsOverridesModel struct {
+	FallbackPool      types.String                   `tfsdk:"fallback_pool" json:"fallback_pool,optional"`
+	PoolDefaultWeight types.Float64                  `tfsdk:"pool_default_weight" json:"pool_default_weight,computed_optional"`
+	PoolWeights       customfield.Map[types.Float64] `tfsdk:"pool_weights" json:"pool_weights,computed_optional"`
+	Pools             customfield.List[types.String] `tfsdk:"pools" json:"pools,computed_optional"`
+	SteeringPolicy    types.String                   `tfsdk:"steering_policy" json:"steering_policy,computed_optional"`
 }
 
 type LoadBalancerRandomSteeringModel struct {

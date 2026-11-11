@@ -57,6 +57,36 @@ func (d *AISearchNamespaceDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 
+	if data.Filter != nil {
+		params, diags := data.toListParams(ctx)
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		env := AISearchNamespacesResultListDataSourceEnvelope{}
+		page, err := d.client.AISearch.Namespaces.List(ctx, params)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
+
+		bytes := []byte(page.JSON.RawJSON())
+		err = apijson.UnmarshalComputed(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
+			return
+		}
+
+		if count := len(env.Result.Elements()); count != 1 {
+			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
+			return
+		}
+		ts, diags := env.Result.AsStructSliceT(ctx)
+		resp.Diagnostics.Append(diags...)
+		data.Name = ts[0].Name
+	}
+
 	params, diags := data.toReadParams(ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -83,6 +113,7 @@ func (d *AISearchNamespaceDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

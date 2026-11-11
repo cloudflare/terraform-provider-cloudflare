@@ -30,7 +30,7 @@ data "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_policy" 
 ### Read-Only
 
 - `action` (String) Specify the action to perform when the associated traffic, identity, and device posture expressions either absent or evaluate to `true`.
-Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "resolve", "quarantine", "redirect".
+Available values: "on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "resolve", "quarantine", "redirect", "forward".
 - `created_at` (String)
 - `deleted_at` (String) Indicate the date of deletion, if any.
 - `description` (String) Specify the rule description.
@@ -93,7 +93,6 @@ Read-Only:
 
 - `add_headers` (Map of List of String) Add custom headers to allowed requests as key-value pairs. Use header names as keys that map to arrays of header values. Header values may contain `@{selector.name}` variable references that are interpolated at the edge. Use `@@{` to escape a literal `@{`. A maximum of 20 header operations (add + set + delete) is allowed per policy. Each header name may not exceed 256 bytes and each header value may not exceed 4 KB. Settable only for `http` rules with the action set to `allow`.
 - `allow_child_bypass` (Boolean) Set to enable MSP children to bypass this rule. Only parent MSP accounts can set this. this rule. Settable for all types of rules.
-- `audit_ssh` (Attributes) Define the settings for the Audit SSH action. Settable only for `l4` rules with `audit_ssh` action. (see [below for nested schema](#nestedatt--rule_settings--audit_ssh))
 - `biso_admin_controls` (Attributes) Configure browser isolation behavior. Settable only for `http` rules with the action set to `isolate`. (see [below for nested schema](#nestedatt--rule_settings--biso_admin_controls))
 - `block_page` (Attributes) Configure custom block page settings. If missing or null, use the account settings. Settable only for `http` rules with the action set to `block`. (see [below for nested schema](#nestedatt--rule_settings--block_page))
 - `block_page_enabled` (Boolean) Enable the custom block page. Settable only for `dns` rules with action `block`.
@@ -104,6 +103,7 @@ Read-Only:
 - `dns_resolvers` (Attributes) Configure custom resolvers to route queries that match the resolver policy. Unused with 'resolve_dns_through_cloudflare' or 'resolve_dns_internally' settings. DNS queries get routed to the address closest to their origin. Only valid when a rule's action set to 'resolve'. Settable only for `dns_resolver` rules. (see [below for nested schema](#nestedatt--rule_settings--dns_resolvers))
 - `egress` (Attributes) Configure how Gateway Proxy traffic egresses. You can enable this setting for rules with Egress actions and filters, or omit it to indicate local egress via WARP IPs. Settable only for `egress` rules. (see [below for nested schema](#nestedatt--rule_settings--egress))
 - `forensic_copy` (Attributes) Configure whether a copy of the HTTP request will be sent to storage when the rule matches. (see [below for nested schema](#nestedatt--rule_settings--forensic_copy))
+- `forward` (Attributes) Forward matching HTTP requests to a Worker. Required for `http` rules with the action set to `forward`. (see [below for nested schema](#nestedatt--rule_settings--forward))
 - `ignore_cname_category_matches` (Boolean) Ignore category matches at CNAME domains in a response. When off, evaluate categories in this rule against all CNAME domain categories in the response. Settable only for `dns` and `dns_resolver` rules.
 - `insecure_disable_dnssec_validation` (Boolean) Specify whether to disable DNSSEC validation (for Allow actions) [INSECURE]. Settable only for `dns` rules.
 - `ip_categories` (Boolean) Enable IPs in DNS resolver category blocks. The system blocks only domain name categories unless you enable this setting. Settable only for `dns` and `dns_resolver` rules.
@@ -120,14 +120,6 @@ Read-Only:
 - `set_headers` (Map of List of String) Replace existing headers on allowed requests with the specified key-value pairs. If a header does not exist, it is added. Header values may contain `@{selector.name}` variable references that are interpolated at the edge. Use `@@{` to escape a literal `@{`. A maximum of 20 header operations (add + set + delete) is allowed per policy. Each header name may not exceed 256 bytes and each header value may not exceed 4 KB. Settable only for `http` rules with the action set to `allow`.
 - `untrusted_cert` (Attributes) Configure behavior when an upstream certificate is invalid or an SSL error occurs. Settable only for `http` rules with the action set to `allow`. (see [below for nested schema](#nestedatt--rule_settings--untrusted_cert))
 
-<a id="nestedatt--rule_settings--audit_ssh"></a>
-### Nested Schema for `rule_settings.audit_ssh`
-
-Read-Only:
-
-- `command_logging` (Boolean) Enable SSH command logging.
-
-
 <a id="nestedatt--rule_settings--biso_admin_controls"></a>
 ### Nested Schema for `rule_settings.biso_admin_controls`
 
@@ -142,8 +134,8 @@ Available values: "enabled", "disabled", "remote_only".
 Available values: "enabled", "disabled", "remote_only".
 - `dp` (Boolean) Set to false to enable printing. Only applies when `version == "v1"`.
 - `du` (Boolean) Set to false to enable uploading. Only applies when `version == "v1"`.
-- `keyboard` (String) Configure keyboard usage behavior. If this field is absent, keyboard usage remains enabled. Applies only when version == "v2".
-Available values: "enabled", "disabled".
+- `keyboard` (String) Configure keyboard usage behavior. When set to enable_read_only_actions, only approved browser commands (find, copy, print, zoom, and select-all) may execute; other keyboard input is blocked from reaching the page. Copy and print remain subject to their independent controls. If this field is absent, keyboard usage remains enabled. Applies only when version == "v2". The enable_read_only_actions value requires an explicit version of "v2".
+Available values: "enabled", "disabled", "enable_read_only_actions".
 - `paste` (String) Configure paste behavior. If set to remote_only, users cannot paste content from the local clipboard into isolated pages. If this field is absent, pasting remains enabled. Applies only when version == "v2".
 Available values: "enabled", "disabled", "remote_only".
 - `printing` (String) Configure print behavior. Default, Printing is enabled. Applies only when version == "v2".
@@ -220,6 +212,14 @@ Read-Only:
 Read-Only:
 
 - `enabled` (Boolean) Enable sending the copy to storage.
+
+
+<a id="nestedatt--rule_settings--forward"></a>
+### Nested Schema for `rule_settings.forward`
+
+Read-Only:
+
+- `worker_id` (String) Specify the public Worker ID of the target Worker.
 
 
 <a id="nestedatt--rule_settings--l4override"></a>

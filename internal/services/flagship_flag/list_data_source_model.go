@@ -46,6 +46,7 @@ type FlagshipFlagsResultDataSourceModel struct {
 	Type             types.String                                                    `tfsdk:"type" json:"type,computed"`
 	Variations       customfield.Map[types.String]                                   `tfsdk:"variations" json:"variations,computed"`
 	Description      types.String                                                    `tfsdk:"description" json:"description,computed"`
+	Metadata         customfield.NormalizedDynamicValue                              `tfsdk:"metadata" json:"metadata,computed"`
 	UpdatedAt        types.String                                                    `tfsdk:"updated_at" json:"updated_at,computed"`
 	UpdatedBy        types.String                                                    `tfsdk:"updated_by" json:"updated_by,computed"`
 }
@@ -98,11 +99,9 @@ type FlagshipFlagsRulesConditionsClausesClausesClausesClausesDataSourceModel str
 }
 
 type FlagshipFlagsRulesConditionsClausesClausesClausesClausesClausesDataSourceModel struct {
-	Attribute       types.String                   `tfsdk:"attribute" json:"attribute,computed"`
-	Operator        types.String                   `tfsdk:"operator" json:"operator,computed"`
-	Value           jsontypes.Normalized           `tfsdk:"value" json:"value,computed"`
-	Clauses         customfield.List[types.String] `tfsdk:"clauses" json:"clauses,computed"`
-	LogicalOperator types.String                   `tfsdk:"logical_operator" json:"logical_operator,computed"`
+	Attribute types.String         `tfsdk:"attribute" json:"attribute,computed"`
+	Operator  types.String         `tfsdk:"operator" json:"operator,computed"`
+	Value     jsontypes.Normalized `tfsdk:"value" json:"value,computed"`
 }
 
 type FlagshipFlagsRulesRolloutDataSourceModel struct {

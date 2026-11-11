@@ -19,22 +19,24 @@ type SourceCloudflareByoIPPrefixModel struct {
 // TargetByoIPPrefixModel represents the target cloudflare_byo_ip_prefix state structure (v500).
 // Must match byo_ip_prefix.ByoIPPrefixModel exactly.
 type TargetByoIPPrefixModel struct {
-	ID                       types.String      `tfsdk:"id"`
-	AccountID                types.String      `tfsdk:"account_id"`
-	ASN                      types.Int64       `tfsdk:"asn"`
-	CIDR                     types.String      `tfsdk:"cidr"`
-	LOADocumentID            types.String      `tfsdk:"loa_document_id"`
-	DelegateLOACreation      types.Bool        `tfsdk:"delegate_loa_creation"`
-	Description              types.String      `tfsdk:"description"`
-	Advertised               types.Bool        `tfsdk:"advertised"`
-	AdvertisedModifiedAt     timetypes.RFC3339 `tfsdk:"advertised_modified_at"`
-	Approved                 types.String      `tfsdk:"approved"`
-	CreatedAt                timetypes.RFC3339 `tfsdk:"created_at"`
-	IrrValidationState       types.String      `tfsdk:"irr_validation_state"`
-	ModifiedAt               timetypes.RFC3339 `tfsdk:"modified_at"`
-	OnDemandEnabled          types.Bool        `tfsdk:"on_demand_enabled"`
-	OnDemandLocked           types.Bool        `tfsdk:"on_demand_locked"`
-	OwnershipValidationState types.String      `tfsdk:"ownership_validation_state"`
-	OwnershipValidationToken types.String      `tfsdk:"ownership_validation_token"`
-	RPKIValidationState      types.String      `tfsdk:"rpki_validation_state"`
+	ID                          types.String      `tfsdk:"id"`
+	AccountID                   types.String      `tfsdk:"account_id"`
+	ASN                         types.Int64       `tfsdk:"asn"`
+	CIDR                        types.String      `tfsdk:"cidr"`
+	LOADocumentID               types.String      `tfsdk:"loa_document_id"`
+	DelegateLOACreation         types.Bool        `tfsdk:"delegate_loa_creation"`
+	Description                 types.String      `tfsdk:"description"`
+	Advertised                  types.Bool        `tfsdk:"advertised"`
+	AdvertisedModifiedAt        timetypes.RFC3339 `tfsdk:"advertised_modified_at"`
+	Approved                    types.String      `tfsdk:"approved"`
+	ASNOwnershipValidationState types.String      `tfsdk:"asn_ownership_validation_state"`
+	ASPAValidationState         types.String      `tfsdk:"aspa_validation_state"`
+	CreatedAt                   timetypes.RFC3339 `tfsdk:"created_at"`
+	IrrValidationState          types.String      `tfsdk:"irr_validation_state"`
+	ModifiedAt                  timetypes.RFC3339 `tfsdk:"modified_at"`
+	OnDemandEnabled             types.Bool        `tfsdk:"on_demand_enabled"`
+	OnDemandLocked              types.Bool        `tfsdk:"on_demand_locked"`
+	OwnershipValidationState    types.String      `tfsdk:"ownership_validation_state"`
+	OwnershipValidationToken    types.String      `tfsdk:"ownership_validation_token"`
+	RPKIValidationState         types.String      `tfsdk:"rpki_validation_state"`
 }

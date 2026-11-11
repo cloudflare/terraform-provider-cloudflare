@@ -69,6 +69,7 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Create(ctx context.Context, r
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+	presence := captureOriginRequestPresence(data)
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredConfigResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Tunnels.Cloudflared.Configurations.Update(
@@ -92,6 +93,7 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Create(ctx context.Context, r
 		return
 	}
 	data = &env.Result
+	presence.normalize(data)
 	data.ID = data.TunnelID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -119,6 +121,7 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Update(ctx context.Context, r
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+	presence := captureOriginRequestPresence(data)
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredConfigResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Tunnels.Cloudflared.Configurations.Update(
@@ -142,6 +145,7 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Update(ctx context.Context, r
 		return
 	}
 	data = &env.Result
+	presence.normalize(data)
 	data.ID = data.TunnelID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -156,6 +160,7 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Read(ctx context.Context, req
 		return
 	}
 
+	presence := captureOriginRequestPresence(data)
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredConfigResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Tunnels.Cloudflared.Configurations.Get(
@@ -183,6 +188,7 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) Read(ctx context.Context, req
 		return
 	}
 	data = &env.Result
+	presence.normalize(data)
 	data.ID = data.TunnelID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -211,6 +217,7 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) ImportState(ctx context.Conte
 	data.AccountID = types.StringValue(path_account_id)
 	data.TunnelID = types.StringValue(path_tunnel_id)
 
+	presence := captureOriginRequestPresence(data)
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredConfigResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Tunnels.Cloudflared.Configurations.Get(
@@ -233,6 +240,7 @@ func (r *ZeroTrustTunnelCloudflaredConfigResource) ImportState(ctx context.Conte
 		return
 	}
 	data = &env.Result
+	presence.normalize(data)
 	data.ID = data.TunnelID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

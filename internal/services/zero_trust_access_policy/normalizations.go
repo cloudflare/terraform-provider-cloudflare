@@ -112,6 +112,16 @@ func normalizeReadZeroTrustAccessPolicyAPIData(ctx context.Context, data, source
 	return diags
 }
 
+// The API returns every rule in full, in its own order. Decoding onto the prior
+// state merges the response into the existing set elements by index, so when the
+// order differs, selectors from one rule leak into another. Clear the prior rules
+// so they decode fresh.
+func clearPriorRules(ctx context.Context, data *ZeroTrustAccessPolicyModel) {
+	data.Include = customfield.NullObjectSet[ZeroTrustAccessPolicyIncludeModel](ctx)
+	data.Exclude = customfield.NullObjectSet[ZeroTrustAccessPolicyExcludeModel](ctx)
+	data.Require = customfield.NullObjectSet[ZeroTrustAccessPolicyRequireModel](ctx)
+}
+
 func pruneEmptyConditionSelectors(ctx context.Context, data *ZeroTrustAccessPolicyModel) diag.Diagnostics {
 	diags := make(diag.Diagnostics, 0)
 	diags.Append(pruneEmptyIncludeSelectors(ctx, &data.Include)...)
@@ -145,6 +155,15 @@ func pruneEmptyIncludeSelectors(ctx context.Context, set *customfield.NestedObje
 		}
 		if c.Geo != nil && isNullUnknownOrEmptyString(c.Geo.CountryCode) {
 			c.Geo = nil
+		}
+		if c.DevicePosture != nil && isNullUnknownOrEmptyString(c.DevicePosture.IntegrationUID) {
+			c.DevicePosture = nil
+		}
+		if c.OIDC != nil &&
+			isNullUnknownOrEmptyString(c.OIDC.ClaimName) &&
+			isNullUnknownOrEmptyString(c.OIDC.ClaimValue) &&
+			isNullUnknownOrEmptyString(c.OIDC.IdentityProviderID) {
+			c.OIDC = nil
 		}
 
 		if reflect.DeepEqual(c, ZeroTrustAccessPolicyIncludeModel{}) {
@@ -188,6 +207,15 @@ func pruneEmptyExcludeSelectors(ctx context.Context, set *customfield.NestedObje
 		if c.Geo != nil && isNullUnknownOrEmptyString(c.Geo.CountryCode) {
 			c.Geo = nil
 		}
+		if c.DevicePosture != nil && isNullUnknownOrEmptyString(c.DevicePosture.IntegrationUID) {
+			c.DevicePosture = nil
+		}
+		if c.OIDC != nil &&
+			isNullUnknownOrEmptyString(c.OIDC.ClaimName) &&
+			isNullUnknownOrEmptyString(c.OIDC.ClaimValue) &&
+			isNullUnknownOrEmptyString(c.OIDC.IdentityProviderID) {
+			c.OIDC = nil
+		}
 
 		if reflect.DeepEqual(c, ZeroTrustAccessPolicyExcludeModel{}) {
 			continue
@@ -229,6 +257,15 @@ func pruneEmptyRequireSelectors(ctx context.Context, set *customfield.NestedObje
 		}
 		if c.Geo != nil && isNullUnknownOrEmptyString(c.Geo.CountryCode) {
 			c.Geo = nil
+		}
+		if c.DevicePosture != nil && isNullUnknownOrEmptyString(c.DevicePosture.IntegrationUID) {
+			c.DevicePosture = nil
+		}
+		if c.OIDC != nil &&
+			isNullUnknownOrEmptyString(c.OIDC.ClaimName) &&
+			isNullUnknownOrEmptyString(c.OIDC.ClaimValue) &&
+			isNullUnknownOrEmptyString(c.OIDC.IdentityProviderID) {
+			c.OIDC = nil
 		}
 
 		if reflect.DeepEqual(c, ZeroTrustAccessPolicyRequireModel{}) {

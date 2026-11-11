@@ -31,6 +31,7 @@ type FlagshipFlagDataSourceModel struct {
 	UpdatedBy        types.String                                                   `tfsdk:"updated_by" json:"updated_by,computed"`
 	Variations       customfield.Map[types.String]                                  `tfsdk:"variations" json:"variations,computed"`
 	Rules            customfield.NestedObjectList[FlagshipFlagRulesDataSourceModel] `tfsdk:"rules" json:"rules,computed"`
+	Metadata         customfield.NormalizedDynamicValue                             `tfsdk:"metadata" json:"metadata,computed"`
 	Filter           *FlagshipFlagFindOneByDataSourceModel                          `tfsdk:"filter"`
 }
 
@@ -102,11 +103,9 @@ type FlagshipFlagRulesConditionsClausesClausesClausesClausesDataSourceModel stru
 }
 
 type FlagshipFlagRulesConditionsClausesClausesClausesClausesClausesDataSourceModel struct {
-	Attribute       types.String                   `tfsdk:"attribute" json:"attribute,computed"`
-	Operator        types.String                   `tfsdk:"operator" json:"operator,computed"`
-	Value           jsontypes.Normalized           `tfsdk:"value" json:"value,computed"`
-	Clauses         customfield.List[types.String] `tfsdk:"clauses" json:"clauses,computed"`
-	LogicalOperator types.String                   `tfsdk:"logical_operator" json:"logical_operator,computed"`
+	Attribute types.String         `tfsdk:"attribute" json:"attribute,computed"`
+	Operator  types.String         `tfsdk:"operator" json:"operator,computed"`
+	Value     jsontypes.Normalized `tfsdk:"value" json:"value,computed"`
 }
 
 type FlagshipFlagRulesRolloutDataSourceModel struct {

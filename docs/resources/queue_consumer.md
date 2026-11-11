@@ -46,7 +46,7 @@ resource "cloudflare_queue_consumer" "example_queue_consumer" {
 ### Optional
 
 - `dead_letter_queue` (String)
-- `script_name` (String) Name of a Worker
+- `script_name` (String) For `type: worker`: Name of a Worker
 - `settings` (Attributes) (see [below for nested schema](#nestedatt--settings))
 
 ### Read-Only

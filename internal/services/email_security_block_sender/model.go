@@ -19,6 +19,7 @@ type EmailSecurityBlockSenderModel struct {
 	Pattern      types.String      `tfsdk:"pattern" json:"pattern,required"`
 	PatternType  types.String      `tfsdk:"pattern_type" json:"pattern_type,required"`
 	Comments     types.String      `tfsdk:"comments" json:"comments,optional"`
+	ExpiresAt    timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,optional" format:"date-time"`
 	CreatedAt    timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	LastModified timetypes.RFC3339 `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
 	ModifiedAt   timetypes.RFC3339 `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`

@@ -27,12 +27,15 @@ resource "cloudflare_organization_profile" "example_organization_profile" {
 
 ### Required
 
+- `organization_id` (String)
+
+### Optional
+
 - `business_address` (String)
 - `business_email` (String)
 - `business_name` (String)
 - `business_phone` (String)
 - `external_metadata` (String)
-- `organization_id` (String)
 
 ## Import
 

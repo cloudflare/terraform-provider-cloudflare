@@ -63,7 +63,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 				Attributes: map[string]schema.Attribute{
 					"api_url": schema.StringAttribute{
-						Description: "The Workspace One API URL provided in the Workspace One Admin Dashboard.",
+						Description: "The Workspace One API URL provided in the Workspace One Admin Dashboard.\n\nThe Crowdstrike API URL.\n\nThe Uptycs API URL.\n\nThe Tanium API URL.\n\nThe SentinelOne S2S API URL.\n\nThe Custom Device Posture Integration  API URL.",
 						Optional:    true,
 					},
 					"auth_url": schema.StringAttribute{
@@ -71,16 +71,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"client_id": schema.StringAttribute{
-						Description: "The Workspace One client ID provided in the Workspace One Admin Dashboard.",
+						Description: "The Workspace One client ID provided in the Workspace One Admin Dashboard.\n\nThe Crowdstrike client ID.\n\nThe Intune client ID.\n\nThe Kolide client ID.",
 						Optional:    true,
 					},
 					"client_secret": schema.StringAttribute{
-						Description: "The Workspace One client secret provided in the Workspace One Admin Dashboard.",
+						Description: "The Workspace One client secret provided in the Workspace One Admin Dashboard.\n\nThe Crowdstrike client secret.\n\nThe Uptycs client secret.\n\nThe Intune client secret.\n\nThe Kolide client secret.\n\nThe Tanium client secret.\n\nThe SentinelOne S2S client secret.",
 						Optional:    true,
 						Sensitive:   true,
 					},
 					"customer_id": schema.StringAttribute{
-						Description: "The Crowdstrike customer ID.",
+						Description: "The Crowdstrike customer ID.\n\nThe Uptycs customer ID.\n\nThe Intune customer ID.",
 						Optional:    true,
 					},
 					"client_key": schema.StringAttribute{
@@ -89,11 +89,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Sensitive:   true,
 					},
 					"access_client_id": schema.StringAttribute{
-						Description: "If present, this id will be passed in the `CF-Access-Client-ID` header when hitting the `api_url`.",
+						Description: "If present, this id will be passed in the `CF-Access-Client-ID` header when hitting the `api_url`.\n\nThis id will be passed in the `CF-Access-Client-ID` header when hitting the `api_url`.",
 						Optional:    true,
 					},
 					"access_client_secret": schema.StringAttribute{
-						Description: "If present, this secret will be passed in the `CF-Access-Client-Secret` header when hitting the `api_url`.",
+						Description: "If present, this secret will be passed in the `CF-Access-Client-Secret` header when hitting the `api_url`.\n\nThis secret will be passed in the `CF-Access-Client-Secret` header when hitting the `api_url`.",
 						Optional:    true,
 						Sensitive:   true,
 					},

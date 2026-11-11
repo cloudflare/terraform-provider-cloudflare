@@ -161,7 +161,7 @@ resource "cloudflare_zero_trust_access_application" "infrastructure_application_
 - `http_only_cookie_attribute` (Boolean) Enables the HttpOnly cookie attribute, which increases security against XSS attacks.
 - `landing_page_design` (Attributes) The design of the App Launcher landing page shown to users when they log in. (see [below for nested schema](#nestedatt--landing_page_design))
 - `logo_url` (String) The image URL for the logo shown in the App Launcher dashboard.
-- `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings for the application. Only valid for self_hosted, ssh, vnc, and rdp application types. (see [below for nested schema](#nestedatt--mfa_config))
+- `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings for the application. Only valid for self_hosted, ssh, vnc, rdp, and infrastructure application types. For infrastructure applications, supported authenticators are `piv_key` and `ssh_fido2_key`; for other application types use `totp`, `biometrics`, or `security_key`. (see [below for nested schema](#nestedatt--mfa_config))
 - `name` (String) The name of the application.
 - `oauth_configuration` (Attributes) Optional configuration for managing an OAuth authorization flow controlled by Access. When set, Access will act as the OAuth authorization server for this application. This feature is currently in beta. (see [below for nested schema](#nestedatt--oauth_configuration))
 - `options_preflight_bypass` (Boolean) Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.
@@ -252,7 +252,7 @@ Optional:
 Optional:
 
 - `allowed_authenticators` (List of String) The authenticators allowed for MFA.
-Available values: "totp", "biometrics", "security_key".
+Available values: "totp", "biometrics", "security_key", "piv_key", "ssh_fido2_key".
 - `mfa_disabled` (Boolean) Whether MFA is disabled for this application.
 - `session_duration` (String) How often a user will be forced to re-authenticate with MFA.
 
@@ -298,7 +298,7 @@ Available values: "allow", "deny", "non_identity", "bypass".
 - `exclude` (Attributes Set) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--policies--exclude))
 - `id` (String) The UUID of the policy
 - `include` (Attributes Set) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--policies--include))
-- `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings for this policy. For infrastructure applications only `ssh_piv_key` is a supported authenticator; for other application types use `totp`, `biometrics`, or `security_key`. (see [below for nested schema](#nestedatt--policies--mfa_config))
+- `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings for this policy. For infrastructure applications, supported authenticators are `piv_key` and `ssh_fido2_key`; for other application types use `totp`, `biometrics`, or `security_key`. (see [below for nested schema](#nestedatt--policies--mfa_config))
 - `name` (String) The name of the Access policy.
 - `precedence` (Number) The order of execution for this policy. Must be unique for each policy within an app.
 - `require` (Attributes Set) Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--policies--require))
@@ -791,7 +791,7 @@ Required:
 Optional:
 
 - `allowed_authenticators` (List of String) The authenticators allowed for MFA.
-Available values: "totp", "biometrics", "security_key", "ssh_piv_key".
+Available values: "totp", "biometrics", "security_key", "piv_key", "ssh_fido2_key".
 - `mfa_disabled` (Boolean) Whether MFA is disabled for this policy.
 - `session_duration` (String) How often a user will be forced to re-authenticate with MFA.
 
@@ -1262,4 +1262,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_zero_trust_access_application.example '<{accounts|zones}/{account_id|zone_id}>/<app_id>'
 ```
+
 

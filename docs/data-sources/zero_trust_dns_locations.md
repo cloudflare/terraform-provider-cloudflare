@@ -73,6 +73,7 @@ Read-Only:
 
 - `client_default` (Boolean) Indicate whether this location is the default location.
 - `created_at` (String)
+- `dns64_enabled` (Boolean) Enable DNS64 synthesis for DNS queries matched to this location. When updating a location, omitting this field resets it to false.
 - `dns_destination_ips_id` (String) Indicate the identifier of the pair of IPv4 addresses assigned to this location.
 - `dns_destination_ipv6_block_id` (String) Specify the UUID of the IPv6 block brought to the gateway so that this location's IPv6 address is allocated from the Bring Your Own IPv6 (BYOIPv6) block rather than the standard Cloudflare IPv6 block.
 - `doh_subdomain` (String) Specify the DNS over HTTPS domain that receives DNS requests. Gateway automatically generates this value.

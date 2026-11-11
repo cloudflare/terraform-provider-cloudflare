@@ -133,32 +133,38 @@ type TargetV5ZeroTrustAccessGroupModel struct {
 // In v5, each selector is a SingleNestedAttribute, so only one field is set per object.
 // Note: Exclude and Require use the same model structure.
 type TargetV5ZeroTrustAccessGroupIncludeModel struct {
-	Group                *TargetV5GroupModel                `tfsdk:"group"`
-	AnyValidServiceToken *TargetV5AnyValidServiceTokenModel `tfsdk:"any_valid_service_token"`
-	AuthContext          *TargetV5AuthContextModel          `tfsdk:"auth_context"`
-	AuthMethod           *TargetV5AuthMethodModel           `tfsdk:"auth_method"`
-	AzureAD              *TargetV5AzureADModel              `tfsdk:"azure_ad"`
-	Certificate          *TargetV5CertificateModel          `tfsdk:"certificate"`
-	CommonName           *TargetV5CommonNameModel           `tfsdk:"common_name"`
-	Geo                  *TargetV5GeoModel                  `tfsdk:"geo"`
-	DevicePosture        *TargetV5DevicePostureModel        `tfsdk:"device_posture"`
-	EmailDomain          *TargetV5EmailDomainModel          `tfsdk:"email_domain"`
-	EmailList            *TargetV5EmailListModel            `tfsdk:"email_list"`
-	Email                *TargetV5EmailModel                `tfsdk:"email"`
-	Everyone             *TargetV5EveryoneModel             `tfsdk:"everyone"`
-	ExternalEvaluation   *TargetV5ExternalEvaluationModel   `tfsdk:"external_evaluation"`
-	GitHubOrganization   *TargetV5GitHubOrganizationModel   `tfsdk:"github_organization"`
-	GSuite               *TargetV5GSuiteModel               `tfsdk:"gsuite"`
-	LoginMethod          *TargetV5LoginMethodModel          `tfsdk:"login_method"`
-	IPList               *TargetV5IPListModel               `tfsdk:"ip_list"`
-	IP                   *TargetV5IPModel                   `tfsdk:"ip"`
-	Okta                 *TargetV5OktaModel                 `tfsdk:"okta"`
-	SAML                 *TargetV5SAMLModel                 `tfsdk:"saml"`
-	OIDC                 *TargetV5OIDCModel                 `tfsdk:"oidc"`
+	Group                   *TargetV5GroupModel                   `tfsdk:"group"`
+	AnyValidServiceToken    *TargetV5AnyValidServiceTokenModel    `tfsdk:"any_valid_service_token"`
+	AuthContext             *TargetV5AuthContextModel             `tfsdk:"auth_context"`
+	AuthMethod              *TargetV5AuthMethodModel              `tfsdk:"auth_method"`
+	AzureAD                 *TargetV5AzureADModel                 `tfsdk:"azure_ad"`
+	Certificate             *TargetV5CertificateModel             `tfsdk:"certificate"`
+	CommonName              *TargetV5CommonNameModel              `tfsdk:"common_name"`
+	Geo                     *TargetV5GeoModel                     `tfsdk:"geo"`
+	DevicePosture           *TargetV5DevicePostureModel           `tfsdk:"device_posture"`
+	EmailDomain             *TargetV5EmailDomainModel             `tfsdk:"email_domain"`
+	EmailList               *TargetV5EmailListModel               `tfsdk:"email_list"`
+	Email                   *TargetV5EmailModel                   `tfsdk:"email"`
+	Everyone                *TargetV5EveryoneModel                `tfsdk:"everyone"`
+	ExternalEvaluation      *TargetV5ExternalEvaluationModel      `tfsdk:"external_evaluation"`
+	GitHubOrganization      *TargetV5GitHubOrganizationModel      `tfsdk:"github_organization"`
+	GSuite                  *TargetV5GSuiteModel                  `tfsdk:"gsuite"`
+	LoginMethod             *TargetV5LoginMethodModel             `tfsdk:"login_method"`
+	IPList                  *TargetV5IPListModel                  `tfsdk:"ip_list"`
+	IP                      *TargetV5IPModel                      `tfsdk:"ip"`
+	Okta                    *TargetV5OktaModel                    `tfsdk:"okta"`
+	SAML                    *TargetV5SAMLModel                    `tfsdk:"saml"`
+	OIDC                    *TargetV5OIDCModel                    `tfsdk:"oidc"`
 	ServiceToken            *TargetV5ServiceTokenModel            `tfsdk:"service_token"`
+	ServiceTokenTag         *TargetV5ServiceTokenTagModel         `tfsdk:"service_token_tag"`
 	LinkedAppToken          *TargetV5LinkedAppTokenModel          `tfsdk:"linked_app_token"`
 	UserRiskScore           *TargetV5UserRiskScoreModel           `tfsdk:"user_risk_score"`
 	CloudflareAccountMember *TargetV5CloudflareAccountMemberModel `tfsdk:"cloudflare_account_member"`
+}
+
+type TargetV5ServiceTokenTagModel struct {
+	Key   types.String `tfsdk:"key"`
+	Value types.String `tfsdk:"value"`
 }
 
 type TargetV5CloudflareAccountMemberModel struct {

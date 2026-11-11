@@ -31,7 +31,7 @@ func (r *ZeroTrustAccessPolicyResource) MoveState(ctx context.Context) []resourc
 // Both v4 cloudflare_access_policy and early v5 cloudflare_zero_trust_access_policy have schema_version=0.
 //
 // We use v5Schema at version 0, which means:
-// - Early v5 state (v5.12-v5.15): works correctly, passes through as no-op
+// - Early v5 state (v5.0-v5.15): works correctly, passes through as no-op
 // - v4 state via `terraform state mv`: will FAIL (schema mismatch)
 //
 // For v4 → v5 migration, users MUST use `moved` blocks (Terraform 1.8+) which go through MoveState.
@@ -39,7 +39,7 @@ func (r *ZeroTrustAccessPolicyResource) UpgradeState(ctx context.Context) map[in
 	v5Schema := ResourceSchema(ctx)
 
 	return map[int64]resource.StateUpgrader{
-		// Handle early v5 state with schema_version=0 (v5.12-v5.15) AND v4 state
+		// Handle early v5 state with schema_version=0 (v5.0-v5.15) AND v4 state
 		// PriorSchema is nil to allow raw JSON unmarshaling in handler
 		// Handler detects v4 format (application_id/precedence/connection_rules=[])
 		// and transforms using v4 source schema, or passes v5 state through unchanged

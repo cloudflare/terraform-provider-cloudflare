@@ -26,7 +26,7 @@ func TestUpgradeStateV0toV500(t *testing.T) {
 
 	state := tfsdk.State{Raw: raw, Schema: sourceSchema}
 	req := resource.UpgradeStateRequest{State: &state}
-	resp := &resource.UpgradeStateResponse{State: tfsdk.State{Schema: sourceSchema}}
+	resp := &resource.UpgradeStateResponse{State: tfsdk.State{Schema: targetSchemaV500()}}
 
 	upgrader := UpgradeStateV0toV500(sourceSchema)
 	upgrader.StateUpgrader(ctx, req, resp)
@@ -68,7 +68,7 @@ func TestMoveStateV4toV500(t *testing.T) {
 		SourceSchemaVersion:   0,
 		SourceState:           &sourceState,
 	}
-	resp := &resource.MoveStateResponse{TargetState: tfsdk.State{Schema: sourceSchema}}
+	resp := &resource.MoveStateResponse{TargetState: tfsdk.State{Schema: targetSchemaV500()}}
 
 	MoveStateV4toV500(ctx, req, resp)
 
@@ -88,7 +88,7 @@ func TestMoveStateV4toV500(t *testing.T) {
 
 func TestUpgradeStateV1toV500_NoOp(t *testing.T) {
 	ctx := context.Background()
-	targetSchema := SourceSchemaV0()
+	targetSchema := targetSchemaV500()
 
 	raw := createTerraformValue(t, targetSchema, map[string]interface{}{
 		"id":          "domain-id",
@@ -137,7 +137,7 @@ func TestUpgradeStateV0toV500_NullOptionalField(t *testing.T) {
 
 	state := tfsdk.State{Raw: raw, Schema: sourceSchema}
 	req := resource.UpgradeStateRequest{State: &state}
-	resp := &resource.UpgradeStateResponse{State: tfsdk.State{Schema: sourceSchema}}
+	resp := &resource.UpgradeStateResponse{State: tfsdk.State{Schema: targetSchemaV500()}}
 
 	upgrader := UpgradeStateV0toV500(sourceSchema)
 	upgrader.StateUpgrader(ctx, req, resp)
@@ -252,8 +252,8 @@ func createTerraformValue(t *testing.T, s schema.Schema, values map[string]inter
 	t.Helper()
 
 	attrTypes := make(map[string]tftypes.Type)
-	for name := range s.Attributes {
-		attrTypes[name] = tftypes.String
+	for name, attr := range s.Attributes {
+		attrTypes[name] = attr.GetType().TerraformType(context.Background())
 	}
 
 	objectType := tftypes.Object{AttributeTypes: attrTypes}
@@ -269,4 +269,13 @@ func createTerraformValue(t *testing.T, s schema.Schema, values map[string]inter
 	}
 
 	return tftypes.NewValue(objectType, valueMap)
+}
+
+// targetSchemaV500 has the v5 attribute set. The live schema can't be imported
+// here without an import cycle.
+func targetSchemaV500() schema.Schema {
+	s := SourceSchemaV0()
+	s.Attributes["enabled"] = schema.BoolAttribute{Computed: true, Optional: true}
+	s.Attributes["previews_enabled"] = schema.BoolAttribute{Computed: true, Optional: true}
+	return s
 }

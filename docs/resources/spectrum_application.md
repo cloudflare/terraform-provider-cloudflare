@@ -78,6 +78,9 @@ Available values: "direct", "http", "https", "worker".
 - `created_on` (String) When the Application was created.
 - `id` (String) App identifier.
 - `modified_on` (String) When the Application was last modified.
+- `origin_worker_name` (String) Name of the Worker origin. Omitted when the Worker is not found or its name cannot be resolved.
+- `origin_worker_status` (String) Lookup status of the Worker origin. Unknown indicates that its name could not be resolved. Only returned for Worker origins.
+Available values: "available", "not_found", "unknown".
 
 <a id="nestedatt--dns"></a>
 ### Nested Schema for `dns`
@@ -94,10 +97,12 @@ Available values: "CNAME", "ADDRESS".
 
 Optional:
 
-- `connectivity` (String) The IP versions supported for inbound connections on Spectrum anycast IPs.
+- `connectivity` (String) For `type: dynamic`: The IP versions supported for inbound connections on Spectrum anycast IPs.
 Available values: "all", "ipv4", "ipv6".
-- `ips` (List of String) The array of customer owned IPs we broadcast via anycast for this hostname and application.
-- `type` (String) The type of edge IP configuration specified. Dynamically allocated edge IPs use Spectrum anycast IPs in accordance with the connectivity you specify. Only valid with CNAME DNS names.
+- `ips` (List of String) For `type: static`: The array of customer owned IPs we broadcast via anycast for this hostname and application.
+- `type` (String) For `type: dynamic`: The type of edge IP configuration specified. Dynamically allocated edge IPs use Spectrum anycast IPs in accordance with the connectivity you specify. Only valid with CNAME DNS names.
+
+For `type: static`: The type of edge IP configuration specified. Statically allocated edge IPs use customer IPs in accordance with the ips array you specify. Only valid with ADDRESS DNS names.
 Available values: "dynamic", "static".
 
 

@@ -23,7 +23,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Specify the Cloudflare account identifier.",
-				Optional:    true,
+				Optional: true,
 			},
 			"direction": schema.StringAttribute{
 				Description: "Sort direction. When `order_by` is omitted, this controls the direction\nof the existing precedence ordering. Shared rules remain first in either\ndirection. Accepted values are `asc` and `desc`.\nAvailable values: \"asc\", \"desc\".",
@@ -67,7 +67,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"action": schema.StringAttribute{
-							Description: "Specify the action to perform when the associated traffic, identity, and device posture expressions either absent or evaluate to `true`.\nAvailable values: \"on\", \"off\", \"allow\", \"block\", \"scan\", \"noscan\", \"safesearch\", \"ytrestricted\", \"isolate\", \"noisolate\", \"override\", \"l4_override\", \"egress\", \"resolve\", \"quarantine\", \"redirect\".",
+							Description: "Specify the action to perform when the associated traffic, identity, and device posture expressions either absent or evaluate to `true`.\nAvailable values: \"on\", \"off\", \"allow\", \"block\", \"scan\", \"noscan\", \"safesearch\", \"ytrestricted\", \"isolate\", \"noisolate\", \"override\", \"l4_override\", \"egress\", \"resolve\", \"quarantine\", \"redirect\", \"forward\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -87,6 +87,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"resolve",
 									"quarantine",
 									"redirect",
+									"forward",
 								),
 							},
 						},
@@ -192,17 +193,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Description: "Set to enable MSP children to bypass this rule. Only parent MSP accounts can set this. this rule. Settable for all types of rules.",
 									Computed:    true,
 								},
-								"audit_ssh": schema.SingleNestedAttribute{
-									Description: "Define the settings for the Audit SSH action. Settable only for `l4` rules with `audit_ssh` action.",
-									Computed:    true,
-									CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPoliciesRuleSettingsAuditSSHDataSourceModel](ctx),
-									Attributes: map[string]schema.Attribute{
-										"command_logging": schema.BoolAttribute{
-											Description: "Enable SSH command logging.",
-											Computed:    true,
-										},
-									},
-								},
 								"biso_admin_controls": schema.SingleNestedAttribute{
 									Description: "Configure browser isolation behavior. Settable only for `http` rules with the action set to `isolate`.",
 									Computed:    true,
@@ -251,10 +241,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed:    true,
 										},
 										"keyboard": schema.StringAttribute{
-											Description: "Configure keyboard usage behavior. If this field is absent, keyboard usage remains enabled. Applies only when version == \"v2\".\nAvailable values: \"enabled\", \"disabled\".",
+											Description: "Configure keyboard usage behavior. When set to enable_read_only_actions, only approved browser commands (find, copy, print, zoom, and select-all) may execute; other keyboard input is blocked from reaching the page. Copy and print remain subject to their independent controls. If this field is absent, keyboard usage remains enabled. Applies only when version == \"v2\". The enable_read_only_actions value requires an explicit version of \"v2\".\nAvailable values: \"enabled\", \"disabled\", \"enable_read_only_actions\".",
 											Computed:    true,
 											Validators: []validator.String{
-												stringvalidator.OneOfCaseInsensitive("enabled", "disabled"),
+												stringvalidator.OneOfCaseInsensitive(
+													"enabled",
+													"disabled",
+													"enable_read_only_actions",
+												),
 											},
 										},
 										"paste": schema.StringAttribute{
@@ -424,6 +418,17 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"enabled": schema.BoolAttribute{
 											Description: "Enable sending the copy to storage.",
+											Computed:    true,
+										},
+									},
+								},
+								"forward": schema.SingleNestedAttribute{
+									Description: "Forward matching HTTP requests to a Worker. Required for `http` rules with the action set to `forward`.",
+									Computed:    true,
+									CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPoliciesRuleSettingsForwardDataSourceModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"worker_id": schema.StringAttribute{
+											Description: "Specify the public Worker ID of the target Worker.",
 											Computed:    true,
 										},
 									},

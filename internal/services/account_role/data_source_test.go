@@ -51,7 +51,7 @@ func testAccCloudflareAccountRolesBasic(rnd, accountID string) string {
 		data "cloudflare_account_roles" "%[1]s" {
 		  account_id = "%[2]s"
 		}
-		
+
 		data "cloudflare_account_role" "%[1]s" {
 		  account_id = "%[2]s"
 		  role_id    = data.cloudflare_account_roles.%[1]s.result[0].id

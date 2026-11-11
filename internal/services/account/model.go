@@ -14,14 +14,15 @@ type AccountResultEnvelope struct {
 }
 
 type AccountModel struct {
-	ID         types.String                                    `tfsdk:"id" json:"id,computed"`
-	Standalone types.Bool                                      `tfsdk:"standalone" json:"standalone,computed_optional,no_refresh"`
-	Unit       customfield.NestedObject[AccountUnitModel]      `tfsdk:"unit" json:"unit,computed_optional,no_refresh"`
-	Name       types.String                                    `tfsdk:"name" json:"name,required"`
-	Type       types.String                                    `tfsdk:"type" json:"type,computed_optional"`
-	ManagedBy  customfield.NestedObject[AccountManagedByModel] `tfsdk:"managed_by" json:"managed_by,computed_optional"`
-	Settings   customfield.NestedObject[AccountSettingsModel]  `tfsdk:"settings" json:"settings,computed_optional"`
-	CreatedOn  timetypes.RFC3339                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ID          types.String                                      `tfsdk:"id" json:"id,computed"`
+	Standalone  types.Bool                                        `tfsdk:"standalone" json:"standalone,computed_optional,no_refresh"`
+	Unit        customfield.NestedObject[AccountUnitModel]        `tfsdk:"unit" json:"unit,computed_optional,no_refresh"`
+	Name        types.String                                      `tfsdk:"name" json:"name,required"`
+	Type        types.String                                      `tfsdk:"type" json:"type,computed_optional"`
+	ManagedBy   customfield.NestedObject[AccountManagedByModel]   `tfsdk:"managed_by" json:"managed_by,computed_optional"`
+	Settings    customfield.NestedObject[AccountSettingsModel]    `tfsdk:"settings" json:"settings,computed_optional"`
+	CreatedOn   timetypes.RFC3339                                 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	LegacyFlags customfield.NestedObject[AccountLegacyFlagsModel] `tfsdk:"legacy_flags" json:"legacy_flags,computed"`
 }
 
 func (m AccountModel) MarshalJSON() (data []byte, err error) {
@@ -37,11 +38,23 @@ type AccountUnitModel struct {
 }
 
 type AccountManagedByModel struct {
-	ParentOrgID   types.String `tfsdk:"parent_org_id" json:"parent_org_id,computed"`
-	ParentOrgName types.String `tfsdk:"parent_org_name" json:"parent_org_name,computed"`
+	ParentOrgID             types.String `tfsdk:"parent_org_id" json:"parent_org_id,computed"`
+	ParentOrgName           types.String `tfsdk:"parent_org_name" json:"parent_org_name,computed"`
+	RootOrgID               types.String `tfsdk:"root_org_id" json:"root_org_id,computed"`
+	ShouldDisplayParentOrgs types.Bool   `tfsdk:"should_display_parent_orgs" json:"should_display_parent_orgs,computed"`
 }
 
 type AccountSettingsModel struct {
 	AbuseContactEmail types.String `tfsdk:"abuse_contact_email" json:"abuse_contact_email,optional"`
 	EnforceTwofactor  types.Bool   `tfsdk:"enforce_twofactor" json:"enforce_twofactor,computed_optional"`
+}
+
+type AccountLegacyFlagsModel struct {
+	EnterpriseZoneQuota customfield.NestedObject[AccountLegacyFlagsEnterpriseZoneQuotaModel] `tfsdk:"enterprise_zone_quota" json:"enterprise_zone_quota,computed"`
+}
+
+type AccountLegacyFlagsEnterpriseZoneQuotaModel struct {
+	Available types.Int64 `tfsdk:"available" json:"available,computed"`
+	Current   types.Int64 `tfsdk:"current" json:"current,computed"`
+	Maximum   types.Int64 `tfsdk:"maximum" json:"maximum,computed"`
 }

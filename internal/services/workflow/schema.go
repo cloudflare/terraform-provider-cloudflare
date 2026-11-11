@@ -10,6 +10,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -53,6 +54,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"script_name": schema.StringAttribute{
 				Required: true,
+			},
+			"jurisdiction": schema.StringAttribute{
+				Description: "Jurisdiction where instances of this workflow run and store data. Can only be set when the workflow is created and cannot be changed afterwards; omit it to keep the existing jurisdiction.\nAvailable values: \"eu\", \"fedramp\", \"us\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"eu",
+						"fedramp",
+						"us",
+					),
+				},
 			},
 			"concurrency": schema.SingleNestedAttribute{
 				Optional: true,

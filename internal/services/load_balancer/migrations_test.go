@@ -308,7 +308,7 @@ func TestMigrateCloudflareLoadBalancer_Migration_GeoBalanced_MultiVersion(t *tes
 				},
 			})
 
-			// Combine all steps  
+			// Combine all steps
 			allSteps := []resource.TestStep{initialStep}
 			allSteps = append(allSteps, migrationSteps...)
 
@@ -364,39 +364,39 @@ func TestMigrateCloudflareLoadBalancer_Migration_Rules_MultiVersion(t *testing.T
 			testConfig := tc.configFn(accountID, zoneID, zone, rnd)
 			tmpDir := t.TempDir()
 
-		// Build test steps
-		steps := []resource.TestStep{
-					{
-						// Step 1: Create load balancer with specific version
-						ExternalProviders: map[string]resource.ExternalProvider{
-							"cloudflare": {
-								VersionConstraint: tc.version,
-								Source:            "cloudflare/cloudflare",
-							},
-						},
-						Config: testConfig,
-						ConfigStateChecks: []statecheck.StateCheck{
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("off")),
+			// Build test steps
+			steps := []resource.TestStep{
+				{
+					// Step 1: Create load balancer with specific version
+					ExternalProviders: map[string]resource.ExternalProvider{
+						"cloudflare": {
+							VersionConstraint: tc.version,
+							Source:            "cloudflare/cloudflare",
 						},
 					},
-		}
-
-		// Step 2: Migrate to v5 provider
-		migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
+					Config: testConfig,
+					ConfigStateChecks: []statecheck.StateCheck{
 						statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("off")),
-		})
-		steps = append(steps, migrationSteps...)
+					},
+				},
+			}
 
-		// Step 3: Apply migrated config with v5 provider
-		steps = append(steps, resource.TestStep{
-			ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-			ConfigDirectory:          config.StaticDirectory(tmpDir),
-			ConfigStateChecks: []statecheck.StateCheck{
+			// Step 2: Migrate to v5 provider
+			migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, testConfig, tmpDir, tc.version, "v4", "v5", []statecheck.StateCheck{
 				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("off")),
-			},
-		})
+			})
+			steps = append(steps, migrationSteps...)
 
-		resource.Test(t, resource.TestCase{
+			// Step 3: Apply migrated config with v5 provider
+			steps = append(steps, resource.TestStep{
+				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+				ConfigDirectory:          config.StaticDirectory(tmpDir),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("off")),
+				},
+			})
+
+			resource.Test(t, resource.TestCase{
 				PreCheck: func() {
 					acctest.TestAccPreCheck(t)
 					acctest.TestAccPreCheck_AccountID(t)
@@ -405,8 +405,8 @@ func TestMigrateCloudflareLoadBalancer_Migration_Rules_MultiVersion(t *testing.T
 				},
 				CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
 				WorkingDir:   tmpDir,
-			Steps:        steps,
-		})
+				Steps:        steps,
+			})
 		})
 	}
 }
@@ -435,40 +435,40 @@ func TestMigrateCloudflareLoadBalancer_Migration_SessionAffinityIPCookie(t *test
 	v4Config := testAccCloudflareLoadBalancerMigrationConfigV4SessionAffinityIPCookie(accountID, zoneID, zone, rnd)
 	tmpDir := t.TempDir()
 
-		// Build test steps
-		steps := []resource.TestStep{
-			{
-				// Step 1: Create load balancer with v4 provider
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						VersionConstraint: "4.52.1",
-						Source:            "cloudflare/cloudflare",
-					},
-				},
-				Config: v4Config,
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_affinity"), knownvalue.StringExact("ip_cookie")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_affinity_ttl"), knownvalue.Float64Exact(10800)),
+	// Build test steps
+	steps := []resource.TestStep{
+		{
+			// Step 1: Create load balancer with v4 provider
+			ExternalProviders: map[string]resource.ExternalProvider{
+				"cloudflare": {
+					VersionConstraint: "4.52.1",
+					Source:            "cloudflare/cloudflare",
 				},
 			},
-		}
+			Config: v4Config,
+			ConfigStateChecks: []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_affinity"), knownvalue.StringExact("ip_cookie")),
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_affinity_ttl"), knownvalue.Float64Exact(10800)),
+			},
+		},
+	}
 
-		// Step 2: Migrate to v5 provider
-		migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{})
-		steps = append(steps, migrationSteps...)
+	// Step 2: Migrate to v5 provider
+	migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{})
+	steps = append(steps, migrationSteps...)
 
+	// Step 3: Apply migrated config with v5 provider
+	steps = append(steps, resource.TestStep{
 		// Step 3: Apply migrated config with v5 provider
-		steps = append(steps, resource.TestStep{
-				// Step 3: Apply migrated config with v5 provider
-				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-				ConfigDirectory:          config.StaticDirectory(tmpDir),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_affinity"), knownvalue.StringExact("ip_cookie")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_affinity_ttl"), knownvalue.Int64Exact(10800)),
-				},
-		})
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ConfigStateChecks: []statecheck.StateCheck{
+			statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_affinity"), knownvalue.StringExact("ip_cookie")),
+			statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_affinity_ttl"), knownvalue.Int64Exact(10800)),
+		},
+	})
 
-		resource.Test(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
@@ -477,8 +477,8 @@ func TestMigrateCloudflareLoadBalancer_Migration_SessionAffinityIPCookie(t *test
 		},
 		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
 		WorkingDir:   tmpDir,
-			Steps:        steps,
-		})
+		Steps:        steps,
+	})
 }
 
 // TestAccCloudflareLoadBalancer_Migration_ProximitySteeringPolicy tests migration of
@@ -503,38 +503,38 @@ func TestMigrateCloudflareLoadBalancer_Migration_ProximitySteeringPolicy(t *test
 	v4Config := testAccCloudflareLoadBalancerMigrationConfigV4ProximityPolicy(accountID, zoneID, zone, rnd)
 	tmpDir := t.TempDir()
 
-		// Build test steps
-		steps := []resource.TestStep{
-			{
-				// Step 1: Create load balancer with v4 provider
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"cloudflare": {
-						VersionConstraint: "4.52.1",
-						Source:            "cloudflare/cloudflare",
-					},
-				},
-				Config: v4Config,
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("proximity")),
+	// Build test steps
+	steps := []resource.TestStep{
+		{
+			// Step 1: Create load balancer with v4 provider
+			ExternalProviders: map[string]resource.ExternalProvider{
+				"cloudflare": {
+					VersionConstraint: "4.52.1",
+					Source:            "cloudflare/cloudflare",
 				},
 			},
-		}
+			Config: v4Config,
+			ConfigStateChecks: []statecheck.StateCheck{
+				statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("proximity")),
+			},
+		},
+	}
 
-		// Step 2: Migrate to v5 provider
-		migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{})
-		steps = append(steps, migrationSteps...)
+	// Step 2: Migrate to v5 provider
+	migrationSteps := acctest.MigrationV2TestStepWithStateNormalization(t, v4Config, tmpDir, "4.52.1", "v4", "v5", []statecheck.StateCheck{})
+	steps = append(steps, migrationSteps...)
 
+	// Step 3: Apply migrated config with v5 provider
+	steps = append(steps, resource.TestStep{
 		// Step 3: Apply migrated config with v5 provider
-		steps = append(steps, resource.TestStep{
-				// Step 3: Apply migrated config with v5 provider
-				ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-				ConfigDirectory:          config.StaticDirectory(tmpDir),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("proximity")),
-				},
-		})
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		ConfigDirectory:          config.StaticDirectory(tmpDir),
+		ConfigStateChecks: []statecheck.StateCheck{
+			statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("steering_policy"), knownvalue.StringExact("proximity")),
+		},
+	})
 
-		resource.Test(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
@@ -543,8 +543,8 @@ func TestMigrateCloudflareLoadBalancer_Migration_ProximitySteeringPolicy(t *test
 		},
 		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
 		WorkingDir:   tmpDir,
-			Steps:        steps,
-		})
+		Steps:        steps,
+	})
 }
 
 // V4 Configuration Functions
@@ -604,21 +604,21 @@ resource "cloudflare_load_balancer" "%[4]s" {
   default_pool_ids     = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
-  
+
   session_affinity_attributes {
     samesite = "Lax"
     secure = "Auto"
   }
-  
+
   adaptive_routing {
     failover_across_pools = false
   }
-  
+
   location_strategy {
     prefer_ecs = "proximity"
     mode = "pop"
   }
-  
+
   random_steering {
     default_weight = 0.5
   }
@@ -808,21 +808,21 @@ resource "cloudflare_load_balancer" "%[4]s" {
   default_pools = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
-  
+
   session_affinity_attributes = {
     samesite = "Lax"
     secure = "Auto"
   }
-  
+
   adaptive_routing = {
     failover_across_pools = false
   }
-  
+
   location_strategy = {
     prefer_ecs = "proximity"
     mode = "pop"
   }
-  
+
   random_steering = {
     default_weight = 0.5
   }
@@ -865,7 +865,7 @@ resource "cloudflare_load_balancer" "%[4]s" {
   default_pools = [
     cloudflare_load_balancer_pool.%[4]s.id
   ]
-  
+
   region_pools = {
     WNAM = [cloudflare_load_balancer_pool.%[4]s.id]
     ENAM = [cloudflare_load_balancer_pool.%[4]s-2.id]
@@ -914,13 +914,13 @@ resource "cloudflare_load_balancer" "%[4]s" {
     cloudflare_load_balancer_pool.%[4]s.id
   ]
   ttl = 30
-  
+
   rules = [{
     name = "test rule"
     condition = "http.request.uri.path contains \"/api\""
     disabled = false
     priority = 1
-    
+
     overrides = {
       fallback_pool = cloudflare_load_balancer_pool.%[4]s-2.id
       default_pools = [cloudflare_load_balancer_pool.%[4]s-2.id]

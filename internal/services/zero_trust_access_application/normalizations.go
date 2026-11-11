@@ -135,6 +135,22 @@ func normalizeZeroTrustApplicationPolicyAPIData(ctx context.Context, data, state
 	}
 }
 
+// The API returns every policy rule in full, in its own order. Decoding onto the prior
+// state merges the response into the existing set elements by index, so when the
+// order differs, selectors from one rule leak into another. Clear the prior rules
+// so they decode fresh.
+func clearPriorPolicyRules(ctx context.Context, data *ZeroTrustAccessApplicationModel) {
+	if data.Policies == nil {
+		return
+	}
+	for i := range *data.Policies {
+		policy := &(*data.Policies)[i]
+		policy.Include = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx)
+		policy.Exclude = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx)
+		policy.Require = customfield.NullObjectSet[ZeroTrustAccessApplicationPoliciesRequireModel](ctx)
+	}
+}
+
 // Normalizing function to ensure consistency between the state and the meaning of the API response.
 // Alters the API response before applying it to the state by laxing equalities between null & zero-value
 // for some attributes, and nullifies fields that terraform should not be saving in the state.
@@ -179,6 +195,10 @@ func normalizeReadZeroTrustApplicationAPIData(ctx context.Context, data, stateDa
 			}
 		}
 	}
+
+	// The API returns `landing_page_design` with every field null when no design is set. Treat that
+	// as null so a configuration that omits the attribute does not plan a change on every run.
+	data.LandingPageDesign = customfield.NullifyEmptyObject(ctx, data.LandingPageDesign)
 
 	normalizeFalseAndNullBool(&data.ServiceAuth401Redirect, stateData.ServiceAuth401Redirect)
 	normalizeFalseAndNullBool(&data.EnableBindingCookie, stateData.EnableBindingCookie)

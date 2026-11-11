@@ -16,6 +16,7 @@ type ZeroTrustDNSLocationModel struct {
 	ID                        types.String                          `tfsdk:"id" json:"id,computed"`
 	AccountID                 types.String                          `tfsdk:"account_id" path:"account_id,required"`
 	Name                      types.String                          `tfsdk:"name" json:"name,required"`
+	Dns64Enabled              types.Bool                            `tfsdk:"dns64_enabled" json:"dns64_enabled,optional"`
 	Endpoints                 *ZeroTrustDNSLocationEndpointsModel   `tfsdk:"endpoints" json:"endpoints,optional"`
 	MaxTTL                    *ZeroTrustDNSLocationMaxTTLModel      `tfsdk:"max_ttl" json:"max_ttl,computed_optional"`
 	Networks                  *[]*ZeroTrustDNSLocationNetworksModel `tfsdk:"networks" json:"networks,computed_optional"`

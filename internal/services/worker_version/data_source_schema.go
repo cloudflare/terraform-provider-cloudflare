@@ -9,7 +9,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -23,6 +22,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
+				"Individual Workers Admin",
+				"Individual Workers Content Read-Only",
+				"Individual Workers Editor",
+				"Workers Admin",
+				"Workers Content Read-Only",
+				"Workers Editor",
 				"Workers Scripts Read",
 				"Workers Scripts Write",
 				"Workers Tail Read",
@@ -323,27 +328,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Namespace identifier tag.",
 							Computed:    true,
 						},
-						"retry": schema.SingleNestedAttribute{
-							Description: "Retry policy for calls made to the Durable Object through this binding. Omitted or null properties use the runtime defaults. These limits are upper bounds and do not enable retries for otherwise ineligible calls.",
-							Computed:    true,
-							CustomType:  customfield.NewNestedObjectType[WorkerVersionBindingsRetryDataSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"max_attempts": schema.Int64Attribute{
-									Description: "Maximum number of retries after the initial request, not the total number of attempts. Defaults to 4. Zero disables retries.",
-									Computed:    true,
-									Validators: []validator.Int64{
-										int64validator.Between(0, 10),
-									},
-								},
-								"timeout_ms": schema.Int64Attribute{
-									Description: "Retry timeout in milliseconds, measured from the start of the call. No retry starts after it expires, and a retry still running when it expires is cancelled. This is not a request timeout; it does not limit the initial request, which is still subject to any timeouts set by your Worker. Defaults to 10000.",
-									Computed:    true,
-									Validators: []validator.Int64{
-										int64validator.Between(500, 60000),
-									},
-								},
-							},
-						},
 						"script_name": schema.StringAttribute{
 							Description: "The script where the Durable Object is defined, if it is external to this Worker.",
 							Computed:    true,
@@ -353,7 +337,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"version_id": schema.StringAttribute{
-							Description: `Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.`,
+							Description: "Identifier for the version to inherit the binding from. This can be a version ID, or the literal \"latest\" to inherit from the most recently uploaded version, which may not be the deployed version. Defaults to \"latest\". Only the Workers API version endpoints under `/accounts/{account_id}/workers/workers/{worker_id}/versions` accept a version ID. Other endpoints, including script upload and script version upload, accept only \"latest\" and reject a version ID with error 10057.",
 							Computed:    true,
 						},
 						"json": schema.StringAttribute{
@@ -500,14 +484,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"identity": schema.StringAttribute{
-							Description: "Enables Gateway identity for the binding. Requires network_id to be \"cf1:network\" and cannot be combined with tunnel_id.\nAvailable values: \"runtime-email-alpha\".",
+							Description: "Enables Gateway identity for the binding. Requires network_id to be \"cf1:network\" and cannot be combined with tunnel_id or an explicit \"cf1:vnet:<UUID>\" network_id.\nAvailable values: \"runtime-email-alpha\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("runtime-email-alpha"),
 							},
 						},
 						"network_id": schema.StringAttribute{
-							Description: `Identifier of the network to bind to. Only "cf1:network" is currently supported. Mutually exclusive with tunnel_id.`,
+							Description: `Identifier of the network to bind to. Use "cf1:network" to select the account's default virtual network at runtime, or "cf1:vnet:<UUID>" to select an explicit virtual network in the Worker's account. Mutually exclusive with tunnel_id.`,
 							Computed:    true,
 						},
 						"tunnel_id": schema.StringAttribute{

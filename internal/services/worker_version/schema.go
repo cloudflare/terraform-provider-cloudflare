@@ -9,7 +9,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -33,6 +32,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
+				"Individual Workers Admin",
+				"Individual Workers Content Read-Only",
+				"Individual Workers Editor",
+				"Workers Admin",
+				"Workers Content Read-Only",
+				"Workers Editor",
 				"Workers Scripts Read",
 				"Workers Scripts Write",
 				"Workers Tail Read",
@@ -61,10 +66,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 			},
 			"include": schema.StringAttribute{
-				Description: "Whether to include the `modules` property of the version in the response, which contains code and sourcemap content and may add several megabytes to the response size.\nAvailable values: \"modules\".",
+				Description: "Optional properties to include in the response. `modules` includes the `modules` property, which contains code and may add several megabytes to the response size. `modules,sourcemaps` also includes the version's source maps in `modules`.\nAvailable values: \"modules\", \"modules,sourcemaps\".",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("modules"),
+					stringvalidator.OneOfCaseInsensitive("modules", "modules,sourcemaps"),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -97,14 +102,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
-							Description: "The kind of export.\nAvailable values: \"worker\", \"durable-object\".",
+							Description: "For `type: worker`: Marks this entry as a Worker entrypoint export.\n\nFor `type: durable-object`: Marks this entry as a Durable Object export.\nAvailable values: \"worker\", \"durable-object\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("worker", "durable-object"),
 							},
 						},
 						"cache": schema.SingleNestedAttribute{
-							Description: "Cache override for this entrypoint. It applies only to\n`type: worker` entries and overrides the Worker's global\n`cache_options.enabled` for that entrypoint.",
+							Description: "For `type: worker`: Cache override for this entrypoint. Overrides the Worker's\nglobal `cache_options.enabled` for this entrypoint only.",
 							Optional:    true,
 							Attributes: map[string]schema.Attribute{
 								"enabled": schema.BoolAttribute{
@@ -113,12 +118,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"renamed_to": schema.StringAttribute{
-							Description: "Destination class name for a `state: renamed` tombstone. The\ntarget must appear as a live (`created`) entry in the same\n`exports` map. Write-only: never present in GET responses.",
-							Optional:    true,
-						},
 						"state": schema.StringAttribute{
-							Description: "Lifecycle state of the export entry. Defaults to `created`\n(a normal, live export) when omitted.\n\n`deleted`, `renamed`, and `transferred` are tombstones:\nwrite-only lifecycle operations that retire, rename, or hand\noff a provisioned Durable Object namespace. They are applied\nat upload and are filtered out of GET responses, so a read\nonly ever returns `created` or `expecting-transfer`.\n\n`expecting-transfer` is a live export whose data is being\nreceived from another script via the two-phase transfer flow;\nit carries `storage` and `transfer_from`.\nAvailable values: \"created\", \"deleted\", \"renamed\", \"transferred\", \"expecting-transfer\".",
+							Description: "For `state: created`: Live export. May be omitted; defaults to `created`.\n\nFor `state: deleted`: Tombstone that deletes the namespace.\n\nFor `state: renamed`: Tombstone that renames the namespace's class.\n\nFor `state: transferred`: Tombstone that transfers the namespace to another script.\n\nFor `state: expecting-transfer`: Target side of a two-phase transfer.\nAvailable values: \"created\", \"deleted\", \"renamed\", \"transferred\", \"expecting-transfer\".",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -131,18 +132,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"storage": schema.StringAttribute{
-							Description: "Storage backend for a `type: durable-object` export. Required\nfor live Durable Object entries (`created` and\n`expecting-transfer`). `sqlite` selects SQLite-backed storage;\n`legacy-kv` selects the legacy key-value storage.\nAvailable values: \"sqlite\", \"legacy-kv\".",
+							Description: "For `type: durable-object` and `state: created`: Durable Object storage backend. `sqlite` is the recommended (and\nonly) backend for new namespaces. `legacy-kv` is accepted only for\na class whose namespace already exists as KV-backed; the `exports`\nflow never provisions a new `legacy-kv` namespace.\n\nFor `type: durable-object` and `state: expecting-transfer`: Durable Object storage backend. `sqlite` is the recommended (and\nonly) backend for new namespaces. `legacy-kv` is accepted only for\na class whose namespace already exists as KV-backed; the `exports`\nflow never provisions a new `legacy-kv` namespace.\nAvailable values: \"sqlite\", \"legacy-kv\".",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("sqlite", "legacy-kv"),
 							},
 						},
-						"transfer_from": schema.StringAttribute{
-							Description: "Source script for a `state: expecting-transfer` entry. The\nnamespace on this script is materialised from the source\nscript's data via the pending-transfer flow. Present on reads\nfor `expecting-transfer` entries.",
+						"container": schema.StringAttribute{
+							Description: "For `type: durable-object` and `state: created`: Name of the container (declared in the upload's\n`metadata.containers`) that backs this Durable Object. When\nset, the namespace is container-enabled. Valid only on live\nentries.\n\nFor `state: expecting-transfer`: Name of the container (declared in the upload's\n`metadata.containers`) that backs this Durable Object once the\ntransfer settles. Valid only on live entries.",
+							Optional:    true,
+						},
+						"renamed_to": schema.StringAttribute{
+							Description: "For `state: renamed`: The destination class name. Must differ from the source class\n(the map key) and must be declared as a live (`created`) entry\nin the same `exports` map. Write-only: never present in GET\nresponses.",
 							Optional:    true,
 						},
 						"transferred_to": schema.StringAttribute{
-							Description: "Destination script for a `state: transferred` tombstone. Must\nreference a script in the same account; cross-dispatch-namespace\ntransfers are rejected. Write-only: never present in GET\nresponses.",
+							Description: "For `state: transferred`: The destination script name. Must be in the same account and\nthe same dispatch-namespace context (or both non-dispatch).\nCross-dispatch-namespace transfers are rejected. Write-only:\nnever present in GET responses.",
+							Optional:    true,
+						},
+						"transfer_from": schema.StringAttribute{
+							Description: "For `state: expecting-transfer`: The source script name to receive the namespace from. Must be\nin the same account and dispatch-namespace context. Present on\nreads for `expecting-transfer` entries.",
 							Optional:    true,
 						},
 					},
@@ -265,7 +274,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"modules": schema.SetNestedAttribute{
-				Description: "Code, sourcemaps, and other content used at runtime.\n\nThis includes [`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and\n[`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files used to configure\n[Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be\nincluded as modules named `_headers` and `_redirects` with content type `text/plain`.",
+				Description: "Code, sourcemaps, and other content used at runtime.\n\nSource maps use content type `application/source-map`. Responses include them only when requested with\n`include=modules,sourcemaps`. Workers stores the source map fields used to remap stack traces, so a returned\nsource map is equivalent to the uploaded file but not byte-identical.\n\nThis includes [`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and\n[`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files used to configure\n[Static Assets](https://developers.cloudflare.com/workers/static-assets/). `_headers` and `_redirects` files should be\nincluded as modules named `_headers` and `_redirects` with content type `text/plain`.",
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -336,7 +345,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
-						Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\", \"targeted\".",
+						Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\n\nTargeted placement mode.\nAvailable values: \"smart\", \"targeted\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("smart", "targeted"),
@@ -393,7 +402,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:       stringdefault.StaticString("standard"),
 			},
 			"compatibility_flags": schema.SetAttribute{
-				Description:   "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
+				Description:   "Enables or disables specific Workers runtime features, such as upcoming features or changes outside the `compatibility_date`.\n\nResponses list only the flags this version sets explicitly and exclude behavior that `compatibility_date` enables. Responses omit the field when the list is empty, so a missing field means the version sets zero flags.",
 				Computed:      true,
 				Optional:      true,
 				CustomType:    customfield.NewSetType[types.String](ctx),
@@ -499,11 +508,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
-							Description: "A JavaScript variable name for the binding.",
+							Description: "For `type: ai` or `type: ai_search` or `type: ai_search_namespace` or `type: messaging` or `type: analytics_engine` or `type: artifacts` or `type: assets` or `type: browser` or `type: d1` or `type: data_blob` or `type: dispatch_namespace` or `type: durable_object_namespace` or `type: hyperdrive` or `type: images` or `type: json` or `type: kv_namespace` or `type: media` or `type: mtls_certificate` or `type: plain_text` or `type: pipelines` or `type: k2` or `type: queue` or `type: ratelimit` or `type: r2_bucket` or `type: secret_text` or `type: send_email` or `type: service` or `type: text_blob` or `type: vectorize` or `type: version_metadata` or `type: secrets_store_secret` or `type: flagship` or `type: secret_key` or `type: workflow` or `type: wasm_module` or `type: vpc_service` or `type: vpc_network` or `type: worker_loader`: A JavaScript variable name for the binding.\n\nFor `type: inherit`: The name of the inherited binding.",
 							Required:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"messaging\", \"analytics_engine\", \"artifacts\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"k2\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"flagship\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\".",
+							Description: "The kind of resource that the binding provides.\nAvailable values: \"ai\", \"ai_search\", \"ai_search_namespace\", \"messaging\", \"analytics_engine\", \"artifacts\", \"assets\", \"browser\", \"d1\", \"data_blob\", \"dispatch_namespace\", \"durable_object_namespace\", \"hyperdrive\", \"inherit\", \"images\", \"json\", \"kv_namespace\", \"media\", \"mtls_certificate\", \"plain_text\", \"pipelines\", \"k2\", \"queue\", \"ratelimit\", \"r2_bucket\", \"secret_text\", \"send_email\", \"service\", \"text_blob\", \"vectorize\", \"version_metadata\", \"secrets_store_secret\", \"flagship\", \"secret_key\", \"workflow\", \"wasm_module\", \"vpc_service\", \"vpc_network\", \"worker_loader\".",
 							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -545,36 +554,37 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"wasm_module",
 									"vpc_service",
 									"vpc_network",
+									"worker_loader",
 								),
 							},
 						},
 						"instance_name": schema.StringAttribute{
-							Description: "The user-chosen instance name. Must exist at deploy time. The worker can search, chat, update, and manage items/jobs on this instance.",
+							Description: "For `type: ai_search`: The user-chosen instance name. Must exist at deploy time. The worker can search, chat, update, and manage items/jobs on this instance.",
 							Optional:    true,
 						},
 						"namespace": schema.StringAttribute{
-							Description: `The namespace the instance belongs to. Defaults to "default" if omitted. Customers who don't use namespaces can simply omit this field.`,
+							Description: "For `type: ai_search`: The namespace the instance belongs to. Defaults to \"default\" if omitted. Customers who don't use namespaces can simply omit this field.\n\nFor `type: ai_search_namespace`: The user-chosen namespace name. Must exist before deploy -- Wrangler handles auto-creation on deploy failure (R2 bucket pattern). The \"default\" namespace is auto-created by config-api for new accounts. Grants full access (CRUD + search + chat) to all instances within the namespace.\n\nFor `type: messaging`: The Messaging namespace to bind to.\n\nFor `type: artifacts`: The Artifacts namespace exposed to the Worker in the Worker's account. Must be 2-63 characters, start with an ASCII alphanumeric character, contain only ASCII alphanumeric characters, dots, underscores, and hyphens, and must not end with a hyphen. The namespace does not need to be created before binding it.\n\nFor `type: dispatch_namespace`: The name of the dispatch namespace.",
 							Optional:    true,
 						},
 						"dataset": schema.StringAttribute{
-							Description: "The name of the dataset to bind to.",
+							Description: "For `type: analytics_engine`: The name of the dataset to bind to.",
 							Optional:    true,
 						},
 						"database_id": schema.StringAttribute{
-							Description: "Identifier of the D1 database to bind to.",
+							Description: "For `type: d1`: Identifier of the D1 database to bind to.",
 							Computed:    true,
 							Optional:    true,
 						},
 						"id": schema.StringAttribute{
-							Description: "Identifier of the D1 database to bind to.",
+							Description: "For `type: d1`: Identifier of the D1 database to bind to.\n\nFor `type: hyperdrive`: Identifier of the Hyperdrive connection to bind to.",
 							Optional:    true,
 						},
 						"part": schema.StringAttribute{
-							Description: "The name of the file containing the data content. Only accepted for `service worker syntax` Workers.",
+							Description: "For `type: data_blob`: The name of the file containing the data content. Only accepted for `service worker syntax` Workers.\n\nFor `type: text_blob`: The name of the file containing the text content. Only accepted for `service worker syntax` Workers.\n\nFor `type: wasm_module`: The name of the file containing the WebAssembly module content. Only accepted for `service worker syntax` Workers.",
 							Optional:    true,
 						},
 						"outbound": schema.SingleNestedAttribute{
-							Description: "Outbound worker.",
+							Description: "For `type: dispatch_namespace`: Outbound worker.",
 							Optional:    true,
 							Attributes: map[string]schema.Attribute{
 								"params": schema.ListNestedAttribute{
@@ -610,7 +620,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"class_name": schema.StringAttribute{
-							Description: "The exported class name of the Durable Object.",
+							Description: "For `type: durable_object_namespace`: The exported class name of the Durable Object.\n\nFor `type: workflow`: Class name of the Workflow. Should only be provided if the Workflow belongs to this script.",
 							Computed:    true,
 							Optional:    true,
 							PlanModifiers: []planmodifier.String{
@@ -618,43 +628,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"dispatch_namespace": schema.StringAttribute{
-							Description: "The dispatch namespace the Durable Object script belongs to.",
+							Description: "For `type: durable_object_namespace`: The dispatch namespace the Durable Object script belongs to.",
 							Optional:    true,
 						},
 						"environment": schema.StringAttribute{
-							Description: "The environment of the script_name to bind to.",
-							Optional:    true,
+							Description:   "For `type: durable_object_namespace`: The environment of the script_name to bind to.\n\nFor `type: service`: Optional environment if the Worker utilizes one.",
+							Computed:      true,
+							Optional:      true,
+							PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 						},
 						"namespace_id": schema.StringAttribute{
-							Description: "Namespace identifier tag.",
+							Description: "For `type: durable_object_namespace` or `type: kv_namespace`: Namespace identifier tag.\n\nFor `type: ratelimit`: Identifier of the rate limit namespace to bind to.",
 							Computed:    true,
 							Optional:    true,
 							PlanModifiers: []planmodifier.String{
 								UnknownOnlyIf("type", "durable_object_namespace"),
 							},
 						},
-						"retry": schema.SingleNestedAttribute{
-							Description: "Retry policy for calls made to the Durable Object through this binding. Omitted or null properties use the runtime defaults. These limits are upper bounds and do not enable retries for otherwise ineligible calls.",
-							Optional:    true,
-							Attributes: map[string]schema.Attribute{
-								"max_attempts": schema.Int64Attribute{
-									Description: "Maximum number of retries after the initial request, not the total number of attempts. Defaults to 4. Zero disables retries.",
-									Optional:    true,
-									Validators: []validator.Int64{
-										int64validator.Between(0, 10),
-									},
-								},
-								"timeout_ms": schema.Int64Attribute{
-									Description: "Retry timeout in milliseconds, measured from the start of the call. No retry starts after it expires, and a retry still running when it expires is cancelled. This is not a request timeout; it does not limit the initial request, which is still subject to any timeouts set by your Worker. Defaults to 10000.",
-									Optional:    true,
-									Validators: []validator.Int64{
-										int64validator.Between(500, 60000),
-									},
-								},
-							},
-						},
 						"script_name": schema.StringAttribute{
-							Description: "The script where the Durable Object is defined, if it is external to this Worker.",
+							Description: "For `type: durable_object_namespace`: The script where the Durable Object is defined, if it is external to this Worker.\n\nFor `type: workflow`: Script name that contains the Workflow. If not provided, defaults to this script name.",
 							Computed:    true,
 							Optional:    true,
 							PlanModifiers: []planmodifier.String{
@@ -662,41 +654,41 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"old_name": schema.StringAttribute{
-							Description: "The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.",
+							Description: "For `type: inherit`: The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.",
 							Optional:    true,
 						},
 						"version_id": schema.StringAttribute{
-							Description: `Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.`,
+							Description: "For `type: inherit`: Identifier for the version to inherit the binding from. This can be a version ID, or the literal \"latest\" to inherit from the most recently uploaded version, which may not be the deployed version. Defaults to \"latest\". Only the Workers API version endpoints under `/accounts/{account_id}/workers/workers/{worker_id}/versions` accept a version ID. Other endpoints, including script upload and script version upload, accept only \"latest\" and reject a version ID with error 10057.",
 							Optional:    true,
 						},
 						"json": schema.StringAttribute{
-							Description: "JSON data to use.",
+							Description: "For `type: json`: JSON data to use.",
 							Optional:    true,
 							CustomType:  jsontypes.NormalizedType{},
 						},
 						"certificate_id": schema.StringAttribute{
-							Description: "Identifier of the certificate to bind to.",
+							Description: "For `type: mtls_certificate`: Identifier of the certificate to bind to.",
 							Optional:    true,
 						},
 						"text": schema.StringAttribute{
-							Description: "The text value to use.",
+							Description: "For `type: plain_text`: The text value to use.\n\nFor `type: secret_text`: The secret value to use.",
 							Optional:    true,
 							Sensitive:   true,
 						},
 						"pipeline": schema.StringAttribute{
-							Description: "Name of the Pipeline to bind to.",
+							Description: "For `type: pipelines`: Name of the Pipeline to bind to.",
 							Optional:    true,
 						},
 						"stream": schema.StringAttribute{
-							Description: "ID of a K2 stream owned by the account deploying the Worker.",
+							Description: "For `type: k2`: ID of a K2 stream owned by the account deploying the Worker.",
 							Optional:    true,
 						},
 						"queue_name": schema.StringAttribute{
-							Description: "Name of the Queue to bind to.",
+							Description: "For `type: queue`: Name of the Queue to bind to.",
 							Optional:    true,
 						},
 						"simple": schema.SingleNestedAttribute{
-							Description: "The rate limit configuration.",
+							Description: "For `type: ratelimit`: The rate limit configuration.",
 							Optional:    true,
 							Attributes: map[string]schema.Attribute{
 								"limit": schema.Float64Attribute{
@@ -714,11 +706,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"bucket_name": schema.StringAttribute{
-							Description: "R2 bucket to bind to.",
+							Description: "For `type: r2_bucket`: R2 bucket to bind to.",
 							Optional:    true,
 						},
 						"jurisdiction": schema.StringAttribute{
-							Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\", \"fedramp-high\", \"us\".",
+							Description: "For `type: r2_bucket`: The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\", \"fedramp-high\", \"us\".",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -730,50 +722,50 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"allowed_destination_addresses": schema.ListAttribute{
-							Description: "List of allowed destination addresses.",
+							Description: "For `type: send_email`: List of allowed destination addresses.",
 							Optional:    true,
 							ElementType: types.StringType,
 						},
 						"allowed_sender_addresses": schema.ListAttribute{
-							Description: "List of allowed sender addresses.",
+							Description: "For `type: send_email`: List of allowed sender addresses.",
 							Optional:    true,
 							ElementType: types.StringType,
 						},
 						"destination_address": schema.StringAttribute{
-							Description: "Destination address for the email.",
+							Description: "For `type: send_email`: Destination address for the email.",
 							Optional:    true,
 						},
 						"service": schema.StringAttribute{
-							Description: "Name of Worker to bind to.",
+							Description: "For `type: service`: Name of Worker to bind to.",
 							Optional:    true,
 						},
 						"entrypoint": schema.StringAttribute{
-							Description: "Entrypoint to invoke on the target Worker.",
+							Description: "For `type: service`: Entrypoint to invoke on the target Worker.",
 							Optional:    true,
 						},
 						"index_name": schema.StringAttribute{
-							Description: "Name of the Vectorize index to bind to.",
+							Description: "For `type: vectorize`: Name of the Vectorize index to bind to.",
 							Optional:    true,
 						},
 						"secret_name": schema.StringAttribute{
-							Description: "Name of the secret in the store.",
+							Description: "For `type: secrets_store_secret`: Name of the secret in the store.",
 							Optional:    true,
 						},
 						"store_id": schema.StringAttribute{
-							Description: "ID of the store containing the secret.",
+							Description: "For `type: secrets_store_secret`: ID of the store containing the secret.",
 							Optional:    true,
 						},
 						"app_id": schema.StringAttribute{
-							Description: "ID of the Flagship app to bind to for feature flag evaluation.",
+							Description: "For `type: flagship`: ID of the Flagship app to bind to for feature flag evaluation.",
 							Optional:    true,
 						},
 						"algorithm": schema.StringAttribute{
-							Description: "Algorithm-specific key parameters. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm).",
+							Description: "For `type: secret_key`: Algorithm-specific key parameters. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm).",
 							Optional:    true,
 							CustomType:  jsontypes.NormalizedType{},
 						},
 						"format": schema.StringAttribute{
-							Description: "Data format of the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#format).\nAvailable values: \"raw\", \"pkcs8\", \"spki\", \"jwk\".",
+							Description: "For `type: secret_key`: Data format of the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#format).\nAvailable values: \"raw\", \"pkcs8\", \"spki\", \"jwk\".",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -785,43 +777,43 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"usages": schema.SetAttribute{
-							Description: "Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).",
+							Description: "For `type: secret_key`: Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).",
 							Optional:    true,
 							CustomType:  customfield.NewSetType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"key_base64": schema.StringAttribute{
-							Description: "Base64-encoded key data. Required if `format` is \"raw\", \"pkcs8\", or \"spki\".",
+							Description: "For `type: secret_key`: Base64-encoded key data. Required if `format` is \"raw\", \"pkcs8\", or \"spki\".",
 							Optional:    true,
 							Sensitive:   true,
 						},
 						"key_jwk": schema.StringAttribute{
-							Description: "Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is \"jwk\".",
+							Description: "For `type: secret_key`: Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is \"jwk\".",
 							Optional:    true,
 							Sensitive:   true,
 							CustomType:  jsontypes.NormalizedType{},
 						},
 						"workflow_name": schema.StringAttribute{
-							Description: "Name of the Workflow to bind to.",
+							Description: "For `type: workflow`: Name of the Workflow to bind to.",
 							Optional:    true,
 						},
 						"service_id": schema.StringAttribute{
-							Description: "Identifier of the VPC service to bind to.",
+							Description: "For `type: vpc_service`: Identifier of the VPC service to bind to.",
 							Optional:    true,
 						},
 						"identity": schema.StringAttribute{
-							Description: "Enables Gateway identity for the binding. Requires network_id to be \"cf1:network\" and cannot be combined with tunnel_id.\nAvailable values: \"runtime-email-alpha\".",
+							Description: "For `type: vpc_network`: Enables Gateway identity for the binding. Requires network_id to be \"cf1:network\" and cannot be combined with tunnel_id or an explicit \"cf1:vnet:<UUID>\" network_id.\nAvailable values: \"runtime-email-alpha\".",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("runtime-email-alpha"),
 							},
 						},
 						"network_id": schema.StringAttribute{
-							Description: `Identifier of the network to bind to. Only "cf1:network" is currently supported. Mutually exclusive with tunnel_id.`,
+							Description: "For `type: vpc_network`: Identifier of the network to bind to. Use \"cf1:network\" to select the account's default virtual network at runtime, or \"cf1:vnet:<UUID>\" to select an explicit virtual network in the Worker's account. Mutually exclusive with tunnel_id.",
 							Optional:    true,
 						},
 						"tunnel_id": schema.StringAttribute{
-							Description: "UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.",
+							Description: "For `type: vpc_network`: UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.",
 							Optional:    true,
 						},
 					},
@@ -866,14 +858,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplaceIfConfigured()},
 			},
-		"author_email": schema.StringAttribute{
-			Description: "Email of the user who created the version.",
-			Computed:    true,
-		},
-		"author_id": schema.StringAttribute{
-			Description: "Identifier of the user who created the version.",
-			Computed:    true,
-		},
+			"author_email": schema.StringAttribute{
+				Description: "Email of the user who created the version.",
+				Computed:    true,
+			},
+			"author_id": schema.StringAttribute{
+				Description: "Identifier of the user who created the version.",
+				Computed:    true,
+			},
 			"created_on": schema.StringAttribute{
 				Description:   "When the version was created.",
 				Computed:      true,

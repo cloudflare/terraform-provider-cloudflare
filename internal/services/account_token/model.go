@@ -26,6 +26,8 @@ type AccountTokenModel struct {
 	ModifiedOn             timetypes.RFC3339             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	ProvisionerID          types.String                  `tfsdk:"provisioner_id" json:"provisioner_id,computed"`
 	ProvisionerType        types.String                  `tfsdk:"provisioner_type" json:"provisioner_type,computed"`
+	TokenPrefix            types.String                  `tfsdk:"token_prefix" json:"token_prefix,computed"`
+	TokenSuffix            types.String                  `tfsdk:"token_suffix" json:"token_suffix,computed"`
 	Value                  types.String                  `tfsdk:"value" json:"value,computed,no_refresh"`
 }
 
@@ -34,7 +36,7 @@ func (m AccountTokenModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m AccountTokenModel) MarshalJSONForUpdate(state AccountTokenModel) (data []byte, err error) {
-	return MarshalCustom(m)
+	return MarshalCustomForUpdate(m, state)
 }
 
 type AccountTokenPoliciesModel struct {

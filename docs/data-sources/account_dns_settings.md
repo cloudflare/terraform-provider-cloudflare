@@ -39,7 +39,6 @@ data "cloudflare_account_dns_settings" "example_account_dns_settings" {
 Read-Only:
 
 - `flatten_all_cnames` (Boolean) Whether to flatten all CNAME records in the zone. Note that, due to DNS limitations, a CNAME record at the zone apex will always be flattened.
-- `foundation_dns` (Boolean) Whether to enable Foundation DNS Advanced Nameservers on the zone.
 - `internal_dns` (Attributes) Settings for this internal zone. (see [below for nested schema](#nestedatt--zone_defaults--internal_dns))
 - `multi_provider` (Boolean) Whether to enable multi-provider DNS, which causes Cloudflare to activate the zone even when non-Cloudflare NS records exist, and to respect NS records at the zone apex during outbound zone transfers.
 - `nameservers` (Attributes) Settings determining the nameservers through which the zone should be available. (see [below for nested schema](#nestedatt--zone_defaults--nameservers))
@@ -63,7 +62,7 @@ Read-Only:
 Read-Only:
 
 - `type` (String) Nameserver type
-Available values: "cloudflare.standard", "cloudflare.standard.random", "custom.account", "custom.tenant".
+Available values: "cloudflare.standard", "cloudflare.advanced", "cloudflare.standard.random", "custom.account", "custom.tenant".
 
 
 <a id="nestedatt--zone_defaults--soa"></a>

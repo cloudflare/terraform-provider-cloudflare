@@ -75,13 +75,19 @@ func (r *ManagedTransformsResource) checkAllDisabledBeforeCreation(ctx context.C
 		return diagnostics
 	}
 
-	for _, t := range res.ManagedRequestHeaders {
+	headers, ok := res.AsUnion().(managed_transforms.ManagedTransformListResponseObject)
+	if !ok {
+		diagnostics.AddError("unexpected managed transforms response", fmt.Sprintf("Expected a managed transforms object, got: %T", res.AsUnion()))
+		return diagnostics
+	}
+
+	for _, t := range headers.ManagedRequestHeaders {
 		if t.Enabled {
 			diagnostics.AddError("cannot create resource", fmt.Sprintf("managed request header transform %s cannot be enabled before creation", t.ID))
 		}
 	}
 
-	for _, t := range res.ManagedResponseHeaders {
+	for _, t := range headers.ManagedResponseHeaders {
 		if t.Enabled {
 			diagnostics.AddError("cannot create resource", fmt.Sprintf("managed response header transform %s cannot be enabled before creation", t.ID))
 		}
@@ -227,10 +233,15 @@ func (r *ManagedTransformsResource) disableMissingTransformations(
 		return nil
 	}
 
+	headers, ok := res.AsUnion().(managed_transforms.ManagedTransformListResponseObject)
+	if !ok {
+		return fmt.Errorf("unexpected managed transforms response type: %T", res.AsUnion())
+	}
+
 	if plan.ManagedRequestHeaders != nil {
 		var existingTransformations = []*ManagedTransformsManagedRequestHeadersModel{}
 
-		for _, t := range res.ManagedRequestHeaders {
+		for _, t := range headers.ManagedRequestHeaders {
 			existingTransformations = append(existingTransformations, &ManagedTransformsManagedRequestHeadersModel{
 				ID:      types.StringValue(t.ID),
 				Enabled: types.BoolValue(t.Enabled),
@@ -247,7 +258,7 @@ func (r *ManagedTransformsResource) disableMissingTransformations(
 	if plan.ManagedResponseHeaders != nil {
 		var existingTransformations = []*ManagedTransformsManagedResponseHeadersModel{}
 
-		for _, t := range res.ManagedResponseHeaders {
+		for _, t := range headers.ManagedResponseHeaders {
 			existingTransformations = append(existingTransformations, &ManagedTransformsManagedResponseHeadersModel{
 				ID:      types.StringValue(t.ID),
 				Enabled: types.BoolValue(t.Enabled),

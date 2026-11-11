@@ -129,6 +129,7 @@ func upgradeStateFromV0(ctx context.Context, req resource.UpgradeStateRequest, r
 			Bindings:            priorStateData.Bindings,
 			BodyPart:            priorStateData.BodyPart,
 			CacheOptions:        priorStateData.CacheOptions,
+			CodeUpdateStrategy:  priorStateData.CodeUpdateStrategy,
 			CompatibilityDate:   priorStateData.CompatibilityDate,
 			CompatibilityFlags:  priorStateData.CompatibilityFlags,
 			Exports:             priorStateData.Exports,
@@ -198,6 +199,7 @@ type resourceModelV0 struct {
 	Bindings            customfield.NestedObjectList[WorkersScriptMetadataBindingsModel]     `tfsdk:"bindings" json:"bindings,computed_optional"`
 	BodyPart            types.String                                                         `tfsdk:"body_part" json:"body_part,optional"`
 	CacheOptions        *WorkersScriptMetadataCacheOptionsModel                              `tfsdk:"cache_options" json:"cache_options,optional"`
+	CodeUpdateStrategy  *WorkersScriptMetadataCodeUpdateStrategyModel                        `tfsdk:"code_update_strategy" json:"code_update_strategy,optional"`
 	CompatibilityDate   types.String                                                         `tfsdk:"compatibility_date" json:"compatibility_date,computed_optional"`
 	CompatibilityFlags  customfield.Set[types.String]                                        `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
 	Exports             *map[string]WorkersScriptMetadataExportsModel                        `tfsdk:"exports" json:"exports,optional"`

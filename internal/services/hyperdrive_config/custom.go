@@ -183,4 +183,3 @@ func mtlsEqual(a, b *HyperdriveConfigMTLSModel) bool {
 		a.MTLSCertificateID.Equal(b.MTLSCertificateID) &&
 		a.Sslmode.Equal(b.Sslmode)
 }
-

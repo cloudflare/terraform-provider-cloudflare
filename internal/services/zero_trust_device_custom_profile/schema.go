@@ -178,6 +178,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Required:    true,
 						ElementType: types.StringType,
 					},
+					"allow_manual_override": schema.BoolAttribute{
+						Description: "Whether WARP users may manually override the automatic Global Acceleration decision. Defaults to true when not provided.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(true),
+					},
+					"autoswitch": schema.BoolAttribute{
+						Description: "Automatically switch Global Acceleration regions based on device location. Defaults to false when not provided.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(false),
+					},
 				},
 			},
 			"service_mode_v2": schema.SingleNestedAttribute{
@@ -251,6 +263,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"disable_auto_fallback": schema.BoolAttribute{
 				Description: "If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"enable_device_credential_authentication": schema.BoolAttribute{
+				Description: "Determines whether the WARP client can silently reauthenticate the user with device credentials (Microsoft Entra) instead of prompting for browser-based reauthentication.",
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),

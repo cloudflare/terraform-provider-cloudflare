@@ -48,6 +48,8 @@ type AIGatewaysResultDataSourceModel struct {
 	Authentication          types.Bool                                                     `tfsdk:"authentication" json:"authentication,computed"`
 	ByokOnly                types.Bool                                                     `tfsdk:"byok_only" json:"byok_only,computed"`
 	DLP                     customfield.NestedObject[AIGatewaysDLPDataSourceModel]         `tfsdk:"dlp" json:"dlp,computed"`
+	FedrampLevel            types.String                                                   `tfsdk:"fedramp_level" json:"fedramp_level,computed"`
+	FedrampMode             types.String                                                   `tfsdk:"fedramp_mode" json:"fedramp_mode,computed"`
 	Guardrails              customfield.NestedObject[AIGatewaysGuardrailsDataSourceModel]  `tfsdk:"guardrails" json:"guardrails,computed"`
 	IsDefault               types.Bool                                                     `tfsdk:"is_default" json:"is_default,computed"`
 	LogClassification       types.Bool                                                     `tfsdk:"log_classification" json:"log_classification,computed"`
@@ -94,6 +96,7 @@ type AIGatewaysGuardrailsPromptDataSourceModel struct {
 	S11 types.String `tfsdk:"s11" json:"S11,computed"`
 	S12 types.String `tfsdk:"s12" json:"S12,computed"`
 	S13 types.String `tfsdk:"s13" json:"S13,computed"`
+	S14 types.String `tfsdk:"s14" json:"S14,computed"`
 	S2  types.String `tfsdk:"s2" json:"S2,computed"`
 	S3  types.String `tfsdk:"s3" json:"S3,computed"`
 	S4  types.String `tfsdk:"s4" json:"S4,computed"`
@@ -111,6 +114,7 @@ type AIGatewaysGuardrailsResponseDataSourceModel struct {
 	S11 types.String `tfsdk:"s11" json:"S11,computed"`
 	S12 types.String `tfsdk:"s12" json:"S12,computed"`
 	S13 types.String `tfsdk:"s13" json:"S13,computed"`
+	S14 types.String `tfsdk:"s14" json:"S14,computed"`
 	S2  types.String `tfsdk:"s2" json:"S2,computed"`
 	S3  types.String `tfsdk:"s3" json:"S3,computed"`
 	S4  types.String `tfsdk:"s4" json:"S4,computed"`

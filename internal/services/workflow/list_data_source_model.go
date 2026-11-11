@@ -45,6 +45,7 @@ type WorkflowsResultDataSourceModel struct {
 	Name          types.String                                                    `tfsdk:"name" json:"name,computed"`
 	ScriptName    types.String                                                    `tfsdk:"script_name" json:"script_name,computed"`
 	TriggeredOn   timetypes.RFC3339                                               `tfsdk:"triggered_on" json:"triggered_on,computed" format:"date-time"`
+	Jurisdiction  types.String                                                    `tfsdk:"jurisdiction" json:"jurisdiction,computed"`
 	Schedules     customfield.NestedObjectList[WorkflowsSchedulesDataSourceModel] `tfsdk:"schedules" json:"schedules,computed"`
 	ScriptDeleted types.Bool                                                      `tfsdk:"script_deleted" json:"script_deleted,computed"`
 }

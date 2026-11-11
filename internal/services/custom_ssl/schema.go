@@ -4,6 +4,7 @@ package custom_ssl
 
 import (
 	"context"
+	"strings"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
@@ -58,13 +59,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"certificate": schema.StringAttribute{
 				Description:   "The zone's SSL certificate or certificate and the intermediate(s).",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{requiresReplaceIfSNICustom()},
 			},
 			"private_key": schema.StringAttribute{
 				Description:   "The zone's private key. Not required if custom_csr_id is provided, in which case the private key is retrieved from the CSR record held by Cloudflare.",
 				Optional:      true,
 				Sensitive:     true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{requiresReplaceIfSNICustom()},
 			},
 			"custom_csr_id": schema.StringAttribute{
 				Description: "The identifier for the Custom CSR that was used.",
@@ -132,7 +133,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"priority": schema.Float64Attribute{
 				Description: "The order/priority in which the certificate will be used in a request. The higher priority will break ties across overlapping 'legacy_custom' certificates, but 'legacy_custom' certificates will always supercede 'sni_custom' certificates.",
 				Computed:    true,
-				Default:     float64default.StaticFloat64(0),
 			},
 			"signature": schema.StringAttribute{
 				Description: "The type of hash used for the certificate.",
@@ -247,4 +247,33 @@ func (r *CustomSSLResource) ConfigValidators(_ context.Context) []resource.Confi
 			path.MatchRoot("custom_csr_id"),
 		),
 	}
+}
+
+// requiresReplaceIfSNICustom returns a plan modifier that forces replacement
+// when the certificate or private_key changes on an sni_custom certificate.
+//
+// For legacy_custom certificates the PATCH endpoint updates in place and returns
+// the same resource ID, so no replacement is needed. For sni_custom certificates
+// the API returns a new resource ID on every PATCH, which would cause a
+// "Provider produced inconsistent result after apply" error if Terraform planned
+// an in-place update (because the planned ID would not match the actual ID).
+func requiresReplaceIfSNICustom() planmodifier.String {
+	const description = "Replacing the certificate or private key on an sni_custom certificate requires resource replacement because the API returns a new resource ID."
+	return stringplanmodifier.RequiresReplaceIf(
+		func(ctx context.Context, req planmodifier.StringRequest, resp *stringplanmodifier.RequiresReplaceIfFuncResponse) {
+			// Only act when the value is actually changing.
+			if req.StateValue.Equal(req.PlanValue) {
+				return
+			}
+			// Read the current type from state.
+			var state CustomSSLModel
+			resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+			if resp.Diagnostics.HasError() {
+				return
+			}
+			resp.RequiresReplace = strings.EqualFold(state.Type.ValueString(), "sni_custom")
+		},
+		description,
+		description,
+	)
 }

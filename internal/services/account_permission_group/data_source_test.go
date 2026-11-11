@@ -51,7 +51,7 @@ func testAccCloudflareAccountPermissionGroupsConfig(rnd, accountID string) strin
 		data "cloudflare_account_permission_groups" "%[1]s" {
 		  account_id = "%[2]s"
 		}
-		
+
 		data "cloudflare_account_permission_group" "%[1]s" {
 		  account_id          = "%[2]s"
 		  permission_group_id = data.cloudflare_account_permission_groups.%[1]s.result[0].id

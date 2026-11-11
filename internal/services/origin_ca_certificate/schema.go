@@ -5,6 +5,7 @@ package origin_ca_certificate
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -52,6 +53,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType:   types.StringType,
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
+			"zone_id": schema.StringAttribute{
+				Description:   "Identifier of the zone whose keyless servers the certificate is for. Required when `request_type` is `keyless-certificate`; ignored otherwise.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"requested_validity": schema.Float64Attribute{
 				Description: "The number of days for which the certificate should be valid.\nAvailable values: 7, 30, 90, 365, 730, 1095, 5475.",
 				Computed:    true,
@@ -77,6 +83,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate will expire.",
 				Computed:    true,
+			},
+			"revoked_at": schema.StringAttribute{
+				Description: "When the certificate was revoked.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}

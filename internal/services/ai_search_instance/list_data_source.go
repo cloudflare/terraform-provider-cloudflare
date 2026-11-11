@@ -67,7 +67,11 @@ func (d *AISearchInstancesDataSource) Read(ctx context.Context, req datasource.R
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.AISearch.Instances.List(ctx, params)
+	page, err := d.client.AISearch.Namespaces.Instances.List(
+		ctx,
+		data.Namespace.ValueString(),
+		params,
+	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

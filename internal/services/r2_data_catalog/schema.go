@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -43,6 +44,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"credential": schema.SingleNestedAttribute{
+				Description: "Contains request to store catalog credentials.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"token": schema.StringAttribute{
+						Description: "Provides the Cloudflare API token for accessing R2.",
+						Required:    true,
+						Sensitive:   true,
+					},
+				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
+			},
 			"bucket": schema.StringAttribute{
 				Description: "Specifies the associated R2 bucket name.",
 				Computed:    true,
@@ -53,6 +66,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("present", "absent"),
 				},
+			},
+			"jurisdiction": schema.StringAttribute{
+				Description: "Specifies the data-locality jurisdiction of the catalog. The first enable sets it, and it cannot change. Currently always `default`.",
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Specifies the catalog name (generated from account and bucket name).",

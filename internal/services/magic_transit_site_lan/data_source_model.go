@@ -29,6 +29,7 @@ type MagicTransitSiteLANDataSourceModel struct {
 	Physport         types.Int64                                                                   `tfsdk:"physport" json:"physport,computed"`
 	VlanTag          types.Int64                                                                   `tfsdk:"vlan_tag" json:"vlan_tag,computed"`
 	Nat              customfield.NestedObject[MagicTransitSiteLANNatDataSourceModel]               `tfsdk:"nat" json:"nat,computed"`
+	RemoteSubnets    customfield.NestedObjectList[MagicTransitSiteLANRemoteSubnetsDataSourceModel] `tfsdk:"remote_subnets" json:"remote_subnets,computed"`
 	RoutedSubnets    customfield.NestedObjectList[MagicTransitSiteLANRoutedSubnetsDataSourceModel] `tfsdk:"routed_subnets" json:"routed_subnets,computed"`
 	StaticAddressing customfield.NestedObject[MagicTransitSiteLANStaticAddressingDataSourceModel]  `tfsdk:"static_addressing" json:"static_addressing,computed"`
 }
@@ -43,6 +44,11 @@ func (m *MagicTransitSiteLANDataSourceModel) toReadParams(_ context.Context) (pa
 
 type MagicTransitSiteLANNatDataSourceModel struct {
 	StaticPrefix types.String `tfsdk:"static_prefix" json:"static_prefix,computed"`
+}
+
+type MagicTransitSiteLANRemoteSubnetsDataSourceModel struct {
+	LocalAliasPrefix types.String `tfsdk:"local_alias_prefix" json:"local_alias_prefix,computed"`
+	RemotePrefix     types.String `tfsdk:"remote_prefix" json:"remote_prefix,computed"`
 }
 
 type MagicTransitSiteLANRoutedSubnetsDataSourceModel struct {

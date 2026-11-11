@@ -2,12 +2,15 @@
 page_title: "cloudflare_share Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Resource Sharing Read
 ---
 
 # cloudflare_share (Resource)
 
+Accepted Permissions
 
+- `Resource Sharing Read`
 
 ## Example Usage
 
@@ -15,6 +18,9 @@ description: |-
 resource "cloudflare_share" "example_share" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   name = "My Shared WAF Managed Rule"
+  excluded_recipients = [{
+    account_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  }]
   recipients = [{
     organization_id = "023e105f4ecef8ad9ca31a8372d0c353"
     recipient_account_id = "023e105f4ecef8ad9ca31a8372d0c353"
@@ -22,9 +28,12 @@ resource "cloudflare_share" "example_share" {
   resources = [{
     meta = jsonencode({})
     resource_account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-    resource_id = "023e105f4ecef8ad9ca31a8372d0c353"
+    resource_id = "0a679032-bbb2-4b7e-9acc-dd5c5cb27a17"
     resource_type = "custom-ruleset"
   }]
+  tags = {
+    foo = "string"
+  }
 }
 ```
 
@@ -35,28 +44,40 @@ resource "cloudflare_share" "example_share" {
 
 - `account_id` (String) Account identifier.
 - `name` (String) The name of the share.
-- `recipients` (Attributes List) (see [below for nested schema](#nestedatt--recipients))
-- `resources` (Attributes List) (see [below for nested schema](#nestedatt--resources))
 
 ### Optional
 
+- `excluded_recipients` (Attributes List) Accounts to exclude from an organization-targeted share. Only allowed when `recipients` contains no account entries. The share owner cannot be excluded. Duplicate entries are ignored. (see [below for nested schema](#nestedatt--excluded_recipients))
 - `include_recipient_counts` (Boolean) Include recipient counts in the response.
 - `include_resources` (Boolean) Include resources in the response.
+- `include_tags_from` (String) Include share tags in the response. `api` reads tags from the tag service; `mirror` reads a local, eventually consistent replica. If the tag lookup fails, the response omits `tags`.
+Available values: "api", "mirror".
+- `recipients` (Attributes List) (see [below for nested schema](#nestedatt--recipients))
+- `resources` (Attributes List) (see [below for nested schema](#nestedatt--resources))
+- `tags` (Map of String) Tags associated with the share.
 
 ### Read-Only
 
 - `account_name` (String) The display name of an account.
 - `associated_recipient_count` (Number) The number of recipients in the 'associated' state. This field is only included when requested via the 'include_recipient_counts' parameter.
 - `associating_recipient_count` (Number) The number of recipients in the 'associating' state. This field is only included when requested via the 'include_recipient_counts' parameter.
-- `created` (String) When the share was created.
+- `created` (String) When the object was created.
 - `disassociated_recipient_count` (Number) The number of recipients in the 'disassociated' state. This field is only included when requested via the 'include_recipient_counts' parameter.
 - `disassociating_recipient_count` (Number) The number of recipients in the 'disassociating' state. This field is only included when requested via the 'include_recipient_counts' parameter.
 - `id` (String) Share identifier tag.
 - `kind` (String) Available values: "sent", "received".
-- `modified` (String) When the share was modified.
+- `modified` (String) When the object was last modified.
 - `organization_id` (String) Organization identifier.
 - `status` (String) Available values: "active", "deleting", "deleted".
 - `target_type` (String) Available values: "account", "organization".
+
+<a id="nestedatt--excluded_recipients"></a>
+### Nested Schema for `excluded_recipients`
+
+Required:
+
+- `account_id` (String) The account to exclude from the organization-targeted share.
+
 
 <a id="nestedatt--recipients"></a>
 ### Nested Schema for `recipients`
@@ -73,8 +94,8 @@ Optional:
 Required:
 
 - `meta` (String) Resource Metadata.
-- `resource_account_id` (String) Account identifier.
-- `resource_id` (String) Share Resource identifier.
+- `resource_account_id` (String) The account that owns the resource. Must match the `account_id` in the path.
+- `resource_id` (String) Identifier assigned by the service that owns the shared resource.
 - `resource_type` (String) Resource Type.
 Available values: "custom-ruleset", "gateway-policy", "gateway-destination-ip", "gateway-block-page-settings", "gateway-extended-email-matching", "idp-federation-grant", "trust-grant".
 

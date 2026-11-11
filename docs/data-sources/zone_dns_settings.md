@@ -33,7 +33,6 @@ data "cloudflare_zone_dns_settings" "example_zone_dns_settings" {
 ### Read-Only
 
 - `flatten_all_cnames` (Boolean) Whether to flatten all CNAME records in the zone. Note that, due to DNS limitations, a CNAME record at the zone apex will always be flattened.
-- `foundation_dns` (Boolean, Deprecated) Deprecated. Use nameservers.type to configure Advanced Nameservers.
 - `internal_dns` (Attributes) Settings for this internal zone. (see [below for nested schema](#nestedatt--internal_dns))
 - `multi_provider` (Boolean) Whether to enable multi-provider DNS, which causes Cloudflare to activate the zone even when non-Cloudflare NS records exist, and to respect NS records at the zone apex during outbound zone transfers.
 - `nameservers` (Attributes) Controls the nameservers through which the zone is available. (see [below for nested schema](#nestedatt--nameservers))
@@ -56,8 +55,8 @@ Read-Only:
 
 Read-Only:
 
-- `nameserver_set_id` (String) Identifier of the account-owned Custom Nameserver Set to use for this zone.
-- `ns_set` (Number) Configured nameserver set number to use for this zone.
+- `nameserver_set_id` (String) For `type: custom`: Identifier of the account-owned Custom Nameserver Set to use for this zone.
+- `ns_set` (Number) For `type: custom.account` or `type: custom.tenant` or `type: custom.zone`: Configured nameserver set number to use for this zone.
 - `type` (String) Nameserver type.
 Available values: "cloudflare.standard", "custom.account", "custom.tenant", "custom.zone", "custom".
 

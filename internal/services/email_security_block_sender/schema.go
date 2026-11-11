@@ -19,13 +19,13 @@ var _ resource.ResourceWithConfigValidators = (*EmailSecurityBlockSenderResource
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Cloud Email Security: Read",
 				"Cloud Email Security: Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Blocked sender pattern identifier.",
@@ -59,6 +59,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"comments": schema.StringAttribute{
 				Optional: true,
+			},
+			"expires_at": schema.StringAttribute{
+				Description: "Timestamp at which the pattern expires. After this time, Email Security ignores the pattern. The value must lie in the future. Send `null` to clear the expiration.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"created_at": schema.StringAttribute{
 				Computed:      true,

@@ -74,6 +74,12 @@ when `provisioner_type` is present and null when the identifier is
 unavailable.
 - `provisioner_type` (String) The type of service that provisioned the token. Only present for
 provisioned Account Owned API Tokens.
+- `token_prefix` (String) The prefix of the token value, before the first underscore. Use it with
+`token_suffix` to identify a token. Only present for tokens created or
+rolled after this field was added.
+- `token_suffix` (String) The last 4 characters of the token value. Use it with `token_prefix` to
+identify a token. It is not unique. Only present for tokens created or
+rolled after this field was added.
 - `value` (String, Sensitive) The token value.
 
 <a id="nestedatt--policies"></a>

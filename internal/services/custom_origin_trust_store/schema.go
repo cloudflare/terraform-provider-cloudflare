@@ -71,7 +71,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"updated_at": schema.StringAttribute{
-				Description: "When the certificate was last modified.",
+				Description: "When the certificate was last modified. Only returned when uploading a certificate.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},

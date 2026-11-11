@@ -26,6 +26,7 @@ resource "cloudflare_zero_trust_dlp_entry" "example_zero_trust_dlp_entry" {
   }
   description = "description"
   profile_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
+  validator_ids = ["182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"]
 }
 ```
 
@@ -44,22 +45,23 @@ resource "cloudflare_zero_trust_dlp_entry" "example_zero_trust_dlp_entry" {
 - `description` (String)
 - `profile_id` (String)
 - `type` (String) Available values: "custom", "predefined", "integration".
+- `validator_ids` (Set of String) Validators the new entry should reference, by id, at most 10.
 
 ### Read-Only
 
-- `case_sensitive` (Boolean) Only applies to custom word lists.
+- `case_sensitive` (Boolean) For `type: exact_data`: Only applies to custom word lists.
 Determines if the words should be matched in a case-sensitive manner
 Cannot be set to false if secret is true
 - `confidence` (Attributes) (see [below for nested schema](#nestedatt--confidence))
 - `created_at` (String)
-- `deprecated` (Boolean) Whether this entry is deprecated for new use. This is computed from the static catalog and
+- `deprecated` (Boolean) For `type: predefined`: Whether this entry is deprecated for new use. This is computed from the static catalog and
 emitted only when true.
 - `id` (String) The ID of this resource.
 - `profiles` (Attributes List) (see [below for nested schema](#nestedatt--profiles))
 - `secret` (Boolean)
 - `updated_at` (String)
 - `upload_status` (String) Available values: "empty", "uploading", "pending", "processing", "failed", "complete".
-- `variant` (Attributes) A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--variant))
+- `variant` (Attributes) For `type: predefined`: A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--variant))
 - `word_list` (List of String)
 
 <a id="nestedatt--pattern"></a>
@@ -97,7 +99,9 @@ Read-Only:
 
 Read-Only:
 
-- `description` (String) A customer-facing explanation of what this predefined AI prompt topic represents.
+- `description` (String) For `type: PromptTopic`: A customer-facing explanation of what this predefined AI prompt topic represents.
+
+For `type: General`: A customer-facing explanation of what this predefined entry represents.
 - `topic_type` (String) Available values: "Intent", "Content".
 - `type` (String) Available values: "PromptTopic", "General".
 

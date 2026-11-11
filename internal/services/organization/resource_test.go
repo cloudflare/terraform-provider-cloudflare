@@ -161,6 +161,11 @@ func TestAccCloudflareOrganization_WithProfile(t *testing.T) {
 					"profile.business_phone",
 					"profile.business_address",
 					"profile.external_metadata",
+					// GET-by-id omits these computed fields; not populated on import.
+					"create_time",
+					"meta.are_child_accounts_accessible_by_org_members",
+					"meta.hierarchy_tags",
+					"meta.tenant_type",
 				},
 			},
 		},

@@ -46,8 +46,14 @@ func (m *PipelineStreamDataSourceModel) toListParams(_ context.Context) (params 
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
+	if !m.Filter.Direction.IsNull() {
+		params.Direction = cloudflare.F(pipelines.StreamListParamsDirection(m.Filter.Direction.ValueString()))
+	}
 	if !m.Filter.Name.IsNull() {
 		params.Name = cloudflare.F(m.Filter.Name.ValueString())
+	}
+	if !m.Filter.OrderBy.IsNull() {
+		params.OrderBy = cloudflare.F(pipelines.StreamListParamsOrderBy(m.Filter.OrderBy.ValueString()))
 	}
 	if !m.Filter.PipelineID.IsNull() {
 		params.PipelineID = cloudflare.F(m.Filter.PipelineID.ValueString())
@@ -94,6 +100,8 @@ type PipelineStreamWorkerBindingDataSourceModel struct {
 }
 
 type PipelineStreamFindOneByDataSourceModel struct {
+	Direction  types.String `tfsdk:"direction" query:"direction,computed_optional"`
 	Name       types.String `tfsdk:"name" query:"name,optional"`
+	OrderBy    types.String `tfsdk:"order_by" query:"order_by,optional"`
 	PipelineID types.String `tfsdk:"pipeline_id" query:"pipeline_id,optional"`
 }

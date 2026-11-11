@@ -34,10 +34,11 @@ Available values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 51
 - `embedding_model` (String)
 - `fusion_method` (String) Available values: "max", "rrf".
 - `hybrid_search_enabled` (Boolean, Deprecated) Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.
-- `index_method` (Attributes) Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances. (see [below for nested schema](#nestedatt--index_method))
+- `index_method` (Attributes) Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances. When set, both vector and keyword are required. (see [below for nested schema](#nestedatt--index_method))
 - `indexing_options` (Attributes) (see [below for nested schema](#nestedatt--indexing_options))
 - `max_num_results` (Number)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
+- `namespace` (String)
 - `paused` (Boolean)
 - `public_endpoint_params` (Attributes) (see [below for nested schema](#nestedatt--public_endpoint_params))
 - `reranking` (Boolean)
@@ -45,12 +46,12 @@ Available values: 600, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 259200, 51
 - `retrieval_options` (Attributes) (see [below for nested schema](#nestedatt--retrieval_options))
 - `rewrite_model` (String) A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.
 - `rewrite_query` (Boolean)
-- `score_threshold` (Number)
+- `score_threshold` (Number) Minimum similarity score a chunk must reach to be returned. Defaults to 0.4.
 - `source` (String)
 - `source_params` (Attributes) (see [below for nested schema](#nestedatt--source_params))
 - `summarization` (Boolean)
 - `summarization_model` (String)
-- `sync_interval` (Number) Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).
+- `sync_interval` (Number) Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h). Defaults to 86400 (24h).
 Available values: 900, 1800, 3600, 7200, 14400, 21600, 43200, 86400.
 - `system_prompt_aisearch` (String)
 - `system_prompt_index_summarization` (String)
@@ -68,7 +69,6 @@ Available values: "r2", "web-crawler".
 - `last_activity` (String)
 - `modified_at` (String)
 - `modified_by` (String)
-- `namespace` (String)
 - `public_endpoint_id` (String)
 - `status` (String)
 
@@ -84,7 +84,7 @@ Required:
 <a id="nestedatt--index_method"></a>
 ### Nested Schema for `index_method`
 
-Required:
+Optional:
 
 - `keyword` (Boolean) Enable keyword (BM25) storage backend.
 - `vector` (Boolean) Enable vector (embedding) storage backend.
@@ -138,7 +138,7 @@ Optional:
 
 Optional:
 
-- `disabled` (Boolean) Disable chat completions endpoint for this public endpoint
+- `disabled` (Boolean) Disable chat completions endpoint for this public endpoint.
 
 
 <a id="nestedatt--public_endpoint_params--mcp"></a>
@@ -147,7 +147,7 @@ Optional:
 Optional:
 
 - `description` (String)
-- `disabled` (Boolean) Disable MCP endpoint for this public endpoint
+- `disabled` (Boolean) Disable MCP endpoint for this public endpoint.
 
 
 <a id="nestedatt--public_endpoint_params--rate_limit"></a>
@@ -165,7 +165,7 @@ Optional:
 
 Optional:
 
-- `disabled` (Boolean) Disable search endpoint for this public endpoint
+- `disabled` (Boolean) Disable search endpoint for this public endpoint.
 
 
 
@@ -175,7 +175,7 @@ Optional:
 Optional:
 
 - `boost_by` (Attributes List) Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric/datetime fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field. (see [below for nested schema](#nestedatt--retrieval_options--boost_by))
-- `keyword_match_mode` (String) Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. When omitted on an update, the existing stored value is preserved; when never set, search falls back to 'and'.
+- `keyword_match_mode` (String) Controls which documents become candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term and ranks results according to BM25 relevance. When omitted on an update, the existing stored value stays unchanged; when never set, search falls back to 'and'.
 Available values: "and", "or".
 
 <a id="nestedatt--retrieval_options--boost_by"></a>
@@ -197,8 +197,8 @@ Available values: "asc", "desc", "exists", "not_exists".
 
 Optional:
 
-- `exclude_items` (List of String) List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.
-- `include_items` (List of String) List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.
+- `exclude_items` (List of String) List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.
+- `include_items` (List of String) List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts have a limit of 10 rules; contact support to raise it.
 - `prefix` (String)
 - `r2_jurisdiction` (String)
 - `web_crawler` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler))
@@ -208,9 +208,9 @@ Optional:
 
 Optional:
 
-- `discover_options` (Attributes) Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'. (see [below for nested schema](#nestedatt--source_params--web_crawler--discover_options))
+- `discover_options` (Attributes) Options for parse_type 'discover', where Browser Run discovers URLs through link following and sitemaps. Ignored for 'sitemap'. (see [below for nested schema](#nestedatt--source_params--web_crawler--discover_options))
 - `parse_options` (Attributes) (see [below for nested schema](#nestedatt--source_params--web_crawler--parse_options))
-- `parse_type` (String) How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.
+- `parse_type` (String) How the crawler finds URLs. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to belong to a Verified zone on this account.
 Available values: "sitemap", "discover".
 
 <a id="nestedatt--source_params--web_crawler--discover_options"></a>
@@ -219,7 +219,7 @@ Available values: "sitemap", "discover".
 Optional:
 
 - `depth` (Number) Maximum link-follow depth from the seed URL.
-- `include_external_links` (Boolean) Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.
+- `include_external_links` (Boolean) Follow links that point outside the source domain. Must stay `false` because discover crawls only cover the zone you own.
 - `include_subdomains` (Boolean) Follow links to subdomains of the source host.
 - `limit` (Number) Maximum number of pages to crawl (1-100000).
 - `max_age` (Number) Maximum content age in seconds to accept (0–604800).
@@ -232,8 +232,8 @@ Available values: "all", "sitemaps", "links".
 
 Optional:
 
-- `content_selector` (Attributes List) List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed. Omit the field to disable content selection — empty arrays are rejected. (see [below for nested schema](#nestedatt--source_params--web_crawler--parse_options--content_selector))
-- `include_headers` (Map of String) Up to 5 custom HTTP headers sent with each crawl request. Names must be RFC-7230 token characters (no spaces, colons, or control characters); values must be HTAB + printable ASCII (no CR/LF).
+- `content_selector` (Attributes List) List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. The crawler stores and indexes only the matched HTML fragment. Omit the field to disable content selection; the API rejects empty arrays. (see [below for nested schema](#nestedatt--source_params--web_crawler--parse_options--content_selector))
+- `include_headers` (Map of String) Up to 5 custom HTTP headers sent with each crawl request. Names must use RFC-7230 token characters, excluding spaces, colons, and control characters. Values must use HTAB and printable ASCII only, excluding CR and LF.
 - `include_images` (Boolean)
 - `specific_sitemaps` (List of String) List of specific sitemap URLs to use for crawling. Only valid when parse_type is 'sitemap'.
 - `use_browser_rendering` (Boolean)
@@ -244,7 +244,7 @@ Optional:
 Required:
 
 - `path` (String) Glob pattern to match against the page URL path. Uses standard glob syntax: * matches within a segment, ** crosses directories.
-- `selector` (String) CSS selector to extract content from pages matching the path pattern. Must not contain disallowed characters (;, `, $, {, }, \). Must target a single element; if multiple elements match, the selector is ignored and the full page is used.
+- `selector` (String) CSS selector to extract content from pages matching the path pattern. Disallowed characters: ;, `, $, {, }, \. Must target a single element; if multiple elements match, the crawler ignores the selector and uses the full page.
 
 ## Import
 

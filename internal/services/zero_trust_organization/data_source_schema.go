@@ -54,6 +54,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Determines whether to deny all requests to Cloudflare-protected resources that lack an associated Access application. If enabled, you must explicitly configure an Access application and policy to allow traffic to your Cloudflare-protected resources. For domains you want to be public across all subdomains, add the domain to the `deny_unmatched_requests_exempted_zone_names` array.",
 				Computed:    true,
 			},
+			"disable_end_user_app_creation": schema.BoolAttribute{
+				Description: "Whether creation of end user applications is disabled for this organization.",
+				Computed:    true,
+			},
 			"is_ui_read_only": schema.BoolAttribute{
 				Description: "Lock all settings as Read-Only in the Dashboard, regardless of user permission. Updates may only be made via the API or Terraform for this account when enabled.",
 				Computed:    true,

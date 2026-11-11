@@ -89,9 +89,9 @@ func testAccCheckCloudflareCustomSSLDestroy(s *terraform.State) error {
 	return nil
 }
 
-// TestAccCustomSSL_Lifecycle tests the full lifecycle of a custom SSL certificate.
-// This validates that the resource can be created, replaced (new cert/key triggers
-// destroy+create due to RequiresReplace), imported, and deleted.
+// TestAccCustomSSL_Lifecycle tests the full lifecycle of a legacy_custom SSL certificate.
+// Cert/key changes on legacy_custom route through PATCH (in-place update), not DELETE+POST,
+// so the resource ID is preserved across rotations.
 // Reference: https://developers.cloudflare.com/api/resources/custom_certificates/methods/edit/
 func TestAccCustomSSL_Lifecycle(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_CUSTOM_SSL_TEST") != "1" {
@@ -131,12 +131,17 @@ func TestAccCustomSSL_Lifecycle(t *testing.T) {
 					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
 				},
 			},
-			// Step 2: Replace cert/key — triggers destroy+create (new ID)
+			// Step 2: Rotate cert/key — legacy_custom uses PATCH so the resource is
+			// updated in place (ResourceActionUpdate), not destroyed and recreated.
+			// The resource ID must be unchanged after apply.
 			{
 				Config: testAccCustomSSLBasicConfig(zoneID, rnd, certUpdated, keyUpdated),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction(name, plancheck.ResourceActionDestroyBeforeCreate),
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionUpdate),
+					},
+					PostApplyPostRefresh: []plancheck.PlanCheck{
+						plancheck.ExpectEmptyPlan(),
 					},
 				},
 				ConfigStateChecks: []statecheck.StateCheck{
@@ -159,6 +164,67 @@ func TestAccCustomSSL_Lifecycle(t *testing.T) {
 					"status",      // async state transition (pending -> active)
 					"modified_on", // timestamp changes between operations
 					"type",        // default value handling
+				},
+			},
+		},
+	})
+}
+
+// TestAccCustomSSL_SNICustomReplace verifies that cert/key changes on an sni_custom
+// certificate trigger a destroy+create replace. The PATCH endpoint for sni_custom
+// returns a new resource ID, so an in-place update would cause a "Provider produced
+// inconsistent result after apply" error. RequiresReplace must fire for sni_custom.
+func TestAccCustomSSL_SNICustomReplace(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_CUSTOM_SSL_TEST") != "1" {
+		t.Skip("Skipping custom SSL test due to quota limits on test zone. Set CLOUDFLARE_CUSTOM_SSL_TEST=1 to run.")
+	}
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_custom_ssl." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+
+	expiry := time.Now().Add(time.Hour * 1)
+	cert, key, err := utils.GenerateEphemeralCertAndKey([]string{domain}, expiry)
+	if err != nil {
+		t.Fatalf("Failed to generate certificate: %s", err)
+	}
+
+	certUpdated, keyUpdated, err := utils.GenerateEphemeralCertAndKey([]string{domain}, expiry)
+	if err != nil {
+		t.Fatalf("Failed to generate updated certificate: %s", err)
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_Credentials(t)
+			acctest.TestAccPreCheck_ZoneID(t)
+			acctest.TestAccPreCheck_Domain(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareCustomSSLDestroy,
+		Steps: []resource.TestStep{
+			// Step 1: Create as sni_custom
+			{
+				Config: testAccCustomSSLSNICustomConfig(zoneID, rnd, cert, key),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("type"), knownvalue.StringExact("sni_custom")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
+				},
+			},
+			// Step 2: Rotate cert/key — sni_custom must trigger destroy+create because
+			// the API returns a new resource ID on PATCH for sni_custom certificates.
+			{
+				Config: testAccCustomSSLSNICustomConfig(zoneID, rnd, certUpdated, keyUpdated),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(name, plancheck.ResourceActionDestroyBeforeCreate),
+					},
+				},
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(name, tfjsonpath.New(consts.ZoneIDSchemaKey), knownvalue.StringExact(zoneID)),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("type"), knownvalue.StringExact("sni_custom")),
+					statecheck.ExpectKnownValue(name, tfjsonpath.New("id"), knownvalue.NotNull()),
 				},
 			},
 		},
@@ -349,4 +415,8 @@ func testAccCustomSSLBundleMethodConfig(zoneID, rnd, bundleMethod string) string
 
 func testAccCustomSSLWithPolicyConfig(zoneID, rnd, cert, key, policy string) string {
 	return acctest.LoadTestCase("customsslwithpolicy.tf", zoneID, rnd, cert, key, policy)
+}
+
+func testAccCustomSSLSNICustomConfig(zoneID, rnd, cert, key string) string {
+	return acctest.LoadTestCase("customsslcertsnicustom.tf", zoneID, rnd, cert, key)
 }

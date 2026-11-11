@@ -39,7 +39,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"allowed_match_count": schema.Int64Attribute{
-				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
+				Description: "For `type: custom`: Related DLP policies will trigger when the match count exceeds the number set.",
 				Computed:    true,
 			},
 			"confidence_threshold": schema.StringAttribute{
@@ -55,26 +55,26 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_at": schema.StringAttribute{
-				Description: "When the profile was created.",
+				Description: "For `type: custom`: When the profile was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"description": schema.StringAttribute{
-				Description: "The description of the profile.",
+				Description: "For `type: custom` or `type: integration`: The description of the profile.",
 				Computed:    true,
 			},
 			"integration_id": schema.StringAttribute{
 				Computed: true,
 			},
 			"name": schema.StringAttribute{
-				Description: "The name of the profile.",
+				Description: "For `type: custom`: The name of the profile.\n\nFor `type: predefined`: The name of the predefined profile.",
 				Computed:    true,
 			},
 			"ocr_enabled": schema.BoolAttribute{
 				Computed: true,
 			},
 			"open_access": schema.BoolAttribute{
-				Description: "Whether this profile can be accessed by anyone.",
+				Description: "For `type: predefined`: Whether this profile can be accessed by anyone.",
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
@@ -89,24 +89,24 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"updated_at": schema.StringAttribute{
-				Description: "When the profile was lasted updated.",
+				Description: "For `type: custom`: When the profile was lasted updated.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"data_classes": schema.ListAttribute{
-				Description: "Data classes associated with this profile.",
+				Description: "For `type: custom`: Data classes associated with this profile.",
 				Computed:    true,
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"data_tags": schema.ListAttribute{
-				Description: "Data tags associated with this profile.",
+				Description: "For `type: custom`: Data tags associated with this profile.",
 				Computed:    true,
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"context_awareness": schema.SingleNestedAttribute{
-				Description:        "Scan the context of predefined entries to only return matches surrounded by keywords.",
+				Description:        "For `type: custom`: Scan the context of predefined entries to only return matches surrounded by keywords.",
 				Computed:           true,
 				DeprecationMessage: "This attribute is deprecated.",
 				CustomType:         customfield.NewNestedObjectType[ZeroTrustDLPCustomProfileContextAwarenessDataSourceModel](ctx),
@@ -184,10 +184,17 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"description": schema.StringAttribute{
-							Computed: true,
+							Description: "For `type: custom_prompt_topic`: The optional description of the custom prompt topic entry.\n\nFor `type: exact_data`: The optional description of the exact data entry.\n\nFor `type: document_fingerprint`: The optional description of the document fingerprint entry.",
+							Computed:    true,
 						},
 						"profile_id": schema.StringAttribute{
 							Computed: true,
+						},
+						"validator_ids": schema.SetAttribute{
+							Description: "For `type: custom`: Validators this entry references, by id, at most 10. An empty list means the entry\nreferences none.\n\nReturned by the entry endpoints. Not returned on entries embedded in other responses, such\nas profiles.",
+							Computed:    true,
+							CustomType:  customfield.NewSetType[types.String](ctx),
+							ElementType: types.StringType,
 						},
 						"confidence": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -204,11 +211,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"deprecated": schema.BoolAttribute{
-							Description: "Whether this entry is deprecated for new use. This is computed from the static catalog and\nemitted only when true.",
+							Description: "For `type: predefined`: Whether this entry is deprecated for new use. This is computed from the static catalog and\nemitted only when true.",
 							Computed:    true,
 						},
 						"variant": schema.SingleNestedAttribute{
-							Description: "A Predefined AI prompt classification topic entry.",
+							Description: "For `type: predefined`: A Predefined AI prompt classification topic entry.",
 							Computed:    true,
 							CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPCustomProfileEntriesVariantDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
@@ -227,13 +234,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"description": schema.StringAttribute{
-									Description: "A customer-facing explanation of what this predefined AI prompt topic represents.",
+									Description: "For `type: PromptTopic`: A customer-facing explanation of what this predefined AI prompt topic represents.\n\nFor `type: General`: A customer-facing explanation of what this predefined entry represents.",
 									Computed:    true,
 								},
 							},
 						},
 						"case_sensitive": schema.BoolAttribute{
-							Description: "Only applies to custom word lists.\nDetermines if the words should be matched in a case-sensitive manner\nCannot be set to false if secret is true",
+							Description: "For `type: exact_data`: Only applies to custom word lists.\nDetermines if the words should be matched in a case-sensitive manner\nCannot be set to false if secret is true",
 							Computed:    true,
 						},
 						"secret": schema.BoolAttribute{
@@ -248,7 +255,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"sensitivity_levels": schema.ListNestedAttribute{
-				Description: "Sensitivity levels associated with this profile.",
+				Description: "For `type: custom`: Sensitivity levels associated with this profile.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDLPCustomProfileSensitivityLevelsDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
@@ -317,10 +324,17 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"description": schema.StringAttribute{
-							Computed: true,
+							Description: "For `type: custom_prompt_topic`: The optional description of the custom prompt topic entry.\n\nFor `type: exact_data`: The optional description of the exact data entry.\n\nFor `type: document_fingerprint`: The optional description of the document fingerprint entry.",
+							Computed:    true,
 						},
 						"profile_id": schema.StringAttribute{
 							Computed: true,
+						},
+						"validator_ids": schema.SetAttribute{
+							Description: "For `type: custom`: Validators this entry references, by id, at most 10. An empty list means the entry\nreferences none.\n\nReturned by the entry endpoints. Not returned on entries embedded in other responses, such\nas profiles.",
+							Computed:    true,
+							CustomType:  customfield.NewSetType[types.String](ctx),
+							ElementType: types.StringType,
 						},
 						"confidence": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -337,11 +351,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"deprecated": schema.BoolAttribute{
-							Description: "Whether this entry is deprecated for new use. This is computed from the static catalog and\nemitted only when true.",
+							Description: "For `type: predefined`: Whether this entry is deprecated for new use. This is computed from the static catalog and\nemitted only when true.",
 							Computed:    true,
 						},
 						"variant": schema.SingleNestedAttribute{
-							Description: "A Predefined AI prompt classification topic entry.",
+							Description: "For `type: predefined`: A Predefined AI prompt classification topic entry.",
 							Computed:    true,
 							CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPCustomProfileSharedEntriesVariantDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
@@ -360,13 +374,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"description": schema.StringAttribute{
-									Description: "A customer-facing explanation of what this predefined AI prompt topic represents.",
+									Description: "For `type: PromptTopic`: A customer-facing explanation of what this predefined AI prompt topic represents.\n\nFor `type: General`: A customer-facing explanation of what this predefined entry represents.",
 									Computed:    true,
 								},
 							},
 						},
 						"case_sensitive": schema.BoolAttribute{
-							Description: "Only applies to custom word lists.\nDetermines if the words should be matched in a case-sensitive manner\nCannot be set to false if secret is true",
+							Description: "For `type: exact_data`: Only applies to custom word lists.\nDetermines if the words should be matched in a case-sensitive manner\nCannot be set to false if secret is true",
 							Computed:    true,
 						},
 						"secret": schema.BoolAttribute{

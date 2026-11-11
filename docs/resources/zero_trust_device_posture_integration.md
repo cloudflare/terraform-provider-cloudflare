@@ -51,13 +51,49 @@ Available values: "workspace_one", "crowdstrike_s2s", "uptycs", "intune", "kolid
 Optional:
 
 - `access_client_id` (String) If present, this id will be passed in the `CF-Access-Client-ID` header when hitting the `api_url`.
+
+This id will be passed in the `CF-Access-Client-ID` header when hitting the `api_url`.
 - `access_client_secret` (String, Sensitive) If present, this secret will be passed in the `CF-Access-Client-Secret` header when hitting the `api_url`.
+
+This secret will be passed in the `CF-Access-Client-Secret` header when hitting the `api_url`.
 - `api_url` (String) The Workspace One API URL provided in the Workspace One Admin Dashboard.
+
+The Crowdstrike API URL.
+
+The Uptycs API URL.
+
+The Tanium API URL.
+
+The SentinelOne S2S API URL.
+
+The Custom Device Posture Integration  API URL.
 - `auth_url` (String) The Workspace One Authorization URL depending on your region.
 - `client_id` (String) The Workspace One client ID provided in the Workspace One Admin Dashboard.
+
+The Crowdstrike client ID.
+
+The Intune client ID.
+
+The Kolide client ID.
 - `client_key` (String, Sensitive) The Uptycs client secret.
 - `client_secret` (String, Sensitive) The Workspace One client secret provided in the Workspace One Admin Dashboard.
+
+The Crowdstrike client secret.
+
+The Uptycs client secret.
+
+The Intune client secret.
+
+The Kolide client secret.
+
+The Tanium client secret.
+
+The SentinelOne S2S client secret.
 - `customer_id` (String) The Crowdstrike customer ID.
+
+The Uptycs customer ID.
+
+The Intune customer ID.
 
 ## Import
 

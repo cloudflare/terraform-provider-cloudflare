@@ -39,6 +39,9 @@ resource "cloudflare_flagship_flag" "example_flagship_flag" {
     foo = "string"
   }
   description = "description"
+  metadata = {
+    foo = true
+  }
   type = "boolean"
 }
 ```
@@ -59,6 +62,7 @@ resource "cloudflare_flagship_flag" "example_flagship_flag" {
 ### Optional
 
 - `description` (String) Optional operator-facing description. It does not affect flag evaluation.
+- `metadata` (Dynamic) Key-value metadata associated with the flag. `null` or an empty object clears existing metadata; omission semantics depend on the endpoint (PUT clears it, PATCH preserves it).
 - `type` (String, Deprecated) Deprecated compatibility field. Omit it; the API ignores this value and infers the type from the flag's variations.
 Available values: "boolean", "string", "number", "json".
 
@@ -139,11 +143,9 @@ Optional:
 <a id="nestedatt--rules--conditions--clauses--clauses--clauses--clauses--clauses"></a>
 ### Nested Schema for `rules.conditions.clauses.clauses.clauses.clauses.clauses`
 
-Optional:
+Required:
 
 - `attribute` (String)
-- `clauses` (List of String)
-- `logical_operator` (String) Available values: "AND", "OR".
 - `operator` (String) Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".
 - `value` (String) Value to compare against the context attribute. Must be an array for `in` and `not_in`; numeric and ISO-8601 datetime strings are accepted by the ordering operators.
 

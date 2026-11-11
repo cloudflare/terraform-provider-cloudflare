@@ -32,7 +32,7 @@ resource "cloudflare_certificate_authorities_hostname_associations" "example_cer
 
 ### Optional
 
-- `hostnames` (List of String)
+- `hostnames` (Set of String) Unordered set of hostnames. Hostnames are stored as lowercase punycode.
 - `mtls_certificate_id` (String) The UUID for a certificate that was uploaded to the mTLS Certificate Management endpoint. If no mtls_certificate_id is given, the hostnames will be associated to your active Cloudflare Managed CA.
 
 ### Read-Only

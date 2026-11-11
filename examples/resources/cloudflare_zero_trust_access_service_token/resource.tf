@@ -5,4 +5,7 @@ resource "cloudflare_zero_trust_access_service_token" "example_zero_trust_access
   duration = "60m"
   enabled = true
   previous_client_secret_expires_at = "2014-01-01T05:20:00.12345Z"
+  tags = {
+    environment = "production"
+  }
 }

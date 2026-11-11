@@ -41,8 +41,22 @@ type TargetAccountUnitModel struct {
 
 // TargetAccountManagedByModel represents the nested managed_by object in v5.
 type TargetAccountManagedByModel struct {
-	ParentOrgID   types.String `tfsdk:"parent_org_id"`
-	ParentOrgName types.String `tfsdk:"parent_org_name"`
+	ParentOrgID             types.String `tfsdk:"parent_org_id"`
+	ParentOrgName           types.String `tfsdk:"parent_org_name"`
+	RootOrgID               types.String `tfsdk:"root_org_id"`
+	ShouldDisplayParentOrgs types.Bool   `tfsdk:"should_display_parent_orgs"`
+}
+
+// TargetAccountLegacyFlagsModel represents the nested legacy_flags object in v5.
+type TargetAccountLegacyFlagsModel struct {
+	EnterpriseZoneQuota customfield.NestedObject[TargetAccountLegacyFlagsEnterpriseZoneQuotaModel] `tfsdk:"enterprise_zone_quota"`
+}
+
+// TargetAccountLegacyFlagsEnterpriseZoneQuotaModel represents legacy_flags.enterprise_zone_quota in v5.
+type TargetAccountLegacyFlagsEnterpriseZoneQuotaModel struct {
+	Available types.Int64 `tfsdk:"available"`
+	Current   types.Int64 `tfsdk:"current"`
+	Maximum   types.Int64 `tfsdk:"maximum"`
 }
 
 // TargetAccountModel represents the target cloudflare_account state structure (v500).
@@ -61,12 +75,13 @@ type TargetAccountManagedByModel struct {
 // We duplicate it here to keep the migration package self-contained,
 // but use simpler types to avoid customfield dependency issues during migration.
 type TargetAccountModel struct {
-	ID         types.String                                          `tfsdk:"id"`
-	Unit       customfield.NestedObject[TargetAccountUnitModel]      `tfsdk:"unit"`
-	Standalone types.Bool                                            `tfsdk:"standalone"`
-	Name       types.String                                          `tfsdk:"name"`
-	Type       types.String                                          `tfsdk:"type"`
-	ManagedBy  customfield.NestedObject[TargetAccountManagedByModel] `tfsdk:"managed_by"`
-	Settings   customfield.NestedObject[TargetAccountSettingsModel]  `tfsdk:"settings"`
-	CreatedOn  timetypes.RFC3339                                     `tfsdk:"created_on"`
+	ID          types.String                                            `tfsdk:"id"`
+	Unit        customfield.NestedObject[TargetAccountUnitModel]        `tfsdk:"unit"`
+	Standalone  types.Bool                                              `tfsdk:"standalone"`
+	Name        types.String                                            `tfsdk:"name"`
+	Type        types.String                                            `tfsdk:"type"`
+	ManagedBy   customfield.NestedObject[TargetAccountManagedByModel]   `tfsdk:"managed_by"`
+	Settings    customfield.NestedObject[TargetAccountSettingsModel]    `tfsdk:"settings"`
+	CreatedOn   timetypes.RFC3339                                       `tfsdk:"created_on"`
+	LegacyFlags customfield.NestedObject[TargetAccountLegacyFlagsModel] `tfsdk:"legacy_flags"`
 }

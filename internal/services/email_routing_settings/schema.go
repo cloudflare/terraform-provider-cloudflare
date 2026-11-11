@@ -61,8 +61,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"support_subaddress": schema.BoolAttribute{
-				Description: "Whether subaddressing (plus-addressing) is honored when matching incoming mail against routing rules.",
+				Description: "Whether subaddressing (plus-addressing) is honored when matching incoming mail against routing rules. When omitted, preserves the existing setting.",
 				Optional:    true,
+				Computed:    true,
 			},
 			"status": schema.StringAttribute{
 				Description: "Show the state of your account, and the type or configuration error.\nAvailable values: \"ready\", \"unconfigured\", \"misconfigured\", \"misconfigured/locked\", \"unlocked\".",

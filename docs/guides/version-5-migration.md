@@ -94,7 +94,7 @@ Before starting the migration:
   tar -xzf tf-migrate_1.0.0_darwin_arm64.tar.gz
   chmod +x tf-migrate
   sudo mv tf-migrate /usr/local/bin/
-  
+
   # Or build from source:
   git clone https://github.com/cloudflare/tf-migrate.git
   cd tf-migrate
@@ -353,16 +353,38 @@ created on the first apply:
 | `cloudflare_argo` | `cloudflare_argo_tiered_caching` | v4 `cloudflare_argo` managed both smart routing and tiered caching. v5 splits them. The `cloudflare_argo_smart_routing` resource inherits the state via `moved`, but `cloudflare_argo_tiered_caching` must be created fresh. |
 | `cloudflare_tiered_cache` (with `cache_type = "generic"`) | `cloudflare_argo_tiered_caching` | Similar split. The `cloudflare_tiered_cache` resource retains its state, but the companion `cloudflare_argo_tiered_caching` resource must be created. |
 
-#### Precedence normalization
+#### Gateway policy precedence review
 
-`cloudflare_zero_trust_gateway_policy` resources will show precedence values
-changing from large internal values to the user-facing values:
+Before applying migrated `cloudflare_teams_rule` or
+`cloudflare_zero_trust_gateway_policy` resources, review Gateway policy order.
+The v4 provider applied a name-based hash calculation to configured precedence,
+so live API values can differ from configuration. The state upgrader preserves
+source precedence values without attempting to decode them, and tf-migrate
+preserves configured values and expressions.
+
+A plan such as:
 
 ```
 ~ precedence = 1400392 -> 1400
 ```
 
-This is a one-time normalization applied by the state upgrader.
+represents a real precedence update on apply, not harmless state normalization.
+Lower values execute first within each processing phase. Duplicate configured
+precedences that worked in v4 need unique v5 values, preserving the live order
+of all relevant policies, including allow exceptions and catch-all block rules.
+Do not substitute API values for only some policies while retaining configured
+values for others; mixing scales can invert their order.
+
+Use the dashboard or API to inspect the existing order before editing values.
+Either consistently retain live precedence values across the relevant policies
+or choose unique values that preserve their intended order. A large integer
+alone is not evidence that a value should be divided by 1,000. When reordering
+with Terraform, move one policy at a time and review each plan before applying.
+See [Manage precedence with Terraform](https://developers.cloudflare.com/cloudflare-one/traffic-controls/order-of-enforcement/#manage-precedence-with-terraform).
+
+#### Gateway policy `audit_ssh` settings
+
+Gateway retired the `audit_ssh` action, and the v5 schema has no `rule_settings.audit_ssh`. The state upgrader drops any v4 `audit_ssh` value from `rule_settings` and shows a warning. Remove `audit_ssh` from your configuration.
 
 #### IP CIDR normalization
 
@@ -430,6 +452,16 @@ restructuring:
 - Flat booleans (`activity_log_enabled`, `tls_decrypt_enabled`, `protocol_detection_enabled`) move to `settings.*` nested objects
 - `antivirus.notification_settings[0].message` renamed to `notification_settings.msg`
 - `logging`, `proxy`, `ssh_session_log`, `payload_log` are dropped
+
+Before migration, save the GET responses from `/accounts/{account_id}/gateway/configuration`, `/accounts/{account_id}/access/organizations`, and, if migrating a `proxy` block, `/accounts/{account_id}/devices/settings`. The v4 schema and state do not contain all settings exposed by v5.
+
+After migrating HCL, use `tf-migrate preserve-zero-trust-settings --snapshot zero-trust-settings.json` before the first v5 apply. The snapshot maps local **v5** resource addresses to the saved API responses, including the new `cloudflare_zero_trust_device_settings.<name>_device_settings` resource created from a `proxy` block. See [the snapshot workflow](https://github.com/cloudflare/tf-migrate/blob/main/docs/zero-trust-settings.md) for capture commands and the JSON format. Run the command in each affected module directory. For `count`, `for_each`, or expression-based Gateway settings, restore the values explicitly in the corresponding per-instance configuration.
+
+The command adds explicit `settings.sandbox`, `settings.host_selector`, and emergency signal configuration without overwriting values already present in HCL. Inspect the first v5 plan to confirm that the restored settings are retained.
+
+#### Zero Trust organization security settings
+
+Organization MFA/PIV settings, `deny_unmatched_requests`, and its exempted zone names were not exposed by v4. Restore their live values into explicit v5 HCL from the pre-migration API response using the snapshot step above. State upgrading alone cannot preserve settings absent from v4's schema. This is a one-time migration step: subsequent configuration edits use the provider's existing behavior, and removing a setting from HCL can reset it.
 
 #### Zero Trust Access Policy normalization
 
@@ -523,7 +555,6 @@ are safe to ignore.
 | `cloudflare_healthcheck` | `status`, `failure_reason`, `tcp_config`, `http_config` | Read-only fields that refresh to `(known after apply)` on every plan. `tcp_config` appears on HTTP healthchecks and `http_config` on TCP healthchecks (the "other" config type). |
 | `cloudflare_zero_trust_gateway_policy` | `duration` | The provider normalizes `"24h"` to `"24h0m0s"` on read, causing a perpetual diff. |
 | `cloudflare_zero_trust_gateway_policy` | Various rule settings (`read_only`, `schedule`, `source_account`, `override_host`, `sharable`, `warning_status`, `deleted_at`, `expiration`, and others) | Computed read-only fields that refresh to `(known after apply)` on every plan. Affects a subset of gateway policies (typically 5-6 resources). |
-| `cloudflare_zero_trust_gateway_policy` | `audit_ssh.command_logging` | Computed default (`true`) that re-appears on every plan for resources with `audit_ssh` settings. |
 | `cloudflare_zero_trust_gateway_policy` | `block_page_enabled`, `ip_categories` | Computed defaults (`false`) that appear on every plan for certain rule settings. |
 | `cloudflare_zero_trust_dlp_predefined_profile` | `entries`, `name`, `open_access` | Read-only API fields that the provider recalculates on every plan. |
 | `cloudflare_zero_trust_dlp_predefined_profile` | `enabled_entries` | API returns `[]` but config uses `null`. Shows `[] -> null` on every plan. |

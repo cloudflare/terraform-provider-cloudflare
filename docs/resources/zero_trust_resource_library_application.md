@@ -2,12 +2,18 @@
 page_title: "cloudflare_zero_trust_resource_library_application Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Resource Library ReadResource Library WriteZero Trust ReadZero Trust Write
 ---
 
 # cloudflare_zero_trust_resource_library_application (Resource)
 
+Accepted Permissions
 
+- `Resource Library Read`
+- `Resource Library Write`
+- `Zero Trust Read`
+- `Zero Trust Write`
 
 ## Example Usage
 

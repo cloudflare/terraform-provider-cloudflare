@@ -209,6 +209,48 @@ func TestAccCloudflareObservatoryScheduledTest_FrequencyUpdate(t *testing.T) {
 	})
 }
 
+// TestAccCloudflareObservatoryScheduledTest_ImportWithRegion verifies that
+// import works when a non-default region is included in the import ID.
+// The v5 generator only puts required parameters in the import ID, so region
+// (optional with a server-side default of us-central1) was dropped, breaking
+// import for any schedule not in us-central1.
+func TestAccCloudflareObservatoryScheduledTest_ImportWithRegion(t *testing.T) {
+	t.Skip("needs to be fixed by service team")
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_observatory_scheduled_test.%s", rnd)
+	testURL := url.PathEscape(domain + "/" + rnd)
+	region := "europe-west4"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			// Step 1: Create in a non-default region.
+			{
+				Config: testAccCloudflareObservatoryScheduledTestConfigRegion(rnd, zoneID, domain, rnd, region),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						name,
+						tfjsonpath.New("region"),
+						knownvalue.StringExact(region),
+					),
+				},
+			},
+			// Step 2: Import using <zone_id>/<url>/<region>. Without the region
+			// segment the GET defaults to us-central1 and returns 404.
+			{
+				ResourceName:      name,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateId:     fmt.Sprintf("%s/%s/%s", zoneID, testURL, region),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareObservatoryScheduledTestDestroy(s *terraform.State) error {
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
@@ -233,20 +275,13 @@ func testAccCheckCloudflareObservatoryScheduledTestDestroy(s *terraform.State) e
 }
 
 func testAccCloudflareObservatoryScheduledTestConfig(resourceName, zoneID, domain, path string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_observatory_scheduled_test" "%[1]s" {
-  zone_id = %[2]q
-  url     = urlencode("%[3]s/%[4]s")
-}
-`, resourceName, zoneID, domain, path)
+	return acctest.LoadTestCase("observatoryscheduledtest.tf", resourceName, zoneID, domain, path)
 }
 
 func testAccCloudflareObservatoryScheduledTestConfigFrequency(resourceName, zoneID, domain, path, frequency string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_observatory_scheduled_test" "%[1]s" {
-  zone_id   = %[2]q
-  url       = urlencode("%[3]s/%[4]s")
-  frequency = %[5]q
+	return acctest.LoadTestCase("frequency.tf", resourceName, zoneID, domain, path, frequency)
 }
-`, resourceName, zoneID, domain, path, frequency)
+
+func testAccCloudflareObservatoryScheduledTestConfigRegion(resourceName, zoneID, domain, path, region string) string {
+	return acctest.LoadTestCase("region.tf", resourceName, zoneID, domain, path, region)
 }

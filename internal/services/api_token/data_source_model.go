@@ -30,6 +30,8 @@ type APITokenDataSourceModel struct {
 	ProvisionerID          types.String                                                  `tfsdk:"provisioner_id" json:"provisioner_id,computed"`
 	ProvisionerType        types.String                                                  `tfsdk:"provisioner_type" json:"provisioner_type,computed"`
 	Status                 types.String                                                  `tfsdk:"status" json:"status,computed"`
+	TokenPrefix            types.String                                                  `tfsdk:"token_prefix" json:"token_prefix,computed"`
+	TokenSuffix            types.String                                                  `tfsdk:"token_suffix" json:"token_suffix,computed"`
 	Condition              customfield.NestedObject[APITokenConditionDataSourceModel]    `tfsdk:"condition" json:"condition,computed"`
 	Policies               customfield.NestedObjectList[APITokenPoliciesDataSourceModel] `tfsdk:"policies" json:"policies,computed"`
 	Filter                 *APITokenFindOneByDataSourceModel                             `tfsdk:"filter"`

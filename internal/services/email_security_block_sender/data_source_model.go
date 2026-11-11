@@ -22,6 +22,7 @@ type EmailSecurityBlockSenderDataSourceModel struct {
 	AccountID    types.String                                      `tfsdk:"account_id" path:"account_id,required"`
 	Comments     types.String                                      `tfsdk:"comments" json:"comments,computed"`
 	CreatedAt    timetypes.RFC3339                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	ExpiresAt    timetypes.RFC3339                                 `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
 	IsRegex      types.Bool                                        `tfsdk:"is_regex" json:"is_regex,computed"`
 	LastModified timetypes.RFC3339                                 `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
 	ModifiedAt   timetypes.RFC3339                                 `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
@@ -46,6 +47,9 @@ func (m *EmailSecurityBlockSenderDataSourceModel) toListParams(_ context.Context
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(email_security.SettingBlockSenderListParamsDirection(m.Filter.Direction.ValueString()))
 	}
+	if !m.Filter.Expired.IsNull() {
+		params.Expired = cloudflare.F(m.Filter.Expired.ValueBool())
+	}
 	if !m.Filter.Order.IsNull() {
 		params.Order = cloudflare.F(email_security.SettingBlockSenderListParamsOrder(m.Filter.Order.ValueString()))
 	}
@@ -64,6 +68,7 @@ func (m *EmailSecurityBlockSenderDataSourceModel) toListParams(_ context.Context
 
 type EmailSecurityBlockSenderFindOneByDataSourceModel struct {
 	Direction   types.String `tfsdk:"direction" query:"direction,optional"`
+	Expired     types.Bool   `tfsdk:"expired" query:"expired,optional"`
 	Order       types.String `tfsdk:"order" query:"order,optional"`
 	Pattern     types.String `tfsdk:"pattern" query:"pattern,optional"`
 	PatternType types.String `tfsdk:"pattern_type" query:"pattern_type,optional"`

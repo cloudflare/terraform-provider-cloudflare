@@ -113,6 +113,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"enable_device_credential_authentication": schema.BoolAttribute{
+							Description: "Determines whether the WARP client can silently reauthenticate the user with device credentials (Microsoft Entra) instead of prompting for browser-based reauthentication.",
+							Computed:    true,
+						},
 						"enabled": schema.BoolAttribute{
 							Description: "Whether the policy will be applied to matching devices.",
 							Computed:    true,

@@ -2,12 +2,16 @@
 page_title: "cloudflare_zone_tracing Resource - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zone Observability ReadZone Observability Write
 ---
 
 # cloudflare_zone_tracing (Resource)
 
+Accepted Permissions
 
+- `Zone Observability Read`
+- `Zone Observability Write`
 
 ## Example Usage
 

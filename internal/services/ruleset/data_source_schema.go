@@ -995,6 +995,28 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										),
 									},
 								},
+								"webmcp_enabled": schema.BoolAttribute{
+									Description: "Whether to serve the WebMCP bridge script, which exposes the page's tools to browser AI agents.",
+									Computed:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
+								},
+								"webmcp_packs": schema.ListAttribute{
+									Description: "Bundled WebMCP tool packs to activate for matching requests. An empty list disables all packs. Omitting this parameter leaves the pack selection unchanged. Does not enable the WebMCP bridge itself.",
+									Computed:    true,
+									Validators: []validator.List{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
+									CustomType:  customfield.NewListType[types.String](ctx),
+									ElementType: types.StringType,
+								},
 								// "phase": schema.StringAttribute{
 								// 	Description: "A phase to skip the execution of. This option is only compatible with the products option.\nAvailable values: \"current\".",
 								// 	Computed:    true,

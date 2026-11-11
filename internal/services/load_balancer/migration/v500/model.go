@@ -21,28 +21,28 @@ import (
 // - Nested objects stored as TypeList MaxItems:1 (arrays) in v4, single objects in v5
 // - Pool fields stored as TypeSet of blocks in v4, maps in v5
 type SourceCloudflareLoadBalancerModel struct {
-	ID                        types.String                                `tfsdk:"id"`
-	ZoneID                    types.String                                `tfsdk:"zone_id"`
-	Name                      types.String                                `tfsdk:"name"`
-	DefaultPoolIds            types.List                                  `tfsdk:"default_pool_ids"` // Renamed to default_pools in v5
-	FallbackPoolId            types.String                                `tfsdk:"fallback_pool_id"` // Renamed to fallback_pool in v5
-	Description               types.String                                `tfsdk:"description"`
-	TTL                       types.Int64                                 `tfsdk:"ttl"`                        // Int64 in v4, Float64 in v5
-	SessionAffinity           types.String                                `tfsdk:"session_affinity"`
-	SessionAffinityTTL        types.Int64                                 `tfsdk:"session_affinity_ttl"`       // Int64 in v4, Float64 in v5
-	SessionAffinityAttributes []SourceSessionAffinityAttributesModel      `tfsdk:"session_affinity_attributes"` // Array in v4, single object in v5
-	Proxied                   types.Bool                                  `tfsdk:"proxied"`
-	Enabled                   types.Bool                                  `tfsdk:"enabled"`
-	SteeringPolicy            types.String                                `tfsdk:"steering_policy"`
-	AdaptiveRouting           []SourceAdaptiveRoutingModel                `tfsdk:"adaptive_routing"`    // Array in v4, single object in v5
-	LocationStrategy          []SourceLocationStrategyModel               `tfsdk:"location_strategy"`   // Array in v4, single object in v5
-	RandomSteering            []SourceRandomSteeringModel                 `tfsdk:"random_steering"`     // Array in v4, single object in v5
-	RegionPools               []SourceRegionPoolModel                     `tfsdk:"region_pools"`        // Set of blocks in v4, map in v5
-	PopPools                  []SourcePopPoolModel                        `tfsdk:"pop_pools"`           // Set of blocks in v4, map in v5
-	CountryPools              []SourceCountryPoolModel                    `tfsdk:"country_pools"`       // Set of blocks in v4, map in v5
-	Rules                     []SourceRulesModel                          `tfsdk:"rules"`
-	CreatedOn                 types.String                                `tfsdk:"created_on"`
-	ModifiedOn                types.String                                `tfsdk:"modified_on"`
+	ID                        types.String                           `tfsdk:"id"`
+	ZoneID                    types.String                           `tfsdk:"zone_id"`
+	Name                      types.String                           `tfsdk:"name"`
+	DefaultPoolIds            types.List                             `tfsdk:"default_pool_ids"` // Renamed to default_pools in v5
+	FallbackPoolId            types.String                           `tfsdk:"fallback_pool_id"` // Renamed to fallback_pool in v5
+	Description               types.String                           `tfsdk:"description"`
+	TTL                       types.Int64                            `tfsdk:"ttl"` // Int64 in v4, Float64 in v5
+	SessionAffinity           types.String                           `tfsdk:"session_affinity"`
+	SessionAffinityTTL        types.Int64                            `tfsdk:"session_affinity_ttl"`        // Int64 in v4, Float64 in v5
+	SessionAffinityAttributes []SourceSessionAffinityAttributesModel `tfsdk:"session_affinity_attributes"` // Array in v4, single object in v5
+	Proxied                   types.Bool                             `tfsdk:"proxied"`
+	Enabled                   types.Bool                             `tfsdk:"enabled"`
+	SteeringPolicy            types.String                           `tfsdk:"steering_policy"`
+	AdaptiveRouting           []SourceAdaptiveRoutingModel           `tfsdk:"adaptive_routing"`  // Array in v4, single object in v5
+	LocationStrategy          []SourceLocationStrategyModel          `tfsdk:"location_strategy"` // Array in v4, single object in v5
+	RandomSteering            []SourceRandomSteeringModel            `tfsdk:"random_steering"`   // Array in v4, single object in v5
+	RegionPools               []SourceRegionPoolModel                `tfsdk:"region_pools"`      // Set of blocks in v4, map in v5
+	PopPools                  []SourcePopPoolModel                   `tfsdk:"pop_pools"`         // Set of blocks in v4, map in v5
+	CountryPools              []SourceCountryPoolModel               `tfsdk:"country_pools"`     // Set of blocks in v4, map in v5
+	Rules                     []SourceRulesModel                     `tfsdk:"rules"`
+	CreatedOn                 types.String                           `tfsdk:"created_on"`
+	ModifiedOn                types.String                           `tfsdk:"modified_on"`
 }
 
 // SourceSessionAffinityAttributesModel represents v4 session_affinity_attributes structure.
@@ -51,6 +51,17 @@ type SourceSessionAffinityAttributesModel struct {
 	Samesite             types.String `tfsdk:"samesite"`
 	Secure               types.String `tfsdk:"secure"`
 	DrainDuration        types.Int64  `tfsdk:"drain_duration"` // Int64 in v4, Float64 in v5
+	ZeroDowntimeFailover types.String `tfsdk:"zero_downtime_failover"`
+	Headers              types.List   `tfsdk:"headers"` // List of strings
+	RequireAllHeaders    types.Bool   `tfsdk:"require_all_headers"`
+}
+
+// SourceRulesOverridesSessionAffinityAttributesModel represents v4
+// rules.overrides.session_affinity_attributes. Unlike the top-level block, it
+// has no drain_duration.
+type SourceRulesOverridesSessionAffinityAttributesModel struct {
+	Samesite             types.String `tfsdk:"samesite"`
+	Secure               types.String `tfsdk:"secure"`
 	ZeroDowntimeFailover types.String `tfsdk:"zero_downtime_failover"`
 	Headers              types.List   `tfsdk:"headers"` // List of strings
 	RequireAllHeaders    types.Bool   `tfsdk:"require_all_headers"`
@@ -111,19 +122,19 @@ type SourceRulesModel struct {
 // SourceRulesOverridesModel represents v4 rules.overrides structure.
 // Mirrors top-level transformations (same nested structure changes).
 type SourceRulesOverridesModel struct {
-	SessionAffinity           types.String                                `tfsdk:"session_affinity"`
-	SessionAffinityTTL        types.Int64                                 `tfsdk:"session_affinity_ttl"`        // Int64 in v4, Float64 in v5
-	SessionAffinityAttributes []SourceSessionAffinityAttributesModel      `tfsdk:"session_affinity_attributes"` // Array in v4, single object in v5
-	TTL                       types.Int64                                 `tfsdk:"ttl"`                         // Int64 in v4, Float64 in v5
-	SteeringPolicy            types.String                                `tfsdk:"steering_policy"`
-	FallbackPool              types.String                                `tfsdk:"fallback_pool"`
-	DefaultPools              types.List                                  `tfsdk:"default_pools"`
-	AdaptiveRouting           []SourceAdaptiveRoutingModel                `tfsdk:"adaptive_routing"`    // Array in v4, single object in v5
-	LocationStrategy          []SourceLocationStrategyModel               `tfsdk:"location_strategy"`   // Array in v4, single object in v5
-	RandomSteering            []SourceRandomSteeringModel                 `tfsdk:"random_steering"`     // Array in v4, single object in v5
-	RegionPools               []SourceRegionPoolModel                     `tfsdk:"region_pools"`        // Set of blocks in v4, map in v5
-	PopPools                  []SourcePopPoolModel                        `tfsdk:"pop_pools"`           // Set of blocks in v4, map in v5
-	CountryPools              []SourceCountryPoolModel                    `tfsdk:"country_pools"`       // Set of blocks in v4, map in v5
+	SessionAffinity           types.String                                         `tfsdk:"session_affinity"`
+	SessionAffinityTTL        types.Int64                                          `tfsdk:"session_affinity_ttl"`        // Int64 in v4, Float64 in v5
+	SessionAffinityAttributes []SourceRulesOverridesSessionAffinityAttributesModel `tfsdk:"session_affinity_attributes"` // Array in v4, single object in v5
+	TTL                       types.Int64                                          `tfsdk:"ttl"`                         // Int64 in v4, Float64 in v5
+	SteeringPolicy            types.String                                         `tfsdk:"steering_policy"`
+	FallbackPool              types.String                                         `tfsdk:"fallback_pool"`
+	DefaultPools              types.List                                           `tfsdk:"default_pools"`
+	AdaptiveRouting           []SourceAdaptiveRoutingModel                         `tfsdk:"adaptive_routing"`  // Array in v4, single object in v5
+	LocationStrategy          []SourceLocationStrategyModel                        `tfsdk:"location_strategy"` // Array in v4, single object in v5
+	RandomSteering            []SourceRandomSteeringModel                          `tfsdk:"random_steering"`   // Array in v4, single object in v5
+	RegionPools               []SourceRegionPoolModel                              `tfsdk:"region_pools"`      // Set of blocks in v4, map in v5
+	PopPools                  []SourcePopPoolModel                                 `tfsdk:"pop_pools"`         // Set of blocks in v4, map in v5
+	CountryPools              []SourceCountryPoolModel                             `tfsdk:"country_pools"`     // Set of blocks in v4, map in v5
 }
 
 // SourceFixedResponseModel represents v4 fixed_response structure.
@@ -142,30 +153,31 @@ type SourceFixedResponseModel struct {
 
 // TargetLoadBalancerModel represents the target cloudflare_load_balancer state (v500).
 type TargetLoadBalancerModel struct {
-	ID                        types.String                                                         `tfsdk:"id"`
-	ZoneID                    types.String                                                         `tfsdk:"zone_id"`
-	FallbackPool              types.String                                                         `tfsdk:"fallback_pool"` // Renamed from fallback_pool_id
-	Name                      types.String                                                         `tfsdk:"name"`
-	DefaultPools              *[]types.String                                                      `tfsdk:"default_pools"` // Renamed from default_pool_ids
-	Description               types.String                                                         `tfsdk:"description"`
-	SessionAffinityTTL        types.Float64                                                        `tfsdk:"session_affinity_ttl"` // Converted from Int64
-	TTL                       types.Float64                                                        `tfsdk:"ttl"`                  // Converted from Int64
-	CountryPools              customfield.Map[customfield.List[types.String]]                      `tfsdk:"country_pools"`        // Converted from set of blocks
-	Networks                  customfield.List[types.String]                                       `tfsdk:"networks"`             // New field in v5
-	POPPools                  customfield.Map[customfield.List[types.String]]                      `tfsdk:"pop_pools"`            // Converted from set of blocks
-	RegionPools               customfield.Map[customfield.List[types.String]]                      `tfsdk:"region_pools"`         // Converted from set of blocks
-	Enabled                   types.Bool                                                           `tfsdk:"enabled"`
-	Proxied                   types.Bool                                                           `tfsdk:"proxied"`
-	SessionAffinity           types.String                                                         `tfsdk:"session_affinity"`
-	SteeringPolicy            types.String                                                         `tfsdk:"steering_policy"`
-	AdaptiveRouting           customfield.NestedObject[TargetAdaptiveRoutingModel]                 `tfsdk:"adaptive_routing"`             // Converted from array
-	LocationStrategy          customfield.NestedObject[TargetLocationStrategyModel]                `tfsdk:"location_strategy"`            // Converted from array
-	RandomSteering            customfield.NestedObject[TargetRandomSteeringModel]                  `tfsdk:"random_steering"`              // Converted from array
-	Rules                     customfield.NestedObjectList[TargetRulesModel]                       `tfsdk:"rules"`
-	SessionAffinityAttributes customfield.NestedObject[TargetSessionAffinityAttributesModel]       `tfsdk:"session_affinity_attributes"`  // Converted from array
-	CreatedOn                 types.String                                                         `tfsdk:"created_on"`
-	ModifiedOn                types.String                                                         `tfsdk:"modified_on"`
-	ZoneName                  types.String                                                         `tfsdk:"zone_name"` // Computed, may not exist in v4
+	ID                        types.String                                                   `tfsdk:"id"`
+	ZoneID                    types.String                                                   `tfsdk:"zone_id"`
+	FallbackPool              types.String                                                   `tfsdk:"fallback_pool"` // Renamed from fallback_pool_id
+	Name                      types.String                                                   `tfsdk:"name"`
+	DefaultPools              *[]types.String                                                `tfsdk:"default_pools"` // Renamed from default_pool_ids
+	Description               types.String                                                   `tfsdk:"description"`
+	SessionAffinityTTL        types.Float64                                                  `tfsdk:"session_affinity_ttl"` // Converted from Int64
+	TTL                       types.Float64                                                  `tfsdk:"ttl"`                  // Converted from Int64
+	CountryPools              customfield.Map[customfield.List[types.String]]                `tfsdk:"country_pools"`        // Converted from set of blocks
+	Networks                  customfield.List[types.String]                                 `tfsdk:"networks"`             // New field in v5
+	POPPools                  customfield.Map[customfield.List[types.String]]                `tfsdk:"pop_pools"`            // Converted from set of blocks
+	RegionPools               customfield.Map[customfield.List[types.String]]                `tfsdk:"region_pools"`         // Converted from set of blocks
+	Enabled                   types.Bool                                                     `tfsdk:"enabled"`
+	Proxied                   types.Bool                                                     `tfsdk:"proxied"`
+	SessionAffinity           types.String                                                   `tfsdk:"session_affinity"`
+	SteeringPolicy            types.String                                                   `tfsdk:"steering_policy"`
+	AdaptiveRouting           customfield.NestedObject[TargetAdaptiveRoutingModel]           `tfsdk:"adaptive_routing"`  // Converted from array
+	LocationStrategy          customfield.NestedObject[TargetLocationStrategyModel]          `tfsdk:"location_strategy"` // Converted from array
+	PoolSets                  customfield.NestedObjectList[TargetPoolSetsModel]              `tfsdk:"pool_sets"`         // New field in v5
+	RandomSteering            customfield.NestedObject[TargetRandomSteeringModel]            `tfsdk:"random_steering"`   // Converted from array
+	Rules                     customfield.NestedObjectList[TargetRulesModel]                 `tfsdk:"rules"`
+	SessionAffinityAttributes customfield.NestedObject[TargetSessionAffinityAttributesModel] `tfsdk:"session_affinity_attributes"` // Converted from array
+	CreatedOn                 types.String                                                   `tfsdk:"created_on"`
+	ModifiedOn                types.String                                                   `tfsdk:"modified_on"`
+	ZoneName                  types.String                                                   `tfsdk:"zone_name"` // Computed, may not exist in v4
 }
 
 // TargetSessionAffinityAttributesModel represents v5 session_affinity_attributes structure.
@@ -189,6 +201,45 @@ type TargetLocationStrategyModel struct {
 	PreferECS types.String `tfsdk:"prefer_ecs"`
 }
 
+// TargetPoolSetsModel represents v5 pool_sets structure (list-nested).
+type TargetPoolSetsModel struct {
+	Disabled      types.Bool                                             `tfsdk:"disabled"`
+	FixedResponse *TargetPoolSetsFixedResponseModel                      `tfsdk:"fixed_response"`
+	Match         customfield.NestedObject[TargetPoolSetsMatchModel]     `tfsdk:"match"`
+	Name          types.String                                           `tfsdk:"name"`
+	Overrides     customfield.NestedObject[TargetPoolSetsOverridesModel] `tfsdk:"overrides"`
+}
+
+// TargetPoolSetsFixedResponseModel represents v5 pool_sets.fixed_response structure.
+type TargetPoolSetsFixedResponseModel struct {
+	ContentType types.String `tfsdk:"content_type"`
+	Location    types.String `tfsdk:"location"`
+	MessageBody types.String `tfsdk:"message_body"`
+	StatusCode  types.Int64  `tfsdk:"status_code"`
+}
+
+// TargetPoolSetsMatchModel represents v5 pool_sets.match structure.
+type TargetPoolSetsMatchModel struct {
+	Default  types.Bool                                                 `tfsdk:"default"`
+	Topology customfield.NestedObject[TargetPoolSetsMatchTopologyModel] `tfsdk:"topology"`
+}
+
+// TargetPoolSetsMatchTopologyModel represents v5 pool_sets.match.topology structure.
+type TargetPoolSetsMatchTopologyModel struct {
+	Countries *[]types.String `tfsdk:"countries"`
+	POPs      *[]types.String `tfsdk:"pops"`
+	Regions   *[]types.String `tfsdk:"regions"`
+}
+
+// TargetPoolSetsOverridesModel represents v5 pool_sets.overrides structure.
+type TargetPoolSetsOverridesModel struct {
+	FallbackPool      types.String                   `tfsdk:"fallback_pool"`
+	PoolDefaultWeight types.Float64                  `tfsdk:"pool_default_weight"`
+	PoolWeights       customfield.Map[types.Float64] `tfsdk:"pool_weights"`
+	Pools             customfield.List[types.String] `tfsdk:"pools"`
+	SteeringPolicy    types.String                   `tfsdk:"steering_policy"`
+}
+
 // TargetRandomSteeringModel represents v5 random_steering structure.
 type TargetRandomSteeringModel struct {
 	DefaultWeight types.Float64             `tfsdk:"default_weight"`
@@ -197,13 +248,13 @@ type TargetRandomSteeringModel struct {
 
 // TargetRulesModel represents v5 rules structure.
 type TargetRulesModel struct {
-	Condition     types.String                                              `tfsdk:"condition"`
-	Disabled      types.Bool                                                `tfsdk:"disabled"`
-	FixedResponse *TargetFixedResponseModel                                 `tfsdk:"fixed_response"` // Converted from array
-	Name          types.String                                              `tfsdk:"name"`
-	Overrides     customfield.NestedObject[TargetRulesOverridesModel]       `tfsdk:"overrides"` // Converted from array
-	Priority      types.Int64                                               `tfsdk:"priority"`
-	Terminates    types.Bool                                                `tfsdk:"terminates"`
+	Condition     types.String                                        `tfsdk:"condition"`
+	Disabled      types.Bool                                          `tfsdk:"disabled"`
+	FixedResponse *TargetFixedResponseModel                           `tfsdk:"fixed_response"` // Converted from array
+	Name          types.String                                        `tfsdk:"name"`
+	Overrides     customfield.NestedObject[TargetRulesOverridesModel] `tfsdk:"overrides"` // Converted from array
+	Priority      types.Int64                                         `tfsdk:"priority"`
+	Terminates    types.Bool                                          `tfsdk:"terminates"`
 }
 
 // TargetFixedResponseModel represents v5 fixed_response structure.

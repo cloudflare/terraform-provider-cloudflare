@@ -3,13 +3,21 @@ page_title: "cloudflare_workers_scripts Data Source - Cloudflare"
 subcategory: ""
 description: |-
   Accepted Permissions
-  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
+  Individual Workers AdminIndividual Workers Content Read-OnlyIndividual Workers EditorIndividual Workers Metadata Read-OnlyWorkers AdminWorkers Content Read-OnlyWorkers EditorWorkers Metadata Read-OnlyWorkers Scripts ReadWorkers Scripts WriteWorkers Tail Read
 ---
 
 # cloudflare_workers_scripts (Data Source)
 
 Accepted Permissions
 
+- `Individual Workers Admin`
+- `Individual Workers Content Read-Only`
+- `Individual Workers Editor`
+- `Individual Workers Metadata Read-Only`
+- `Workers Admin`
+- `Workers Content Read-Only`
+- `Workers Editor`
+- `Workers Metadata Read-Only`
 - `Workers Scripts Read`
 - `Workers Scripts Write`
 - `Workers Tail Read`
@@ -91,39 +99,41 @@ caching off and back on.
 
 Read-Only:
 
-- `cache` (Attributes) Cache override for this entrypoint. It applies only to
-`type: worker` entries and overrides the Worker's global
-`cache_options.enabled` for that entrypoint. (see [below for nested schema](#nestedatt--result--exports--cache))
+- `cache` (Attributes) For `type: worker`: Cache override for this entrypoint. Overrides the Worker's
+global `cache_options.enabled` for this entrypoint only. (see [below for nested schema](#nestedatt--result--exports--cache))
 - `renamed_to` (String) Destination class name for a `state: renamed` tombstone. The
 target must appear as a live (`created`) entry in the same
 `exports` map. Write-only: never present in GET responses.
-- `state` (String) Lifecycle state of the export entry. Defaults to `created`
-(a normal, live export) when omitted.
+- `state` (String) For `state: created`: Live export. May be omitted; defaults to `created`.
 
-`deleted`, `renamed`, and `transferred` are tombstones:
-write-only lifecycle operations that retire, rename, or hand
-off a provisioned Durable Object namespace. They are applied
-at upload and are filtered out of GET responses, so a read
-only ever returns `created` or `expecting-transfer`.
+For `state: deleted`: Tombstone that deletes the namespace.
 
-`expecting-transfer` is a live export whose data is being
-received from another script via the two-phase transfer flow;
-it carries `storage` and `transfer_from`.
+For `state: renamed`: Tombstone that renames the namespace's class.
+
+For `state: transferred`: Tombstone that transfers the namespace to another script.
+
+For `state: expecting-transfer`: Target side of a two-phase transfer.
 Available values: "created", "deleted", "renamed", "transferred", "expecting-transfer".
-- `storage` (String) Storage backend for a `type: durable-object` export. Required
-for live Durable Object entries (`created` and
-`expecting-transfer`). `sqlite` selects SQLite-backed storage;
-`legacy-kv` selects the legacy key-value storage.
+- `storage` (String) For `type: durable-object` and `state: created`: Durable Object storage backend. `sqlite` is the recommended (and
+only) backend for new namespaces. `legacy-kv` is accepted only for
+a class whose namespace already exists as KV-backed; the `exports`
+flow never provisions a new `legacy-kv` namespace.
+
+For `type: durable-object` and `state: expecting-transfer`: Durable Object storage backend. `sqlite` is the recommended (and
+only) backend for new namespaces. `legacy-kv` is accepted only for
+a class whose namespace already exists as KV-backed; the `exports`
+flow never provisions a new `legacy-kv` namespace.
 Available values: "sqlite", "legacy-kv".
-- `transfer_from` (String) Source script for a `state: expecting-transfer` entry. The
-namespace on this script is materialised from the source
-script's data via the pending-transfer flow. Present on reads
-for `expecting-transfer` entries.
-- `transferred_to` (String) Destination script for a `state: transferred` tombstone. Must
-reference a script in the same account; cross-dispatch-namespace
-transfers are rejected. Write-only: never present in GET
-responses.
-- `type` (String) The kind of export.
+- `transfer_from` (String) For `state: expecting-transfer`: The source script name to receive the namespace from. Must be
+in the same account and dispatch-namespace context. Present on
+reads for `expecting-transfer` entries.
+- `transferred_to` (String) For `state: transferred`: The destination script name. Must be in the same account and
+the same dispatch-namespace context (or both non-dispatch).
+Cross-dispatch-namespace transfers are rejected. Write-only:
+never present in GET responses.
+- `type` (String) For `type: worker`: Marks this entry as a Worker entrypoint export.
+
+For `type: durable-object`: Marks this entry as a Durable Object export.
 Available values: "worker", "durable-object".
 
 <a id="nestedatt--result--exports--cache"></a>
@@ -199,6 +209,8 @@ Read-Only:
 - `hostname` (String) HTTP hostname for targeted placement.
 - `last_analyzed_at` (String) The last time the script was analyzed for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
 - `mode` (String) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+
+Targeted placement mode.
 Available values: "smart", "targeted".
 - `region` (String) Cloud region for targeted placement in format 'provider:region'.
 - `status` (String) Status of [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).

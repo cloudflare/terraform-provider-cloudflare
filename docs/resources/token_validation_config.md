@@ -74,13 +74,13 @@ Available values: "RSA", "EC", "oct".
 
 Optional:
 
-- `crv` (String) Curve
+- `crv` (String) For `alg: ES256` or `alg: ES384`: Curve
 Available values: "P-256", "P-384".
-- `e` (String) RSA exponent
-- `k` (String) Symmetric key material. Required for create and PUT update requests.
-- `n` (String) RSA modulus
-- `x` (String) X EC coordinate
-- `y` (String) Y EC coordinate
+- `e` (String) For `alg: RS256` or `alg: RS384` or `alg: RS512` or `alg: PS256` or `alg: PS384` or `alg: PS512`: RSA exponent
+- `k` (String) For `alg: HS256` or `alg: HS384` or `alg: HS512`: Symmetric key material. Required for create and PUT update requests.
+- `n` (String) For `alg: RS256` or `alg: RS384` or `alg: RS512` or `alg: PS256` or `alg: PS384` or `alg: PS512`: RSA modulus
+- `x` (String) For `alg: ES256` or `alg: ES384`: X EC coordinate
+- `y` (String) For `alg: ES256` or `alg: ES384`: Y EC coordinate
 
 ## Import
 

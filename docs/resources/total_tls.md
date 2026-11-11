@@ -33,13 +33,13 @@ resource "cloudflare_total_tls" "example_total_tls" {
 
 ### Optional
 
-- `certificate_authority` (String) The Certificate Authority that Total TLS certificates will be issued through.
+- `certificate_authority` (String) The Certificate Authority that Total TLS certificates will be issued through. Not returned in responses when Total TLS is disabled.
 Available values: "google", "lets_encrypt", "ssl_com".
 
 ### Read-Only
 
 - `id` (String) Identifier.
-- `validity_period` (Number) The validity period in days for the certificates ordered via Total TLS.
+- `validity_period` (Number) The validity period in days for the certificates ordered via Total TLS. Not returned when Total TLS is disabled.
 Available values: 90.
 
 ## Import

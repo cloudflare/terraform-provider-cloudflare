@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -217,6 +218,75 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"ai_agents": schema.SingleNestedAttribute{
+				Description: "Configure blocking behavior for supported personal AI agents.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[BotManagementAIAgentsModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"anthropic_agent": schema.StringAttribute{
+						Description: "Action to apply to one supported personal AI agent.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"disabled",
+								"block",
+								"only_on_ad_pages",
+							),
+						},
+					},
+					"google_agent": schema.StringAttribute{
+						Description: "Action to apply to one supported personal AI agent.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"disabled",
+								"block",
+								"only_on_ad_pages",
+							),
+						},
+					},
+					"instinct": schema.StringAttribute{
+						Description: "Action to apply to one supported personal AI agent.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"disabled",
+								"block",
+								"only_on_ad_pages",
+							),
+						},
+					},
+					"muse": schema.StringAttribute{
+						Description: "Action to apply to one supported personal AI agent.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"disabled",
+								"block",
+								"only_on_ad_pages",
+							),
+						},
+					},
+					"openai_agent": schema.StringAttribute{
+						Description: "Action to apply to one supported personal AI agent.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"disabled",
+								"block",
+								"only_on_ad_pages",
+							),
+						},
+					},
+				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"using_latest_model": schema.BoolAttribute{
 				Description: "A read-only field that indicates whether the zone currently is running the latest ML model.",

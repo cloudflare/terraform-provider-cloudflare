@@ -12,16 +12,18 @@ type MagicTransitSiteWANResultEnvelope struct {
 }
 
 type MagicTransitSiteWANModel struct {
-	ID                    types.String                              `tfsdk:"id" json:"id,computed"`
-	AccountID             types.String                              `tfsdk:"account_id" path:"account_id,required"`
-	SiteID                types.String                              `tfsdk:"site_id" path:"site_id,required"`
-	Physport              types.Int64                               `tfsdk:"physport" json:"physport,required"`
-	Name                  types.String                              `tfsdk:"name" json:"name,optional"`
-	Priority              types.Int64                               `tfsdk:"priority" json:"priority,optional"`
-	VlanTag               types.Int64                               `tfsdk:"vlan_tag" json:"vlan_tag,optional"`
-	StaticAddressing      *MagicTransitSiteWANStaticAddressingModel `tfsdk:"static_addressing" json:"static_addressing,optional"`
-	HealthCheckRate       types.String                              `tfsdk:"health_check_rate" json:"health_check_rate,computed_optional"`
-	LoadBalanceInnerFlows types.Bool                                `tfsdk:"load_balance_inner_flows" json:"load_balance_inner_flows,computed_optional"`
+	ID                      types.String                              `tfsdk:"id" json:"id,computed"`
+	AccountID               types.String                              `tfsdk:"account_id" path:"account_id,required"`
+	SiteID                  types.String                              `tfsdk:"site_id" path:"site_id,required"`
+	Physport                types.Int64                               `tfsdk:"physport" json:"physport,required"`
+	Name                    types.String                              `tfsdk:"name" json:"name,optional"`
+	Priority                types.Int64                               `tfsdk:"priority" json:"priority,optional"`
+	ProvisionedDownloadKbps types.Int64                               `tfsdk:"provisioned_download_kbps" json:"provisioned_download_kbps,optional"`
+	ProvisionedUploadKbps   types.Int64                               `tfsdk:"provisioned_upload_kbps" json:"provisioned_upload_kbps,optional"`
+	VlanTag                 types.Int64                               `tfsdk:"vlan_tag" json:"vlan_tag,optional"`
+	StaticAddressing        *MagicTransitSiteWANStaticAddressingModel `tfsdk:"static_addressing" json:"static_addressing,optional"`
+	HealthCheckRate         types.String                              `tfsdk:"health_check_rate" json:"health_check_rate,computed_optional"`
+	LoadBalanceInnerFlows   types.Bool                                `tfsdk:"load_balance_inner_flows" json:"load_balance_inner_flows,computed_optional"`
 }
 
 func (m MagicTransitSiteWANModel) MarshalJSON() (data []byte, err error) {
@@ -33,7 +35,8 @@ func (m MagicTransitSiteWANModel) MarshalJSONForUpdate(state MagicTransitSiteWAN
 }
 
 type MagicTransitSiteWANStaticAddressingModel struct {
-	Address          types.String `tfsdk:"address" json:"address,required"`
-	GatewayAddress   types.String `tfsdk:"gateway_address" json:"gateway_address,required"`
-	SecondaryAddress types.String `tfsdk:"secondary_address" json:"secondary_address,optional"`
+	Address                 types.String `tfsdk:"address" json:"address,required"`
+	GatewayAddress          types.String `tfsdk:"gateway_address" json:"gateway_address,required"`
+	SecondaryAddress        types.String `tfsdk:"secondary_address" json:"secondary_address,optional"`
+	SecondaryGatewayAddress types.String `tfsdk:"secondary_gateway_address" json:"secondary_gateway_address,optional"`
 }

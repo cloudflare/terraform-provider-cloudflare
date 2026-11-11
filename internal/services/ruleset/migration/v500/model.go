@@ -387,10 +387,12 @@ type TargetV5ActionParametersModel struct {
 	Ruleset                 types.String `tfsdk:"ruleset"`
 
 	// New in v5 (absent in v4)
-	AssetName              types.String `tfsdk:"asset_name"`
-	RequestBodyBuffering   types.String `tfsdk:"request_body_buffering"`
-	ResponseBodyBuffering  types.String `tfsdk:"response_body_buffering"`
-	RedirectsForAITraining types.Bool   `tfsdk:"redirects_for_ai_training"`
+	AssetName              types.String   `tfsdk:"asset_name"`
+	RequestBodyBuffering   types.String   `tfsdk:"request_body_buffering"`
+	ResponseBodyBuffering  types.String   `tfsdk:"response_body_buffering"`
+	RedirectsForAITraining types.Bool     `tfsdk:"redirects_for_ai_training"`
+	WebMCPEnabled          types.Bool     `tfsdk:"webmcp_enabled"`
+	WebMCPPacks            []types.String `tfsdk:"webmcp_packs"`
 
 	// Cache control fields (set_cache_settings action)
 	StripETags        types.Bool `tfsdk:"strip_etags"`

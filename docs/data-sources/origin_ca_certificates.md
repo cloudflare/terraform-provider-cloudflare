@@ -14,8 +14,6 @@ description: |-
 ```terraform
 data "cloudflare_origin_ca_certificates" "example_origin_ca_certificates" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  limit = 10
-  offset = 10
 }
 ```
 
@@ -28,9 +26,7 @@ data "cloudflare_origin_ca_certificates" "example_origin_ca_certificates" {
 
 ### Optional
 
-- `limit` (Number) Limit to the number of records returned.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `offset` (Number) Offset the results.
 
 ### Read-Only
 
@@ -49,7 +45,8 @@ Hostnames must be fully qualified domain names (FQDNs) belonging to zones on you
 - `id` (String) The x509 serial number of the Origin CA certificate.
 - `request_type` (String) Signature type desired on certificate ("origin-rsa" (rsa), "origin-ecc" (ecdsa), or "keyless-certificate" (for Keyless SSL servers).
 Available values: "origin-rsa", "origin-ecc", "keyless-certificate".
-- `requested_validity` (Number) The number of days for which the certificate should be valid.
+- `requested_validity` (Number) The number of days for which the certificate was requested to be valid. Only returned in the Create Certificate response, where it echoes the requested value. Not returned when getting or listing certificates.
 Available values: 7, 30, 90, 365, 730, 1095, 5475.
+- `revoked_at` (String) When the certificate was revoked.
 
 

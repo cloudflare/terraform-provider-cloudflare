@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -26,6 +27,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				"User Details Read",
 				"User Details Write",
 			},
+			MarkdownDescription: "User API tokens can list and create Organizations, but reading, updating, or deleting an Organization requires a Global API key and your registered email address. The `cloudflare_organization` Terraform resource therefore requires a Global API key for its full lifecycle.\n\nSee [Organizations authentication limitations](https://developers.cloudflare.com/fundamentals/organizations/limitations/#api-authentication) for credential compatibility by operation. Each endpoint’s **Security** section lists its supported authentication methods, with **Accepted Permissions** where applicable.",
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -45,6 +47,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectType[OrganizationMetaDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
+					"are_child_accounts_accessible_by_org_members": schema.BoolAttribute{
+						Computed: true,
+					},
 					"hierarchy_tags": schema.ListAttribute{
 						Description: "Ordered chain of organization tags from the root organization down to\n(and including) this organization itself. Root organizations return a\nsingle-element array containing their own tag; sub-organizations return\n`[rootTag, ...intermediateTags, parentTag, selfTag]`. Useful for\nconstructing authorization scopes that need to cover every ancestor\nin the hierarchy.",
 						Computed:    true,
@@ -84,6 +89,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed: true,
 							},
 						},
+					},
+					"tenant_type": schema.StringAttribute{
+						Computed: true,
 					},
 				},
 			},
@@ -145,6 +153,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
+					"direction": schema.StringAttribute{
+						Description: "Sort direction for the `order_by` field. Defaults to `asc` when `order_by` is\nspecified.\nAvailable values: \"asc\", \"desc\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+						},
+					},
+					"member": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"email": schema.StringAttribute{
+								Description: "Filter organizations to those where the given user, by email, is an active member of\nthat exact organization. This does not include hierarchy-derived access.",
+								Optional:    true,
+							},
+						},
+					},
 					"name": schema.SingleNestedAttribute{
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
@@ -160,6 +184,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Description: "(case-insensitive) Filter the list of organizations to where the name starts with a\nparticular string.",
 								Optional:    true,
 							},
+						},
+					},
+					"order_by": schema.StringAttribute{
+						Description: "Field to order results by. Currently supported values: `name`.\nWhen not specified, results are ordered by hierarchy.\nAvailable values: \"name\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("name"),
 						},
 					},
 					"page_size": schema.Int64Attribute{

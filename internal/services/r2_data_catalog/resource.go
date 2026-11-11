@@ -64,14 +64,20 @@ func (r *R2DataCatalogResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
+	dataBytes, err := data.MarshalJSON()
+	if err != nil {
+		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+		return
+	}
 	res := new(http.Response)
 	env := R2DataCatalogResultEnvelope{*data}
-	_, err := r.client.R2DataCatalog.Enable(
+	_, err = r.client.R2DataCatalog.Enable(
 		ctx,
 		data.BucketName.ValueString(),
 		r2_data_catalog.R2DataCatalogEnableParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
+		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

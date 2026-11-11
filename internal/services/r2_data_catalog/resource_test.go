@@ -62,6 +62,7 @@ func TestAccCloudflareR2DataCatalog_Basic(t *testing.T) {
 				ImportStateVerifyIgnore: []string{
 					"bucket",
 					"credential_status",
+					"jurisdiction",
 					"maintenance_config",
 					"status",
 				},

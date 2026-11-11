@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -24,14 +25,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier.",
 				Required:    true,
 			},
-			"limit": schema.Int64Attribute{
-				Description: "Limit to the number of records returned.",
-				Optional:    true,
-			},
-			"offset": schema.Int64Attribute{
-				Description: "Offset the results.",
-				Optional:    true,
-			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
@@ -45,8 +38,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[OriginCACertificatesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "The x509 serial number of the Origin CA certificate.",
+							Computed:    true,
+						},
+						"certificate": schema.StringAttribute{
+							Description: "The Origin CA certificate. Will be newline-encoded.",
+							Computed:    true,
+						},
 						"csr": schema.StringAttribute{
 							Description: "The Certificate Signing Request (CSR). Must be newline-encoded.",
+							Computed:    true,
+						},
+						"expires_on": schema.StringAttribute{
+							Description: "When the certificate will expire.",
 							Computed:    true,
 						},
 						"hostnames": schema.ListAttribute{
@@ -67,7 +72,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"requested_validity": schema.Float64Attribute{
-							Description: "The number of days for which the certificate should be valid.\nAvailable values: 7, 30, 90, 365, 730, 1095, 5475.",
+							Description: "The number of days for which the certificate was requested to be valid. Only returned in the Create Certificate response, where it echoes the requested value. Not returned when getting or listing certificates.\nAvailable values: 7, 30, 90, 365, 730, 1095, 5475.",
 							Computed:    true,
 							Validators: []validator.Float64{
 								float64validator.OneOf(
@@ -81,17 +86,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-						"id": schema.StringAttribute{
-							Description: "The x509 serial number of the Origin CA certificate.",
+						"revoked_at": schema.StringAttribute{
+							Description: "When the certificate was revoked.",
 							Computed:    true,
-						},
-						"certificate": schema.StringAttribute{
-							Description: "The Origin CA certificate. Will be newline-encoded.",
-							Computed:    true,
-						},
-						"expires_on": schema.StringAttribute{
-							Description: "When the certificate will expire.",
-							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 					},
 				},

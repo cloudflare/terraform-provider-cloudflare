@@ -3,7 +3,7 @@ page_title: "cloudflare_workers_script Resource - Cloudflare"
 subcategory: ""
 description: |-
   Accepted Permissions
-  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
+  Workers Scripts ReadWorkers Scripts WriteIndividual Workers AdminIndividual Workers Content Read-OnlyIndividual Workers EditorWorkers AdminWorkers Content Read-OnlyWorkers EditorWorkers Tail Read
 ---
 
 # cloudflare_workers_script (Resource)
@@ -12,6 +12,12 @@ Accepted Permissions
 
 - `Workers Scripts Read`
 - `Workers Scripts Write`
+- `Individual Workers Admin`
+- `Individual Workers Content Read-Only`
+- `Individual Workers Editor`
+- `Workers Admin`
+- `Workers Content Read-Only`
+- `Workers Editor`
 - `Workers Tail Read`
 
 -> For more direct control over Workers resources, we recommend the beta `cloudflare_worker`, `cloudflare_worker_version`, and `cloudflare_workers_deployment` resources. See how to use them in the [developer documentation](https://developers.cloudflare.com/workers/platform/infrastructure-as-code/).
@@ -52,6 +58,9 @@ resource "cloudflare_workers_script" "example_workers_script" {
     cache_options = {
       enabled = true
       cross_version_cache = true
+    }
+    code_update_strategy = {
+      mode = "immediate"
     }
     compatibility_date = "2021-01-01T00:00:00Z"
     compatibility_flags = ["nodejs_compat"]
@@ -160,13 +169,14 @@ resource "cloudflare_workers_script" "example_workers_script" {
 - `annotations` (Attributes) Annotations for the version created by this upload. (see [below for nested schema](#nestedatt--annotations))
 - `assets` (Attributes) Configuration for assets within a Worker. (see [below for nested schema](#nestedatt--assets))
 - `bindings` (Attributes List) List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings. (see [below for nested schema](#nestedatt--bindings))
-- `bindings_inherit` (String) When set to "strict", the upload will fail if any `inherit` type bindings cannot be resolved against the previous version of the Worker. Without this, unresolvable inherit bindings are silently dropped.
+- `bindings_inherit` (String) When set to "strict", the upload will fail with error 10057 if any `inherit` type bindings cannot be resolved against the latest uploaded version of the Worker, which may not be the deployed version. Without this, unresolvable inherit bindings are silently dropped.
 Available values: "strict".
 - `body_part` (String) Name of the uploaded file that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.
 - `cache_options` (Attributes) Global CacheW configuration for the Worker. When caching is on,
 the platform provisions a `cloudflare.app` zone for the Worker.
 A `type: worker` entry in the `exports` map can override this
 value for a single entrypoint. (see [below for nested schema](#nestedatt--cache_options))
+- `code_update_strategy` (Attributes) Choose whether to apply Durable Object code updates immediately or defer them. When omitted, the default strategy applies. (see [below for nested schema](#nestedatt--code_update_strategy))
 - `compatibility_date` (String) Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
 - `compatibility_flags` (Set of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
 - `content` (String) Module or Service Worker contents of the Worker. Conflicts with `content_file`.
@@ -279,7 +289,7 @@ Available values: "raw", "pkcs8", "spki", "jwk".
 - `instance_name` (String) The user-chosen instance name. Must exist at deploy time. The worker can search, chat, update, and manage items/jobs on this instance.
 - `json` (String) JSON data to use.
 - `jurisdiction` (String) The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.
-Available values: "eu", "fedramp", "fedramp-high".
+Available values: "eu", "fedramp", "fedramp-high", "us".
 - `key_base64` (String, Sensitive) Base64-encoded key data. Required if `format` is "raw", "pkcs8", or "spki".
 - `key_jwk` (String, Sensitive) Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is "jwk".
 - `namespace` (String) The namespace the instance belongs to. Defaults to "default" if omitted. Customers who don't use namespaces can simply omit this field.
@@ -301,7 +311,7 @@ Available values: "eu", "fedramp", "fedramp-high".
 - `text` (String, Sensitive) The text value to use.
 - `tunnel_id` (String) UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.
 - `usages` (Set of String) Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
-- `version_id` (String) Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.
+- `version_id` (String) Identifier for the version to inherit the binding from. This can be a version ID, or the literal "latest" to inherit from the most recently uploaded version, which may not be the deployed version. Defaults to "latest". Only the Workers API version endpoints under `/accounts/{account_id}/workers/workers/{worker_id}/versions` accept a version ID. Other endpoints, including script upload and script version upload, accept only "latest" and reject a version ID with error 10057.
 - `workflow_name` (String) Name of the Workflow to bind to.
 
 <a id="nestedatt--bindings--outbound"></a>
@@ -355,6 +365,19 @@ uploads. This is independent of `enabled`. It can stay true
 while caching is off, so the preference survives turning
 caching off and back on.
 - `enabled` (Boolean) Whether caching is enabled for this Worker.
+
+
+<a id="nestedatt--code_update_strategy"></a>
+### Nested Schema for `code_update_strategy`
+
+Required:
+
+- `mode` (String) Apply Durable Object code updates immediately.
+Available values: "immediate", "deferred".
+
+Optional:
+
+- `max_delay` (Number) Set the maximum number of seconds to wait before forcing the update. When omitted, the default maximum delay applies.
 
 
 <a id="nestedatt--exports"></a>
@@ -535,6 +558,8 @@ Required:
 Optional:
 
 - `mode` (String) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+
+Targeted placement mode.
 Available values: "smart", "targeted".
 
 Read-Only:

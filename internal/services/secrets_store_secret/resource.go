@@ -270,5 +270,3 @@ func (r *SecretsStoreSecretResource) ImportState(ctx context.Context, req resour
 func (r *SecretsStoreSecretResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
 }
-
-

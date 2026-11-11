@@ -26,14 +26,17 @@ data "cloudflare_precursor" "example_precursor" {
 
 ### Read-Only
 
-- `default_mode` (String, Deprecated) The zone-level Precursor enforcement mode applied to requests that do
-not match a more specific enforcement rule.
-Available values: "off", "min-friction", "max-security".
-- `enforcement_rules` (Attributes List, Deprecated) The ordered list of enforcement rules for the zone. (see [below for nested schema](#nestedatt--enforcement_rules))
 - `id` (String) Identifier.
+- `mode` (String) Controls Precursor detection for the zone. `off` disables detection,
+`monitor` records detections without affecting bot scores, and `arm`
+allows detections to affect bot scores.
+Available values: "off", "monitor", "arm".
+- `rules` (Attributes List) The ordered list of Precursor rules for the zone. (see [below for nested schema](#nestedatt--rules))
+- `show_interstitial` (Boolean) Whether Precursor shows an interstitial when it takes action on a
+request.
 
-<a id="nestedatt--enforcement_rules"></a>
-### Nested Schema for `enforcement_rules`
+<a id="nestedatt--rules"></a>
+### Nested Schema for `rules`
 
 Read-Only:
 
@@ -41,8 +44,7 @@ Read-Only:
 - `enabled` (Boolean) Whether the rule is active.
 - `expression` (String) The filter expression that determines which requests the rule matches.
 - `id` (String) The read-only identifier that Cloudflare assigns to the rule.
-- `mode` (String) The override mode Precursor applies to requests matching an enforcement
-rule. Unlike `default_mode`, this cannot be `off`.
-Available values: "min-friction", "max-security".
+- `show_interstitial` (Boolean) Whether Precursor shows an interstitial when it takes action on a
+request.
 
 

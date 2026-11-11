@@ -77,7 +77,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"e": schema.StringAttribute{
-									Description: "RSA exponent",
+									Description: "For `alg: RS256` or `alg: RS384` or `alg: RS512` or `alg: PS256` or `alg: PS384` or `alg: PS512`: RSA exponent",
 									Optional:    true,
 								},
 								"kid": schema.StringAttribute{
@@ -96,26 +96,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"n": schema.StringAttribute{
-									Description: "RSA modulus",
+									Description: "For `alg: RS256` or `alg: RS384` or `alg: RS512` or `alg: PS256` or `alg: PS384` or `alg: PS512`: RSA modulus",
 									Optional:    true,
 								},
 								"crv": schema.StringAttribute{
-									Description: "Curve\nAvailable values: \"P-256\", \"P-384\".",
+									Description: "For `alg: ES256` or `alg: ES384`: Curve\nAvailable values: \"P-256\", \"P-384\".",
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("P-256", "P-384"),
 									},
 								},
 								"x": schema.StringAttribute{
-									Description: "X EC coordinate",
+									Description: "For `alg: ES256` or `alg: ES384`: X EC coordinate",
 									Optional:    true,
 								},
 								"y": schema.StringAttribute{
-									Description: "Y EC coordinate",
+									Description: "For `alg: ES256` or `alg: ES384`: Y EC coordinate",
 									Optional:    true,
 								},
 								"k": schema.StringAttribute{
-									Description: "Symmetric key material. Required for create and PUT update requests.",
+									Description: "For `alg: HS256` or `alg: HS384` or `alg: HS512`: Symmetric key material. Required for create and PUT update requests.",
 									Optional:    true,
 								},
 							},

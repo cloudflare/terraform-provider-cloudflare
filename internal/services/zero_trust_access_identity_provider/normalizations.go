@@ -5,6 +5,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
@@ -52,6 +53,11 @@ func normalizeReadZeroTrustIDPConfigData(_ context.Context, dataValue, stateValu
 	normalizeFalseAndNullBool(&dataValue.Config.ConditionalAccessEnabled, stateValue.Config.ConditionalAccessEnabled)
 	normalizeFalseAndNullBool(&dataValue.Config.SupportGroups, stateValue.Config.SupportGroups)
 	normalizeFalseAndNullBool(&dataValue.Config.LoginPageAutoPrompt, stateValue.Config.LoginPageAutoPrompt)
+	// The API returns login_page_auto_prompt only for passkeys. Fill the schema
+	// default so state written before the field existed doesn't plan an update.
+	if dataValue.Config.LoginPageAutoPrompt.IsNull() && !stateValue.Config.LoginPageAutoPrompt.ValueBool() {
+		dataValue.Config.LoginPageAutoPrompt = types.BoolValue(false)
+	}
 
 	if dataValue.Config != nil && stateValue.Config != nil && dataValue.Config.ClientSecret.IsNull() {
 		dataValue.Config.ClientSecret = stateValue.Config.ClientSecret

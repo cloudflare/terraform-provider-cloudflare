@@ -25,6 +25,7 @@ type ZeroTrustDNSLocationDataSourceModel struct {
 	CreatedAt                 timetypes.RFC3339                                                         `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DNSDestinationIPsID       types.String                                                              `tfsdk:"dns_destination_ips_id" json:"dns_destination_ips_id,computed"`
 	DNSDestinationIPV6BlockID types.String                                                              `tfsdk:"dns_destination_ipv6_block_id" json:"dns_destination_ipv6_block_id,computed"`
+	Dns64Enabled              types.Bool                                                                `tfsdk:"dns64_enabled" json:"dns64_enabled,computed"`
 	DOHSubdomain              types.String                                                              `tfsdk:"doh_subdomain" json:"doh_subdomain,computed"`
 	ECSSupport                types.Bool                                                                `tfsdk:"ecs_support" json:"ecs_support,computed"`
 	IP                        types.String                                                              `tfsdk:"ip" json:"ip,computed"`

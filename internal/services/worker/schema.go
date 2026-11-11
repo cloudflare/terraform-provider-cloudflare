@@ -30,6 +30,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
+				"Individual Workers Admin",
+				"Individual Workers Content Read-Only",
+				"Individual Workers Editor",
+				"Individual Workers Metadata Read-Only",
+				"Workers Admin",
+				"Workers Content Read-Only",
+				"Workers Editor",
+				"Workers Metadata Read-Only",
 				"Workers Scripts Read",
 				"Workers Scripts Write",
 				"Workers Tail Read",
@@ -422,7 +430,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"mode": schema.StringAttribute{
-								Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\", \"targeted\".",
+								Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\n\nTargeted placement mode.\nAvailable values: \"smart\", \"targeted\".",
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("smart", "targeted"),

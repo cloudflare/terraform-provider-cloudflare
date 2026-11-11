@@ -21,7 +21,7 @@ resource "cloudflare_zero_trust_risk_behavior" "example_zero_trust_risk_behavior
   behaviors = {
     foo = {
       enabled = true
-      risk_level = "low"
+      risk_level = "info"
     }
   }
 }
@@ -41,7 +41,7 @@ resource "cloudflare_zero_trust_risk_behavior" "example_zero_trust_risk_behavior
 Required:
 
 - `enabled` (Boolean)
-- `risk_level` (String) Available values: "low", "medium", "high".
+- `risk_level` (String) Available values: "info", "low", "medium", "high".
 
 ## Import
 

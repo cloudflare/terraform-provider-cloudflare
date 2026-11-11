@@ -32,7 +32,6 @@ func (m *AccountDNSSettingsDataSourceModel) toReadParams(_ context.Context) (par
 
 type AccountDNSSettingsZoneDefaultsDataSourceModel struct {
 	FlattenAllCNAMEs   types.Bool                                                                         `tfsdk:"flatten_all_cnames" json:"flatten_all_cnames,computed"`
-	FoundationDNS      types.Bool                                                                         `tfsdk:"foundation_dns" json:"foundation_dns,computed"`
 	InternalDNS        customfield.NestedObject[AccountDNSSettingsZoneDefaultsInternalDNSDataSourceModel] `tfsdk:"internal_dns" json:"internal_dns,computed"`
 	MultiProvider      types.Bool                                                                         `tfsdk:"multi_provider" json:"multi_provider,computed"`
 	Nameservers        customfield.NestedObject[AccountDNSSettingsZoneDefaultsNameserversDataSourceModel] `tfsdk:"nameservers" json:"nameservers,computed"`

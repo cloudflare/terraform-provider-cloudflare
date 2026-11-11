@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -66,6 +67,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Priority of WAN for traffic loadbalancing.",
 				Computed:    true,
 			},
+			"provisioned_download_kbps": schema.Int64Attribute{
+				Description: "Provisioned download rate of the WAN circuit in kilobits per second.",
+				Computed:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 1000000000),
+				},
+			},
+			"provisioned_upload_kbps": schema.Int64Attribute{
+				Description: "Provisioned upload rate of the WAN circuit in kilobits per second.",
+				Computed:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 1000000000),
+				},
+			},
 			"vlan_tag": schema.Int64Attribute{
 				Description: "VLAN ID. Use zero for untagged.",
 				Computed:    true,
@@ -85,6 +100,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 					"secondary_address": schema.StringAttribute{
 						Description: "A valid CIDR notation representing an IP range.",
+						Computed:    true,
+					},
+					"secondary_gateway_address": schema.StringAttribute{
+						Description: "Gateway address for the secondary connector of a high availability site.",
 						Computed:    true,
 					},
 				},

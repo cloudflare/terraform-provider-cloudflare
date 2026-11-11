@@ -55,7 +55,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"ips": schema.ListAttribute{
-				Description: "Specify the list of CIDRs to restrict ingress connections.",
+				Description: "For `kind: ip`: Specify the list of CIDRs to restrict ingress connections.",
 				Computed:    true,
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,

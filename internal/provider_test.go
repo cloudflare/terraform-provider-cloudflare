@@ -12,7 +12,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
@@ -165,4 +167,39 @@ func TestProviderUserAgentOperatorSuffix(t *testing.T) {
 
 func stringPtr(s string) *string {
 	return &s
+}
+
+// Actions get their client from ActionData. Codegen rewrites Configure in
+// provider.go, so this fails if a regeneration drops that line.
+func TestProviderConfigureSetsActionData(t *testing.T) {
+	ctx := context.Background()
+	resp := provider.ConfigureResponse{}
+	internal.NewProvider(testProviderVersion)().Configure(ctx, provider.ConfigureRequest{
+		TerraformVersion: testTerraformVersion,
+		Config: providerConfig(t, ctx, map[string]tftypes.Value{
+			consts.APITokenSchemaKey: tftypes.NewValue(tftypes.String, "test-token"),
+		}),
+	}, &resp)
+	if resp.Diagnostics.HasError() {
+		t.Fatalf("Configure failed: %v", resp.Diagnostics)
+	}
+	if _, ok := resp.ActionData.(*cloudflare.Client); !ok {
+		t.Fatalf("ActionData is %T, expected *cloudflare.Client", resp.ActionData)
+	}
+}
+
+func TestProviderServesActionSchemas(t *testing.T) {
+	server := providerserver.NewProtocol6(internal.NewProvider(testProviderVersion)())()
+	resp, err := server.GetProviderSchema(context.Background(), &tfprotov6.GetProviderSchemaRequest{})
+	if err != nil {
+		t.Fatalf("GetProviderSchema: %v", err)
+	}
+	for _, d := range resp.Diagnostics {
+		if d.Severity == tfprotov6.DiagnosticSeverityError {
+			t.Fatalf("GetProviderSchema diagnostic: %s: %s", d.Summary, d.Detail)
+		}
+	}
+	if _, ok := resp.ActionSchemas["cloudflare_zero_trust_access_service_token_refresh"]; !ok {
+		t.Fatalf("action cloudflare_zero_trust_access_service_token_refresh is not served; got %d action schemas", len(resp.ActionSchemas))
+	}
 }

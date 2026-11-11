@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/load_balancers"
@@ -20,7 +21,6 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*LoadBalancerResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*LoadBalancerResource)(nil)
 var _ resource.ResourceWithImportState = (*LoadBalancerResource)(nil)
 
 func NewResource() resource.Resource {
@@ -30,6 +30,52 @@ func NewResource() resource.Resource {
 // LoadBalancerResource defines the resource implementation.
 type LoadBalancerResource struct {
 	client *cloudflare.Client
+}
+
+// isZeroOrEmptyTime reports whether s is empty or parses to the Go zero time
+// (the Load Balancing API's PUT response omits created_on, which unmarshals to
+// "0001-01-01T00:00:00Z").
+func isZeroOrEmptyTime(s string) bool {
+	if s == "" {
+		return true
+	}
+	t, err := time.Parse(time.RFC3339, s)
+	return err == nil && t.IsZero()
+}
+
+// preserveCreatedOnFromState keeps the prior created_on when the Update response
+// omits it (the Load Balancing API's PUT response does not echo created_on, so
+// apijson.UnmarshalComputed leaves it at the Go zero time). Without this the
+// framework rejects the apply: the plan carried the known prior created_on but
+// the result came back "0001-01-01T00:00:00Z".
+func preserveCreatedOnFromState(data *LoadBalancerModel, state *LoadBalancerModel) {
+	if data == nil || state == nil {
+		return
+	}
+
+	if data.CreatedOn.IsUnknown() || data.CreatedOn.IsNull() || isZeroOrEmptyTime(data.CreatedOn.ValueString()) {
+		if !state.CreatedOn.IsUnknown() && !state.CreatedOn.IsNull() {
+			data.CreatedOn = state.CreatedOn
+		}
+	}
+}
+
+// preserveTTLFromState keeps the prior ttl when an API response omits it. ttl
+// applies only to unproxied load balancers; for a proxied LB the GET omits ttl
+// (so a refresh would null a server-managed value) while the create/update PUT
+// echoes the server default. Restoring the prior known value keeps the plan and
+// the stored state stable, avoiding inconsistent-result-after-apply and refresh
+// churn.
+func preserveTTLFromState(data *LoadBalancerModel, state *LoadBalancerModel) {
+	if data == nil || state == nil {
+		return
+	}
+
+	if data.TTL.IsUnknown() || data.TTL.IsNull() {
+		if !state.TTL.IsUnknown() && !state.TTL.IsNull() {
+			data.TTL = state.TTL
+		}
+	}
 }
 
 func (r *LoadBalancerResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -140,6 +186,8 @@ func (r *LoadBalancerResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	data = &env.Result
+	preserveCreatedOnFromState(data, state)
+	preserveTTLFromState(data, state)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -157,6 +205,9 @@ func (r *LoadBalancerResource) Read(ctx context.Context, req resource.ReadReques
 	// on the server-side based on other attribute values.
 	steeringPolicy := data.SteeringPolicy.ValueString()
 	rules := data.Rules
+	// The GET omits ttl for proxied LBs; keep the prior value so a refresh does
+	// not null a server-managed default (see preserveTTLFromState).
+	priorState := *data
 
 	res := new(http.Response)
 	env := LoadBalancerResultEnvelope{*data}
@@ -192,6 +243,7 @@ func (r *LoadBalancerResource) Read(ctx context.Context, req resource.ReadReques
 		data.SteeringPolicy = types.StringValue("")
 	}
 	data.Rules = rules
+	preserveTTLFromState(data, &priorState)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -264,8 +316,4 @@ func (r *LoadBalancerResource) ImportState(ctx context.Context, req resource.Imp
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *LoadBalancerResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-
 }

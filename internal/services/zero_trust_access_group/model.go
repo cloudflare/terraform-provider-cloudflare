@@ -54,6 +54,7 @@ type ZeroTrustAccessGroupIncludeModel struct {
 	SAML                    *ZeroTrustAccessGroupIncludeSAMLModel                    `tfsdk:"saml" json:"saml,optional"`
 	OIDC                    *ZeroTrustAccessGroupIncludeOIDCModel                    `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken            *ZeroTrustAccessGroupIncludeServiceTokenModel            `tfsdk:"service_token" json:"service_token,optional"`
+	ServiceTokenTag         *ZeroTrustAccessGroupIncludeServiceTokenTagModel         `tfsdk:"service_token_tag" json:"service_token_tag,optional"`
 	LinkedAppToken          *ZeroTrustAccessGroupIncludeLinkedAppTokenModel          `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
 	UserRiskScore           *ZeroTrustAccessGroupIncludeUserRiskScoreModel           `tfsdk:"user_risk_score" json:"user_risk_score,optional"`
 	CloudflareAccountMember *ZeroTrustAccessGroupIncludeCloudflareAccountMemberModel `tfsdk:"cloudflare_account_member" json:"cloudflare_account_member,optional"`
@@ -161,6 +162,11 @@ type ZeroTrustAccessGroupIncludeServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
 }
 
+type ZeroTrustAccessGroupIncludeServiceTokenTagModel struct {
+	Key   types.String `tfsdk:"key" json:"key,required"`
+	Value types.String `tfsdk:"value" json:"value,required"`
+}
+
 type ZeroTrustAccessGroupIncludeLinkedAppTokenModel struct {
 	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
 }
@@ -197,6 +203,7 @@ type ZeroTrustAccessGroupExcludeModel struct {
 	SAML                    *ZeroTrustAccessGroupExcludeSAMLModel                    `tfsdk:"saml" json:"saml,optional"`
 	OIDC                    *ZeroTrustAccessGroupExcludeOIDCModel                    `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken            *ZeroTrustAccessGroupExcludeServiceTokenModel            `tfsdk:"service_token" json:"service_token,optional"`
+	ServiceTokenTag         *ZeroTrustAccessGroupExcludeServiceTokenTagModel         `tfsdk:"service_token_tag" json:"service_token_tag,optional"`
 	LinkedAppToken          *ZeroTrustAccessGroupExcludeLinkedAppTokenModel          `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
 	UserRiskScore           *ZeroTrustAccessGroupExcludeUserRiskScoreModel           `tfsdk:"user_risk_score" json:"user_risk_score,optional"`
 	CloudflareAccountMember *ZeroTrustAccessGroupExcludeCloudflareAccountMemberModel `tfsdk:"cloudflare_account_member" json:"cloudflare_account_member,optional"`
@@ -304,6 +311,11 @@ type ZeroTrustAccessGroupExcludeServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
 }
 
+type ZeroTrustAccessGroupExcludeServiceTokenTagModel struct {
+	Key   types.String `tfsdk:"key" json:"key,required"`
+	Value types.String `tfsdk:"value" json:"value,required"`
+}
+
 type ZeroTrustAccessGroupExcludeLinkedAppTokenModel struct {
 	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
 }
@@ -340,6 +352,7 @@ type ZeroTrustAccessGroupRequireModel struct {
 	SAML                    *ZeroTrustAccessGroupRequireSAMLModel                    `tfsdk:"saml" json:"saml,optional"`
 	OIDC                    *ZeroTrustAccessGroupRequireOIDCModel                    `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken            *ZeroTrustAccessGroupRequireServiceTokenModel            `tfsdk:"service_token" json:"service_token,optional"`
+	ServiceTokenTag         *ZeroTrustAccessGroupRequireServiceTokenTagModel         `tfsdk:"service_token_tag" json:"service_token_tag,optional"`
 	LinkedAppToken          *ZeroTrustAccessGroupRequireLinkedAppTokenModel          `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
 	UserRiskScore           *ZeroTrustAccessGroupRequireUserRiskScoreModel           `tfsdk:"user_risk_score" json:"user_risk_score,optional"`
 	CloudflareAccountMember *ZeroTrustAccessGroupRequireCloudflareAccountMemberModel `tfsdk:"cloudflare_account_member" json:"cloudflare_account_member,optional"`
@@ -445,6 +458,11 @@ type ZeroTrustAccessGroupRequireOIDCModel struct {
 
 type ZeroTrustAccessGroupRequireServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
+}
+
+type ZeroTrustAccessGroupRequireServiceTokenTagModel struct {
+	Key   types.String `tfsdk:"key" json:"key,required"`
+	Value types.String `tfsdk:"value" json:"value,required"`
 }
 
 type ZeroTrustAccessGroupRequireLinkedAppTokenModel struct {

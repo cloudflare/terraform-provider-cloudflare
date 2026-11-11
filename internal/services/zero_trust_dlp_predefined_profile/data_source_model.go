@@ -49,6 +49,7 @@ type ZeroTrustDLPPredefinedProfileEntriesDataSourceModel struct {
 	UpdatedAt     timetypes.RFC3339                                                                       `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Description   types.String                                                                            `tfsdk:"description" json:"description,computed"`
 	ProfileID     types.String                                                                            `tfsdk:"profile_id" json:"profile_id,computed"`
+	ValidatorIDs  customfield.Set[types.String]                                                           `tfsdk:"validator_ids" json:"validator_ids,computed"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPPredefinedProfileEntriesConfidenceDataSourceModel] `tfsdk:"confidence" json:"confidence,computed"`
 	Deprecated    types.Bool                                                                              `tfsdk:"deprecated" json:"deprecated,computed"`
 	Variant       customfield.NestedObject[ZeroTrustDLPPredefinedProfileEntriesVariantDataSourceModel]    `tfsdk:"variant" json:"variant,computed"`

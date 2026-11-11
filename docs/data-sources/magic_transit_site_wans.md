@@ -52,6 +52,8 @@ Available values: "low", "mid", "high".
 - `name` (String)
 - `physport` (Number)
 - `priority` (Number) Priority of WAN for traffic loadbalancing.
+- `provisioned_download_kbps` (Number) Provisioned download rate of the WAN circuit in kilobits per second.
+- `provisioned_upload_kbps` (Number) Provisioned upload rate of the WAN circuit in kilobits per second.
 - `site_id` (String) Identifier
 - `static_addressing` (Attributes) (optional) if omitted, use DHCP. Submit secondary_address when site is in high availability mode. (see [below for nested schema](#nestedatt--result--static_addressing))
 - `vlan_tag` (Number) VLAN ID. Use zero for untagged.
@@ -64,5 +66,6 @@ Read-Only:
 - `address` (String) A valid CIDR notation representing an IP range.
 - `gateway_address` (String) A valid IPv4 address.
 - `secondary_address` (String) A valid CIDR notation representing an IP range.
+- `secondary_gateway_address` (String) Gateway address for the secondary connector of a high availability site.
 
 

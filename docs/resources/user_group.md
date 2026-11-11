@@ -49,7 +49,7 @@ resource "cloudflare_user_group" "example_user_group" {
 ### Read-Only
 
 - `created_on` (String) Timestamp for the creation of the user group
-- `id` (String) User Group identifier tag.
+- `id` (String) Identifier of the user group.
 - `modified_on` (String) Last time the user group was modified.
 
 <a id="nestedatt--policies"></a>

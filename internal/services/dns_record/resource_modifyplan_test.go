@@ -9,7 +9,7 @@ import (
 // TestModifyPlan_ModifiedOnPreservation tests that modified_on is properly preserved
 // when no actual changes are made (issue #6076)
 func TestModifyPlan_ModifiedOnPreservation(t *testing.T) {
-	
+
 	tests := []struct {
 		name           string
 		state          map[string]tftypes.Value
@@ -125,13 +125,13 @@ func TestModifyPlan_ModifiedOnPreservation(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// This is a simplified test that would need the actual resource implementation
 			// to properly test. For now, we're documenting the expected behavior.
-			
+
 			// The actual test would need to:
 			// 1. Create a DNSRecordResource instance
 			// 2. Set up the ModifyPlanRequest with tt.state and tt.plan
 			// 3. Call ModifyPlan
 			// 4. Check if modified_on was preserved or left unknown based on tt.expectPreserve
-			
+
 			// For demonstration, we just log the test case
 			t.Logf("Test case: %s", tt.description)
 			t.Logf("Expect preserve modified_on: %v", tt.expectPreserve)
@@ -143,7 +143,7 @@ func TestModifyPlan_ModifiedOnPreservation(t *testing.T) {
 func TestModifyPlan_SettingsEmptyObject(t *testing.T) {
 	// This test verifies that settings = {} doesn't cause perpetual drift
 	// by ensuring empty settings objects are treated as equivalent to null settings
-	
+
 	testCases := []struct {
 		name          string
 		stateSettings interface{}

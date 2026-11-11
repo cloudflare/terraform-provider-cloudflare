@@ -18,6 +18,13 @@ Accepted Permissions
 ```terraform
 resource "cloudflare_bot_management" "example_bot_management" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  ai_agents = {
+    anthropic_agent = "block"
+    google_agent = "block"
+    instinct = "block"
+    muse = "block"
+    openai_agent = "block"
+  }
   ai_bots_migration_opt_out = false
   ai_bots_protection = "block"
   aisearch = "block"
@@ -43,6 +50,7 @@ resource "cloudflare_bot_management" "example_bot_management" {
 
 ### Optional
 
+- `ai_agents` (Attributes) Configure blocking behavior for supported personal AI agents. (see [below for nested schema](#nestedatt--ai_agents))
 - `ai_bots_migration_opt_out` (Boolean) Temporary migration flag tracking zones opted out of AI bots managed-rule updates.
 - `ai_bots_protection` (String) Enable rule to block AI Scrapers and Crawlers.
 Available values: "block", "disabled", "only_on_ad_pages".
@@ -82,6 +90,23 @@ Available values: "allow", "block".
 - `id` (String) Identifier.
 - `stale_zone_configuration` (Attributes) A read-only field that shows which unauthorized settings are currently active on the zone. These settings typically result from upgrades or downgrades. (see [below for nested schema](#nestedatt--stale_zone_configuration))
 - `using_latest_model` (Boolean) A read-only field that indicates whether the zone currently is running the latest ML model.
+
+<a id="nestedatt--ai_agents"></a>
+### Nested Schema for `ai_agents`
+
+Optional:
+
+- `anthropic_agent` (String) Action to apply to one supported personal AI agent.
+Available values: "disabled", "block", "only_on_ad_pages".
+- `google_agent` (String) Action to apply to one supported personal AI agent.
+Available values: "disabled", "block", "only_on_ad_pages".
+- `instinct` (String) Action to apply to one supported personal AI agent.
+Available values: "disabled", "block", "only_on_ad_pages".
+- `muse` (String) Action to apply to one supported personal AI agent.
+Available values: "disabled", "block", "only_on_ad_pages".
+- `openai_agent` (String) Action to apply to one supported personal AI agent.
+Available values: "disabled", "block", "only_on_ad_pages".
+
 
 <a id="nestedatt--stale_zone_configuration"></a>
 ### Nested Schema for `stale_zone_configuration`

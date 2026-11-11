@@ -40,8 +40,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"integration": schema.StringAttribute{
-				Optional:   true,
-				CustomType: jsontypes.NormalizedType{},
+				Description: "Selects a PlanetScale database and provisions credentials managed by Cloudflare when creating a Hyperdrive configuration. The Cloudflare account must already be linked to PlanetScale in the Hyperdrive dashboard. The selection is returned as read-only metadata and cannot be changed with replace or update operations.",
+				Optional:    true,
+				CustomType:  jsontypes.NormalizedType{},
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the Hyperdrive configuration. Used to identify the configuration in the Cloudflare dashboard and API.",
@@ -61,10 +62,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional: true,
 					},
 					"max_age": schema.Int64Attribute{
-						Optional: true,
+						Description: "Specify the maximum duration (in seconds) items should persist in the cache. Defaults to 60 seconds if not specified.",
+						Optional:    true,
 					},
 					"stale_while_revalidate": schema.Int64Attribute{
-						Optional: true,
+						Description: "Specify the number of seconds the cache may serve a stale response. Defaults to 15 seconds if not specified.",
+						Optional:    true,
 					},
 				},
 			},
@@ -95,7 +98,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Required:    true,
 					},
 					"host": schema.StringAttribute{
-						Description: "Defines the publicly reachable hostname or IP of your origin database. Private, loopback, and link-local IP addresses are not allowed.",
+						Description: "Defines the publicly reachable hostname or IP of your origin database. Private, loopback, and link-local IP addresses are not allowed.\n\nDefines the host (hostname or IP) of your origin database.",
 						Optional:    true,
 					},
 					"password": schema.StringAttribute{

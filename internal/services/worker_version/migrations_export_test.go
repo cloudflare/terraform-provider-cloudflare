@@ -13,4 +13,3 @@ func ResourceSchemaV0ForTest(ctx context.Context) schema.Schema {
 
 // ResourceModelV0ForTest is an alias for resourceModelV0 for testing purposes
 type ResourceModelV0ForTest = resourceModelV0
-

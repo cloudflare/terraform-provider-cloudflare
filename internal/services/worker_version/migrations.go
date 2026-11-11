@@ -35,14 +35,7 @@ func resourceSchemaV0(ctx context.Context) *schema.Schema {
 	resourceSchemaLatest.Version = 0
 	delete(resourceSchemaLatest.Attributes, "exports")
 	delete(resourceSchemaLatest.Attributes, "exports_reconciliation")
-	resourceSchemaLatest.
-		Attributes["assets"].(schema.SingleNestedAttribute).
-		Attributes["config"].(schema.SingleNestedAttribute).
-		Attributes["run_worker_first"] = schema.ListAttribute{
-		Optional:    true,
-		CustomType:  customfield.NewListType[types.String](ctx),
-		ElementType: types.StringType,
-	}
+	resourceSchemaLatest.Attributes["assets"] = resourceSchemaV0Assets(ctx)
 	return &resourceSchemaLatest
 }
 

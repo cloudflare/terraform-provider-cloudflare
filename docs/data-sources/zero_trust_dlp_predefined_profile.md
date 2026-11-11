@@ -50,14 +50,18 @@ data "cloudflare_zero_trust_dlp_predefined_profile" "example_zero_trust_dlp_pred
 
 Read-Only:
 
-- `case_sensitive` (Boolean) Only applies to custom word lists.
+- `case_sensitive` (Boolean) For `type: exact_data`: Only applies to custom word lists.
 Determines if the words should be matched in a case-sensitive manner
 Cannot be set to false if secret is true
 - `confidence` (Attributes) (see [below for nested schema](#nestedatt--entries--confidence))
 - `created_at` (String)
-- `deprecated` (Boolean) Whether this entry is deprecated for new use. This is computed from the static catalog and
+- `deprecated` (Boolean) For `type: predefined`: Whether this entry is deprecated for new use. This is computed from the static catalog and
 emitted only when true.
-- `description` (String)
+- `description` (String) For `type: custom_prompt_topic`: The optional description of the custom prompt topic entry.
+
+For `type: exact_data`: The optional description of the exact data entry.
+
+For `type: document_fingerprint`: The optional description of the document fingerprint entry.
 - `enabled` (Boolean)
 - `id` (String)
 - `name` (String)
@@ -66,7 +70,12 @@ emitted only when true.
 - `secret` (Boolean)
 - `type` (String) Available values: "custom", "custom_prompt_topic", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
-- `variant` (Attributes) A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--entries--variant))
+- `validator_ids` (Set of String) For `type: custom`: Validators this entry references, by id, at most 10. An empty list means the entry
+references none.
+
+Returned by the entry endpoints. Not returned on entries embedded in other responses, such
+as profiles.
+- `variant` (Attributes) For `type: predefined`: A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--entries--variant))
 - `word_list` (List of String)
 
 <a id="nestedatt--entries--confidence"></a>
@@ -92,7 +101,9 @@ Read-Only:
 
 Read-Only:
 
-- `description` (String) A customer-facing explanation of what this predefined AI prompt topic represents.
+- `description` (String) For `type: PromptTopic`: A customer-facing explanation of what this predefined AI prompt topic represents.
+
+For `type: General`: A customer-facing explanation of what this predefined entry represents.
 - `topic_type` (String) Available values: "Intent", "Content".
 - `type` (String) Available values: "PromptTopic", "General".
 

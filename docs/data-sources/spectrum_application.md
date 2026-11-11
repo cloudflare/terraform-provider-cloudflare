@@ -47,6 +47,9 @@ Notes: Only available for TCP applications.
 - `origin_port` (Dynamic) The destination port at the origin. Only specified in conjunction with origin_dns. May use an integer to specify a single origin port, for example `1000`, or a string to specify a range of origin ports, for example `"1000-2000"`.
 Notes: If specifying a port range, the number of ports in the range must match the number of ports specified in the "protocol" field.
 - `origin_worker_id` (String) Optional Worker script tag (worker ID) to use as the application's origin. Only supported for TCP applications with traffic_type "worker"; mutually exclusive with origin_direct, origin_dns, origin_port, proxy_protocol, and argo_smart_routing. tls may only be "off" or "flexible".
+- `origin_worker_name` (String) Name of the Worker origin. Omitted when the Worker is not found or its name cannot be resolved.
+- `origin_worker_status` (String) Lookup status of the Worker origin. Unknown indicates that its name could not be resolved. Only returned for Worker origins.
+Available values: "available", "not_found", "unknown".
 - `protocol` (String) The port configuration at Cloudflare's edge. May specify a single port, for example `"tcp/1000"`, or a range of ports, for example `"tcp/1000-2000"`.
 - `proxy_protocol` (String) Enables Proxy Protocol to the origin. Refer to [Enable Proxy protocol](https://developers.cloudflare.com/spectrum/getting-started/proxy-protocol/) for implementation details on PROXY Protocol V1, PROXY Protocol V2, and Simple Proxy Protocol.
 Available values: "off", "v1", "v2", "simple".
@@ -82,10 +85,12 @@ Available values: "CNAME", "ADDRESS".
 
 Read-Only:
 
-- `connectivity` (String) The IP versions supported for inbound connections on Spectrum anycast IPs.
+- `connectivity` (String) For `type: dynamic`: The IP versions supported for inbound connections on Spectrum anycast IPs.
 Available values: "all", "ipv4", "ipv6".
-- `ips` (List of String) The array of customer owned IPs we broadcast via anycast for this hostname and application.
-- `type` (String) The type of edge IP configuration specified. Dynamically allocated edge IPs use Spectrum anycast IPs in accordance with the connectivity you specify. Only valid with CNAME DNS names.
+- `ips` (List of String) For `type: static`: The array of customer owned IPs we broadcast via anycast for this hostname and application.
+- `type` (String) For `type: dynamic`: The type of edge IP configuration specified. Dynamically allocated edge IPs use Spectrum anycast IPs in accordance with the connectivity you specify. Only valid with CNAME DNS names.
+
+For `type: static`: The type of edge IP configuration specified. Statically allocated edge IPs use customer IPs in accordance with the ips array you specify. Only valid with ADDRESS DNS names.
 Available values: "dynamic", "static".
 
 

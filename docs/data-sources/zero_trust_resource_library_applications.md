@@ -2,12 +2,18 @@
 page_title: "cloudflare_zero_trust_resource_library_applications Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Resource Library ReadResource Library WriteZero Trust ReadZero Trust Write
 ---
 
 # cloudflare_zero_trust_resource_library_applications (Data Source)
 
+Accepted Permissions
 
+- `Resource Library Read`
+- `Resource Library Write`
+- `Zero Trust Read`
+- `Zero Trust Write`
 
 ## Example Usage
 
@@ -60,14 +66,17 @@ Unknown or empty property names return `400`.
 - `limit` (Number) Number of results to return. Defaults to 25; values are clamped to 1–250.
 - `lookup` (String) Find complete, case-insensitive application name mentions in a phrase or
 rule sentence. Misspelled names do not match. Returns matching applications
-ranked by relevance. Must be between 2 and 1000 characters. Uses the same
+ranked by relevance. Must be between 2 and 1000 characters, with no control
+characters other than tab and line breaks. Uses the same
 filters, fields, and pagination as listing. `search` cannot be combined
 with lookup. Results are ranked by relevance, so `order_by` is ignored.
+To keep the text out of URLs, send it to `POST .../applications/lookup` instead.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `offset` (Number) Number of results to skip. Defaults to 0; negative values are clamped to 0.
+- `offset` (Number) Number of results to skip. Defaults to 0; negative values are clamped to 0. Ignored when `cursor` is provided.
 - `order_by` (String) Order results using field:direction format. Supported fields are name, id, human_id,
 category_id, application_type, application_confidence_score, and gen_ai_score.
-Supported directions are asc and desc. Ignored when search is provided; results are
+Supported directions are asc and desc. name and application_type ignore the case of
+the letters A to Z, and ties sort by id. Ignored when search is provided; results are
 ranked by relevance instead. Also ignored when lookup is provided.
 - `search` (String) Fuzzy search across application name and hostnames. Results are ranked by relevance. Must be between 2 and 200 characters. Can be combined with filter parameters.
 

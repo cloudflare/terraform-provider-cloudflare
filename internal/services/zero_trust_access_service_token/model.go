@@ -13,17 +13,21 @@ type ZeroTrustAccessServiceTokenResultEnvelope struct {
 }
 
 type ZeroTrustAccessServiceTokenModel struct {
-	ID                            types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID                     types.String      `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID                        types.String      `tfsdk:"zone_id" path:"zone_id,optional"`
-	Name                          types.String      `tfsdk:"name" json:"name,required"`
-	Enabled                       types.Bool        `tfsdk:"enabled" json:"enabled,computed_optional"`
-	PreviousClientSecretExpiresAt timetypes.RFC3339 `tfsdk:"previous_client_secret_expires_at" json:"previous_client_secret_expires_at,optional,no_refresh" format:"date-time"`
-	ClientSecretVersion           types.Float64     `tfsdk:"client_secret_version" json:"client_secret_version,computed_optional,no_refresh"`
-	Duration                      types.String      `tfsdk:"duration" json:"duration,computed_optional"`
-	ClientID                      types.String      `tfsdk:"client_id" json:"client_id,computed"`
-	ClientSecret                  types.String      `tfsdk:"client_secret" json:"client_secret,computed,no_refresh"`
-	ExpiresAt                     timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
+	ID                            types.String             `tfsdk:"id" json:"id,computed"`
+	AccountID                     types.String             `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID                        types.String             `tfsdk:"zone_id" path:"zone_id,optional"`
+	Name                          types.String             `tfsdk:"name" json:"name,required"`
+	Enabled                       types.Bool               `tfsdk:"enabled" json:"enabled,computed_optional"`
+	PreviousClientSecretExpiresAt timetypes.RFC3339        `tfsdk:"previous_client_secret_expires_at" json:"previous_client_secret_expires_at,optional,no_refresh" format:"date-time"`
+	Tags                          *map[string]types.String `tfsdk:"tags" json:"tags,optional"`
+	ClientSecretVersion           types.Float64            `tfsdk:"client_secret_version" json:"client_secret_version,computed_optional,no_refresh"`
+	Duration                      types.String             `tfsdk:"duration" json:"duration,computed_optional"`
+	ClientID                      types.String             `tfsdk:"client_id" json:"client_id,computed"`
+	ClientSecret                  types.String             `tfsdk:"client_secret" json:"client_secret,computed,no_refresh"`
+	ExpiresAt                     timetypes.RFC3339        `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
+	LeakReportURL                 types.String             `tfsdk:"leak_report_url" json:"leak_report_url,computed"`
+	LeakReportedAt                timetypes.RFC3339        `tfsdk:"leak_reported_at" json:"leak_reported_at,computed" format:"date-time"`
+	LeakReporter                  types.String             `tfsdk:"leak_reporter" json:"leak_reporter,computed"`
 }
 
 func (m ZeroTrustAccessServiceTokenModel) MarshalJSON() (data []byte, err error) {

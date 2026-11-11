@@ -98,10 +98,11 @@ var splitTunnelMutuallyExclusive = map[string]string{
 }
 
 // normalizeSplitTunnelList resolves unknown nested attributes in exclude/include
-// list elements. Matching is index-based (plan[i] ↔ state[i]). For unknown
-// fields: if the mutually exclusive counterpart (address↔host) is already set
-// in the plan entry, resolve to null to avoid API error 2049; otherwise fall
-// back to the state value (or null for new entries beyond state length).
+// list elements. For unknown fields: if the mutually exclusive counterpart
+// (address↔host) is already set in the plan entry, resolve to null to avoid API
+// error 2049; otherwise take the value from the state entry with the same
+// address or host, or null when there is none. Matching by index would hand an
+// inserted entry the description of the entry it displaced (GH-7388).
 func normalizeSplitTunnelList[T splitTunnelEntry](
 	ctx context.Context,
 	planList customfield.NestedObjectList[T],
@@ -137,13 +138,7 @@ func normalizeSplitTunnelList[T splitTunnelEntry](
 		newAttrs := make(map[string]attr.Value, len(attrs))
 		elementChanged := false
 
-		// Get corresponding state element attributes if available (index-based).
-		var stateAttrs map[string]attr.Value
-		if i < len(stateElements) {
-			if stateObj, ok := stateElements[i].(types.Object); ok && !stateObj.IsNull() && !stateObj.IsUnknown() {
-				stateAttrs = stateObj.Attributes()
-			}
-		}
+		stateAttrs := findSplitTunnelStateEntry(attrs, stateElements)
 
 		for key, val := range attrs {
 			if val.IsUnknown() {
@@ -197,4 +192,26 @@ func normalizeSplitTunnelList[T splitTunnelEntry](
 		return planList, diags
 	}
 	return result, diags
+}
+
+// findSplitTunnelStateEntry returns the attributes of the first state entry
+// whose address or host equals the plan entry's known address or host, or nil.
+func findSplitTunnelStateEntry(planAttrs map[string]attr.Value, stateElements []attr.Value) map[string]attr.Value {
+	for _, key := range []string{"address", "host"} {
+		pv, ok := planAttrs[key]
+		if !ok || pv.IsNull() || pv.IsUnknown() {
+			continue
+		}
+		for _, elem := range stateElements {
+			stateObj, ok := elem.(types.Object)
+			if !ok || stateObj.IsNull() || stateObj.IsUnknown() {
+				continue
+			}
+			stateAttrs := stateObj.Attributes()
+			if sv, ok := stateAttrs[key]; ok && sv.Equal(pv) {
+				return stateAttrs
+			}
+		}
+	}
+	return nil
 }

@@ -59,7 +59,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).\nAvailable values: \"onetimepin\", \"azureAD\", \"saml\", \"centrify\", \"facebook\", \"github\", \"google-apps\", \"google\", \"linkedin\", \"oidc\", \"okta\", \"onelogin\", \"pingone\", \"yandex\", \"cloudflare\", \"passkeys\".",
+				Description: "The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).\nAvailable values: \"onetimepin\", \"azureAD\", \"saml\", \"centrify\", \"facebook\", \"github\", \"google-apps\", \"google\", \"linkedin\", \"oidc\", \"duo\", \"okta\", \"onelogin\", \"pingone\", \"yandex\", \"cloudflare\", \"passkeys\".",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -73,6 +73,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"google",
 						"linkedin",
 						"oidc",
+						"duo",
 						"okta",
 						"onelogin",
 						"pingone",
@@ -94,11 +95,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						ElementType: types.StringType,
 					},
 					"client_id": schema.StringAttribute{
-						Description: "Your OAuth Client ID",
+						Description: "Your OAuth Client ID\n\nThe client ID from the Duo Generic OIDC Relying Party metadata.",
 						Computed:    true,
 					},
 					"client_secret": schema.StringAttribute{
-						Description: "Your OAuth Client Secret",
+						Description: "Your OAuth Client Secret\n\nThe client secret from the Duo Generic OIDC Relying Party metadata.",
 						Computed:    true,
 						Sensitive:   true,
 					},
@@ -115,7 +116,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"prompt": schema.StringAttribute{
-						Description: "Indicates the type of user interaction that is required. prompt=login forces the user to enter their credentials on that request, negating single-sign on. prompt=none is the opposite. It ensures that the user isn't presented with any interactive prompt. If the request can't be completed silently by using single-sign on, the Microsoft identity platform returns an interaction_required error. prompt=select_account interrupts single sign-on providing account selection experience listing all the accounts either in session or any remembered account or an option to choose to use a different account altogether.\nAvailable values: \"login\", \"select_account\", \"none\", \"consent\".",
+						Description: "Indicates the type of user interaction that is required. prompt=login forces the user to enter their credentials on that request, negating single-sign on. prompt=none is the opposite. It ensures that the user isn't presented with any interactive prompt. If the request can't be completed silently by using single-sign on, the Microsoft identity platform returns an interaction_required error. prompt=select_account interrupts single sign-on providing account selection experience listing all the accounts either in session or any remembered account or an option to choose to use a different account altogether.\n\nConfigures the prompt behavior for Google authentication.\nAvailable values: \"login\", \"select_account\", \"none\", \"consent\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -165,7 +166,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						ElementType: types.StringType,
 					},
 					"token_url": schema.StringAttribute{
-						Description: "The token_endpoint URL of your IdP",
+						Description: "The token_endpoint URL of your IdP. Updates that change its origin (scheme, host, or port) require client_secret in the request. Path-only changes do not require client_secret.",
+						Computed:    true,
+					},
+					"issuer_url": schema.StringAttribute{
+						Description: "The issuer URL from the Duo Generic OIDC Relying Party metadata.\n\nIdP Entity ID or Issuer URL",
 						Computed:    true,
 					},
 					"authorization_server_id": schema.StringAttribute{
@@ -224,10 +229,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
-					},
-					"issuer_url": schema.StringAttribute{
-						Description: "IdP Entity ID or Issuer URL",
-						Computed:    true,
 					},
 					"max_sso_url_length": schema.Int64Attribute{
 						Description: "The maximum URL length the IdP accepts for the SSO redirect URL.\nWhen the constructed SSO URL would exceed this length, the RelayState\nis stored server-side and a short nonce is passed to the IdP instead.\nSet this if your IdP enforces a URL length limit.",

@@ -15,7 +15,6 @@ description: |-
 resource "cloudflare_share_recipient" "example_share_recipient" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   share_id = "3fd85f74b32742f1bff64a85009dda07"
-  organization_id = "023e105f4ecef8ad9ca31a8372d0c353"
   recipient_account_id = "023e105f4ecef8ad9ca31a8372d0c353"
 }
 ```
@@ -31,7 +30,6 @@ resource "cloudflare_share_recipient" "example_share_recipient" {
 ### Optional
 
 - `include_resources` (Boolean) Include resources in the response.
-- `organization_id` (String) Organization identifier.
 - `recipient_account_id` (String) The account that will receive the share.
 
 ### Read-Only
@@ -51,9 +49,9 @@ drives `current_association_status` toward it.
 - `disassociated` — Shared resources have been removed from the
   recipient account. The recipient record remains in the database.
 Available values: "associating", "associated", "disassociating", "disassociated".
-- `created` (String) When the share was created.
+- `created` (String) When the object was created.
 - `id` (String) Share Recipient identifier tag.
-- `modified` (String) When the share was modified.
+- `modified` (String) When the object was last modified.
 - `resources` (Attributes List) (see [below for nested schema](#nestedatt--resources))
 
 <a id="nestedatt--resources"></a>
@@ -61,9 +59,9 @@ Available values: "associating", "associated", "disassociating", "disassociated"
 
 Read-Only:
 
-- `error` (String) Share Recipient error message.
-- `resource_id` (String) Share Resource identifier.
-- `resource_version` (Number) Resource Version.
+- `error` (String) Error from the most recent attempt to apply the resource to the recipient. Empty string when no error has been recorded.
+- `resource_id` (String) Identifier assigned by the service that owns the shared resource.
+- `resource_version` (Number) Resource version applied to the recipient, if reconciliation has occurred.
 - `terminal` (Boolean) Whether the error is terminal or will be continually retried.
 
 ## Import

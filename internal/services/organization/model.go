@@ -14,12 +14,13 @@ type OrganizationResultEnvelope struct {
 }
 
 type OrganizationModel struct {
-	ID         types.String                                      `tfsdk:"id" json:"id,computed"`
-	Name       types.String                                      `tfsdk:"name" json:"name,required"`
-	Profile    *OrganizationProfileModel                         `tfsdk:"profile" json:"profile,optional"`
-	Parent     customfield.NestedObject[OrganizationParentModel] `tfsdk:"parent" json:"parent,computed_optional"`
-	CreateTime timetypes.RFC3339                                 `tfsdk:"create_time" json:"create_time,computed" format:"date-time"`
-	Meta       customfield.NestedObject[OrganizationMetaModel]   `tfsdk:"meta" json:"meta,computed"`
+	ID         types.String                                    `tfsdk:"id" json:"id,computed"`
+	Parent     *OrganizationParentModel                        `tfsdk:"parent" json:"parent,optional"`
+	Profile    *OrganizationProfileModel                       `tfsdk:"profile" json:"profile,optional"`
+	Name       types.String                                    `tfsdk:"name" json:"name,required"`
+	ParentID   types.String                                    `tfsdk:"parent_id" json:"parent_id,optional,no_refresh"`
+	CreateTime timetypes.RFC3339                               `tfsdk:"create_time" json:"create_time,computed" format:"date-time"`
+	Meta       customfield.NestedObject[OrganizationMetaModel] `tfsdk:"meta" json:"meta,computed"`
 }
 
 func (m OrganizationModel) MarshalJSON() (data []byte, err error) {
@@ -30,23 +31,24 @@ func (m OrganizationModel) MarshalJSONForUpdate(state OrganizationModel) (data [
 	return apijson.MarshalForUpdate(m, state)
 }
 
-type OrganizationProfileModel struct {
-	BusinessAddress  types.String `tfsdk:"business_address" json:"business_address,required"`
-	BusinessEmail    types.String `tfsdk:"business_email" json:"business_email,required"`
-	BusinessName     types.String `tfsdk:"business_name" json:"business_name,required"`
-	BusinessPhone    types.String `tfsdk:"business_phone" json:"business_phone,required"`
-	ExternalMetadata types.String `tfsdk:"external_metadata" json:"external_metadata,required"`
+type OrganizationParentModel struct {
+	ID types.String `tfsdk:"id" json:"id,required"`
 }
 
-type OrganizationParentModel struct {
-	ID   types.String `tfsdk:"id" json:"id,required"`
-	Name types.String `tfsdk:"name" json:"name,computed"`
+type OrganizationProfileModel struct {
+	BusinessAddress  types.String `tfsdk:"business_address" json:"business_address,optional"`
+	BusinessEmail    types.String `tfsdk:"business_email" json:"business_email,optional"`
+	BusinessName     types.String `tfsdk:"business_name" json:"business_name,optional"`
+	BusinessPhone    types.String `tfsdk:"business_phone" json:"business_phone,optional"`
+	ExternalMetadata types.String `tfsdk:"external_metadata" json:"external_metadata,optional"`
 }
 
 type OrganizationMetaModel struct {
-	HierarchyTags customfield.List[types.String]                             `tfsdk:"hierarchy_tags" json:"hierarchy_tags,computed"`
-	ManagedBy     types.String                                               `tfsdk:"managed_by" json:"managed_by,computed"`
-	TenantFlags   customfield.NestedObject[OrganizationMetaTenantFlagsModel] `tfsdk:"tenant_flags" json:"tenant_flags,computed"`
+	AreChildAccountsAccessibleByOrgMembers types.Bool                                                 `tfsdk:"are_child_accounts_accessible_by_org_members" json:"are_child_accounts_accessible_by_org_members,computed"`
+	HierarchyTags                          customfield.List[types.String]                             `tfsdk:"hierarchy_tags" json:"hierarchy_tags,computed"`
+	ManagedBy                              types.String                                               `tfsdk:"managed_by" json:"managed_by,computed"`
+	TenantFlags                            customfield.NestedObject[OrganizationMetaTenantFlagsModel] `tfsdk:"tenant_flags" json:"tenant_flags,computed"`
+	TenantType                             types.String                                               `tfsdk:"tenant_type" json:"tenant_type,computed"`
 }
 
 type OrganizationMetaTenantFlagsModel struct {

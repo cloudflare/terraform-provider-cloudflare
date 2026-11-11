@@ -37,6 +37,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
 				},
 			},
+			"expired": schema.BoolAttribute{
+				Description: "Filter to return only expired patterns (`true`) or only patterns that still apply (`false`). Omit to return both.",
+				Optional:    true,
+			},
 			"order": schema.StringAttribute{
 				Description: "Field to sort by.\nAvailable values: \"pattern\", \"created_at\".",
 				Optional:    true,
@@ -87,6 +91,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"created_at": schema.StringAttribute{
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
+						},
+						"expires_at": schema.StringAttribute{
+							Description: "Timestamp at which the pattern expires. After this time, Email Security ignores the pattern. The value must lie in the future. Send `null` to clear the expiration.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"is_regex": schema.BoolAttribute{
 							Description: "Whether `pattern` is a regular expression instead of a literal value.",

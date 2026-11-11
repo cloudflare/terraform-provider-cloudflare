@@ -18,7 +18,6 @@ type ShareRecipientModel struct {
 	AccountID          types.String                                               `tfsdk:"account_id" path:"account_id,required"`
 	ShareID            types.String                                               `tfsdk:"share_id" path:"share_id,required"`
 	IncludeResources   types.Bool                                                 `tfsdk:"include_resources" query:"include_resources,optional"`
-	OrganizationID     types.String                                               `tfsdk:"organization_id" json:"organization_id,optional,no_refresh"`
 	RecipientAccountID types.String                                               `tfsdk:"recipient_account_id" json:"recipient_account_id,optional,no_refresh"`
 	AssociationStatus  types.String                                               `tfsdk:"association_status" json:"association_status,computed"`
 	Created            timetypes.RFC3339                                          `tfsdk:"created" json:"created,computed" format:"date-time"`

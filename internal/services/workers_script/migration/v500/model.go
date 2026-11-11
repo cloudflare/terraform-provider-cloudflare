@@ -139,6 +139,7 @@ type TargetWorkersScriptModel struct {
 	Bindings            customfield.NestedObjectList[TargetBindingsModel]     `tfsdk:"bindings"`
 	BodyPart            types.String                                          `tfsdk:"body_part"`
 	CacheOptions        *TargetCacheOptionsModel                              `tfsdk:"cache_options"`
+	CodeUpdateStrategy  *TargetCodeUpdateStrategyModel                        `tfsdk:"code_update_strategy"`
 	CompatibilityDate   types.String                                          `tfsdk:"compatibility_date"`
 	CompatibilityFlags  customfield.Set[types.String]                         `tfsdk:"compatibility_flags"`
 	Exports             *map[string]TargetExportsModel                        `tfsdk:"exports"`
@@ -264,6 +265,11 @@ type TargetLimitsModel struct {
 type TargetCacheOptionsModel struct {
 	Enabled           types.Bool `tfsdk:"enabled"`
 	CrossVersionCache types.Bool `tfsdk:"cross_version_cache"`
+}
+
+type TargetCodeUpdateStrategyModel struct {
+	Mode     types.String  `tfsdk:"mode"`
+	MaxDelay types.Float64 `tfsdk:"max_delay"`
 }
 
 type TargetExportsModel struct {

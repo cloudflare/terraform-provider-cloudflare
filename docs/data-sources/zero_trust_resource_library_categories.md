@@ -2,12 +2,18 @@
 page_title: "cloudflare_zero_trust_resource_library_categories Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Resource Library ReadResource Library WriteZero Trust ReadZero Trust Write
 ---
 
 # cloudflare_zero_trust_resource_library_categories (Data Source)
 
+Accepted Permissions
 
+- `Resource Library Read`
+- `Resource Library Write`
+- `Zero Trust Read`
+- `Zero Trust Write`
 
 ## Example Usage
 
@@ -28,7 +34,7 @@ data "cloudflare_zero_trust_resource_library_categories" "example_zero_trust_res
 
 - `limit` (Number) Number of results to return. Defaults to 25; values are clamped to 1–250.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `offset` (Number) Number of results to skip. Defaults to 0; negative values are clamped to 0.
+- `offset` (Number) Number of results to skip. Defaults to 0; negative values are clamped to 0. Ignored when `cursor` is provided.
 
 ### Read-Only
 

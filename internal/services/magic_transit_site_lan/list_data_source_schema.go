@@ -84,6 +84,22 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"physport": schema.Int64Attribute{
 							Computed: true,
 						},
+						"remote_subnets": schema.ListNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectListType[MagicTransitSiteLANsRemoteSubnetsDataSourceModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"local_alias_prefix": schema.StringAttribute{
+										Description: "A valid CIDR notation representing an IP range.",
+										Computed:    true,
+									},
+									"remote_prefix": schema.StringAttribute{
+										Description: "A valid CIDR notation representing an IP range.",
+										Computed:    true,
+									},
+								},
+							},
+						},
 						"routed_subnets": schema.ListNestedAttribute{
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectListType[MagicTransitSiteLANsRoutedSubnetsDataSourceModel](ctx),

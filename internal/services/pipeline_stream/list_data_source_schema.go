@@ -35,9 +35,24 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Filters streams by name (case-insensitive substring).",
 				Optional:    true,
 			},
+			"order_by": schema.StringAttribute{
+				Description: "Sorts streams by this field. Defaults to `created_at`.\nAvailable values: \"name\", \"created_at\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("name", "created_at"),
+				},
+			},
 			"pipeline_id": schema.StringAttribute{
 				Description: "Specifies the public ID of the pipeline.",
 				Optional:    true,
+			},
+			"direction": schema.StringAttribute{
+				Description: "Sort direction.\nAvailable values: \"asc\", \"desc\".",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+				},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

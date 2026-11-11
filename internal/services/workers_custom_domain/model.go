@@ -12,14 +12,16 @@ type WorkersCustomDomainResultEnvelope struct {
 }
 
 type WorkersCustomDomainModel struct {
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String `tfsdk:"account_id" path:"account_id,required"`
-	Hostname    types.String `tfsdk:"hostname" json:"hostname,required"`
-	Service     types.String `tfsdk:"service" json:"service,required"`
-	ZoneID      types.String `tfsdk:"zone_id" json:"zone_id,computed_optional"`
-	ZoneName    types.String `tfsdk:"zone_name" json:"zone_name,computed_optional"`
-	CERTID      types.String `tfsdk:"cert_id" json:"cert_id,computed"`
-	Environment types.String `tfsdk:"environment" json:"environment,computed_optional"`
+	ID              types.String `tfsdk:"id" json:"id,computed"`
+	AccountID       types.String `tfsdk:"account_id" path:"account_id,required"`
+	Hostname        types.String `tfsdk:"hostname" json:"hostname,required"`
+	Service         types.String `tfsdk:"service" json:"service,required"`
+	Enabled         types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	PreviewsEnabled types.Bool   `tfsdk:"previews_enabled" json:"previews_enabled,computed_optional"`
+	ZoneID          types.String `tfsdk:"zone_id" json:"zone_id,computed_optional"`
+	ZoneName        types.String `tfsdk:"zone_name" json:"zone_name,computed_optional"`
+	CERTID          types.String `tfsdk:"cert_id" json:"cert_id,computed"`
+	Environment     types.String `tfsdk:"environment" json:"environment,computed_optional"`
 }
 
 func (m WorkersCustomDomainModel) MarshalJSON() (data []byte, err error) {

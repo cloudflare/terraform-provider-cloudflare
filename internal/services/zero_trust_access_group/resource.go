@@ -200,6 +200,7 @@ func (r *ZeroTrustAccessGroupResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	clearPriorRules(&env.Result)
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())

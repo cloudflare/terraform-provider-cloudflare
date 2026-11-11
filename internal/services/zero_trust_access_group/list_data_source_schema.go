@@ -337,6 +337,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"service_token_tag": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeServiceTokenTagDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"key": schema.StringAttribute{
+												Description: "The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.",
+												Computed:    true,
+											},
+											"value": schema.StringAttribute{
+												Description: "The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.",
+												Computed:    true,
+											},
+										},
+									},
 									"linked_app_token": schema.SingleNestedAttribute{
 										Computed:   true,
 										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeLinkedAppTokenDataSourceModel](ctx),
@@ -653,6 +667,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Attributes: map[string]schema.Attribute{
 											"token_id": schema.StringAttribute{
 												Description: "The ID of a Service Token.",
+												Computed:    true,
+											},
+										},
+									},
+									"service_token_tag": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeServiceTokenTagDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"key": schema.StringAttribute{
+												Description: "The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.",
+												Computed:    true,
+											},
+											"value": schema.StringAttribute{
+												Description: "The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.",
 												Computed:    true,
 											},
 										},
@@ -977,6 +1005,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
+									"service_token_tag": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultServiceTokenTagDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"key": schema.StringAttribute{
+												Description: "The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.",
+												Computed:    true,
+											},
+											"value": schema.StringAttribute{
+												Description: "The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.",
+												Computed:    true,
+											},
+										},
+									},
 									"linked_app_token": schema.SingleNestedAttribute{
 										Computed:   true,
 										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultLinkedAppTokenDataSourceModel](ctx),
@@ -1297,6 +1339,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Attributes: map[string]schema.Attribute{
 											"token_id": schema.StringAttribute{
 												Description: "The ID of a Service Token.",
+												Computed:    true,
+											},
+										},
+									},
+									"service_token_tag": schema.SingleNestedAttribute{
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireServiceTokenTagDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"key": schema.StringAttribute{
+												Description: "The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.",
+												Computed:    true,
+											},
+											"value": schema.StringAttribute{
+												Description: "The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.",
 												Computed:    true,
 											},
 										},

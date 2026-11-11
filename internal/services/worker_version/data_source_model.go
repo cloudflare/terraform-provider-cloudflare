@@ -94,7 +94,6 @@ type WorkerVersionBindingsDataSourceModel struct {
 	DispatchNamespace           types.String                                                           `tfsdk:"dispatch_namespace" json:"dispatch_namespace,computed"`
 	Environment                 types.String                                                           `tfsdk:"environment" json:"environment,computed"`
 	NamespaceID                 types.String                                                           `tfsdk:"namespace_id" json:"namespace_id,computed"`
-	Retry                       customfield.NestedObject[WorkerVersionBindingsRetryDataSourceModel]    `tfsdk:"retry" json:"retry,computed"`
 	ScriptName                  types.String                                                           `tfsdk:"script_name" json:"script_name,computed"`
 	OldName                     types.String                                                           `tfsdk:"old_name" json:"old_name,computed"`
 	VersionID                   types.String                                                           `tfsdk:"version_id" json:"version_id,computed"`
@@ -141,11 +140,6 @@ type WorkerVersionBindingsOutboundWorkerDataSourceModel struct {
 	Entrypoint  types.String `tfsdk:"entrypoint" json:"entrypoint,computed"`
 	Environment types.String `tfsdk:"environment" json:"environment,computed"`
 	Service     types.String `tfsdk:"service" json:"service,computed"`
-}
-
-type WorkerVersionBindingsRetryDataSourceModel struct {
-	MaxAttempts types.Int64 `tfsdk:"max_attempts" json:"max_attempts,computed"`
-	TimeoutMs   types.Int64 `tfsdk:"timeout_ms" json:"timeout_ms,computed"`
 }
 
 type WorkerVersionBindingsSimpleDataSourceModel struct {

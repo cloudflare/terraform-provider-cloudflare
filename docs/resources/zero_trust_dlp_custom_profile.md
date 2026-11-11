@@ -68,12 +68,12 @@ If this field is omitted, entries owned by this profile will not be changed. (se
 
 ### Read-Only
 
-- `created_at` (String) When the profile was created.
+- `created_at` (String) For `type: custom`: When the profile was created.
 - `id` (String) The id of the profile (uuid).
 - `integration_id` (String)
-- `open_access` (Boolean) Whether this profile can be accessed by anyone.
+- `open_access` (Boolean) For `type: predefined`: Whether this profile can be accessed by anyone.
 - `type` (String) Available values: "custom", "predefined", "integration".
-- `updated_at` (String) When the profile was lasted updated.
+- `updated_at` (String) For `type: custom`: When the profile was lasted updated.
 
 <a id="nestedatt--context_awareness"></a>
 ### Nested Schema for `context_awareness`

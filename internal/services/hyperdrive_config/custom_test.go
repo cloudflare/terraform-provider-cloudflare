@@ -198,4 +198,3 @@ func TestPreserveWriteOnlyFields(t *testing.T) {
 		})
 	}
 }
-

@@ -9,6 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/resourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
@@ -32,6 +33,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			Scopes: []string{
 				"Workers Scripts Read",
 				"Workers Scripts Write",
+				"Individual Workers Admin",
+				"Individual Workers Content Read-Only",
+				"Individual Workers Editor",
+				"Workers Admin",
+				"Workers Content Read-Only",
+				"Workers Editor",
 				"Workers Tail Read",
 			},
 		}.String(),
@@ -53,7 +60,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"bindings_inherit": schema.StringAttribute{
-				Description: "When set to \"strict\", the upload will fail if any `inherit` type bindings cannot be resolved against the previous version of the Worker. Without this, unresolvable inherit bindings are silently dropped.\nAvailable values: \"strict\".",
+				Description: "When set to \"strict\", the upload will fail with error 10057 if any `inherit` type bindings cannot be resolved against the latest uploaded version of the Worker, which may not be the deployed version. Without this, unresolvable inherit bindings are silently dropped.\nAvailable values: \"strict\".",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("strict"),
@@ -484,7 +491,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 						"version_id": schema.StringAttribute{
-							Description: `Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.`,
+							Description: "Identifier for the version to inherit the binding from. This can be a version ID, or the literal \"latest\" to inherit from the most recently uploaded version, which may not be the deployed version. Defaults to \"latest\". Only the Workers API version endpoints under `/accounts/{account_id}/workers/workers/{worker_id}/versions` accept a version ID. Other endpoints, including script upload and script version upload, accept only \"latest\" and reject a version ID with error 10057.",
 							Optional:    true,
 						},
 						"allowed_destination_addresses": schema.ListAttribute{
@@ -502,13 +509,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 						},
 						"jurisdiction": schema.StringAttribute{
-							Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\", \"fedramp-high\".",
+							Description: "The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.\nAvailable values: \"eu\", \"fedramp\", \"fedramp-high\", \"us\".",
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"eu",
 									"fedramp",
 									"fedramp-high",
+									"us",
 								),
 							},
 						},
@@ -553,6 +561,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
+			"code_update_strategy": schema.SingleNestedAttribute{
+				Description: "Choose whether to apply Durable Object code updates immediately or defer them. When omitted, the default strategy applies.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"mode": schema.StringAttribute{
+						Description: "Apply Durable Object code updates immediately.\nAvailable values: \"immediate\", \"deferred\".",
+						Required:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("immediate", "deferred"),
+						},
+					},
+					"max_delay": schema.Float64Attribute{
+						Description: "Set the maximum number of seconds to wait before forcing the update. When omitted, the default maximum delay applies.",
+						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 86400),
+						},
+					},
 				},
 			},
 			"compatibility_date": schema.StringAttribute{
@@ -961,7 +989,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataPlacementModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
-						Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\nAvailable values: \"smart\", \"targeted\".",
+						Description: "Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).\n\nTargeted placement mode.\nAvailable values: \"smart\", \"targeted\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("smart", "targeted"),

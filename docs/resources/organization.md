@@ -4,6 +4,8 @@ subcategory: ""
 description: |-
   Accepted Permissions
   User Details Write
+  User API tokens can list and create Organizations, but reading, updating, or deleting an Organization requires a Global API key and your registered email address. The cloudflare_organization Terraform resource therefore requires a Global API key for its full lifecycle.
+  See Organizations authentication limitations https://developers.cloudflare.com/fundamentals/organizations/limitations/#api-authentication for credential compatibility by operation. Each endpoint’s Security section lists its supported authentication methods, with Accepted Permissions where applicable.
 ---
 
 # cloudflare_organization (Resource)
@@ -12,11 +14,15 @@ Accepted Permissions
 
 - `User Details Write`
 
+User API tokens can list and create Organizations, but reading, updating, or deleting an Organization requires a Global API key and your registered email address. The `cloudflare_organization` Terraform resource therefore requires a Global API key for its full lifecycle.
+
+See [Organizations authentication limitations](https://developers.cloudflare.com/fundamentals/organizations/limitations/#api-authentication) for credential compatibility by operation. Each endpoint’s **Security** section lists its supported authentication methods, with **Accepted Permissions** where applicable.
+
 ## Example Usage
 
 ```terraform
 resource "cloudflare_organization" "example_organization" {
-  name = "name"
+  name = "x"
   parent = {
     id = "a7b9c3d2e8f4a1b5c6d0e9f2a3b7c4d8"
   }
@@ -35,12 +41,13 @@ resource "cloudflare_organization" "example_organization" {
 
 ### Required
 
-- `name` (String)
+- `name` (String) The Organization name, limited to 65 UTF-8 bytes.
 
 ### Optional
 
 - `parent` (Attributes) (see [below for nested schema](#nestedatt--parent))
-- `profile` (Attributes) (see [below for nested schema](#nestedatt--profile))
+- `parent_id` (String) The current parent Organization ID. A different value is rejected; this endpoint cannot move an Organization.
+- `profile` (Attributes) Optional profile fields, each limited to 1,000 UTF-8 bytes. An empty profile is ignored. (see [below for nested schema](#nestedatt--profile))
 
 ### Read-Only
 
@@ -55,15 +62,11 @@ Required:
 
 - `id` (String)
 
-Read-Only:
-
-- `name` (String)
-
 
 <a id="nestedatt--profile"></a>
 ### Nested Schema for `profile`
 
-Required:
+Optional:
 
 - `business_address` (String)
 - `business_email` (String)
@@ -77,6 +80,7 @@ Required:
 
 Read-Only:
 
+- `are_child_accounts_accessible_by_org_members` (Boolean)
 - `hierarchy_tags` (List of String) Ordered chain of organization tags from the root organization down to
 (and including) this organization itself. Root organizations return a
 single-element array containing their own tag; sub-organizations return
@@ -85,6 +89,7 @@ constructing authorization scopes that need to cover every ancestor
 in the hierarchy.
 - `managed_by` (String)
 - `tenant_flags` (Attributes) Enable features for Organizations. (see [below for nested schema](#nestedatt--meta--tenant_flags))
+- `tenant_type` (String)
 
 <a id="nestedatt--meta--tenant_flags"></a>
 ### Nested Schema for `meta.tenant_flags`

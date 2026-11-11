@@ -86,6 +86,8 @@ type RulesetRulesActionParametersModel struct {
 	ServerSideExcludes      types.Bool                                                                `tfsdk:"server_side_excludes" json:"server_side_excludes,optional"`
 	SSL                     types.String                                                              `tfsdk:"ssl" json:"ssl,optional"`
 	SXG                     types.Bool                                                                `tfsdk:"sxg" json:"sxg,optional"`
+	WebMCPEnabled           types.Bool                                                                `tfsdk:"webmcp_enabled" json:"webmcp_enabled,optional"`
+	WebMCPPacks             customfield.List[types.String]                                            `tfsdk:"webmcp_packs" json:"webmcp_packs,optional"`
 	// Phase                    types.String                                                                            `tfsdk:"phase" json:"phase,optional"`
 	Phases                   customfield.List[types.String]                                                          `tfsdk:"phases" json:"phases,optional"`
 	Products                 customfield.List[types.String]                                                          `tfsdk:"products" json:"products,optional"`

@@ -15,7 +15,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
@@ -39,56 +42,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"type": schema.StringAttribute{
-				Description: "Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.\nAvailable values: \"r2\", \"web-crawler\".",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("r2", "web-crawler"),
-				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			"namespace": schema.StringAttribute{
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplaceIfConfigured()},
+				Default:       stringdefault.StaticString("default"),
 			},
 			"hybrid_search_enabled": schema.BoolAttribute{
 				Description:        "Deprecated — use index_method instead. Defaults to true for new instances; set false to create a vector-only instance.",
 				Computed:           true,
 				Optional:           true,
 				DeprecationMessage: "This attribute is deprecated.",
-				PlanModifiers: []planmodifier.Bool{
-					boolplanmodifier.RequiresReplaceIfConfigured(),
-					// Preserve the value already in state. The API applies the
-					// "true" default for new instances, so a provider-side static
-					// default would otherwise plan false->true on upgrade for
-					// instances created before that default existed.
-					boolplanmodifier.UseStateForUnknown(),
-				},
+				PlanModifiers:      []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown(), boolplanmodifier.RequiresReplaceIfConfigured()},
 			},
-			"ai_gateway_id": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
-			},
-			"aisearch_model": schema.StringAttribute{
-				Description: "A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.",
+			"type": schema.StringAttribute{
+				Description: "Source type. When omitted or null with a non-blank source, HTTP(S) URLs infer web-crawler and existing R2 bucket names infer r2. A missing or blank source without a type uses managed upload-only storage.\nAvailable values: \"r2\", \"web-crawler\".",
 				Computed:    true,
 				Optional:    true,
-			},
-			"chunk_size": schema.Int64Attribute{
-				Computed: true,
-				Optional: true,
-				Validators: []validator.Int64{
-					int64validator.AtLeast(64),
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("r2", "web-crawler"),
 				},
-			},
-			"embedding_model": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
-			},
-			"reranking_model": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
-			},
-			"rewrite_model": schema.StringAttribute{
-				Description: "A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.",
-				Computed:    true,
-				Optional:    true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplaceIfConfigured()},
 			},
 			"source": schema.StringAttribute{
 				Optional: true,
@@ -103,9 +77,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 			},
 			"system_prompt_rewrite_query": schema.StringAttribute{
-				Optional: true,
-			},
-			"token_id": schema.StringAttribute{
 				Optional: true,
 			},
 			"custom_metadata": schema.ListNestedAttribute{
@@ -156,41 +127,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"retrieval_options": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"boost_by": schema.ListNestedAttribute{
-						Description: "Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric/datetime fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field.",
-						Optional:    true,
-						NestedObject: schema.NestedAttributeObject{
-							Attributes: map[string]schema.Attribute{
-								"field": schema.StringAttribute{
-									Description: "Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.",
-									Required:    true,
-								},
-								"direction": schema.StringAttribute{
-									Description: "Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional — defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.\nAvailable values: \"asc\", \"desc\", \"exists\", \"not_exists\".",
-									Optional:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"asc",
-											"desc",
-											"exists",
-											"not_exists",
-										),
-									},
-								},
-							},
-						},
-					},
-					"keyword_match_mode": schema.StringAttribute{
-						Description: "Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. When omitted on an update, the existing stored value is preserved; when never set, search falls back to 'and'.\nAvailable values: \"and\", \"or\".",
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("and", "or"),
-						},
-					},
-				},
+			"ai_gateway_id": schema.StringAttribute{
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"aisearch_model": schema.StringAttribute{
+				Description:   "A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"cache": schema.BoolAttribute{
 				Computed: true,
@@ -244,6 +190,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				Default: int64default.StaticInt64(10),
 			},
+			"chunk_size": schema.Int64Attribute{
+				Computed: true,
+				Optional: true,
+				Validators: []validator.Int64{
+					int64validator.AtLeast(64),
+				},
+				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseNonNullStateForUnknown()},
+			},
+			"embedding_model": schema.StringAttribute{
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+			},
 			"fusion_method": schema.StringAttribute{
 				Description: `Available values: "max", "rrf".`,
 				Computed:    true,
@@ -262,14 +221,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default: int64default.StaticInt64(10),
 			},
 			"paused": schema.BoolAttribute{
-				Computed: true,
-				Optional: true,
-				Default:  booldefault.StaticBool(false),
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"reranking": schema.BoolAttribute{
 				Computed: true,
 				Optional: true,
 				Default:  booldefault.StaticBool(false),
+			},
+			"reranking_model": schema.StringAttribute{
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"rewrite_model": schema.StringAttribute{
+				Description:   "A Workers AI model ID or an AI Gateway model ID compatible with the OpenAI Chat Completions API. An empty string uses the configured or default model.",
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"rewrite_query": schema.BoolAttribute{
 				Computed: true,
@@ -277,12 +247,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:  booldefault.StaticBool(false),
 			},
 			"score_threshold": schema.Float64Attribute{
-				Computed: true,
-				Optional: true,
+				Description: "Minimum similarity score a chunk must reach to be returned. Defaults to 0.4.",
+				Computed:    true,
+				Optional:    true,
 				Validators: []validator.Float64{
 					float64validator.Between(0, 1),
 				},
-				Default: float64default.StaticFloat64(0.4),
+				PlanModifiers: []planmodifier.Float64{float64planmodifier.UseNonNullStateForUnknown()},
 			},
 			"summarization": schema.BoolAttribute{
 				Computed: true,
@@ -290,7 +261,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:  booldefault.StaticBool(false),
 			},
 			"sync_interval": schema.Float64Attribute{
-				Description: "Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).\nAvailable values: 900, 1800, 3600, 7200, 14400, 21600, 43200, 86400.",
+				Description: "Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h). Defaults to 86400 (24h).\nAvailable values: 900, 1800, 3600, 7200, 14400, 21600, 43200, 86400.",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.Float64{
@@ -305,21 +276,30 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						86400,
 					),
 				},
-				Default: float64default.StaticFloat64(21600),
+				PlanModifiers: []planmodifier.Float64{float64planmodifier.UseNonNullStateForUnknown()},
+			},
+			"token_id": schema.StringAttribute{
+				Computed:      true,
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"index_method": schema.SingleNestedAttribute{
-				Description: "Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.",
+				Description: "Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances. When set, both vector and keyword are required.",
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectType[AISearchInstanceIndexMethodModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"keyword": schema.BoolAttribute{
-						Description: "Enable keyword (BM25) storage backend.",
-						Required:    true,
+						Description:   "Enable keyword (BM25) storage backend.",
+						Computed:      true,
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"vector": schema.BoolAttribute{
-						Description: "Enable vector (embedding) storage backend.",
-						Required:    true,
+						Description:   "Enable vector (embedding) storage backend.",
+						Computed:      true,
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
@@ -357,23 +337,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						ElementType: types.StringType,
 					},
 					"chat_completions_endpoint": schema.SingleNestedAttribute{
-						Computed:   true,
-						Optional:   true,
-						CustomType: customfield.NewNestedObjectType[AISearchInstancePublicEndpointParamsChatCompletionsEndpointModel](ctx),
+						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"disabled": schema.BoolAttribute{
-								Description: "Disable chat completions endpoint for this public endpoint",
+								Description: "Disable chat completions endpoint for this public endpoint.",
 								Computed:    true,
 								Optional:    true,
 								Default:     booldefault.StaticBool(false),
 							},
 						},
-						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"custom_domains": schema.ListAttribute{
-						Description: "Custom domain hostnames that alias this public endpoint. GET and create responses return the current set; on update (PUT) this field is only echoed back when supplied in the request body, otherwise it is null (omit it to leave domains unchanged).",
-						Optional:    true,
-						ElementType: types.StringType,
+						Description:   "Custom domain hostnames that alias this public endpoint. GET and create responses return the current set; on update (PUT) this field is only echoed back when supplied in the request body, otherwise it is null (omit it to leave domains unchanged).",
+						Computed:      true,
+						Optional:      true,
+						CustomType:    customfield.NewListType[types.String](ctx),
+						ElementType:   types.StringType,
+						PlanModifiers: []planmodifier.List{listplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"default_domain_enabled": schema.BoolAttribute{
 						Description: "When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.",
@@ -397,7 +377,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Default:  stringdefault.StaticString("Finds exactly what you're looking for"),
 							},
 							"disabled": schema.BoolAttribute{
-								Description: "Disable MCP endpoint for this public endpoint",
+								Description: "Disable MCP endpoint for this public endpoint.",
 								Computed:    true,
 								Optional:    true,
 								Default:     booldefault.StaticBool(false),
@@ -406,7 +386,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"rate_limit": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[AISearchInstancePublicEndpointParamsRateLimitModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"period_ms": schema.Int64Attribute{
 								Optional: true,
@@ -428,20 +410,61 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
 					},
 					"search_endpoint": schema.SingleNestedAttribute{
-						Computed:   true,
-						Optional:   true,
-						CustomType: customfield.NewNestedObjectType[AISearchInstancePublicEndpointParamsSearchEndpointModel](ctx),
+						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"disabled": schema.BoolAttribute{
-								Description: "Disable search endpoint for this public endpoint",
+								Description: "Disable search endpoint for this public endpoint.",
 								Computed:    true,
 								Optional:    true,
 								Default:     booldefault.StaticBool(false),
 							},
 						},
-						PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
+					},
+				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"retrieval_options": schema.SingleNestedAttribute{
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectType[AISearchInstanceRetrievalOptionsModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"boost_by": schema.ListNestedAttribute{
+						Description: "Metadata fields to boost search results by. Each entry specifies a metadata field and an optional direction. Direction defaults to 'asc' for numeric/datetime fields and 'exists' for text/boolean fields. Fields must match 'timestamp' or a defined custom_metadata field.",
+						Optional:    true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"field": schema.StringAttribute{
+									Description: "Metadata field name to boost by. Use 'timestamp' for document freshness, or any custom_metadata field. Numeric and datetime fields support all four directions (asc, desc, exists, not_exists); text/boolean fields only support exists/not_exists.",
+									Required:    true,
+								},
+								"direction": schema.StringAttribute{
+									Description: "Boost direction. 'desc' = higher values rank higher (e.g. newer timestamps). 'asc' = lower values rank higher. 'exists' = boost chunks that have the field. 'not_exists' = boost chunks that lack the field. Optional — defaults to 'asc' for numeric/datetime fields, 'exists' for text/boolean fields.\nAvailable values: \"asc\", \"desc\", \"exists\", \"not_exists\".",
+									Computed:    true,
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive(
+											"asc",
+											"desc",
+											"exists",
+											"not_exists",
+										),
+									},
+									PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+								},
+							},
+						},
+					},
+					"keyword_match_mode": schema.StringAttribute{
+						Description: "Controls which documents become candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term and ranks results according to BM25 relevance. When omitted on an update, the existing stored value stays unchanged; when never set, search falls back to 'and'.\nAvailable values: \"and\", \"or\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("and", "or"),
+						},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},
@@ -452,12 +475,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"exclude_items": schema.ListAttribute{
-						Description: "List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.",
+						Description: "List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.",
 						Optional:    true,
 						ElementType: types.StringType,
 					},
 					"include_items": schema.ListAttribute{
-						Description: "List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.",
+						Description: "List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts have a limit of 10 rules; contact support to raise it.",
 						Optional:    true,
 						ElementType: types.StringType,
 					},
@@ -475,7 +498,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsWebCrawlerModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"discover_options": schema.SingleNestedAttribute{
-								Description: "Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'.",
+								Description: "Options for parse_type 'discover', where Browser Run discovers URLs through link following and sitemaps. Ignored for 'sitemap'.",
 								Optional:    true,
 								Attributes: map[string]schema.Attribute{
 									"depth": schema.Float64Attribute{
@@ -488,7 +511,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Default: float64default.StaticFloat64(5),
 									},
 									"include_external_links": schema.BoolAttribute{
-										Description: "Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.",
+										Description: "Follow links that point outside the source domain. Must stay `false` because discover crawls only cover the zone you own.",
 										Computed:    true,
 										Optional:    true,
 										Default:     booldefault.StaticBool(false),
@@ -536,7 +559,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
 									"content_selector": schema.ListNestedAttribute{
-										Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed. Omit the field to disable content selection — empty arrays are rejected.",
+										Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. The crawler stores and indexes only the matched HTML fragment. Omit the field to disable content selection; the API rejects empty arrays.",
 										Optional:    true,
 										NestedObject: schema.NestedAttributeObject{
 											Attributes: map[string]schema.Attribute{
@@ -545,14 +568,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 													Required:    true,
 												},
 												"selector": schema.StringAttribute{
-													Description: "CSS selector to extract content from pages matching the path pattern. Must not contain disallowed characters (;, `, $, {, }, \\). Must target a single element; if multiple elements match, the selector is ignored and the full page is used.",
+													Description: "CSS selector to extract content from pages matching the path pattern. Disallowed characters: ;, `, $, {, }, \\. Must target a single element; if multiple elements match, the crawler ignores the selector and uses the full page.",
 													Required:    true,
 												},
 											},
 										},
 									},
 									"include_headers": schema.MapAttribute{
-										Description: "Up to 5 custom HTTP headers sent with each crawl request. Names must be RFC-7230 token characters (no spaces, colons, or control characters); values must be HTAB + printable ASCII (no CR/LF).",
+										Description: "Up to 5 custom HTTP headers sent with each crawl request. Names must use RFC-7230 token characters, excluding spaces, colons, and control characters. Values must use HTAB and printable ASCII only, excluding CR and LF.",
 										Optional:    true,
 										ElementType: types.StringType,
 									},
@@ -574,7 +597,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"parse_type": schema.StringAttribute{
-								Description: "How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.\nAvailable values: \"sitemap\", \"discover\".",
+								Description: "How the crawler finds URLs. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to belong to a Verified zone on this account.\nAvailable values: \"sitemap\", \"discover\".",
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
@@ -598,11 +621,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"enable": schema.BoolAttribute{
 				Computed: true,
-				Default:  booldefault.StaticBool(true),
 			},
 			"engine_version": schema.Float64Attribute{
 				Computed: true,
-				Default:  float64default.StaticFloat64(3),
 			},
 			"last_activity": schema.StringAttribute{
 				Computed:   true,
@@ -615,15 +636,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"modified_by": schema.StringAttribute{
 				Computed: true,
 			},
-			"namespace": schema.StringAttribute{
-				Computed: true,
-			},
 			"public_endpoint_id": schema.StringAttribute{
 				Computed: true,
 			},
 			"status": schema.StringAttribute{
 				Computed: true,
-				Default:  stringdefault.StaticString("waiting"),
 			},
 		},
 	}

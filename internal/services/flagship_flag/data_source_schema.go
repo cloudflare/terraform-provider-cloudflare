@@ -296,18 +296,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 																									Computed:    true,
 																									CustomType:  jsontypes.NormalizedType{},
 																								},
-																								"clauses": schema.ListAttribute{
-																									Computed:    true,
-																									CustomType:  customfield.NewListType[types.String](ctx),
-																									ElementType: types.StringType,
-																								},
-																								"logical_operator": schema.StringAttribute{
-																									Description: `Available values: "AND", "OR".`,
-																									Computed:    true,
-																									Validators: []validator.String{
-																										stringvalidator.OneOfCaseInsensitive("AND", "OR"),
-																									},
-																								},
 																							},
 																						},
 																					},
@@ -391,6 +379,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+			},
+			"metadata": schema.DynamicAttribute{
+				Description: "Key-value metadata associated with the flag. Returned only when the flag has metadata.",
+				Computed:    true,
+				CustomType:  customfield.NormalizedDynamicType{},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

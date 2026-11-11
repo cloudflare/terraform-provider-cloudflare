@@ -36,23 +36,25 @@ data "cloudflare_zero_trust_dlp_custom_profile" "example_zero_trust_dlp_custom_p
 ### Read-Only
 
 - `ai_context_enabled` (Boolean)
-- `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
+- `allowed_match_count` (Number) For `type: custom`: Related DLP policies will trigger when the match count exceeds the number set.
 - `confidence_threshold` (String) Available values: "low", "medium", "high", "very_high".
-- `context_awareness` (Attributes, Deprecated) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
-- `created_at` (String) When the profile was created.
-- `data_classes` (List of String) Data classes associated with this profile.
-- `data_tags` (List of String) Data tags associated with this profile.
-- `description` (String) The description of the profile.
+- `context_awareness` (Attributes, Deprecated) For `type: custom`: Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
+- `created_at` (String) For `type: custom`: When the profile was created.
+- `data_classes` (List of String) For `type: custom`: Data classes associated with this profile.
+- `data_tags` (List of String) For `type: custom`: Data tags associated with this profile.
+- `description` (String) For `type: custom` or `type: integration`: The description of the profile.
 - `entries` (Attributes List, Deprecated) (see [below for nested schema](#nestedatt--entries))
 - `id` (String) The ID of this resource.
 - `integration_id` (String)
-- `name` (String) The name of the profile.
+- `name` (String) For `type: custom`: The name of the profile.
+
+For `type: predefined`: The name of the predefined profile.
 - `ocr_enabled` (Boolean)
-- `open_access` (Boolean) Whether this profile can be accessed by anyone.
-- `sensitivity_levels` (Attributes List) Sensitivity levels associated with this profile. (see [below for nested schema](#nestedatt--sensitivity_levels))
+- `open_access` (Boolean) For `type: predefined`: Whether this profile can be accessed by anyone.
+- `sensitivity_levels` (Attributes List) For `type: custom`: Sensitivity levels associated with this profile. (see [below for nested schema](#nestedatt--sensitivity_levels))
 - `shared_entries` (Attributes List) (see [below for nested schema](#nestedatt--shared_entries))
 - `type` (String) Available values: "custom", "predefined", "integration".
-- `updated_at` (String) When the profile was lasted updated.
+- `updated_at` (String) For `type: custom`: When the profile was lasted updated.
 
 <a id="nestedatt--context_awareness"></a>
 ### Nested Schema for `context_awareness`
@@ -76,14 +78,18 @@ Read-Only:
 
 Read-Only:
 
-- `case_sensitive` (Boolean) Only applies to custom word lists.
+- `case_sensitive` (Boolean) For `type: exact_data`: Only applies to custom word lists.
 Determines if the words should be matched in a case-sensitive manner
 Cannot be set to false if secret is true
 - `confidence` (Attributes) (see [below for nested schema](#nestedatt--entries--confidence))
 - `created_at` (String)
-- `deprecated` (Boolean) Whether this entry is deprecated for new use. This is computed from the static catalog and
+- `deprecated` (Boolean) For `type: predefined`: Whether this entry is deprecated for new use. This is computed from the static catalog and
 emitted only when true.
-- `description` (String)
+- `description` (String) For `type: custom_prompt_topic`: The optional description of the custom prompt topic entry.
+
+For `type: exact_data`: The optional description of the exact data entry.
+
+For `type: document_fingerprint`: The optional description of the document fingerprint entry.
 - `enabled` (Boolean)
 - `id` (String)
 - `name` (String)
@@ -92,7 +98,12 @@ emitted only when true.
 - `secret` (Boolean)
 - `type` (String) Available values: "custom", "custom_prompt_topic", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
-- `variant` (Attributes) A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--entries--variant))
+- `validator_ids` (Set of String) For `type: custom`: Validators this entry references, by id, at most 10. An empty list means the entry
+references none.
+
+Returned by the entry endpoints. Not returned on entries embedded in other responses, such
+as profiles.
+- `variant` (Attributes) For `type: predefined`: A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--entries--variant))
 - `word_list` (List of String)
 
 <a id="nestedatt--entries--confidence"></a>
@@ -118,7 +129,9 @@ Read-Only:
 
 Read-Only:
 
-- `description` (String) A customer-facing explanation of what this predefined AI prompt topic represents.
+- `description` (String) For `type: PromptTopic`: A customer-facing explanation of what this predefined AI prompt topic represents.
+
+For `type: General`: A customer-facing explanation of what this predefined entry represents.
 - `topic_type` (String) Available values: "Intent", "Content".
 - `type` (String) Available values: "PromptTopic", "General".
 
@@ -138,14 +151,18 @@ Read-Only:
 
 Read-Only:
 
-- `case_sensitive` (Boolean) Only applies to custom word lists.
+- `case_sensitive` (Boolean) For `type: exact_data`: Only applies to custom word lists.
 Determines if the words should be matched in a case-sensitive manner
 Cannot be set to false if secret is true
 - `confidence` (Attributes) (see [below for nested schema](#nestedatt--shared_entries--confidence))
 - `created_at` (String)
-- `deprecated` (Boolean) Whether this entry is deprecated for new use. This is computed from the static catalog and
+- `deprecated` (Boolean) For `type: predefined`: Whether this entry is deprecated for new use. This is computed from the static catalog and
 emitted only when true.
-- `description` (String)
+- `description` (String) For `type: custom_prompt_topic`: The optional description of the custom prompt topic entry.
+
+For `type: exact_data`: The optional description of the exact data entry.
+
+For `type: document_fingerprint`: The optional description of the document fingerprint entry.
 - `enabled` (Boolean)
 - `id` (String)
 - `name` (String)
@@ -154,7 +171,12 @@ emitted only when true.
 - `secret` (Boolean)
 - `type` (String) Available values: "custom", "custom_prompt_topic", "predefined", "integration", "exact_data", "document_fingerprint", "word_list".
 - `updated_at` (String)
-- `variant` (Attributes) A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--shared_entries--variant))
+- `validator_ids` (Set of String) For `type: custom`: Validators this entry references, by id, at most 10. An empty list means the entry
+references none.
+
+Returned by the entry endpoints. Not returned on entries embedded in other responses, such
+as profiles.
+- `variant` (Attributes) For `type: predefined`: A Predefined AI prompt classification topic entry. (see [below for nested schema](#nestedatt--shared_entries--variant))
 - `word_list` (List of String)
 
 <a id="nestedatt--shared_entries--confidence"></a>
@@ -180,7 +202,9 @@ Read-Only:
 
 Read-Only:
 
-- `description` (String) A customer-facing explanation of what this predefined AI prompt topic represents.
+- `description` (String) For `type: PromptTopic`: A customer-facing explanation of what this predefined AI prompt topic represents.
+
+For `type: General`: A customer-facing explanation of what this predefined entry represents.
 - `topic_type` (String) Available values: "Intent", "Content".
 - `type` (String) Available values: "PromptTopic", "General".
 

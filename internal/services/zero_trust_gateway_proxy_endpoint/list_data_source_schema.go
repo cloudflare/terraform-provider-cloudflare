@@ -65,7 +65,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"ips": schema.ListAttribute{
-							Description: "Specify the list of CIDRs to restrict ingress connections.",
+							Description: "For `kind: ip`: Specify the list of CIDRs to restrict ingress connections.",
 							Computed:    true,
 							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,

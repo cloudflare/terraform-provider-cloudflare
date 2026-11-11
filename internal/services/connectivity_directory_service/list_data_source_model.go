@@ -69,4 +69,6 @@ type ConnectivityDirectoryServicesHostResolverNetworkDataSourceModel struct {
 
 type ConnectivityDirectoryServicesTLSSettingsDataSourceModel struct {
 	CERTVerificationMode types.String `tfsdk:"cert_verification_mode" json:"cert_verification_mode,computed"`
+	CertificateAuthority types.String `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
+	ClientCertificate    types.String `tfsdk:"client_certificate" json:"client_certificate,computed"`
 }

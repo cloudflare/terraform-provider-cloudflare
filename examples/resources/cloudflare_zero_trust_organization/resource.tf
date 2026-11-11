@@ -9,6 +9,7 @@ resource "cloudflare_zero_trust_organization" "example_zero_trust_organization" 
   }
   deny_unmatched_requests = true
   deny_unmatched_requests_exempted_zone_names = ["example.com"]
+  disable_end_user_app_creation = false
   is_ui_read_only = true
   login_design = {
     background_color = "#c5ed1b"

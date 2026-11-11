@@ -9,4 +9,7 @@ resource "cloudflare_workers_deployment" "example_workers_deployment" {
   annotations = {
     workers_message = "Deploy bug fix."
   }
+  code_update_strategy = {
+    mode = "immediate"
+  }
 }

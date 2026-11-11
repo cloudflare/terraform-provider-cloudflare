@@ -24,6 +24,7 @@ type LoadBalancerPoolModel struct {
 	MonitorGroup       types.String                                                      `tfsdk:"monitor_group" json:"monitor_group,optional"`
 	CheckRegions       *[]types.String                                                   `tfsdk:"check_regions" json:"check_regions,optional"`
 	HealthSources      *[]types.String                                                   `tfsdk:"health_sources" json:"health_sources,optional"`
+	Networks           customfield.List[types.String]                                    `tfsdk:"networks" json:"networks,computed"`
 	Description        types.String                                                      `tfsdk:"description" json:"description,computed_optional"`
 	Enabled            types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed_optional"`
 	MinimumOrigins     types.Int64                                                       `tfsdk:"minimum_origins" json:"minimum_origins,computed_optional"`
@@ -34,7 +35,6 @@ type LoadBalancerPoolModel struct {
 	CreatedOn          types.String                                                      `tfsdk:"created_on" json:"created_on,computed"`
 	DisabledAt         timetypes.RFC3339                                                 `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
 	ModifiedOn         types.String                                                      `tfsdk:"modified_on" json:"modified_on,computed"`
-	Networks           customfield.List[types.String]                                    `tfsdk:"networks" json:"networks,computed"`
 }
 
 func (m LoadBalancerPoolModel) MarshalJSON() (data []byte, err error) {

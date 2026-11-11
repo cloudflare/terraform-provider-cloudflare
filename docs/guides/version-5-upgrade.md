@@ -1240,7 +1240,7 @@ If migrating manually, use one of:
 
   ```hcl
   resource "cloudflare_r2_bucket" "example" {
-   	location_hint = "APAC"
+    location_hint = "APAC"
   }
   ```
 
@@ -1248,7 +1248,7 @@ If migrating manually, use one of:
 
   ```hcl
   resource "cloudflare_r2_bucket" "example" {
-   	location   = "APAC"
+    location   = "APAC"
   }
   ```
 
@@ -1260,7 +1260,7 @@ If migrating manually, use one of:
 
   ```hcl
   resource "cloudflare_teams_list" "example" {
-   	items = ["item-1234", "item-5678"	]
+    items = ["item-1234", "item-5678"	]
   }
   ```
 
@@ -1268,7 +1268,7 @@ If migrating manually, use one of:
 
   ```hcl
   resource "cloudflare_teams_list" "example" {
-   	items = [{ value = "item-1234" }, { value = "item-5678" }]
+    items = [{ value = "item-1234" }, { value = "item-5678" }]
   }
   ```
 
@@ -1565,6 +1565,7 @@ If migrating manually, use one of:
 
 - `custom_pages` is now a single nested attribute (`custom_pages = { ... }`) instead of a block (`custom_pages { ... }`).
 - `login_design` is now a single nested attribute (`login_design = { ... }`) instead of a block (`login_design { ... }`).
+- Before the first v5 apply, restore `deny_unmatched_requests`, `deny_unmatched_requests_exempted_zone_names`, `mfa_config`, `mfa_piv_key_requirements`, and `mfa_required_for_all_apps` into explicit HCL from a pre-migration API snapshot. These settings are absent from v4's schema and state. Use `tf-migrate preserve-zero-trust-settings --snapshot zero-trust-settings.json` after migrating HCL; see [the snapshot workflow](https://github.com/cloudflare/tf-migrate/blob/main/docs/zero-trust-settings.md). This migration-only step does not change the provider's ongoing omission/default behavior.
 
 ## cloudflare_address_map
 
@@ -1856,7 +1857,15 @@ resource "cloudflare_list_item" "example" {
 
 ## cloudflare_zero_trust_gateway_policy
 
-- `audit_ssh` is now a single nested attribute (`audit_ssh = { ... }`) instead of a block (`audit_ssh { ... }`).
+- **Review precedence before applying.** The v4 provider applied a name-based hash
+  calculation, so live precedence can differ from configuration. The state
+  upgrader preserves source precedence and tf-migrate preserves configured
+  values; neither infers policy order by dividing large values. Assign unique
+  v5 precedences while preserving the live order of all relevant policies,
+  including allow exceptions and catch-all block policies. Do not mix API-scale
+  values for some policies with configured-scale values for others. A planned
+  precedence update changes actual policy ordering on apply. See
+  [Gateway policy precedence review](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/version-5-migration#gateway-policy-precedence-review).
 - `biso_admin_controls` is now a single nested attribute (`biso_admin_controls = { ... }`) instead of a block (`biso_admin_controls { ... }`).
 - `check_session` is now a single nested attribute (`check_session = { ... }`) instead of a block (`check_session { ... }`).
 - `dns_resolvers` is now a single nested attribute (`dns_resolvers = { ... }`) instead of a block (`dns_resolvers { ... }`).

@@ -26,10 +26,13 @@ resource "cloudflare_magic_transit_site_wan" "example_magic_transit_site_wan" {
   load_balance_inner_flows = true
   name = "name"
   priority = 0
+  provisioned_download_kbps = 500
+  provisioned_upload_kbps = 100
   static_addressing = {
     address = "192.0.2.0/24"
     gateway_address = "192.0.2.1"
     secondary_address = "192.0.2.0/24"
+    secondary_gateway_address = "192.0.2.1"
   }
   vlan_tag = 42
 }
@@ -51,7 +54,9 @@ Available values: "low", "mid", "high".
 - `load_balance_inner_flows` (Boolean)
 - `name` (String)
 - `priority` (Number)
-- `static_addressing` (Attributes) (optional) if omitted, use DHCP. Submit secondary_address when site is in high availability mode. (see [below for nested schema](#nestedatt--static_addressing))
+- `provisioned_download_kbps` (Number) Provisioned download rate of the WAN circuit in kilobits per second.
+- `provisioned_upload_kbps` (Number) Provisioned upload rate of the WAN circuit in kilobits per second.
+- `static_addressing` (Attributes) Static addressing configuration for a WAN. Omit to use DHCP. Submit secondary_address when the site is in high availability mode. (see [below for nested schema](#nestedatt--static_addressing))
 - `vlan_tag` (Number) VLAN ID. Use zero for untagged.
 
 ### Read-Only
@@ -69,6 +74,7 @@ Required:
 Optional:
 
 - `secondary_address` (String) A valid CIDR notation representing an IP range.
+- `secondary_gateway_address` (String) Gateway address for the secondary connector of a high availability site.
 
 ## Import
 

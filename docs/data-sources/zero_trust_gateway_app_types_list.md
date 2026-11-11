@@ -42,6 +42,8 @@ Read-Only:
 - `created_at` (String)
 - `description` (String) Provide a short summary of applications with this type.
 - `id` (Number) Identify this application. Only one application per ID.
+
+Identify the type of this application. Multiple applications can share the same type. Refers to the `id` of a returned application type.
 - `name` (String) Specify the name of the application or application type.
 
 

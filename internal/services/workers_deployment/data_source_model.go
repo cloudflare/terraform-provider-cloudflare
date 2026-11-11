@@ -18,16 +18,17 @@ type WorkersDeploymentResultDataSourceEnvelope struct {
 }
 
 type WorkersDeploymentDataSourceModel struct {
-	ID           types.String                                                           `tfsdk:"id" path:"deployment_id,computed"`
-	DeploymentID types.String                                                           `tfsdk:"deployment_id" path:"deployment_id,required"`
-	AccountID    types.String                                                           `tfsdk:"account_id" path:"account_id,required"`
-	ScriptName   types.String                                                           `tfsdk:"script_name" path:"script_name,required"`
-	AuthorEmail  types.String                                                           `tfsdk:"author_email" json:"author_email,computed"`
-	CreatedOn    timetypes.RFC3339                                                      `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Source       types.String                                                           `tfsdk:"source" json:"source,computed"`
-	Strategy     types.String                                                           `tfsdk:"strategy" json:"strategy,computed"`
-	Annotations  customfield.NestedObject[WorkersDeploymentAnnotationsDataSourceModel]  `tfsdk:"annotations" json:"annotations,computed"`
-	Versions     customfield.NestedObjectList[WorkersDeploymentVersionsDataSourceModel] `tfsdk:"versions" json:"versions,computed"`
+	ID                 types.String                                                                 `tfsdk:"id" path:"deployment_id,computed"`
+	DeploymentID       types.String                                                                 `tfsdk:"deployment_id" path:"deployment_id,required"`
+	AccountID          types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
+	ScriptName         types.String                                                                 `tfsdk:"script_name" path:"script_name,required"`
+	AuthorEmail        types.String                                                                 `tfsdk:"author_email" json:"author_email,computed"`
+	CreatedOn          timetypes.RFC3339                                                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Source             types.String                                                                 `tfsdk:"source" json:"source,computed"`
+	Strategy           types.String                                                                 `tfsdk:"strategy" json:"strategy,computed"`
+	Annotations        customfield.NestedObject[WorkersDeploymentAnnotationsDataSourceModel]        `tfsdk:"annotations" json:"annotations,computed"`
+	CodeUpdateStrategy customfield.NestedObject[WorkersDeploymentCodeUpdateStrategyDataSourceModel] `tfsdk:"code_update_strategy" json:"code_update_strategy,computed"`
+	Versions           customfield.NestedObjectList[WorkersDeploymentVersionsDataSourceModel]       `tfsdk:"versions" json:"versions,computed"`
 }
 
 func (m *WorkersDeploymentDataSourceModel) toReadParams(_ context.Context) (params workers.ScriptDeploymentGetParams, diags diag.Diagnostics) {
@@ -41,6 +42,11 @@ func (m *WorkersDeploymentDataSourceModel) toReadParams(_ context.Context) (para
 type WorkersDeploymentAnnotationsDataSourceModel struct {
 	WorkersMessage     types.String `tfsdk:"workers_message" json:"workers/message,computed"`
 	WorkersTriggeredBy types.String `tfsdk:"workers_triggered_by" json:"workers/triggered_by,computed"`
+}
+
+type WorkersDeploymentCodeUpdateStrategyDataSourceModel struct {
+	Mode     types.String  `tfsdk:"mode" json:"mode,computed"`
+	MaxDelay types.Float64 `tfsdk:"max_delay" json:"max_delay,computed"`
 }
 
 type WorkersDeploymentVersionsDataSourceModel struct {

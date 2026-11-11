@@ -1,6 +1,7 @@
 package v500
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -26,8 +27,8 @@ type SourceCloudflareOriginCACertificateModel struct {
 	Hostnames   types.Set    `tfsdk:"hostnames"`    // TypeSet in v4 → *[]types.String in v5 (SET TO LIST CONVERSION)
 
 	// Optional user-provided field
-	RequestedValidity  types.Int64 `tfsdk:"requested_validity"`   // TypeInt in v4 → Float64 in v5 (TYPE CONVERSION + DEFAULT 5475)
-	MinDaysForRenewal  types.Int64 `tfsdk:"min_days_for_renewal"` // REMOVED in v5 (DROP DURING MIGRATION)
+	RequestedValidity types.Int64 `tfsdk:"requested_validity"`   // TypeInt in v4 → Float64 in v5 (TYPE CONVERSION + DEFAULT 5475)
+	MinDaysForRenewal types.Int64 `tfsdk:"min_days_for_renewal"` // REMOVED in v5 (DROP DURING MIGRATION)
 
 	// Computed fields (API-provided, do not modify during migration)
 	Certificate types.String `tfsdk:"certificate"` // API-generated certificate (no change)
@@ -52,10 +53,14 @@ type TargetOriginCACertificateModel struct {
 	RequestType types.String    `tfsdk:"request_type"` // Signature type: origin-rsa, origin-ecc, keyless-certificate
 	Hostnames   *[]types.String `tfsdk:"hostnames"`    // List of hostnames (converted from Set)
 
+	// Optional user-provided field
+	ZoneID types.String `tfsdk:"zone_id"` // Zone identifier (optional, no_refresh)
+
 	// Optional user-provided field with default
 	RequestedValidity types.Float64 `tfsdk:"requested_validity"` // Number of days for validity (default: 5475)
 
 	// Computed fields (API-provided)
-	Certificate types.String `tfsdk:"certificate"` // The Origin CA certificate (newline-encoded)
-	ExpiresOn   types.String `tfsdk:"expires_on"`  // When the certificate will expire
+	Certificate types.String      `tfsdk:"certificate"` // The Origin CA certificate (newline-encoded)
+	ExpiresOn   types.String      `tfsdk:"expires_on"`  // When the certificate will expire
+	RevokedAt   timetypes.RFC3339 `tfsdk:"revoked_at"`  // When the certificate was revoked
 }

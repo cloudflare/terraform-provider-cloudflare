@@ -2,12 +2,56 @@ package v500
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
+
+// UpgradeFromV0 handles schema_version=0 state. v4 SDKv2 wrote version 0, and
+// so did v5 releases before the zone schema version was bumped to 1, so the
+// state's shape decides which path runs. v5Schema is the current v5 schema.
+func UpgradeFromV0(v5Schema schema.Schema) func(context.Context, resource.UpgradeStateRequest, *resource.UpgradeStateResponse) {
+	return func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
+		if req.RawState == nil || len(req.RawState.JSON) == 0 {
+			resp.Diagnostics.AddError("Missing raw state", "RawState was nil or empty for schema version 0 migration")
+			return
+		}
+
+		if !IsV5State(req.RawState) {
+			UpgradeFromV4(ctx, req, resp)
+			return
+		}
+
+		tflog.Info(ctx, "Detected v5 zone state at schema_version=0, performing no-op version bump")
+		rawValue, err := req.RawState.Unmarshal(v5Schema.Type().TerraformType(ctx))
+		if err != nil {
+			resp.Diagnostics.AddError("Failed to unmarshal v5 zone state",
+				fmt.Sprintf("Could not parse raw state as v5 format: %s", err))
+			return
+		}
+		resp.State.Raw = rawValue
+	}
+}
+
+// IsV5State reports whether raw state has the v5 shape. v5 nests the account
+// under "account"; v4 has a flat "account_id" and names the zone "zone".
+func IsV5State(raw *tfprotov6.RawState) bool {
+	if raw == nil || len(raw.JSON) == 0 {
+		return false
+	}
+	var attrs map[string]json.RawMessage
+	if err := json.Unmarshal(raw.JSON, &attrs); err != nil {
+		return false
+	}
+	_, hasAccount := attrs["account"]
+	_, hasZone := attrs["zone"]
+	return hasAccount && !hasZone
+}
 
 // UpgradeFromV4 handles state upgrades from v4 SDKv2 provider (schema_version=0) to v5 (version=500).
 //

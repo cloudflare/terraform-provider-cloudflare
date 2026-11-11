@@ -30,6 +30,10 @@ resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
     static_prefix = "192.0.2.0/24"
   }
   physport = 1
+  remote_subnets = [{
+    local_alias_prefix = "192.0.2.0/24"
+    remote_prefix = "192.0.2.0/24"
+  }]
   routed_subnets = [{
     next_hop = "192.0.2.1"
     prefix = "192.0.2.0/24"
@@ -81,6 +85,7 @@ resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
 - `name` (String)
 - `nat` (Attributes) (see [below for nested schema](#nestedatt--nat))
 - `physport` (Number)
+- `remote_subnets` (Attributes List) (see [below for nested schema](#nestedatt--remote_subnets))
 - `routed_subnets` (Attributes List) (see [below for nested schema](#nestedatt--routed_subnets))
 - `static_addressing` (Attributes) If the site is not configured in high availability mode, this configuration is optional (if omitted, use DHCP). However, if in high availability mode, static_address is required along with secondary and virtual address. (see [below for nested schema](#nestedatt--static_addressing))
 - `vlan_tag` (Number) VLAN ID. Use zero for untagged.
@@ -95,6 +100,15 @@ resource "cloudflare_magic_transit_site_lan" "example_magic_transit_site_lan" {
 Optional:
 
 - `static_prefix` (String) A valid CIDR notation representing an IP range.
+
+
+<a id="nestedatt--remote_subnets"></a>
+### Nested Schema for `remote_subnets`
+
+Required:
+
+- `local_alias_prefix` (String) A valid CIDR notation representing an IP range.
+- `remote_prefix` (String) A valid CIDR notation representing an IP range.
 
 
 <a id="nestedatt--routed_subnets"></a>

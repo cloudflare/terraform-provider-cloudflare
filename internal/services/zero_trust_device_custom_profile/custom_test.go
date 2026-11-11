@@ -107,7 +107,7 @@ func TestNormalizeSplitTunnelList_PreservesStateForExistingEntries(t *testing.T)
 func TestNormalizeSplitTunnelList_MixedNewAndExistingEntries(t *testing.T) {
 	ctx := context.Background()
 
-	// Plan: existing entry (index 0) + new entry (index 1).
+	// Plan: existing entry + new entry.
 	planEntries := []ZeroTrustDeviceCustomProfileExcludeModel{
 		{
 			Address:     types.StringValue("10.0.0.0/8"),
@@ -147,7 +147,7 @@ func TestNormalizeSplitTunnelList_MixedNewAndExistingEntries(t *testing.T) {
 		t.Fatalf("expected 2 entries, got %d", len(entries))
 	}
 
-	// Entry 0: existing, unknown fields resolved from state (null).
+	// Entry 0: same address as the state entry, unknown fields resolved from it (null).
 	if !entries[0].Host.IsNull() {
 		t.Errorf("entry[0].host: expected null, got unknown=%v value='%s'", entries[0].Host.IsUnknown(), entries[0].Host.ValueString())
 	}
@@ -155,7 +155,7 @@ func TestNormalizeSplitTunnelList_MixedNewAndExistingEntries(t *testing.T) {
 		t.Errorf("entry[0].description: expected null, got unknown=%v", entries[0].Description.IsUnknown())
 	}
 
-	// Entry 1: new, unknown address resolved to null (no state at index 1).
+	// Entry 1: new, unknown address resolved to null (no state entry with its host).
 	if !entries[1].Address.IsNull() {
 		t.Errorf("entry[1].address: expected null, got unknown=%v value='%s'", entries[1].Address.IsUnknown(), entries[1].Address.ValueString())
 	}
@@ -328,6 +328,111 @@ func TestNormalizeSplitTunnelList_AddressEntryDoesNotInheritHostFromState(t *tes
 	}
 	if !e1.Address.IsNull() {
 		t.Errorf("entries[1].address: expected null, got unknown=%v value=%q", e1.Address.IsUnknown(), e1.Address.ValueString())
+	}
+}
+
+// GH-7388: inserting an entry must not shift descriptions onto the wrong
+// entries. Unknown descriptions are resolved from the state entry with the same
+// address or host, not from the state entry at the same index.
+func TestNormalizeSplitTunnelList_InsertedEntryDoesNotTakeDisplacedDescription(t *testing.T) {
+	ctx := context.Background()
+
+	stateList := customfield.NewObjectListMust(ctx, []ZeroTrustDeviceCustomProfileIncludeModel{
+		{
+			Host:        types.StringValue("example.com"),
+			Address:     types.StringNull(),
+			Description: types.StringValue("host entry"),
+		},
+		{
+			Address:     types.StringValue("10.0.0.0/8"),
+			Host:        types.StringNull(),
+			Description: types.StringValue("first"),
+		},
+	})
+
+	// A new address entry is inserted at the front; descriptions are not in config.
+	planList := customfield.NewObjectListMust(ctx, []ZeroTrustDeviceCustomProfileIncludeModel{
+		{
+			Address:     types.StringValue("192.168.0.0/16"),
+			Host:        types.StringUnknown(),
+			Description: types.StringUnknown(),
+		},
+		{
+			Host:        types.StringValue("example.com"),
+			Address:     types.StringUnknown(),
+			Description: types.StringUnknown(),
+		},
+		{
+			Address:     types.StringValue("10.0.0.0/8"),
+			Host:        types.StringUnknown(),
+			Description: types.StringUnknown(),
+		},
+	})
+
+	result, diags := normalizeSplitTunnelList(ctx, planList, stateList)
+	if diags.HasError() {
+		t.Fatalf("unexpected diagnostics: %v", diags)
+	}
+	var entries []ZeroTrustDeviceCustomProfileIncludeModel
+	if diags := result.ElementsAs(ctx, &entries, false); diags.HasError() {
+		t.Fatalf("failed to extract entries: %v", diags)
+	}
+	if len(entries) != 3 {
+		t.Fatalf("expected 3 entries, got %d", len(entries))
+	}
+
+	if !entries[0].Description.IsNull() {
+		t.Errorf("entries[0] (new 192.168.0.0/16): description must be null, got unknown=%v value=%q",
+			entries[0].Description.IsUnknown(), entries[0].Description.ValueString())
+	}
+	if !entries[0].Host.IsNull() {
+		t.Errorf("entries[0].host: expected null, got %s", entries[0].Host)
+	}
+	if got := entries[1].Description; !got.Equal(types.StringValue("host entry")) {
+		t.Errorf("entries[1] (example.com): description = %s, want \"host entry\"", got)
+	}
+	if !entries[1].Address.IsNull() {
+		t.Errorf("entries[1].address: expected null, got %s", entries[1].Address)
+	}
+	if got := entries[2].Description; !got.Equal(types.StringValue("first")) {
+		t.Errorf("entries[2] (10.0.0.0/8): description = %s, want \"first\"", got)
+	}
+	if !entries[2].Host.IsNull() {
+		t.Errorf("entries[2].host: expected null, got %s", entries[2].Host)
+	}
+}
+
+// An entry whose address changed in place is a different entry: it must not
+// keep the old entry's description.
+func TestNormalizeSplitTunnelList_ChangedAddressDoesNotKeepDescription(t *testing.T) {
+	ctx := context.Background()
+
+	stateList := customfield.NewObjectListMust(ctx, []ZeroTrustDeviceCustomProfileExcludeModel{
+		{
+			Address:     types.StringValue("10.0.0.0/8"),
+			Host:        types.StringNull(),
+			Description: types.StringValue("first"),
+		},
+	})
+	planList := customfield.NewObjectListMust(ctx, []ZeroTrustDeviceCustomProfileExcludeModel{
+		{
+			Address:     types.StringValue("172.16.0.0/12"),
+			Host:        types.StringUnknown(),
+			Description: types.StringUnknown(),
+		},
+	})
+
+	result, diags := normalizeSplitTunnelList(ctx, planList, stateList)
+	if diags.HasError() {
+		t.Fatalf("unexpected diagnostics: %v", diags)
+	}
+	var entries []ZeroTrustDeviceCustomProfileExcludeModel
+	if diags := result.ElementsAs(ctx, &entries, false); diags.HasError() {
+		t.Fatalf("failed to extract entries: %v", diags)
+	}
+	if !entries[0].Description.IsNull() {
+		t.Errorf("description must be null for a changed address, got unknown=%v value=%q",
+			entries[0].Description.IsUnknown(), entries[0].Description.ValueString())
 	}
 }
 

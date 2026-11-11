@@ -46,10 +46,14 @@ func (m *ZeroTrustAccessServiceTokensDataSourceModel) toListParams(_ context.Con
 }
 
 type ZeroTrustAccessServiceTokensResultDataSourceModel struct {
-	ID        types.String      `tfsdk:"id" json:"id,computed"`
-	ClientID  types.String      `tfsdk:"client_id" json:"client_id,computed"`
-	Duration  types.String      `tfsdk:"duration" json:"duration,computed"`
-	Enabled   types.Bool        `tfsdk:"enabled" json:"enabled,computed"`
-	ExpiresAt timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
-	Name      types.String      `tfsdk:"name" json:"name,computed"`
+	ID             types.String                  `tfsdk:"id" json:"id,computed"`
+	ClientID       types.String                  `tfsdk:"client_id" json:"client_id,computed"`
+	Duration       types.String                  `tfsdk:"duration" json:"duration,computed"`
+	Enabled        types.Bool                    `tfsdk:"enabled" json:"enabled,computed"`
+	ExpiresAt      timetypes.RFC3339             `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
+	LeakReportURL  types.String                  `tfsdk:"leak_report_url" json:"leak_report_url,computed"`
+	LeakReportedAt timetypes.RFC3339             `tfsdk:"leak_reported_at" json:"leak_reported_at,computed" format:"date-time"`
+	LeakReporter   types.String                  `tfsdk:"leak_reporter" json:"leak_reporter,computed"`
+	Name           types.String                  `tfsdk:"name" json:"name,computed"`
+	Tags           customfield.Map[types.String] `tfsdk:"tags" json:"tags,computed"`
 }

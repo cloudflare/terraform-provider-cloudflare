@@ -34,6 +34,7 @@ data "cloudflare_zero_trust_device_default_profile" "example_zero_trust_device_d
 - `default` (Boolean) Whether the policy will be applied to matching devices.
 - `disable_auto_fallback` (Boolean) If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.
 - `dns_search_suffixes` (Attributes List) List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear. (see [below for nested schema](#nestedatt--dns_search_suffixes))
+- `enable_device_credential_authentication` (Boolean) Determines whether the WARP client can silently reauthenticate the user with device credentials (Microsoft Entra) instead of prompting for browser-based reauthentication.
 - `enabled` (Boolean) Whether the policy will be applied to matching devices.
 - `exclude` (Attributes List) List of routes excluded in the WARP client's tunnel. (see [below for nested schema](#nestedatt--exclude))
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.

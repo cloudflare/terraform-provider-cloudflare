@@ -65,7 +65,11 @@ func (d *AISearchInstanceDataSource) Read(ctx context.Context, req datasource.Re
 		}
 
 		env := AISearchInstancesResultListDataSourceEnvelope{}
-		page, err := d.client.AISearch.Instances.List(ctx, params)
+		page, err := d.client.AISearch.Namespaces.Instances.List(
+			ctx,
+			data.Namespace.ValueString(),
+			params,
+		)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return
@@ -95,8 +99,9 @@ func (d *AISearchInstanceDataSource) Read(ctx context.Context, req datasource.Re
 
 	res := new(http.Response)
 	env := AISearchInstanceResultDataSourceEnvelope{*data}
-	_, err := d.client.AISearch.Instances.Read(
+	_, err := d.client.AISearch.Namespaces.Instances.Read(
 		ctx,
+		data.Namespace.ValueString(),
 		data.ID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),

@@ -8,6 +8,7 @@ resource "cloudflare_email_security_allow_policy" "example_email_security_allow_
   pattern_type = "EMAIL"
   verify_sender = true
   comments = "Trust all messages send from test@example.com"
+  expires_at = "2027-01-01T00:00:00Z"
   is_recipient = false
   is_sender = true
   is_spoof = false
