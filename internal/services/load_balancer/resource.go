@@ -31,6 +31,23 @@ type LoadBalancerResource struct {
 	client *cloudflare.Client
 }
 
+// preserveCreatedOnFromState keeps the prior created_on when the Update response
+// omits it (the Load Balancing API's PUT response does not echo created_on, so
+// apijson.UnmarshalComputed leaves it at the Go zero time). Without this the
+// framework rejects the apply: the plan carried the known prior created_on but
+// the result came back "0001-01-01T00:00:00Z".
+func preserveCreatedOnFromState(data *LoadBalancerModel, state *LoadBalancerModel) {
+	if data == nil || state == nil {
+		return
+	}
+
+	if data.CreatedOn.IsUnknown() || data.CreatedOn.IsNull() || data.CreatedOn.ValueString() == "0001-01-01T00:00:00Z" {
+		if !state.CreatedOn.IsUnknown() && !state.CreatedOn.IsNull() {
+			data.CreatedOn = state.CreatedOn
+		}
+	}
+}
+
 func (r *LoadBalancerResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_load_balancer"
 }
@@ -116,6 +133,11 @@ func (r *LoadBalancerResource) Update(ctx context.Context, req resource.UpdateRe
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
+	// Capture plan-level values that the planmodifiers intentionally resolved to
+	// null so the Update response cannot clobber them (ttl is computed_optional
+	// with a safeDefault that keeps it null for proxied LBs, but the PUT response
+	// returns the server default 30 -> inconsistent-result-after-apply).
+	plannedTTL := data.TTL
 	res := new(http.Response)
 	env := LoadBalancerResultEnvelope{*data}
 	_, err = r.client.LoadBalancers.Update(
@@ -139,6 +161,10 @@ func (r *LoadBalancerResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	data = &env.Result
+	preserveCreatedOnFromState(data, state)
+	if plannedTTL.IsNull() {
+		data.TTL = plannedTTL
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
