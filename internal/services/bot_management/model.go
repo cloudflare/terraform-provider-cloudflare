@@ -130,6 +130,20 @@ func (m BotManagementModel) ToAPIModel() BotManagementAPIModel {
 	setStringField(m.SBFMLikelyAutomated, &api.SBFMLikelyAutomated)
 	setStringField(m.SBFMVerifiedBots, &api.SBFMVerifiedBots)
 
+	// Convert nested ai_agents configuration (send path; mirror of updateAIAgents).
+	// Without this a configured ai_agents block is never marshaled into the request
+	// body, so the API never receives it (APIX-1853).
+	if !m.AIAgents.IsNull() && !m.AIAgents.IsUnknown() {
+		if aiAgents, diags := m.AIAgents.Value(context.TODO()); !diags.HasError() && aiAgents != nil {
+			api.AIAgents = &BotManagementAIAgentsAPIModel{}
+			setStringField(aiAgents.AnthropicAgent, &api.AIAgents.AnthropicAgent)
+			setStringField(aiAgents.GoogleAgent, &api.AIAgents.GoogleAgent)
+			setStringField(aiAgents.Instinct, &api.AIAgents.Instinct)
+			setStringField(aiAgents.Muse, &api.AIAgents.Muse)
+			setStringField(aiAgents.OpenAIAgent, &api.AIAgents.OpenAIAgent)
+		}
+	}
+
 	return api
 }
 

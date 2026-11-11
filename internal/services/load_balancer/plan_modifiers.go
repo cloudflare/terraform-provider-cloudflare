@@ -95,12 +95,19 @@ func (m safeDefault) isDefault(ctx context.Context, plan tfsdk.Plan, v attr.Valu
 		elements := value.Elements()
 		return len(elements) == 1 && elements[0].Equal(types.StringValue("cloudflare"))
 	case "ttl":
+		// ttl applies only to gray-clouded (unproxied) load balancers. For a
+		// proxied LB ttl is server-managed: the GET omits it and the PUT echoes
+		// the server default, so there is no meaningful config-driven value to
+		// diff. Keep whatever prior stable value state holds (null or the
+		// preserved server default) rather than only null. keep()'s "proxied"
+		// dependency guard already restricts this to proxied-unchanged updates,
+		// so a proxied<->unproxied transition still re-resolves ttl normally.
 		var proxied types.Bool
 		if plan.GetAttribute(ctx, path.Root("proxied"), &proxied).HasError() ||
 			proxied.IsNull() || proxied.IsUnknown() {
 			return false
 		}
-		return proxied.ValueBool() && v.IsNull()
+		return proxied.ValueBool()
 	case "affinity_ttl":
 		var affinity types.String
 		if plan.GetAttribute(ctx, path.Root("session_affinity"), &affinity).HasError() ||

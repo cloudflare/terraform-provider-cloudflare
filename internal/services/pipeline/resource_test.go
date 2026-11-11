@@ -20,7 +20,7 @@ import (
 )
 
 func TestAccCloudflarePipeline_Basic(t *testing.T) {
-	t.Skip("Skipping: config creates an r2_data_catalog pipeline_sink, which returns 422 (Basin Catalog table validation 403); tracked in a follow-up issue. Same cause as TestAccCloudflarePipelineSink_R2DataCatalog.")
+	t.Skip("Skipping: config creates an r2_data_catalog pipeline_sink, which returns 422 (Basin Catalog table validation 403). Same cause as TestAccCloudflarePipelineSink_R2DataCatalog.")
 
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

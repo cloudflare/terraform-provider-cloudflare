@@ -153,6 +153,51 @@ func TestSafeDefaultAffinityDependencyChanges(t *testing.T) {
 	}
 }
 
+func TestSafeDefaultTTLProxiedKeepsPriorValue(t *testing.T) {
+	ctx := context.Background()
+	for _, tc := range []struct {
+		name        string
+		proxied     types.Bool
+		prior, want types.Float64
+	}{
+		{
+			name: "proxied keeps server default", proxied: types.BoolValue(true),
+			prior: types.Float64Value(30), want: types.Float64Value(30),
+		},
+		{
+			name: "proxied keeps prior null", proxied: types.BoolValue(true),
+			prior: types.Float64Null(), want: types.Float64Null(),
+		},
+		{
+			name: "unproxied does not retain", proxied: types.BoolValue(false),
+			prior: types.Float64Value(30), want: types.Float64Unknown(),
+		},
+		{
+			name: "unknown proxied does not retain", proxied: types.BoolUnknown(),
+			prior: types.Float64Value(30), want: types.Float64Unknown(),
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			state, plan := defaultPlanContext(t)
+			if diags := state.SetAttribute(ctx, path.Root("proxied"), tc.proxied); diags.HasError() {
+				t.Fatalf("set prior proxy mode: %v", diags)
+			}
+			if diags := plan.SetAttribute(ctx, path.Root("proxied"), tc.proxied); diags.HasError() {
+				t.Fatalf("set planned proxy mode: %v", diags)
+			}
+			req := planmodifier.Float64Request{
+				State: state, Plan: plan, ConfigValue: types.Float64Null(),
+				StateValue: tc.prior, PlanValue: types.Float64Unknown(),
+			}
+			resp := planmodifier.Float64Response{PlanValue: req.PlanValue}
+			safeDefault{kind: "ttl", dependency: "proxied"}.PlanModifyFloat64(ctx, req, &resp)
+			if !resp.PlanValue.Equal(tc.want) {
+				t.Fatalf("planned %s, want %s", resp.PlanValue, tc.want)
+			}
+		})
+	}
+}
+
 func TestSafeDefaultHeadersNeverRetainRemovedNames(t *testing.T) {
 	state, plan := defaultPlanContext(t)
 	for _, tc := range []struct {
