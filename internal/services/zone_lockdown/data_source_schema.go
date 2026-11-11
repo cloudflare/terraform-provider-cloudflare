@@ -71,14 +71,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"target": schema.StringAttribute{
-							Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the Zone Lockdown rule.\nAvailable values: \"ip\", \"ip_range\".",
+							Description: "For `target: ip`: The configuration target. You must set the target to `ip` when specifying an IP address in the Zone Lockdown rule.\n\nFor `target: ip_range`: The configuration target. You must set the target to `ip_range` when specifying an IP address range in the Zone Lockdown rule.\nAvailable values: \"ip\", \"ip_range\".",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("ip", "ip_range"),
 							},
 						},
 						"value": schema.StringAttribute{
-							Description: "The IP address to match. This address will be compared to the IP address of incoming requests.",
+							Description: "For `target: ip`: The IP address to match. This address will be compared to the IP address of incoming requests.\n\nFor `target: ip_range`: The IP address range to match. You can only use prefix lengths `/16` and `/24`.",
 							Computed:    true,
 						},
 					},

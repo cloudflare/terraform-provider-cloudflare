@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -77,8 +78,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"validator_ids": schema.SetAttribute{
+				Description:   "Validators the new entry should reference, by id, at most 10.",
+				Computed:      true,
+				Optional:      true,
+				CustomType:    customfield.NewSetType[types.String](ctx),
+				ElementType:   types.StringType,
+				PlanModifiers: []planmodifier.Set{setplanmodifier.UseNonNullStateForUnknown()},
+			},
 			"case_sensitive": schema.BoolAttribute{
-				Description: "Only applies to custom word lists.\nDetermines if the words should be matched in a case-sensitive manner\nCannot be set to false if secret is true",
+				Description: "For `type: exact_data`: Only applies to custom word lists.\nDetermines if the words should be matched in a case-sensitive manner\nCannot be set to false if secret is true",
 				Computed:    true,
 			},
 			"created_at": schema.StringAttribute{
@@ -87,7 +96,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"deprecated": schema.BoolAttribute{
-				Description: "Whether this entry is deprecated for new use. This is computed from the static catalog and\nemitted only when true.",
+				Description: "For `type: predefined`: Whether this entry is deprecated for new use. This is computed from the static catalog and\nemitted only when true.",
 				Computed:    true,
 			},
 			"secret": schema.BoolAttribute{
@@ -145,7 +154,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"variant": schema.SingleNestedAttribute{
-				Description: "A Predefined AI prompt classification topic entry.",
+				Description: "For `type: predefined`: A Predefined AI prompt classification topic entry.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPEntryVariantModel](ctx),
 				Attributes: map[string]schema.Attribute{
@@ -164,7 +173,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"description": schema.StringAttribute{
-						Description: "A customer-facing explanation of what this predefined AI prompt topic represents.",
+						Description: "For `type: PromptTopic`: A customer-facing explanation of what this predefined AI prompt topic represents.\n\nFor `type: General`: A customer-facing explanation of what this predefined entry represents.",
 						Computed:    true,
 					},
 				},

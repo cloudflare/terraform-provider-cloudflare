@@ -26,6 +26,8 @@ type AIGatewayDataSourceModel struct {
 	CacheTTL                types.Int64                                                   `tfsdk:"cache_ttl" json:"cache_ttl,computed"`
 	CollectLogs             types.Bool                                                    `tfsdk:"collect_logs" json:"collect_logs,computed"`
 	CreatedAt               timetypes.RFC3339                                             `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	FedrampLevel            types.String                                                  `tfsdk:"fedramp_level" json:"fedramp_level,computed"`
+	FedrampMode             types.String                                                  `tfsdk:"fedramp_mode" json:"fedramp_mode,computed"`
 	IsDefault               types.Bool                                                    `tfsdk:"is_default" json:"is_default,computed"`
 	LogClassification       types.Bool                                                    `tfsdk:"log_classification" json:"log_classification,computed"`
 	LogManagement           types.Int64                                                   `tfsdk:"log_management" json:"log_management,computed"`
@@ -97,6 +99,7 @@ type AIGatewayGuardrailsPromptDataSourceModel struct {
 	S11 types.String `tfsdk:"s11" json:"S11,computed"`
 	S12 types.String `tfsdk:"s12" json:"S12,computed"`
 	S13 types.String `tfsdk:"s13" json:"S13,computed"`
+	S14 types.String `tfsdk:"s14" json:"S14,computed"`
 	S2  types.String `tfsdk:"s2" json:"S2,computed"`
 	S3  types.String `tfsdk:"s3" json:"S3,computed"`
 	S4  types.String `tfsdk:"s4" json:"S4,computed"`
@@ -114,6 +117,7 @@ type AIGatewayGuardrailsResponseDataSourceModel struct {
 	S11 types.String `tfsdk:"s11" json:"S11,computed"`
 	S12 types.String `tfsdk:"s12" json:"S12,computed"`
 	S13 types.String `tfsdk:"s13" json:"S13,computed"`
+	S14 types.String `tfsdk:"s14" json:"S14,computed"`
 	S2  types.String `tfsdk:"s2" json:"S2,computed"`
 	S3  types.String `tfsdk:"s3" json:"S3,computed"`
 	S4  types.String `tfsdk:"s4" json:"S4,computed"`

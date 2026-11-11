@@ -41,6 +41,7 @@ type BotManagementDataSourceModel struct {
 	SBFMVerifiedBots             types.String                                                                 `tfsdk:"sbfm_verified_bots" json:"sbfm_verified_bots,computed"`
 	SuppressSessionScore         types.Bool                                                                   `tfsdk:"suppress_session_score" json:"suppress_session_score,computed"`
 	UsingLatestModel             types.Bool                                                                   `tfsdk:"using_latest_model" json:"using_latest_model,computed"`
+	AIAgents                     customfield.NestedObject[BotManagementAIAgentsDataSourceModel]               `tfsdk:"ai_agents" json:"ai_agents,computed"`
 	StaleZoneConfiguration       customfield.NestedObject[BotManagementStaleZoneConfigurationDataSourceModel] `tfsdk:"stale_zone_configuration" json:"stale_zone_configuration,computed"`
 }
 
@@ -50,6 +51,14 @@ func (m *BotManagementDataSourceModel) toReadParams(_ context.Context) (params b
 	}
 
 	return
+}
+
+type BotManagementAIAgentsDataSourceModel struct {
+	AnthropicAgent types.String `tfsdk:"anthropic_agent" json:"anthropic_agent,computed"`
+	GoogleAgent    types.String `tfsdk:"google_agent" json:"google_agent,computed"`
+	Instinct       types.String `tfsdk:"instinct" json:"instinct,computed"`
+	Muse           types.String `tfsdk:"muse" json:"muse,computed"`
+	OpenAIAgent    types.String `tfsdk:"openai_agent" json:"openai_agent,computed"`
 }
 
 type BotManagementStaleZoneConfigurationDataSourceModel struct {

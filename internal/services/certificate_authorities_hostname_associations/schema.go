@@ -39,7 +39,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The UUID for a certificate that was uploaded to the mTLS Certificate Management endpoint. If no mtls_certificate_id is given, the hostnames will be associated to your active Cloudflare Managed CA.",
 				Optional:    true,
 			},
-			"hostnames": schema.ListAttribute{
+			"hostnames": schema.SetAttribute{
+				Description: "Unordered set of hostnames. Hostnames are stored as lowercase punycode.",
 				Optional:    true,
 				ElementType: types.StringType,
 			},

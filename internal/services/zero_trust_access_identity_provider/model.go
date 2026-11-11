@@ -53,6 +53,7 @@ type ZeroTrustAccessIdentityProviderConfigModel struct {
 	PKCEEnabled              types.Bool                                                     `tfsdk:"pkce_enabled" json:"pkce_enabled,optional"`
 	Scopes                   *[]types.String                                                `tfsdk:"scopes" json:"scopes,optional"`
 	TokenURL                 types.String                                                   `tfsdk:"token_url" json:"token_url,optional"`
+	IssuerURL                types.String                                                   `tfsdk:"issuer_url" json:"issuer_url,optional"`
 	AuthorizationServerID    types.String                                                   `tfsdk:"authorization_server_id" json:"authorization_server_id,optional"`
 	OktaAccount              types.String                                                   `tfsdk:"okta_account" json:"okta_account,optional"`
 	OneloginAccount          types.String                                                   `tfsdk:"onelogin_account" json:"onelogin_account,optional"`
@@ -63,7 +64,6 @@ type ZeroTrustAccessIdentityProviderConfigModel struct {
 	ForceAuthn               types.Bool                                                     `tfsdk:"force_authn" json:"force_authn,optional"`
 	HeaderAttributes         *[]*ZeroTrustAccessIdentityProviderConfigHeaderAttributesModel `tfsdk:"header_attributes" json:"header_attributes,optional"`
 	IdPPublicCERTs           *[]types.String                                                `tfsdk:"idp_public_certs" json:"idp_public_certs,optional"`
-	IssuerURL                types.String                                                   `tfsdk:"issuer_url" json:"issuer_url,optional"`
 	SignRequest              types.Bool                                                     `tfsdk:"sign_request" json:"sign_request,optional"`
 	MaxSSOURLLength          types.Int64                                                    `tfsdk:"max_sso_url_length" json:"max_sso_url_length,optional"`
 	SSOTargetURL             types.String                                                   `tfsdk:"sso_target_url" json:"sso_target_url,optional"`

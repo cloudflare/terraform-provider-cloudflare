@@ -72,6 +72,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the Access policy.",
 				Computed:    true,
 			},
+			"policy_resolution_account_id": schema.StringAttribute{
+				Description: "The account ID used to resolve policy resources and identity for cross-account WARP authentication. The account must be trusted by the account that owns this policy.",
+				Computed:    true,
+			},
 			"purpose_justification_prompt": schema.StringAttribute{
 				Description: "A custom message that will appear on the purpose justification screen.",
 				Computed:    true,
@@ -428,6 +432,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"service_token_tag": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPolicyExcludeServiceTokenTagDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"key": schema.StringAttribute{
+									Description: "The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.",
+									Computed:    true,
+								},
+								"value": schema.StringAttribute{
+									Description: "The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.",
+									Computed:    true,
+								},
+							},
+						},
 						"linked_app_token": schema.SingleNestedAttribute{
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPolicyExcludeLinkedAppTokenDataSourceModel](ctx),
@@ -744,6 +762,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Attributes: map[string]schema.Attribute{
 								"token_id": schema.StringAttribute{
 									Description: "The ID of a Service Token.",
+									Computed:    true,
+								},
+							},
+						},
+						"service_token_tag": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPolicyIncludeServiceTokenTagDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"key": schema.StringAttribute{
+									Description: "The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.",
+									Computed:    true,
+								},
+								"value": schema.StringAttribute{
+									Description: "The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.",
 									Computed:    true,
 								},
 							},
@@ -1094,6 +1126,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Attributes: map[string]schema.Attribute{
 								"token_id": schema.StringAttribute{
 									Description: "The ID of a Service Token.",
+									Computed:    true,
+								},
+							},
+						},
+						"service_token_tag": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPolicyRequireServiceTokenTagDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"key": schema.StringAttribute{
+									Description: "The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.",
+									Computed:    true,
+								},
+								"value": schema.StringAttribute{
+									Description: "The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.",
 									Computed:    true,
 								},
 							},

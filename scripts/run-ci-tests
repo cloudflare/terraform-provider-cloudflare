@@ -51,10 +51,11 @@ get_product_group_services() {
             echo "email_routing_catch_all email_routing_dns email_routing_rule"
             ;;
         email-security)
-            echo "email_security_impersonation_registry email_security_trusted_domains"
+            echo "email_security_allow_policy email_security_block_sender email_security_domain email_security_impersonation_registry email_security_trusted_domains"
             ;;
         security-core)
-            echo "api_shield bot_management"
+            # AI Security needs write access and an entitled zone with no custom topics.
+            echo "ai_security ai_security_custom_topics api_shield bot_management"
             ;;
         security-advanced)
             echo "api_shield_operation schema_validation_operation_settings schema_validation_schemas schema_validation_settings"
@@ -174,6 +175,8 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/account_token"
     "resource=./internal/services/access_rule"
     "resource=./internal/services/address_map"
+    "resource=./internal/services/ai_security parallel=1"
+    "resource=./internal/services/ai_security_custom_topics parallel=1 depends_on=ai_security"
     "resource=./internal/services/api_shield"
     "resource=./internal/services/api_shield_operation parallel=1"
     "resource=./internal/services/api_token"
@@ -199,6 +202,9 @@ declare -a ALL_SERVICES=(
     "resource=./internal/services/email_routing_catch_all"
     "resource=./internal/services/email_routing_dns"
     "resource=./internal/services/email_routing_rule"
+    "resource=./internal/services/email_security_allow_policy"
+    "resource=./internal/services/email_security_block_sender"
+    "resource=./internal/services/email_security_domain"
     "resource=./internal/services/email_security_impersonation_registry"
     "resource=./internal/services/email_security_trusted_domains"
     "resource=./internal/services/field_extractor"

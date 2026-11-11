@@ -48,10 +48,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Whether to flatten all CNAME records in the zone. Note that, due to DNS limitations, a CNAME record at the zone apex will always be flattened.",
 						Optional:    true,
 					},
-					"foundation_dns": schema.BoolAttribute{
-						Description: "Whether to enable Foundation DNS Advanced Nameservers on the zone.",
-						Optional:    true,
-					},
 					"internal_dns": schema.SingleNestedAttribute{
 						Description: "Settings for this internal zone.",
 						Computed:    true,
@@ -76,11 +72,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  customfield.NewNestedObjectType[AccountDNSSettingsZoneDefaultsNameserversModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"type": schema.StringAttribute{
-								Description: "Nameserver type\nAvailable values: \"cloudflare.standard\", \"cloudflare.standard.random\", \"custom.account\", \"custom.tenant\".",
+								Description: "Nameserver type\nAvailable values: \"cloudflare.standard\", \"cloudflare.advanced\", \"cloudflare.standard.random\", \"custom.account\", \"custom.tenant\".",
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
 										"cloudflare.standard",
+										"cloudflare.advanced",
 										"cloudflare.standard.random",
 										"custom.account",
 										"custom.tenant",

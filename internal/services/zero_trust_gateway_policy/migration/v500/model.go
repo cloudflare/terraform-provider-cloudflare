@@ -216,7 +216,6 @@ type TargetExpirationModel struct {
 type TargetRuleSettingsModel struct {
 	AddHeaders                      *map[string]*[]types.String      `tfsdk:"add_headers"` // v5: Map[string][]string
 	AllowChildBypass                types.Bool                       `tfsdk:"allow_child_bypass"`
-	AuditSSH                        *TargetAuditSSHModel             `tfsdk:"audit_ssh"`
 	BISOAdminControls               *TargetBISOAdminControlsModel    `tfsdk:"biso_admin_controls"`
 	BlockPage                       *TargetBlockPageModel            `tfsdk:"block_page"` // New in v5
 	BlockPageEnabled                types.Bool                       `tfsdk:"block_page_enabled"`
@@ -227,6 +226,7 @@ type TargetRuleSettingsModel struct {
 	DNSResolvers                    *TargetDNSResolversModel         `tfsdk:"dns_resolvers"`
 	Egress                          *TargetEgressModel               `tfsdk:"egress"`
 	ForensicCopy                    *TargetForensicCopyModel         `tfsdk:"forensic_copy"` // New in v5
+	Forward                         *TargetForwardModel              `tfsdk:"forward"`       // New in v5
 	IgnoreCNAMECategoryMatches      types.Bool                       `tfsdk:"ignore_cname_category_matches"`
 	InsecureDisableDNSSECValidation types.Bool                       `tfsdk:"insecure_disable_dnssec_validation"`
 	IPCategories                    types.Bool                       `tfsdk:"ip_categories"`
@@ -242,11 +242,6 @@ type TargetRuleSettingsModel struct {
 	ResolveDNSThroughCloudflare     types.Bool                       `tfsdk:"resolve_dns_through_cloudflare"`
 	SetHeaders                      *map[string]*[]types.String      `tfsdk:"set_headers"`
 	UntrustedCERT                   *TargetUntrustedCERTModel        `tfsdk:"untrusted_cert"`
-}
-
-// TargetAuditSSHModel represents audit_ssh in v5.
-type TargetAuditSSHModel struct {
-	CommandLogging types.Bool `tfsdk:"command_logging"`
 }
 
 // TargetBISOAdminControlsModel represents biso_admin_controls in v5.
@@ -316,6 +311,11 @@ type TargetEgressModel struct {
 // TargetForensicCopyModel represents forensic_copy (new in v5).
 type TargetForensicCopyModel struct {
 	Enabled types.Bool `tfsdk:"enabled"`
+}
+
+// TargetForwardModel represents forward (new in v5).
+type TargetForwardModel struct {
+	WorkerID types.String `tfsdk:"worker_id"`
 }
 
 // TargetL4overrideModel represents l4override in v5.

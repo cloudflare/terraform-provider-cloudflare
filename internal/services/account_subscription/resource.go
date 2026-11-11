@@ -71,12 +71,8 @@ func (r *AccountSubscriptionResource) Create(ctx context.Context, req resource.C
 	}
 	res := new(http.Response)
 	env := AccountSubscriptionResultEnvelope{*data}
-	params := accounts.SubscriptionNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	params := accounts.SubscriptionNewParams{
+		AccountID: cloudflare.F(data.AccountID.ValueString()),
 	}
 
 	_, err = r.client.Accounts.Subscriptions.New(

@@ -5,11 +5,16 @@ data "cloudflare_organizations" "example_organizations" {
     organization = "organization"
     user = "user"
   }
+  direction = "asc"
+  member = {
+    email = "email"
+  }
   name = {
     contains = "contains"
     ends_with = "endsWith"
     starts_with = "startsWith"
   }
+  order_by = "name"
   page_size = 0
   page_token = "page_token"
   parent = {

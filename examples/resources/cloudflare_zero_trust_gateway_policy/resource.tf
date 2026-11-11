@@ -18,9 +18,6 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
       X-Custom-Header-Name = ["somecustomvalue"]
     }
     allow_child_bypass = false
-    audit_ssh = {
-      command_logging = false
-    }
     biso_admin_controls = {
       copy = "remote_only"
       dcp = true
@@ -69,6 +66,9 @@ resource "cloudflare_zero_trust_gateway_policy" "example_zero_trust_gateway_poli
     }
     forensic_copy = {
       enabled = true
+    }
+    forward = {
+      worker_id = "0123456789abcdef0123456789abcdef"
     }
     ignore_cname_category_matches = true
     insecure_disable_dnssec_validation = false

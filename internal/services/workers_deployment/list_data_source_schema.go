@@ -22,6 +22,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
+				"Individual Workers Admin",
+				"Individual Workers Content Read-Only",
+				"Individual Workers Editor",
+				"Individual Workers Metadata Read-Only",
+				"Workers Admin",
+				"Workers Content Read-Only",
+				"Workers Editor",
+				"Workers Metadata Read-Only",
 				"Workers Scripts Read",
 				"Workers Scripts Write",
 				"Workers Tail Read",
@@ -75,7 +83,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										Computed: true,
 									},
 									"strategy": schema.StringAttribute{
-										Description: `Available values: "percentage".`,
+										Description: "Strategy for routing traffic across the listed versions. `percentage` splits traffic according to each version's `percentage`.\nAvailable values: \"percentage\".",
 										Computed:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive("percentage"),
@@ -102,8 +110,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"annotations": schema.SingleNestedAttribute{
-										Computed:   true,
-										CustomType: customfield.NewNestedObjectType[WorkersDeploymentsDeploymentsAnnotationsDataSourceModel](ctx),
+										Description: "Metadata attached to the deployment.",
+										Computed:    true,
+										CustomType:  customfield.NewNestedObjectType[WorkersDeploymentsDeploymentsAnnotationsDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"workers_message": schema.StringAttribute{
 												Description: "Human-readable message about the deployment. Truncated to 1000 bytes if longer.",
@@ -117,6 +126,27 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 									"author_email": schema.StringAttribute{
 										Computed: true,
+									},
+									"code_update_strategy": schema.SingleNestedAttribute{
+										Description: "Choose whether to apply Durable Object code updates immediately or defer them. When omitted, the default strategy applies.",
+										Computed:    true,
+										CustomType:  customfield.NewNestedObjectType[WorkersDeploymentsDeploymentsCodeUpdateStrategyDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"mode": schema.StringAttribute{
+												Description: "For `mode: immediate`: Apply Durable Object code updates immediately.\n\nFor `mode: deferred`: Allow active Durable Objects to hibernate before updating their code.\nAvailable values: \"immediate\", \"deferred\".",
+												Computed:    true,
+												Validators: []validator.String{
+													stringvalidator.OneOfCaseInsensitive("immediate", "deferred"),
+												},
+											},
+											"max_delay": schema.Float64Attribute{
+												Description: "For `mode: deferred`: Set the maximum number of seconds to wait before forcing the update. When omitted, the default maximum delay applies.",
+												Computed:    true,
+												Validators: []validator.Float64{
+													float64validator.Between(0, 86400),
+												},
+											},
+										},
 									},
 								},
 							},

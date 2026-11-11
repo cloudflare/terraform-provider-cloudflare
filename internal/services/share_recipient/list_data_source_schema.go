@@ -65,12 +65,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"created": schema.StringAttribute{
-							Description: "When the share was created.",
+							Description: "When the object was created.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
 						"modified": schema.StringAttribute{
-							Description: "When the share was modified.",
+							Description: "When the object was last modified.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
@@ -80,15 +80,15 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"error": schema.StringAttribute{
-										Description: "Share Recipient error message.",
+										Description: "Error from the most recent attempt to apply the resource to the recipient. Empty string when no error has been recorded.",
 										Computed:    true,
 									},
 									"resource_id": schema.StringAttribute{
-										Description: "Share Resource identifier.",
+										Description: "Identifier assigned by the service that owns the shared resource.",
 										Computed:    true,
 									},
 									"resource_version": schema.Int64Attribute{
-										Description: "Resource Version.",
+										Description: "Resource version applied to the recipient, if reconciliation has occurred.",
 										Computed:    true,
 									},
 									"terminal": schema.BoolAttribute{

@@ -39,7 +39,7 @@ data "cloudflare_queue_consumer" "example_queue_consumer" {
 - `created_on` (String)
 - `dead_letter_queue` (String) Name of the dead letter queue, or empty string if not configured
 - `queue_name` (String)
-- `script_name` (String) Name of a Worker
+- `script_name` (String) For `type: worker`: Name of a Worker
 - `settings` (Attributes) (see [below for nested schema](#nestedatt--settings))
 - `type` (String) Available values: "worker", "http_pull".
 

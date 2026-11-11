@@ -67,6 +67,7 @@ type ZeroTrustDLPCustomProfileEntriesDataSourceModel struct {
 	UpdatedAt     timetypes.RFC3339                                                                   `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Description   types.String                                                                        `tfsdk:"description" json:"description,computed"`
 	ProfileID     types.String                                                                        `tfsdk:"profile_id" json:"profile_id,computed"`
+	ValidatorIDs  customfield.Set[types.String]                                                       `tfsdk:"validator_ids" json:"validator_ids,computed"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPCustomProfileEntriesConfidenceDataSourceModel] `tfsdk:"confidence" json:"confidence,computed"`
 	Deprecated    types.Bool                                                                          `tfsdk:"deprecated" json:"deprecated,computed"`
 	Variant       customfield.NestedObject[ZeroTrustDLPCustomProfileEntriesVariantDataSourceModel]    `tfsdk:"variant" json:"variant,computed"`
@@ -106,6 +107,7 @@ type ZeroTrustDLPCustomProfileSharedEntriesDataSourceModel struct {
 	UpdatedAt     timetypes.RFC3339                                                                         `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Description   types.String                                                                              `tfsdk:"description" json:"description,computed"`
 	ProfileID     types.String                                                                              `tfsdk:"profile_id" json:"profile_id,computed"`
+	ValidatorIDs  customfield.Set[types.String]                                                             `tfsdk:"validator_ids" json:"validator_ids,computed"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPCustomProfileSharedEntriesConfidenceDataSourceModel] `tfsdk:"confidence" json:"confidence,computed"`
 	Deprecated    types.Bool                                                                                `tfsdk:"deprecated" json:"deprecated,computed"`
 	Variant       customfield.NestedObject[ZeroTrustDLPCustomProfileSharedEntriesVariantDataSourceModel]    `tfsdk:"variant" json:"variant,computed"`

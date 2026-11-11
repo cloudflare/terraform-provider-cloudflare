@@ -44,6 +44,32 @@ func MarshalCustom(m AccountTokenModel) (data []byte, err error) {
 	return json.Marshal(base)
 }
 
+// MarshalCustomForUpdate sends an explicit null for expires_on, not_before and
+// condition when they were removed from the config. The API keeps the current
+// value of an omitted field and clears it only on null. Nested condition fields
+// are left to MarshalCustom: the condition object is replaced as a whole, and
+// the API rejects null request_ip, in and not_in values.
+func MarshalCustomForUpdate(m AccountTokenModel, state AccountTokenModel) (data []byte, err error) {
+	if data, err = MarshalCustom(m); err != nil {
+		return
+	}
+	var base map[string]json.RawMessage
+	if err := json.Unmarshal(data, &base); err != nil {
+		return nil, err
+	}
+	null := json.RawMessage("null")
+	if m.ExpiresOn.IsNull() && !state.ExpiresOn.IsNull() {
+		base["expires_on"] = null
+	}
+	if m.NotBefore.IsNull() && !state.NotBefore.IsNull() {
+		base["not_before"] = null
+	}
+	if m.Condition == nil && state.Condition != nil {
+		base["condition"] = null
+	}
+	return json.Marshal(base)
+}
+
 func UnmarshalCustom(data []byte, model *AccountTokenResultEnvelope) (err error) {
 	// Snapshot prior policy order before apijson.Unmarshal overwrites the model
 	snap := snapshotPolicyOrder(model.Result.Policies)

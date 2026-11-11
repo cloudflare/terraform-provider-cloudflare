@@ -20,6 +20,7 @@ type EmailSecurityAllowPoliciesResultListDataSourceEnvelope struct {
 type EmailSecurityAllowPoliciesDataSourceModel struct {
 	AccountID          types.String                                                                  `tfsdk:"account_id" path:"account_id,required"`
 	Direction          types.String                                                                  `tfsdk:"direction" query:"direction,optional"`
+	Expired            types.Bool                                                                    `tfsdk:"expired" query:"expired,optional"`
 	IsAcceptableSender types.Bool                                                                    `tfsdk:"is_acceptable_sender" query:"is_acceptable_sender,optional"`
 	IsExemptRecipient  types.Bool                                                                    `tfsdk:"is_exempt_recipient" query:"is_exempt_recipient,optional"`
 	IsTrustedSender    types.Bool                                                                    `tfsdk:"is_trusted_sender" query:"is_trusted_sender,optional"`
@@ -39,6 +40,9 @@ func (m *EmailSecurityAllowPoliciesDataSourceModel) toListParams(_ context.Conte
 
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(email_security.SettingAllowPolicyListParamsDirection(m.Direction.ValueString()))
+	}
+	if !m.Expired.IsNull() {
+		params.Expired = cloudflare.F(m.Expired.ValueBool())
 	}
 	if !m.IsAcceptableSender.IsNull() {
 		params.IsAcceptableSender = cloudflare.F(m.IsAcceptableSender.ValueBool())
@@ -73,6 +77,7 @@ type EmailSecurityAllowPoliciesResultDataSourceModel struct {
 	CreatedAt          timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	LastModified       timetypes.RFC3339 `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
 	Comments           types.String      `tfsdk:"comments" json:"comments,computed"`
+	ExpiresAt          timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
 	IsAcceptableSender types.Bool        `tfsdk:"is_acceptable_sender" json:"is_acceptable_sender,computed"`
 	IsExemptRecipient  types.Bool        `tfsdk:"is_exempt_recipient" json:"is_exempt_recipient,computed"`
 	IsRecipient        types.Bool        `tfsdk:"is_recipient" json:"is_recipient,computed"`

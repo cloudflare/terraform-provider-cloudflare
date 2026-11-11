@@ -39,10 +39,29 @@ Read-Only:
 
 - `created_on` (String) Timestamp for the creation of the account
 - `id` (String) Identifier
+- `legacy_flags` (Attributes) Legacy account flags. (see [below for nested schema](#nestedatt--result--legacy_flags))
 - `managed_by` (Attributes) Parent container details (see [below for nested schema](#nestedatt--result--managed_by))
 - `name` (String) Account name
 - `settings` (Attributes) Account settings (see [below for nested schema](#nestedatt--result--settings))
 - `type` (String) Available values: "standard", "enterprise".
+
+<a id="nestedatt--result--legacy_flags"></a>
+### Nested Schema for `result.legacy_flags`
+
+Read-Only:
+
+- `enterprise_zone_quota` (Attributes) Enterprise zone quota for standard and enterprise accounts. Accounts without a quota have a maximum of 0. (see [below for nested schema](#nestedatt--result--legacy_flags--enterprise_zone_quota))
+
+<a id="nestedatt--result--legacy_flags--enterprise_zone_quota"></a>
+### Nested Schema for `result.legacy_flags.enterprise_zone_quota`
+
+Read-Only:
+
+- `available` (Number) Number of additional Enterprise zones available. Returns 0 if the quota is not allocated or is exhausted.
+- `current` (Number) Current number of Enterprise zones.
+- `maximum` (Number) Maximum number of Enterprise zones allowed.
+
+
 
 <a id="nestedatt--result--managed_by"></a>
 ### Nested Schema for `result.managed_by`
@@ -51,6 +70,8 @@ Read-Only:
 
 - `parent_org_id` (String) ID of the parent Organization, if one exists
 - `parent_org_name` (String) Name of the parent Organization, if one exists
+- `root_org_id` (String) ID of the root Organization, if one exists
+- `should_display_parent_orgs` (Boolean) Indicates whether the parent Organization hierarchy should be displayed
 
 
 <a id="nestedatt--result--settings"></a>

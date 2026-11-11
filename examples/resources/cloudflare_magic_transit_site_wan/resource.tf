@@ -6,10 +6,13 @@ resource "cloudflare_magic_transit_site_wan" "example_magic_transit_site_wan" {
   load_balance_inner_flows = true
   name = "name"
   priority = 0
+  provisioned_download_kbps = 500
+  provisioned_upload_kbps = 100
   static_addressing = {
     address = "192.0.2.0/24"
     gateway_address = "192.0.2.1"
     secondary_address = "192.0.2.0/24"
+    secondary_gateway_address = "192.0.2.1"
   }
   vlan_tag = 42
 }

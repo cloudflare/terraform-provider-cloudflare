@@ -26,6 +26,8 @@ resource "cloudflare_connectivity_directory_service" "example_connectivity_direc
   https_port = 8443
   tls_settings = {
     cert_verification_mode = "verify_full"
+    certificate_authority = "705db030-8247-489b-80dd-0d6256e5950d"
+    client_certificate = "a493fbb4-34bc-4218-a63c-61a9323ac725"
   }
 }
 ```
@@ -46,9 +48,7 @@ resource "cloudflare_connectivity_directory_service" "example_connectivity_direc
 - `http_port` (Number)
 - `https_port` (Number)
 - `tcp_port` (Number)
-- `tls_settings` (Attributes) TLS settings for a connectivity service.
-
-If omitted, the default mode (`verify_full`) is used. (see [below for nested schema](#nestedatt--tls_settings))
+- `tls_settings` (Attributes) TLS settings for a connectivity service. (see [below for nested schema](#nestedatt--tls_settings))
 
 ### Read-Only
 
@@ -99,6 +99,14 @@ Required:
 - `"verify_full"` — verify certificate chain and hostname (default)
 - `"verify_ca"` — verify certificate chain only, skip hostname check
 - `"disabled"` — do not verify the server certificate at all
+
+`disabled` cannot be combined with `certificate_authority`: a custom CA is
+only used to verify the server certificate.
+
+Optional:
+
+- `certificate_authority` (String) UUID of the custom CA certificate or chain.
+- `client_certificate` (String) UUID of the mTLS client certificate and private key.
 
 ## Import
 

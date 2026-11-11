@@ -52,6 +52,7 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
     mfa_disabled = false
     session_duration = "24h"
   }
+  policy_resolution_account_id = "policy_resolution_account_id"
   purpose_justification_prompt = "Please enter a justification for entering this protected domain."
   purpose_justification_required = true
   require = [{
@@ -82,6 +83,7 @@ Available values: "allow", "deny", "non_identity", "bypass".
 - `include` (Attributes Set) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--include))
 - `isolation_required` (Boolean) Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.
 - `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings. (see [below for nested schema](#nestedatt--mfa_config))
+- `policy_resolution_account_id` (String) The account ID used to resolve policy resources and identity for cross-account WARP authentication. The account must be trusted by the account that owns this policy.
 - `purpose_justification_prompt` (String) A custom message that will appear on the purpose justification screen.
 - `purpose_justification_required` (Boolean) Require users to enter a justification when they log in to the application.
 - `require` (Attributes Set) Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--require))
@@ -89,7 +91,6 @@ Available values: "allow", "deny", "non_identity", "bypass".
 
 ### Read-Only
 
-- `app_count` (Number) Number of access applications currently using this policy.
 - `created_at` (String)
 - `id` (String) The UUID of the policy
 - `reusable` (Boolean)
@@ -155,6 +156,7 @@ Optional:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--exclude--service_token))
+- `service_token_tag` (Attributes) (see [below for nested schema](#nestedatt--exclude--service_token_tag))
 - `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--exclude--user_risk_score))
 
 <a id="nestedatt--exclude--any_valid_service_token"></a>
@@ -364,6 +366,15 @@ Required:
 - `token_id` (String) The ID of a Service Token.
 
 
+<a id="nestedatt--exclude--service_token_tag"></a>
+### Nested Schema for `exclude.service_token_tag`
+
+Required:
+
+- `key` (String) The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.
+- `value` (String) The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.
+
+
 <a id="nestedatt--exclude--user_risk_score"></a>
 ### Nested Schema for `exclude.user_risk_score`
 
@@ -403,6 +414,7 @@ Optional:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--include--service_token))
+- `service_token_tag` (Attributes) (see [below for nested schema](#nestedatt--include--service_token_tag))
 - `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--include--user_risk_score))
 
 <a id="nestedatt--include--any_valid_service_token"></a>
@@ -612,6 +624,15 @@ Required:
 - `token_id` (String) The ID of a Service Token.
 
 
+<a id="nestedatt--include--service_token_tag"></a>
+### Nested Schema for `include.service_token_tag`
+
+Required:
+
+- `key` (String) The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.
+- `value` (String) The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.
+
+
 <a id="nestedatt--include--user_risk_score"></a>
 ### Nested Schema for `include.user_risk_score`
 
@@ -661,6 +682,7 @@ Optional:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--require--service_token))
+- `service_token_tag` (Attributes) (see [below for nested schema](#nestedatt--require--service_token_tag))
 - `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--require--user_risk_score))
 
 <a id="nestedatt--require--any_valid_service_token"></a>
@@ -868,6 +890,15 @@ Required:
 Required:
 
 - `token_id` (String) The ID of a Service Token.
+
+
+<a id="nestedatt--require--service_token_tag"></a>
+### Nested Schema for `require.service_token_tag`
+
+Required:
+
+- `key` (String) The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.
+- `value` (String) The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.
 
 
 <a id="nestedatt--require--user_risk_score"></a>

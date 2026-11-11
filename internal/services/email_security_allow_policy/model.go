@@ -23,6 +23,7 @@ type EmailSecurityAllowPolicyModel struct {
 	PatternType        types.String      `tfsdk:"pattern_type" json:"pattern_type,required"`
 	VerifySender       types.Bool        `tfsdk:"verify_sender" json:"verify_sender,required"`
 	Comments           types.String      `tfsdk:"comments" json:"comments,optional"`
+	ExpiresAt          timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,optional" format:"date-time"`
 	IsRecipient        types.Bool        `tfsdk:"is_recipient" json:"is_recipient,optional"`
 	IsSender           types.Bool        `tfsdk:"is_sender" json:"is_sender,optional"`
 	IsSpoof            types.Bool        `tfsdk:"is_spoof" json:"is_spoof,optional"`

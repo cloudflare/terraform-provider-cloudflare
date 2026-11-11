@@ -98,6 +98,8 @@ Read-Only:
 - `access_client_secret` (String, Sensitive) Defines the Client Secret of the Access Token to use when connecting to the origin database. The API never returns this write-only value.
 - `database` (String) Set the name of your origin database.
 - `host` (String) Defines the publicly reachable hostname or IP of your origin database. Private, loopback, and link-local IP addresses are not allowed.
+
+Defines the host (hostname or IP) of your origin database.
 - `password` (String, Sensitive) Set the password needed to access your origin database. The API never returns this write-only value.
 - `port` (Number) Defines the port of your origin database. Defaults to 5432 for PostgreSQL or 3306 for MySQL if not specified.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.

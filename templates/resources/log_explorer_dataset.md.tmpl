@@ -1,0 +1,51 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+{{ if .HasExample -}}
+## Example Usage
+
+{{ tffile .ExampleFile }}
+{{- end }}
+
+## Scope
+
+Configure exactly one of `account_id` or `zone_id`.
+
+## Creation and deletion
+
+The API applies its defaults when `enabled` or `deletion_protection` is omitted.
+If a configured value differs from the creation response, the provider applies
+it with an update that preserves the selected fields and filter.
+Set `deletion_protection = false` and apply the change before deleting the dataset.
+The same steps are required before replacing the resource.
+
+## Field selection
+
+When `fields` is omitted, the API selects all available fields. Removing a
+configured selection restores that behavior. Imported resources start with
+unmanaged fields; configure `fields` to manage a selection.
+
+Names are matched without regard to case. The provider keeps the configured
+names and order in state and reads enabled values from the API. Duplicate names
+are not allowed, even with different letter case. Each explicit selection must
+include the dataset's required timestamp field.
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Import
+
+This resource uses schema version `500` to identify its state for version 5 of the provider during resource migrations.
+
+{{ if .HasImport -}}
+Import is supported using the following syntax:
+
+{{ codefile "shell" .ImportFile }}
+{{- end }}

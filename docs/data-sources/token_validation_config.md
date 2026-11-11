@@ -60,14 +60,14 @@ Read-Only:
 
 - `alg` (String) Algorithm
 Available values: "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "HS256", "HS384", "HS512".
-- `crv` (String) Curve
+- `crv` (String) For `alg: ES256` or `alg: ES384`: Curve
 Available values: "P-256", "P-384".
-- `e` (String) RSA exponent
+- `e` (String) For `alg: RS256` or `alg: RS384` or `alg: RS512` or `alg: PS256` or `alg: PS384` or `alg: PS512`: RSA exponent
 - `kid` (String) Key ID
 - `kty` (String) Key Type
 Available values: "RSA", "EC", "oct".
-- `n` (String) RSA modulus
-- `x` (String) X EC coordinate
-- `y` (String) Y EC coordinate
+- `n` (String) For `alg: RS256` or `alg: RS384` or `alg: RS512` or `alg: PS256` or `alg: PS384` or `alg: PS512`: RSA modulus
+- `x` (String) For `alg: ES256` or `alg: ES384`: X EC coordinate
+- `y` (String) For `alg: ES256` or `alg: ES384`: Y EC coordinate
 
 

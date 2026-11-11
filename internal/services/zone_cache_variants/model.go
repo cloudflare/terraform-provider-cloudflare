@@ -24,8 +24,11 @@ func (m ZoneCacheVariantsModel) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(m)
 }
 
-func (m ZoneCacheVariantsModel) MarshalJSONForUpdate(state ZoneCacheVariantsModel) (data []byte, err error) {
-	return apijson.MarshalForPatch(m, state)
+func (m ZoneCacheVariantsModel) MarshalJSONForUpdate(_ ZoneCacheVariantsModel) (data []byte, err error) {
+	// PATCH /cache/variants replaces the whole stored value, so send the full
+	// planned value. A diff body would drop every key it leaves out, and the API
+	// rejects the null a diff uses for a removed key (error 1146).
+	return apijson.MarshalRoot(m)
 }
 
 type ZoneCacheVariantsValueModel struct {

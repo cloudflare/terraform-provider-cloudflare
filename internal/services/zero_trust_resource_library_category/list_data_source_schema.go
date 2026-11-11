@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -16,6 +17,14 @@ var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustResourceLibraryCate
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Resource Library Read",
+				"Resource Library Write",
+				"Zero Trust Read",
+				"Zero Trust Write",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Required: true,
@@ -26,7 +35,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 			},
 			"offset": schema.Int64Attribute{
-				Description: "Number of results to skip. Defaults to 0; negative values are clamped to 0.",
+				Description: "Number of results to skip. Defaults to 0; negative values are clamped to 0. Ignored when `cursor` is provided.",
 				Computed:    true,
 				Optional:    true,
 			},

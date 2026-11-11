@@ -1,6 +1,7 @@
 data "cloudflare_email_security_allow_policies" "example_email_security_allow_policies" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   direction = "asc"
+  expired = true
   is_acceptable_sender = true
   is_exempt_recipient = true
   is_trusted_sender = true

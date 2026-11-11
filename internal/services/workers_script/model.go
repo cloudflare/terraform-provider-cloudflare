@@ -40,7 +40,7 @@ type WorkersScriptModel struct {
 	ID               types.String                                                  `tfsdk:"id" json:"-,computed"`
 	ScriptName       types.String                                                  `tfsdk:"script_name" path:"script_name,required"`
 	AccountID        types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
-	BindingsInherit    types.String                                                `tfsdk:"bindings_inherit" query:"bindings_inherit,optional"`
+	BindingsInherit  types.String                                                  `tfsdk:"bindings_inherit" query:"bindings_inherit,optional"`
 	Force            types.Bool                                                    `tfsdk:"force" query:"force,optional"`
 	Content          types.String                                                  `tfsdk:"content" json:"-"`
 	ContentFile      types.String                                                  `tfsdk:"content_file" json:"-"`
@@ -136,6 +136,7 @@ type WorkersScriptMetadataModel struct {
 	Bindings            customfield.NestedObjectList[WorkersScriptMetadataBindingsModel] `tfsdk:"bindings" json:"bindings,computed_optional"`
 	BodyPart            types.String                                                     `tfsdk:"body_part" json:"body_part,computed_optional"`
 	CacheOptions        *WorkersScriptMetadataCacheOptionsModel                          `tfsdk:"cache_options" json:"cache_options,optional"`
+	CodeUpdateStrategy  *WorkersScriptMetadataCodeUpdateStrategyModel                    `tfsdk:"code_update_strategy" json:"code_update_strategy,optional"`
 	CompatibilityDate   types.String                                                     `tfsdk:"compatibility_date" json:"compatibility_date,computed_optional"`
 	CompatibilityFlags  customfield.Set[types.String]                                    `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
 	Exports             *map[string]WorkersScriptMetadataExportsModel                    `tfsdk:"exports" json:"exports,optional"`
@@ -247,6 +248,11 @@ type WorkersScriptMetadataBindingsSimpleModel struct {
 type WorkersScriptMetadataCacheOptionsModel struct {
 	Enabled           types.Bool `tfsdk:"enabled" json:"enabled,computed_optional"`
 	CrossVersionCache types.Bool `tfsdk:"cross_version_cache" json:"cross_version_cache,computed_optional"`
+}
+
+type WorkersScriptMetadataCodeUpdateStrategyModel struct {
+	Mode     types.String  `tfsdk:"mode" json:"mode,required"`
+	MaxDelay types.Float64 `tfsdk:"max_delay" json:"max_delay,optional"`
 }
 
 type WorkersScriptMetadataExportsModel struct {

@@ -74,6 +74,7 @@ type BotManagementModel struct {
 	SBFMStaticResourceProtection types.Bool                                                         `tfsdk:"sbfm_static_resource_protection" json:"sbfm_static_resource_protection,computed_optional"`
 	SBFMVerifiedBots             types.String                                                       `tfsdk:"sbfm_verified_bots" json:"sbfm_verified_bots,computed_optional"`
 	SuppressSessionScore         types.Bool                                                         `tfsdk:"suppress_session_score" json:"suppress_session_score,computed_optional"`
+	AIAgents                     customfield.NestedObject[BotManagementAIAgentsModel]               `tfsdk:"ai_agents" json:"ai_agents,computed_optional"`
 	UsingLatestModel             types.Bool                                                         `tfsdk:"using_latest_model" json:"using_latest_model,computed"`
 	StaleZoneConfiguration       customfield.NestedObject[BotManagementStaleZoneConfigurationModel] `tfsdk:"stale_zone_configuration" json:"stale_zone_configuration,computed"`
 }
@@ -216,6 +217,14 @@ func (m *BotManagementModel) UpdateFromAPIModel(api BotManagementAPIModel) {
 	} else if m.StaleZoneConfiguration.IsUnknown() {
 		m.StaleZoneConfiguration = customfield.NullObject[BotManagementStaleZoneConfigurationModel](context.TODO())
 	}
+}
+
+type BotManagementAIAgentsModel struct {
+	AnthropicAgent types.String `tfsdk:"anthropic_agent" json:"anthropic_agent,optional"`
+	GoogleAgent    types.String `tfsdk:"google_agent" json:"google_agent,optional"`
+	Instinct       types.String `tfsdk:"instinct" json:"instinct,optional"`
+	Muse           types.String `tfsdk:"muse" json:"muse,optional"`
+	OpenAIAgent    types.String `tfsdk:"openai_agent" json:"openai_agent,optional"`
 }
 
 type BotManagementStaleZoneConfigurationModel struct {

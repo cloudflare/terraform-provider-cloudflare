@@ -41,6 +41,8 @@ type AIGatewayModel struct {
 	Otel                    customfield.NestedObjectList[AIGatewayOtelModel]    `tfsdk:"otel" json:"otel,computed_optional"`
 	SpendLimits             customfield.NestedObject[AIGatewaySpendLimitsModel] `tfsdk:"spend_limits" json:"spend_limits,computed_optional"`
 	CreatedAt               timetypes.RFC3339                                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	FedrampLevel            types.String                                        `tfsdk:"fedramp_level" json:"fedramp_level,computed"`
+	FedrampMode             types.String                                        `tfsdk:"fedramp_mode" json:"fedramp_mode,computed"`
 	IsDefault               types.Bool                                          `tfsdk:"is_default" json:"is_default,computed"`
 	ModifiedAt              timetypes.RFC3339                                   `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 }
@@ -80,6 +82,7 @@ type AIGatewayGuardrailsPromptModel struct {
 	S11 types.String `tfsdk:"s11" json:"S11,optional"`
 	S12 types.String `tfsdk:"s12" json:"S12,optional"`
 	S13 types.String `tfsdk:"s13" json:"S13,optional"`
+	S14 types.String `tfsdk:"s14" json:"S14,optional"`
 	S2  types.String `tfsdk:"s2" json:"S2,optional"`
 	S3  types.String `tfsdk:"s3" json:"S3,optional"`
 	S4  types.String `tfsdk:"s4" json:"S4,optional"`
@@ -97,6 +100,7 @@ type AIGatewayGuardrailsResponseModel struct {
 	S11 types.String `tfsdk:"s11" json:"S11,optional"`
 	S12 types.String `tfsdk:"s12" json:"S12,optional"`
 	S13 types.String `tfsdk:"s13" json:"S13,optional"`
+	S14 types.String `tfsdk:"s14" json:"S14,optional"`
 	S2  types.String `tfsdk:"s2" json:"S2,optional"`
 	S3  types.String `tfsdk:"s3" json:"S3,optional"`
 	S4  types.String `tfsdk:"s4" json:"S4,optional"`

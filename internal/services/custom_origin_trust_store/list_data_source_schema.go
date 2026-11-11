@@ -86,13 +86,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-						"updated_at": schema.StringAttribute{
-							Description: "When the certificate was last modified.",
+						"uploaded_on": schema.StringAttribute{
+							Description: "When the certificate was uploaded to Cloudflare.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
-						"uploaded_on": schema.StringAttribute{
-							Description: "When the certificate was uploaded to Cloudflare.",
+						"updated_at": schema.StringAttribute{
+							Description: "When the certificate was last modified. Only returned when uploading a certificate.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},

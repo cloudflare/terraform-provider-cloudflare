@@ -13,11 +13,11 @@ type OrganizationProfileResultEnvelope struct {
 
 type OrganizationProfileModel struct {
 	OrganizationID   types.String `tfsdk:"organization_id" path:"organization_id,required"`
-	BusinessAddress  types.String `tfsdk:"business_address" json:"business_address,required"`
-	BusinessEmail    types.String `tfsdk:"business_email" json:"business_email,required"`
-	BusinessName     types.String `tfsdk:"business_name" json:"business_name,required"`
-	BusinessPhone    types.String `tfsdk:"business_phone" json:"business_phone,required"`
-	ExternalMetadata types.String `tfsdk:"external_metadata" json:"external_metadata,required"`
+	BusinessAddress  types.String `tfsdk:"business_address" json:"business_address,optional"`
+	BusinessEmail    types.String `tfsdk:"business_email" json:"business_email,optional"`
+	BusinessName     types.String `tfsdk:"business_name" json:"business_name,optional"`
+	BusinessPhone    types.String `tfsdk:"business_phone" json:"business_phone,optional"`
+	ExternalMetadata types.String `tfsdk:"external_metadata" json:"external_metadata,optional"`
 }
 
 func (m OrganizationProfileModel) MarshalJSON() (data []byte, err error) {

@@ -14,24 +14,27 @@ type ShareResultEnvelope struct {
 }
 
 type ShareModel struct {
-	ID                           types.String             `tfsdk:"id" json:"id,computed"`
-	AccountID                    types.String             `tfsdk:"account_id" path:"account_id,required"`
-	Recipients                   *[]*ShareRecipientsModel `tfsdk:"recipients" json:"recipients,required,no_refresh"`
-	Resources                    *[]*ShareResourcesModel  `tfsdk:"resources" json:"resources,required"`
-	IncludeRecipientCounts       types.Bool               `tfsdk:"include_recipient_counts" query:"include_recipient_counts,optional"`
-	IncludeResources             types.Bool               `tfsdk:"include_resources" query:"include_resources,optional"`
-	Name                         types.String             `tfsdk:"name" json:"name,required"`
-	AccountName                  types.String             `tfsdk:"account_name" json:"account_name,computed"`
-	AssociatedRecipientCount     types.Int64              `tfsdk:"associated_recipient_count" json:"associated_recipient_count,computed"`
-	AssociatingRecipientCount    types.Int64              `tfsdk:"associating_recipient_count" json:"associating_recipient_count,computed"`
-	Created                      timetypes.RFC3339        `tfsdk:"created" json:"created,computed" format:"date-time"`
-	DisassociatedRecipientCount  types.Int64              `tfsdk:"disassociated_recipient_count" json:"disassociated_recipient_count,computed"`
-	DisassociatingRecipientCount types.Int64              `tfsdk:"disassociating_recipient_count" json:"disassociating_recipient_count,computed"`
-	Kind                         types.String             `tfsdk:"kind" json:"kind,computed"`
-	Modified                     timetypes.RFC3339        `tfsdk:"modified" json:"modified,computed" format:"date-time"`
-	OrganizationID               types.String             `tfsdk:"organization_id" json:"organization_id,computed"`
-	Status                       types.String             `tfsdk:"status" json:"status,computed"`
-	TargetType                   types.String             `tfsdk:"target_type" json:"target_type,computed"`
+	ID                           types.String                     `tfsdk:"id" json:"id,computed"`
+	AccountID                    types.String                     `tfsdk:"account_id" path:"account_id,required"`
+	ExcludedRecipients           *[]*ShareExcludedRecipientsModel `tfsdk:"excluded_recipients" json:"excluded_recipients,optional,no_refresh"`
+	Recipients                   *[]*ShareRecipientsModel         `tfsdk:"recipients" json:"recipients,optional,no_refresh"`
+	Resources                    *[]*ShareResourcesModel          `tfsdk:"resources" json:"resources,optional"`
+	IncludeRecipientCounts       types.Bool                       `tfsdk:"include_recipient_counts" query:"include_recipient_counts,optional"`
+	IncludeResources             types.Bool                       `tfsdk:"include_resources" query:"include_resources,optional"`
+	IncludeTagsFrom              types.String                     `tfsdk:"include_tags_from" query:"include_tags_from,optional"`
+	Name                         types.String                     `tfsdk:"name" json:"name,required"`
+	Tags                         *map[string]types.String         `tfsdk:"tags" json:"tags,optional"`
+	AccountName                  types.String                     `tfsdk:"account_name" json:"account_name,computed"`
+	AssociatedRecipientCount     types.Int64                      `tfsdk:"associated_recipient_count" json:"associated_recipient_count,computed"`
+	AssociatingRecipientCount    types.Int64                      `tfsdk:"associating_recipient_count" json:"associating_recipient_count,computed"`
+	Created                      timetypes.RFC3339                `tfsdk:"created" json:"created,computed" format:"date-time"`
+	DisassociatedRecipientCount  types.Int64                      `tfsdk:"disassociated_recipient_count" json:"disassociated_recipient_count,computed"`
+	DisassociatingRecipientCount types.Int64                      `tfsdk:"disassociating_recipient_count" json:"disassociating_recipient_count,computed"`
+	Kind                         types.String                     `tfsdk:"kind" json:"kind,computed"`
+	Modified                     timetypes.RFC3339                `tfsdk:"modified" json:"modified,computed" format:"date-time"`
+	OrganizationID               types.String                     `tfsdk:"organization_id" json:"organization_id,computed"`
+	Status                       types.String                     `tfsdk:"status" json:"status,computed"`
+	TargetType                   types.String                     `tfsdk:"target_type" json:"target_type,computed"`
 }
 
 func (m ShareModel) MarshalJSON() (data []byte, err error) {
@@ -40,6 +43,10 @@ func (m ShareModel) MarshalJSON() (data []byte, err error) {
 
 func (m ShareModel) MarshalJSONForUpdate(state ShareModel) (data []byte, err error) {
 	return apijson.MarshalForUpdate(m, state)
+}
+
+type ShareExcludedRecipientsModel struct {
+	AccountID types.String `tfsdk:"account_id" json:"account_id,required"`
 }
 
 type ShareRecipientsModel struct {

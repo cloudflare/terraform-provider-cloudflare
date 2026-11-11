@@ -79,6 +79,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"remote_subnets": schema.ListNestedAttribute{
+				Optional: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"local_alias_prefix": schema.StringAttribute{
+							Description: "A valid CIDR notation representing an IP range.",
+							Required:    true,
+						},
+						"remote_prefix": schema.StringAttribute{
+							Description: "A valid CIDR notation representing an IP range.",
+							Required:    true,
+						},
+					},
+				},
+			},
 			"routed_subnets": schema.ListNestedAttribute{
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{

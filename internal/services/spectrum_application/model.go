@@ -14,23 +14,25 @@ type SpectrumApplicationResultEnvelope struct {
 }
 
 type SpectrumApplicationModel struct {
-	ID               types.String                                              `tfsdk:"id" json:"id,computed"`
-	ZoneID           types.String                                              `tfsdk:"zone_id" path:"zone_id,required"`
-	Protocol         types.String                                              `tfsdk:"protocol" json:"protocol,required"`
-	DNS              *SpectrumApplicationDNSModel                              `tfsdk:"dns" json:"dns,required"`
-	OriginWorkerID   types.String                                              `tfsdk:"origin_worker_id" json:"origin_worker_id,optional"`
-	VirtualNetworkID types.String                                              `tfsdk:"virtual_network_id" json:"virtual_network_id,optional"`
-	OriginDirect     *[]types.String                                           `tfsdk:"origin_direct" json:"origin_direct,optional"`
-	OriginDNS        *SpectrumApplicationOriginDNSModel                        `tfsdk:"origin_dns" json:"origin_dns,optional"`
-	OriginPort       customfield.NormalizedDynamicValue                        `tfsdk:"origin_port" json:"origin_port,optional"`
-	ArgoSmartRouting types.Bool                                                `tfsdk:"argo_smart_routing" json:"argo_smart_routing,computed_optional"`
-	IPFirewall       types.Bool                                                `tfsdk:"ip_firewall" json:"ip_firewall,computed_optional"`
-	ProxyProtocol    types.String                                              `tfsdk:"proxy_protocol" json:"proxy_protocol,computed_optional"`
-	TLS              types.String                                              `tfsdk:"tls" json:"tls,computed_optional"`
-	TrafficType      types.String                                              `tfsdk:"traffic_type" json:"traffic_type,computed_optional"`
-	EdgeIPs          customfield.NestedObject[SpectrumApplicationEdgeIPsModel] `tfsdk:"edge_ips" json:"edge_ips,computed_optional"`
-	CreatedOn        timetypes.RFC3339                                         `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ModifiedOn       timetypes.RFC3339                                         `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	ID                 types.String                                              `tfsdk:"id" json:"id,computed"`
+	ZoneID             types.String                                              `tfsdk:"zone_id" path:"zone_id,required"`
+	Protocol           types.String                                              `tfsdk:"protocol" json:"protocol,required"`
+	DNS                *SpectrumApplicationDNSModel                              `tfsdk:"dns" json:"dns,required"`
+	OriginWorkerID     types.String                                              `tfsdk:"origin_worker_id" json:"origin_worker_id,optional"`
+	VirtualNetworkID   types.String                                              `tfsdk:"virtual_network_id" json:"virtual_network_id,optional"`
+	OriginDirect       *[]types.String                                           `tfsdk:"origin_direct" json:"origin_direct,optional"`
+	OriginDNS          *SpectrumApplicationOriginDNSModel                        `tfsdk:"origin_dns" json:"origin_dns,optional"`
+	OriginPort         customfield.NormalizedDynamicValue                        `tfsdk:"origin_port" json:"origin_port,optional"`
+	ArgoSmartRouting   types.Bool                                                `tfsdk:"argo_smart_routing" json:"argo_smart_routing,computed_optional"`
+	IPFirewall         types.Bool                                                `tfsdk:"ip_firewall" json:"ip_firewall,computed_optional"`
+	ProxyProtocol      types.String                                              `tfsdk:"proxy_protocol" json:"proxy_protocol,computed_optional"`
+	TLS                types.String                                              `tfsdk:"tls" json:"tls,computed_optional"`
+	TrafficType        types.String                                              `tfsdk:"traffic_type" json:"traffic_type,computed_optional"`
+	EdgeIPs            customfield.NestedObject[SpectrumApplicationEdgeIPsModel] `tfsdk:"edge_ips" json:"edge_ips,computed_optional"`
+	CreatedOn          timetypes.RFC3339                                         `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn         timetypes.RFC3339                                         `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	OriginWorkerName   types.String                                              `tfsdk:"origin_worker_name" json:"origin_worker_name,computed"`
+	OriginWorkerStatus types.String                                              `tfsdk:"origin_worker_status" json:"origin_worker_status,computed"`
 }
 
 func (m SpectrumApplicationModel) MarshalJSON() (data []byte, err error) {

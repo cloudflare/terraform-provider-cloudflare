@@ -18,14 +18,15 @@ type AccountResultDataSourceEnvelope struct {
 }
 
 type AccountDataSourceModel struct {
-	ID        types.String                                              `tfsdk:"id" path:"account_id,computed"`
-	AccountID types.String                                              `tfsdk:"account_id" path:"account_id,optional"`
-	CreatedOn timetypes.RFC3339                                         `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Name      types.String                                              `tfsdk:"name" json:"name,computed"`
-	Type      types.String                                              `tfsdk:"type" json:"type,computed"`
-	ManagedBy customfield.NestedObject[AccountManagedByDataSourceModel] `tfsdk:"managed_by" json:"managed_by,computed"`
-	Settings  customfield.NestedObject[AccountSettingsDataSourceModel]  `tfsdk:"settings" json:"settings,computed"`
-	Filter    *AccountFindOneByDataSourceModel                          `tfsdk:"filter"`
+	ID          types.String                                                `tfsdk:"id" path:"account_id,computed"`
+	AccountID   types.String                                                `tfsdk:"account_id" path:"account_id,optional"`
+	CreatedOn   timetypes.RFC3339                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Name        types.String                                                `tfsdk:"name" json:"name,computed"`
+	Type        types.String                                                `tfsdk:"type" json:"type,computed"`
+	LegacyFlags customfield.NestedObject[AccountLegacyFlagsDataSourceModel] `tfsdk:"legacy_flags" json:"legacy_flags,computed"`
+	ManagedBy   customfield.NestedObject[AccountManagedByDataSourceModel]   `tfsdk:"managed_by" json:"managed_by,computed"`
+	Settings    customfield.NestedObject[AccountSettingsDataSourceModel]    `tfsdk:"settings" json:"settings,computed"`
+	Filter      *AccountFindOneByDataSourceModel                            `tfsdk:"filter"`
 }
 
 func (m *AccountDataSourceModel) toReadParams(_ context.Context) (params accounts.AccountGetParams, diags diag.Diagnostics) {
@@ -49,9 +50,21 @@ func (m *AccountDataSourceModel) toListParams(_ context.Context) (params account
 	return
 }
 
+type AccountLegacyFlagsDataSourceModel struct {
+	EnterpriseZoneQuota customfield.NestedObject[AccountLegacyFlagsEnterpriseZoneQuotaDataSourceModel] `tfsdk:"enterprise_zone_quota" json:"enterprise_zone_quota,computed"`
+}
+
+type AccountLegacyFlagsEnterpriseZoneQuotaDataSourceModel struct {
+	Available types.Int64 `tfsdk:"available" json:"available,computed"`
+	Current   types.Int64 `tfsdk:"current" json:"current,computed"`
+	Maximum   types.Int64 `tfsdk:"maximum" json:"maximum,computed"`
+}
+
 type AccountManagedByDataSourceModel struct {
-	ParentOrgID   types.String `tfsdk:"parent_org_id" json:"parent_org_id,computed"`
-	ParentOrgName types.String `tfsdk:"parent_org_name" json:"parent_org_name,computed"`
+	ParentOrgID             types.String `tfsdk:"parent_org_id" json:"parent_org_id,computed"`
+	ParentOrgName           types.String `tfsdk:"parent_org_name" json:"parent_org_name,computed"`
+	RootOrgID               types.String `tfsdk:"root_org_id" json:"root_org_id,computed"`
+	ShouldDisplayParentOrgs types.Bool   `tfsdk:"should_display_parent_orgs" json:"should_display_parent_orgs,computed"`
 }
 
 type AccountSettingsDataSourceModel struct {

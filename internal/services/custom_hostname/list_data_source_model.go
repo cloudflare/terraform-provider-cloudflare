@@ -117,9 +117,7 @@ type CustomHostnamesSSLDataSourceModel struct {
 	ID                   types.String                                                                        `tfsdk:"id" json:"id,computed"`
 	BundleMethod         types.String                                                                        `tfsdk:"bundle_method" json:"bundle_method,computed"`
 	CertificateAuthority types.String                                                                        `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
-	CustomCertificate    types.String                                                                        `tfsdk:"custom_certificate" json:"custom_certificate,computed"`
 	CustomCsrID          types.String                                                                        `tfsdk:"custom_csr_id" json:"custom_csr_id,computed"`
-	CustomKey            types.String                                                                        `tfsdk:"custom_key" json:"custom_key,computed"`
 	DCVDelegationRecords customfield.NestedObjectList[CustomHostnamesSSLDCVDelegationRecordsDataSourceModel] `tfsdk:"dcv_delegation_records" json:"dcv_delegation_records,computed"`
 	ExpiresOn            timetypes.RFC3339                                                                   `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Hosts                customfield.List[types.String]                                                      `tfsdk:"hosts" json:"hosts,computed"`

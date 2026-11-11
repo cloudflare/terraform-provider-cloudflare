@@ -39,6 +39,7 @@ data "cloudflare_zero_trust_organization" "example_zero_trust_organization" {
 - `custom_pages` (Attributes) (see [below for nested schema](#nestedatt--custom_pages))
 - `deny_unmatched_requests` (Boolean) Determines whether to deny all requests to Cloudflare-protected resources that lack an associated Access application. If enabled, you must explicitly configure an Access application and policy to allow traffic to your Cloudflare-protected resources. For domains you want to be public across all subdomains, add the domain to the `deny_unmatched_requests_exempted_zone_names` array.
 - `deny_unmatched_requests_exempted_zone_names` (List of String) Contains zone names to exempt from the `deny_unmatched_requests` feature. Requests to a subdomain in an exempted zone will block unauthenticated traffic by default if there is a configured Access application and policy that matches the request.
+- `disable_end_user_app_creation` (Boolean) Whether creation of end user applications is disabled for this organization.
 - `is_ui_read_only` (Boolean) Lock all settings as Read-Only in the Dashboard, regardless of user permission. Updates may only be made via the API or Terraform for this account when enabled.
 - `login_design` (Attributes) (see [below for nested schema](#nestedatt--login_design))
 - `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings for an organization. (see [below for nested schema](#nestedatt--mfa_config))

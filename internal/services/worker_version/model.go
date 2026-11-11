@@ -175,9 +175,8 @@ type WorkerVersionBindingsModel struct {
 	Outbound                    *WorkerVersionBindingsOutboundModel `tfsdk:"outbound" json:"outbound,optional"`
 	ClassName                   types.String                        `tfsdk:"class_name" json:"class_name,computed_optional"`
 	DispatchNamespace           types.String                        `tfsdk:"dispatch_namespace" json:"dispatch_namespace,optional"`
-	Environment                 types.String                        `tfsdk:"environment" json:"environment,optional"`
+	Environment                 types.String                        `tfsdk:"environment" json:"environment,computed_optional"`
 	NamespaceID                 types.String                        `tfsdk:"namespace_id" json:"namespace_id,computed_optional"`
-	Retry                       *WorkerVersionBindingsRetryModel    `tfsdk:"retry" json:"retry,optional"`
 	ScriptName                  types.String                        `tfsdk:"script_name" json:"script_name,computed_optional"`
 	OldName                     types.String                        `tfsdk:"old_name" json:"old_name,optional"`
 	VersionID                   types.String                        `tfsdk:"version_id" json:"version_id,optional"`
@@ -224,11 +223,6 @@ type WorkerVersionBindingsOutboundWorkerModel struct {
 	Entrypoint  types.String `tfsdk:"entrypoint" json:"entrypoint,optional"`
 	Environment types.String `tfsdk:"environment" json:"environment,optional"`
 	Service     types.String `tfsdk:"service" json:"service,optional"`
-}
-
-type WorkerVersionBindingsRetryModel struct {
-	MaxAttempts types.Int64 `tfsdk:"max_attempts" json:"max_attempts,optional"`
-	TimeoutMs   types.Int64 `tfsdk:"timeout_ms" json:"timeout_ms,optional"`
 }
 
 type WorkerVersionBindingsSimpleModel struct {

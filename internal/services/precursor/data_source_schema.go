@@ -25,35 +25,34 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier.",
 				Required:    true,
 			},
-			"default_mode": schema.StringAttribute{
-				Description:        "The zone-level Precursor enforcement mode applied to requests that do\nnot match a more specific enforcement rule.\nAvailable values: \"off\", \"min-friction\", \"max-security\".",
-				Computed:           true,
-				DeprecationMessage: "This attribute is deprecated.",
+			"mode": schema.StringAttribute{
+				Description: "Controls Precursor detection for the zone. `off` disables detection,\n`monitor` records detections without affecting bot scores, and `arm`\nallows detections to affect bot scores.\nAvailable values: \"off\", \"monitor\", \"arm\".",
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"off",
-						"min-friction",
-						"max-security",
+						"monitor",
+						"arm",
 					),
 				},
 			},
-			"enforcement_rules": schema.ListNestedAttribute{
-				Description:        "The ordered list of enforcement rules for the zone.",
-				Computed:           true,
-				DeprecationMessage: "This attribute is deprecated.",
-				CustomType:         customfield.NewNestedObjectListType[PrecursorEnforcementRulesDataSourceModel](ctx),
+			"show_interstitial": schema.BoolAttribute{
+				Description: "Whether Precursor shows an interstitial when it takes action on a\nrequest.",
+				Computed:    true,
+			},
+			"rules": schema.ListNestedAttribute{
+				Description: "The ordered list of Precursor rules for the zone.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[PrecursorRulesDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"expression": schema.StringAttribute{
 							Description: "The filter expression that determines which requests the rule matches.",
 							Computed:    true,
 						},
-						"mode": schema.StringAttribute{
-							Description: "The override mode Precursor applies to requests matching an enforcement\nrule. Unlike `default_mode`, this cannot be `off`.\nAvailable values: \"min-friction\", \"max-security\".",
+						"show_interstitial": schema.BoolAttribute{
+							Description: "Whether Precursor shows an interstitial when it takes action on a\nrequest.",
 							Computed:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("min-friction", "max-security"),
-							},
 						},
 						"id": schema.StringAttribute{
 							Description: "The read-only identifier that Cloudflare assigns to the rule.",

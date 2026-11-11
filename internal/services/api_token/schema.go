@@ -167,6 +167,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The type of service that provisioned the token. Only present for\nprovisioned Account Owned API Tokens.",
 				Computed:    true,
 			},
+			"token_prefix": schema.StringAttribute{
+				Description: "The prefix of the token value, before the first underscore. Use it with\n`token_suffix` to identify a token. Only present for tokens created or\nrolled after this field was added.",
+				Computed:    true,
+			},
+			"token_suffix": schema.StringAttribute{
+				Description: "The last 4 characters of the token value. Use it with `token_prefix` to\nidentify a token. It is not unique. Only present for tokens created or\nrolled after this field was added.",
+				Computed:    true,
+			},
 			"value": schema.StringAttribute{
 				Description: "The token value.",
 				Computed:    true,

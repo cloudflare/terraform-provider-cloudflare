@@ -21,7 +21,7 @@ func accessGroupConfigV4Basic(rnd, accountID string) string {
 resource "cloudflare_access_group" "%[1]s" {
   account_id = "%[2]s"
   name       = "%[1]s"
-  
+
   include {
     email = ["test@example.com"]
   }
@@ -33,16 +33,16 @@ func accessGroupConfigV4MultiValue(rnd, accountID string) string {
 resource "cloudflare_access_group" "%[1]s" {
   account_id = "%[2]s"
   name       = "%[1]s"
-  
+
   include {
     email = ["user1@example.com", "user2@example.com"]
     ip    = ["192.0.2.1/32", "192.0.2.2/32"]
   }
-  
+
   exclude {
     email_domain = ["blocked.com"]
   }
-  
+
   require {
     ip = ["10.0.0.0/8"]
   }
@@ -54,7 +54,7 @@ func accessGroupConfigV4ZoneScoped(rnd, zoneID string) string {
 resource "cloudflare_access_group" "%[1]s" {
   zone_id = "%[2]s"
   name    = "%[1]s"
-  
+
   include {
     email = ["test@example.com"]
     ip    = ["192.0.2.0/24"]

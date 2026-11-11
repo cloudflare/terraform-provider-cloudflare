@@ -29,7 +29,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Optional:    true,
+				Optional: true,
 			},
 			"search": schema.StringAttribute{
 				Description: "Search by id, name, hostname",
@@ -225,7 +225,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"is_shared_oauth_callback_enabled": schema.BoolAttribute{
-										Description: "When true, the gateway worker uses the shared Cloudflare-owned OAuth callback endpoint as the redirect_uri for upstream on-behalf OAuth, instead of the customer portal hostname. New public server creates default to true; existing servers default to false from migration until explicitly updated. Effective behavior is gated by the gateway worker's per-env rollout mode KV key.",
+										Description: "When true, per-user authorization uses the shared Cloudflare callback URL as the 'redirect_uri' instead of the portal callback URL. The default is false. Set 'is_shared_oauth_callback_enabled' to true to enable the shared Cloudflare callback URL for this MCP server.",
 										Computed:    true,
 									},
 									"last_successful_sync": schema.StringAttribute{
@@ -245,6 +245,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 									"on_behalf": schema.BoolAttribute{
 										Computed: true,
+									},
+									"registered_at": schema.StringAttribute{
+										Description: "Timestamp of the most recent successful admin OAuth registration.",
+										Computed:    true,
+										CustomType:  timetypes.RFC3339Type{},
 									},
 									"secure_web_gateway": schema.BoolAttribute{
 										Description: "Route outbound traffic to this MCP server through Zero Trust Secure Web Gateway.",

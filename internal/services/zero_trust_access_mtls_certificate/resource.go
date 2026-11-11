@@ -377,7 +377,7 @@ func (r *ZeroTrustAccessMTLSCertificateResource) ModifyPlan(ctx context.Context,
 	var state, plan *ZeroTrustAccessMTLSCertificateModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
-	
+
 	if resp.Diagnostics.HasError() {
 		return
 	}

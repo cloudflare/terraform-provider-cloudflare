@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -53,7 +54,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"requested_validity": schema.Float64Attribute{
-				Description: "The number of days for which the certificate should be valid.\nAvailable values: 7, 30, 90, 365, 730, 1095, 5475.",
+				Description: "The number of days for which the certificate was requested to be valid. Only returned in the Create Certificate response, where it echoes the requested value. Not returned when getting or listing certificates.\nAvailable values: 7, 30, 90, 365, 730, 1095, 5475.",
 				Computed:    true,
 				Validators: []validator.Float64{
 					float64validator.OneOf(
@@ -67,6 +68,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"revoked_at": schema.StringAttribute{
+				Description: "When the certificate was revoked.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
 			"hostnames": schema.ListAttribute{
 				Description: "Array of hostnames or wildcard names bound to the certificate.\nHostnames must be fully qualified domain names (FQDNs) belonging to zones on your account (e.g., `example.com` or `sub.example.com`). Wildcards are supported only as a `*.` prefix for a single level (e.g., `*.example.com`). Double wildcards (`*.*.example.com`) and interior wildcards (`foo.*.example.com`) are not allowed. The wildcard suffix must be a multi-label domain (`*.example.com` is valid, but `*.com` is not). Unicode/IDN hostnames are accepted and automatically converted to punycode.",
 				Computed:    true,
@@ -79,14 +85,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"zone_id": schema.StringAttribute{
 						Description: "Identifier.",
 						Required:    true,
-					},
-					"limit": schema.Int64Attribute{
-						Description: "Limit to the number of records returned.",
-						Optional:    true,
-					},
-					"offset": schema.Int64Attribute{
-						Description: "Offset the results.",
-						Optional:    true,
 					},
 				},
 			},

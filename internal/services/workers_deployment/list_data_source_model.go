@@ -51,13 +51,14 @@ type WorkersDeploymentsResultDataSourceModel struct {
 }
 
 type WorkersDeploymentsDeploymentsDataSourceModel struct {
-	ID          types.String                                                                       `tfsdk:"id" json:"id,computed"`
-	CreatedOn   timetypes.RFC3339                                                                  `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Source      types.String                                                                       `tfsdk:"source" json:"source,computed"`
-	Strategy    types.String                                                                       `tfsdk:"strategy" json:"strategy,computed"`
-	Versions    customfield.NestedObjectList[WorkersDeploymentsDeploymentsVersionsDataSourceModel] `tfsdk:"versions" json:"versions,computed"`
-	Annotations customfield.NestedObject[WorkersDeploymentsDeploymentsAnnotationsDataSourceModel]  `tfsdk:"annotations" json:"annotations,computed"`
-	AuthorEmail types.String                                                                       `tfsdk:"author_email" json:"author_email,computed"`
+	ID                 types.String                                                                             `tfsdk:"id" json:"id,computed"`
+	CreatedOn          timetypes.RFC3339                                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Source             types.String                                                                             `tfsdk:"source" json:"source,computed"`
+	Strategy           types.String                                                                             `tfsdk:"strategy" json:"strategy,computed"`
+	Versions           customfield.NestedObjectList[WorkersDeploymentsDeploymentsVersionsDataSourceModel]       `tfsdk:"versions" json:"versions,computed"`
+	Annotations        customfield.NestedObject[WorkersDeploymentsDeploymentsAnnotationsDataSourceModel]        `tfsdk:"annotations" json:"annotations,computed"`
+	AuthorEmail        types.String                                                                             `tfsdk:"author_email" json:"author_email,computed"`
+	CodeUpdateStrategy customfield.NestedObject[WorkersDeploymentsDeploymentsCodeUpdateStrategyDataSourceModel] `tfsdk:"code_update_strategy" json:"code_update_strategy,computed"`
 }
 
 type WorkersDeploymentsDeploymentsVersionsDataSourceModel struct {
@@ -68,4 +69,9 @@ type WorkersDeploymentsDeploymentsVersionsDataSourceModel struct {
 type WorkersDeploymentsDeploymentsAnnotationsDataSourceModel struct {
 	WorkersMessage     types.String `tfsdk:"workers_message" json:"workers/message,computed"`
 	WorkersTriggeredBy types.String `tfsdk:"workers_triggered_by" json:"workers/triggered_by,computed"`
+}
+
+type WorkersDeploymentsDeploymentsCodeUpdateStrategyDataSourceModel struct {
+	Mode     types.String  `tfsdk:"mode" json:"mode,computed"`
+	MaxDelay types.Float64 `tfsdk:"max_delay" json:"max_delay,computed"`
 }

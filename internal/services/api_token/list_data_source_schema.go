@@ -216,6 +216,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
+						"token_prefix": schema.StringAttribute{
+							Description: "The prefix of the token value, before the first underscore. Use it with\n`token_suffix` to identify a token. Only present for tokens created or\nrolled after this field was added.",
+							Computed:    true,
+						},
+						"token_suffix": schema.StringAttribute{
+							Description: "The last 4 characters of the token value. Use it with `token_prefix` to\nidentify a token. It is not unique. Only present for tokens created or\nrolled after this field was added.",
+							Computed:    true,
+						},
 					},
 				},
 			},

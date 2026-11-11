@@ -111,7 +111,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"data": schema.SingleNestedAttribute{
-				Description: "Components of a MX record.",
+				Description: "For `type: CAA`: Components of a CAA record.\n\nFor `type: CERT`: Components of a CERT record.\n\nFor `type: DNSKEY`: Components of a DNSKEY record.\n\nFor `type: DS`: Components of a DS record.\n\nFor `type: HTTPS`: Components of a HTTPS record.\n\nFor `type: LOC`: Components of a LOC record.\n\nFor `type: NAPTR`: Components of a NAPTR record.\n\nFor `type: SMIMEA`: Components of a SMIMEA record.\n\nFor `type: SRV`: Components of a SRV record.\n\nFor `type: SSHFP`: Components of a SSHFP record.\n\nFor `type: SVCB`: Components of a SVCB record.\n\nFor `type: TLSA`: Components of a TLSA record.\n\nFor `type: URI`: Components of a URI record.",
 				Optional:    true,
 				Validators: []validator.Object{
 					objectvalidator.All(
@@ -120,7 +120,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				Attributes: map[string]schema.Attribute{
 					"flags": schema.DynamicAttribute{
-						Description: "Flags for the CAA record.",
+						Description: "Flags for the CAA record.\n\nFlags.",
 						Optional:    true,
 						Validators: []validator.Dynamic{
 							customvalidator.AllowedSubtypes(basetypes.Float64Type{}, basetypes.StringType{}),
@@ -133,7 +133,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"value": schema.StringAttribute{
-						Description: "Value of the record. This field's semantics depend on the chosen tag.",
+						Description: "Value of the record. This field's semantics depend on the chosen tag.\n\nValue.",
 						Optional:    true,
 					},
 					"algorithm": schema.Float64Attribute{
@@ -184,14 +184,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"priority": schema.Float64Attribute{
-						Description: "Priority.",
+						Description: "Priority.\n\nRequired for MX and URI records; ignored for other record types (but may still be returned by the API). Records with lower priorities are preferred. This field is to be deprecated in favor of the priority field within the data map.",
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 65535),
 						},
 					},
 					"target": schema.StringAttribute{
-						Description: "Target.",
+						Description: "Target.\n\nA valid hostname.\n\nThe record content.",
 						Optional:    true,
 					},
 					"altitude": schema.Float64Attribute{
@@ -346,7 +346,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"private_routing": schema.BoolAttribute{
-				Description: "Enables private network routing to the origin.",
+				Description: "For `type: A` or `type: AAAA`: Enables private network routing to the origin.",
 				Optional:    true,
 			},
 			"proxied": schema.BoolAttribute{

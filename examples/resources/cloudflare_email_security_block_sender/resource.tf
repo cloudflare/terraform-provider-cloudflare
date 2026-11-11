@@ -4,4 +4,5 @@ resource "cloudflare_email_security_block_sender" "example_email_security_block_
   pattern = "test@example.com"
   pattern_type = "EMAIL"
   comments = "Block sender with email test@example.com"
+  expires_at = "2027-01-01T00:00:00Z"
 }

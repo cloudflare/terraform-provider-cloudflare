@@ -95,7 +95,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"e": schema.StringAttribute{
-									Description: "RSA exponent",
+									Description: "For `alg: RS256` or `alg: RS384` or `alg: RS512` or `alg: PS256` or `alg: PS384` or `alg: PS512`: RSA exponent",
 									Computed:    true,
 								},
 								"kid": schema.StringAttribute{
@@ -114,22 +114,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"n": schema.StringAttribute{
-									Description: "RSA modulus",
+									Description: "For `alg: RS256` or `alg: RS384` or `alg: RS512` or `alg: PS256` or `alg: PS384` or `alg: PS512`: RSA modulus",
 									Computed:    true,
 								},
 								"crv": schema.StringAttribute{
-									Description: "Curve\nAvailable values: \"P-256\", \"P-384\".",
+									Description: "For `alg: ES256` or `alg: ES384`: Curve\nAvailable values: \"P-256\", \"P-384\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("P-256", "P-384"),
 									},
 								},
 								"x": schema.StringAttribute{
-									Description: "X EC coordinate",
+									Description: "For `alg: ES256` or `alg: ES384`: X EC coordinate",
 									Computed:    true,
 								},
 								"y": schema.StringAttribute{
-									Description: "Y EC coordinate",
+									Description: "For `alg: ES256` or `alg: ES384`: Y EC coordinate",
 									Computed:    true,
 								},
 							},

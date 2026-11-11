@@ -86,6 +86,11 @@ func (r *AIGatewayDynamicRoutingResource) Create(ctx context.Context, req resour
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	bytes, err = normalizeDynamicRoutingResponse(bytes)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to normalize http response", err.Error())
+		return
+	}
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -135,12 +140,16 @@ func (r *AIGatewayDynamicRoutingResource) Update(ctx context.Context, req resour
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	bytes, err = normalizeDynamicRoutingResponse(bytes)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to normalize http response", err.Error())
+		return
+	}
 	err = apijson.UnmarshalComputed(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -175,6 +184,11 @@ func (r *AIGatewayDynamicRoutingResource) Read(ctx context.Context, req resource
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	bytes, err = normalizeDynamicRoutingResponse(bytes)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to normalize http response", err.Error())
+		return
+	}
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -250,6 +264,11 @@ func (r *AIGatewayDynamicRoutingResource) ImportState(ctx context.Context, req r
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
+	bytes, err = normalizeDynamicRoutingResponse(bytes)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to normalize http response", err.Error())
+		return
+	}
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())

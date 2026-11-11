@@ -49,6 +49,7 @@ Read-Only:
 - `enabled` (Boolean) When false, the flag bypasses all rules and always serves `default_variation`.
 - `id` (String) Unique identifier for the flag within an app. Used in all evaluation and SDK calls.
 - `key` (String) Unique identifier for the flag within an app. Used in all evaluation and SDK calls.
+- `metadata` (Dynamic) Key-value metadata associated with the flag. Returned only when the flag has metadata.
 - `rules` (Attributes List) Targeting rules evaluated in ascending `priority`; the first matching rule wins. An empty array means the flag always serves `default_variation`. (see [below for nested schema](#nestedatt--result--rules))
 - `type` (String) Server-inferred value type shared by all of the flag's variations.
 Available values: "boolean", "string", "number", "json".
@@ -127,8 +128,6 @@ Read-Only:
 Read-Only:
 
 - `attribute` (String)
-- `clauses` (List of String)
-- `logical_operator` (String) Available values: "AND", "OR".
 - `operator` (String) Available values: "equals", "not_equals", "greater_than", "less_than", "greater_than_or_equals", "less_than_or_equals", "contains", "starts_with", "ends_with", "in", "not_in", "has", "not_has".
 - `value` (String) Value to compare against the context attribute. Must be an array for `in` and `not_in`; numeric and ISO-8601 datetime strings are accepted by the ordering operators.
 

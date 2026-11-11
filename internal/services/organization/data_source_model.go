@@ -53,6 +53,16 @@ func (m *OrganizationDataSourceModel) toListParams(_ context.Context) (params or
 		}
 		params.Containing = cloudflare.F(paramsContaining)
 	}
+	if !m.Filter.Direction.IsNull() {
+		params.Direction = cloudflare.F(organizations.OrganizationListParamsDirection(m.Filter.Direction.ValueString()))
+	}
+	if m.Filter.Member != nil {
+		paramsMember := organizations.OrganizationListParamsMember{}
+		if !m.Filter.Member.Email.IsNull() {
+			paramsMember.Email = cloudflare.F(m.Filter.Member.Email.ValueString())
+		}
+		params.Member = cloudflare.F(paramsMember)
+	}
 	if m.Filter.Name != nil {
 		paramsName := organizations.OrganizationListParamsName{}
 		if !m.Filter.Name.Contains.IsNull() {
@@ -65,6 +75,9 @@ func (m *OrganizationDataSourceModel) toListParams(_ context.Context) (params or
 			paramsName.StartsWith = cloudflare.F(m.Filter.Name.StartsWith.ValueString())
 		}
 		params.Name = cloudflare.F(paramsName)
+	}
+	if !m.Filter.OrderBy.IsNull() {
+		params.OrderBy = cloudflare.F(organizations.OrganizationListParamsOrderBy(m.Filter.OrderBy.ValueString()))
 	}
 	if !m.Filter.PageSize.IsNull() {
 		params.PageSize = cloudflare.F(m.Filter.PageSize.ValueInt64())
@@ -84,9 +97,11 @@ func (m *OrganizationDataSourceModel) toListParams(_ context.Context) (params or
 }
 
 type OrganizationMetaDataSourceModel struct {
-	HierarchyTags customfield.List[types.String]                                       `tfsdk:"hierarchy_tags" json:"hierarchy_tags,computed"`
-	ManagedBy     types.String                                                         `tfsdk:"managed_by" json:"managed_by,computed"`
-	TenantFlags   customfield.NestedObject[OrganizationMetaTenantFlagsDataSourceModel] `tfsdk:"tenant_flags" json:"tenant_flags,computed"`
+	AreChildAccountsAccessibleByOrgMembers types.Bool                                                           `tfsdk:"are_child_accounts_accessible_by_org_members" json:"are_child_accounts_accessible_by_org_members,computed"`
+	HierarchyTags                          customfield.List[types.String]                                       `tfsdk:"hierarchy_tags" json:"hierarchy_tags,computed"`
+	ManagedBy                              types.String                                                         `tfsdk:"managed_by" json:"managed_by,computed"`
+	TenantFlags                            customfield.NestedObject[OrganizationMetaTenantFlagsDataSourceModel] `tfsdk:"tenant_flags" json:"tenant_flags,computed"`
+	TenantType                             types.String                                                         `tfsdk:"tenant_type" json:"tenant_type,computed"`
 }
 
 type OrganizationMetaTenantFlagsDataSourceModel struct {
@@ -116,7 +131,10 @@ type OrganizationProfileDataSourceModel struct {
 type OrganizationFindOneByDataSourceModel struct {
 	ID         *[]types.String                         `tfsdk:"id" query:"id,computed"`
 	Containing *OrganizationsContainingDataSourceModel `tfsdk:"containing" query:"containing,optional"`
+	Direction  types.String                            `tfsdk:"direction" query:"direction,optional"`
+	Member     *OrganizationsMemberDataSourceModel     `tfsdk:"member" query:"member,optional"`
 	Name       *OrganizationsNameDataSourceModel       `tfsdk:"name" query:"name,optional"`
+	OrderBy    types.String                            `tfsdk:"order_by" query:"order_by,optional"`
 	PageSize   types.Int64                             `tfsdk:"page_size" query:"page_size,optional"`
 	PageToken  types.String                            `tfsdk:"page_token" query:"page_token,optional"`
 	Parent     *OrganizationsParentDataSourceModel     `tfsdk:"parent" query:"parent,computed"`

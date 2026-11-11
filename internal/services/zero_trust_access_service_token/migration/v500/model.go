@@ -39,15 +39,19 @@ type SourceAccessServiceTokenModel struct {
 // Note: This matches the model in the parent package's model.go file.
 // We duplicate it here to keep the migration package self-contained.
 type TargetAccessServiceTokenModel struct {
-	ID                            types.String      `tfsdk:"id"`
-	AccountID                     types.String      `tfsdk:"account_id"`
-	ZoneID                        types.String      `tfsdk:"zone_id"`
-	Name                          types.String      `tfsdk:"name"`
-	Enabled                       types.Bool        `tfsdk:"enabled"`
-	PreviousClientSecretExpiresAt timetypes.RFC3339 `tfsdk:"previous_client_secret_expires_at"`
-	ClientSecretVersion           types.Float64     `tfsdk:"client_secret_version"`
-	Duration                      types.String      `tfsdk:"duration"`
-	ClientID                      types.String      `tfsdk:"client_id"`
-	ClientSecret                  types.String      `tfsdk:"client_secret"`
-	ExpiresAt                     timetypes.RFC3339 `tfsdk:"expires_at"`
+	ID                            types.String             `tfsdk:"id"`
+	AccountID                     types.String             `tfsdk:"account_id"`
+	ZoneID                        types.String             `tfsdk:"zone_id"`
+	Name                          types.String             `tfsdk:"name"`
+	Enabled                       types.Bool               `tfsdk:"enabled"`
+	PreviousClientSecretExpiresAt timetypes.RFC3339        `tfsdk:"previous_client_secret_expires_at"`
+	Tags                          *map[string]types.String `tfsdk:"tags"`
+	ClientSecretVersion           types.Float64            `tfsdk:"client_secret_version"`
+	Duration                      types.String             `tfsdk:"duration"`
+	ClientID                      types.String             `tfsdk:"client_id"`
+	ClientSecret                  types.String             `tfsdk:"client_secret"`
+	ExpiresAt                     timetypes.RFC3339        `tfsdk:"expires_at"`
+	LeakReportURL                 types.String             `tfsdk:"leak_report_url"`
+	LeakReportedAt                timetypes.RFC3339        `tfsdk:"leak_reported_at"`
+	LeakReporter                  types.String             `tfsdk:"leak_reporter"`
 }

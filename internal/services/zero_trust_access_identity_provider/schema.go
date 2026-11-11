@@ -58,8 +58,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"type": schema.StringAttribute{
-				Description: "The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).\nAvailable values: \"onetimepin\", \"azureAD\", \"saml\", \"centrify\", \"facebook\", \"github\", \"google-apps\", \"google\", \"linkedin\", \"oidc\", \"okta\", \"onelogin\", \"pingone\", \"yandex\", \"cloudflare\", \"passkeys\".",
-				Required:    true,
+				Description:   "The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).\nAvailable values: \"onetimepin\", \"azureAD\", \"saml\", \"centrify\", \"facebook\", \"github\", \"google-apps\", \"google\", \"linkedin\", \"oidc\", \"duo\", \"okta\", \"onelogin\", \"pingone\", \"yandex\", \"cloudflare\", \"passkeys\".",
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -73,6 +73,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"google",
 						"linkedin",
 						"oidc",
+						"duo",
 						"okta",
 						"onelogin",
 						"pingone",
@@ -92,11 +93,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						ElementType: types.StringType,
 					},
 					"client_id": schema.StringAttribute{
-						Description: "Your OAuth Client ID",
+						Description: "Your OAuth Client ID\n\nThe client ID from the Duo Generic OIDC Relying Party metadata.",
 						Optional:    true,
 					},
 					"client_secret": schema.StringAttribute{
-						Description: "Your OAuth Client Secret",
+						Description: "Your OAuth Client Secret\n\nThe client secret from the Duo Generic OIDC Relying Party metadata.",
 						Optional:    true,
 						Sensitive:   true,
 					},
@@ -119,7 +120,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"prompt": schema.StringAttribute{
-						Description: "Indicates the type of user interaction that is required. prompt=login forces the user to enter their credentials on that request, negating single-sign on. prompt=none is the opposite. It ensures that the user isn't presented with any interactive prompt. If the request can't be completed silently by using single-sign on, the Microsoft identity platform returns an interaction_required error. prompt=select_account interrupts single sign-on providing account selection experience listing all the accounts either in session or any remembered account or an option to choose to use a different account altogether.\nAvailable values: \"login\", \"select_account\", \"none\", \"consent\".",
+						Description: "Indicates the type of user interaction that is required. prompt=login forces the user to enter their credentials on that request, negating single-sign on. prompt=none is the opposite. It ensures that the user isn't presented with any interactive prompt. If the request can't be completed silently by using single-sign on, the Microsoft identity platform returns an interaction_required error. prompt=select_account interrupts single sign-on providing account selection experience listing all the accounts either in session or any remembered account or an option to choose to use a different account altogether.\n\nConfigures the prompt behavior for Google authentication.\nAvailable values: \"login\", \"select_account\", \"none\", \"consent\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -190,10 +191,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"token_url": schema.StringAttribute{
-						Description: "The token_endpoint URL of your IdP",
+						Description: "The token_endpoint URL of your IdP. Updates that change its origin (scheme, host, or port) require client_secret in the request. Path-only changes do not require client_secret.",
 						Optional:    true,
 						Validators: []validator.String{
 							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "oidc"),
+						},
+					},
+					"issuer_url": schema.StringAttribute{
+						Description: "The issuer URL from the Duo Generic OIDC Relying Party metadata.\n\nIdP Entity ID or Issuer URL",
+						Optional:    true,
+						Validators: []validator.String{
+							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "saml", "duo"),
 						},
 					},
 					"authorization_server_id": schema.StringAttribute{
@@ -245,10 +253,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:      true,
 						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 					},
-				"force_authn": schema.BoolAttribute{
-					Description: "Asks the IdP to reauthenticate the user for each SAML authentication request.",
-					Optional:    true,
-				},
+					"force_authn": schema.BoolAttribute{
+						Description: "Asks the IdP to reauthenticate the user for each SAML authentication request.",
+						Optional:    true,
+					},
 					"header_attributes": schema.ListNestedAttribute{
 						Description: "Add a list of attribute names that will be returned in the response header from the Access callback.",
 						Optional:    true,
@@ -273,13 +281,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						ElementType: types.StringType,
 						Validators: []validator.List{
-							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "saml"),
-						},
-					},
-					"issuer_url": schema.StringAttribute{
-						Description: "IdP Entity ID or Issuer URL",
-						Optional:    true,
-						Validators: []validator.String{
 							customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), "saml"),
 						},
 					},

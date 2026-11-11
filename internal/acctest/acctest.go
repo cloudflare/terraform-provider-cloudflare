@@ -135,16 +135,26 @@ func TestAccPreCheck_CleanZoneManagedTransforms(t *testing.T) {
 		return
 	}
 
+	if res == nil {
+		return
+	}
+
+	headers, ok := res.AsUnion().(managed_transforms.ManagedTransformListResponseObject)
+	if !ok {
+		t.Logf("TestAccPreCheck_CleanZoneManagedTransforms: unexpected managed transforms response type: %T", res.AsUnion())
+		return
+	}
+
 	// Build lists with all headers disabled.
-	reqHeaders := make([]managed_transforms.ManagedTransformEditParamsManagedRequestHeader, 0, len(res.ManagedRequestHeaders))
-	for _, h := range res.ManagedRequestHeaders {
+	reqHeaders := make([]managed_transforms.ManagedTransformEditParamsManagedRequestHeader, 0, len(headers.ManagedRequestHeaders))
+	for _, h := range headers.ManagedRequestHeaders {
 		reqHeaders = append(reqHeaders, managed_transforms.ManagedTransformEditParamsManagedRequestHeader{
 			ID:      cloudflare.F(h.ID),
 			Enabled: cloudflare.F(false),
 		})
 	}
-	respHeaders := make([]managed_transforms.ManagedTransformEditParamsManagedResponseHeader, 0, len(res.ManagedResponseHeaders))
-	for _, h := range res.ManagedResponseHeaders {
+	respHeaders := make([]managed_transforms.ManagedTransformEditParamsManagedResponseHeader, 0, len(headers.ManagedResponseHeaders))
+	for _, h := range headers.ManagedResponseHeaders {
 		respHeaders = append(respHeaders, managed_transforms.ManagedTransformEditParamsManagedResponseHeader{
 			ID:      cloudflare.F(h.ID),
 			Enabled: cloudflare.F(false),
@@ -897,11 +907,17 @@ func isEmptySlice(v interface{}) bool {
 // ExpectEmptyPlanExceptGatewayPolicyAPIChanges is a plan check specifically for
 // cloudflare_zero_trust_gateway_policy resources. It expects an empty plan except for:
 // - Falsey-to-null changes (like the base checker)
-// - Precedence changes (API auto-calculates with random offset)
+// - Explicitly reviewed precedence changes (matched by resource and exact values)
 // - rule_settings changes (API populates empty collections, removes deprecated fields)
-type expectEmptyPlanExceptGatewayPolicyAPIChanges struct{}
+type expectEmptyPlanExceptGatewayPolicyAPIChanges struct {
+	precedenceChanges map[string]GatewayPolicyPrecedenceChange
+}
 
 func (e expectEmptyPlanExceptGatewayPolicyAPIChanges) CheckPlan(ctx context.Context, req plancheck.CheckPlanRequest, resp *plancheck.CheckPlanResponse) {
+	gatewayPolicyPrecedencePlanCheck{expected: e.precedenceChanges}.CheckPlan(ctx, req, resp)
+	if resp.Error != nil {
+		return
+	}
 	for _, rc := range req.Plan.ResourceChanges {
 		if rc.Change.Actions[0] == "no-op" || rc.Change.Actions[0] == "read" {
 			continue
@@ -950,9 +966,9 @@ func (e expectEmptyPlanExceptGatewayPolicyAPIChanges) CheckPlan(ctx context.Cont
 				continue // This change is allowed - API sets default session duration
 			}
 
-			// Gateway Policy specific: Allow precedence changes (API auto-calculates with random offset)
+			// Precedence changes were checked against exact expectations above.
 			if strings.Contains(rc.Address, "cloudflare_zero_trust_gateway_policy") && key == "precedence" {
-				continue // This change is allowed - API modifies precedence values
+				continue
 			}
 
 			// Gateway Policy specific: Allow Computed field changes (v5 provider schema issues)
@@ -1491,17 +1507,22 @@ func MigrationV2TestStepForZoneSetting(t *testing.T, v4Config string, tmpDir str
 
 // MigrationV2TestStepForGatewayPolicy creates a test step for cloudflare_zero_trust_gateway_policy migration
 // that uses a custom plan checker to handle Gateway Policy API normalization behaviors:
-// - Precedence changes (API auto-calculates with random offset 1-100)
+// - Explicitly reviewed precedence changes
 // - rule_settings changes (API populates empty collections, removes deprecated fields)
 //
 // Parameters:
 //   - expectNonEmptyPlan: Set to true for tests with rule_settings that have v5 provider schema issues
-func MigrationV2TestStepForGatewayPolicy(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, expectNonEmptyPlan bool, stateChecks []statecheck.StateCheck) resource.TestStep {
+func MigrationV2TestStepForGatewayPolicy(t *testing.T, v4Config string, tmpDir string, exactVersion string, sourceVersion string, targetVersion string, expectNonEmptyPlan bool, stateChecks []statecheck.StateCheck, precedenceChanges map[string]GatewayPolicyPrecedenceChange) resource.TestStep {
 	return resource.TestStep{
 		PreConfig: func() {
 			WriteOutConfig(t, v4Config, tmpDir)
 			debugLogf(t, "Running migration command for Gateway Policy: %s (%s -> %s)", exactVersion, sourceVersion, targetVersion)
 			RunMigrationV2Command(t, v4Config, tmpDir, sourceVersion, targetVersion)
+			// tf-migrate pins the latest registry version in this helper file.
+			// The migration step must use the local provider supplied below.
+			if err := os.Remove(filepath.Join(tmpDir, "provider.tf")); err != nil {
+				t.Fatalf("Removing migration-only provider config: %v", err)
+			}
 		},
 		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
 		ConfigDirectory:          config.StaticDirectory(tmpDir),
@@ -1509,7 +1530,7 @@ func MigrationV2TestStepForGatewayPolicy(t *testing.T, v4Config string, tmpDir s
 		ConfigPlanChecks: resource.ConfigPlanChecks{
 			PreApply: []plancheck.PlanCheck{
 				DebugNonEmptyPlan,
-				ExpectEmptyPlanExceptGatewayPolicyAPIChanges,
+				expectEmptyPlanExceptGatewayPolicyAPIChanges{precedenceChanges: precedenceChanges},
 			},
 			// Note: PostApplyPostRefresh checks are intentionally omitted to allow
 			// the ExpectNonEmptyPlan field to control refresh plan expectations.

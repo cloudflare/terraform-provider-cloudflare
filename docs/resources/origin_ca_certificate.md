@@ -35,6 +35,7 @@ resource "cloudflare_origin_ca_certificate" "example_origin_ca_certificate" {
   hostnames = ["example.com", "*.example.com", "sub.example.com"]
   request_type = "origin-rsa"
   requested_validity = 5475
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
 }
 ```
 
@@ -53,12 +54,14 @@ Available values: "origin-rsa", "origin-ecc", "keyless-certificate".
 
 - `requested_validity` (Number) The number of days for which the certificate should be valid.
 Available values: 7, 30, 90, 365, 730, 1095, 5475.
+- `zone_id` (String) Identifier of the zone whose keyless servers the certificate is for. Required when `request_type` is `keyless-certificate`; ignored otherwise.
 
 ### Read-Only
 
 - `certificate` (String) The Origin CA certificate. Will be newline-encoded.
 - `expires_on` (String) When the certificate will expire.
 - `id` (String) The x509 serial number of the Origin CA certificate.
+- `revoked_at` (String) When the certificate was revoked.
 
 ## Import
 

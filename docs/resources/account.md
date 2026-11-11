@@ -58,20 +58,22 @@ resource "cloudflare_account" "example_account" {
 
 ### Required
 
-- `name` (String) Account name
+- `name` (String) Account name, limited to 65 UTF-8 bytes.
 
 ### Optional
 
 - `managed_by` (Attributes) Parent container details (see [below for nested schema](#nestedatt--managed_by))
 - `settings` (Attributes) Account settings (see [below for nested schema](#nestedatt--settings))
 - `standalone` (Boolean) Set to `true` and omit `unit` to create a standalone Free Account. If provided, this field must be `true`.
-- `type` (String, Deprecated) Available values: "standard", "enterprise".
+- `type` (String, Deprecated) the type of account being created. For self-serve customers, use standard. for enterprise customers, use enterprise.
+Available values: "standard", "enterprise".
 - `unit` (Attributes) Information related to the tenant unit. Provide its ID and omit `standalone` to create the Account within an Organization. See https://developers.cloudflare.com/tenant/how-to/manage-accounts/. (see [below for nested schema](#nestedatt--unit))
 
 ### Read-Only
 
 - `created_on` (String) Timestamp for the creation of the account
 - `id` (String) Identifier
+- `legacy_flags` (Attributes) Legacy account flags. (see [below for nested schema](#nestedatt--legacy_flags))
 
 <a id="nestedatt--managed_by"></a>
 ### Nested Schema for `managed_by`
@@ -80,6 +82,8 @@ Read-Only:
 
 - `parent_org_id` (String) ID of the parent Organization, if one exists
 - `parent_org_name` (String) Name of the parent Organization, if one exists
+- `root_org_id` (String) ID of the root Organization, if one exists
+- `should_display_parent_orgs` (Boolean) Indicates whether the parent Organization hierarchy should be displayed
 
 
 <a id="nestedatt--settings"></a>
@@ -98,6 +102,23 @@ Two-Factor Authentication is enabled
 Optional:
 
 - `id` (String) Tenant unit ID
+
+
+<a id="nestedatt--legacy_flags"></a>
+### Nested Schema for `legacy_flags`
+
+Read-Only:
+
+- `enterprise_zone_quota` (Attributes) Enterprise zone quota for standard and enterprise accounts. Accounts without a quota have a maximum of 0. (see [below for nested schema](#nestedatt--legacy_flags--enterprise_zone_quota))
+
+<a id="nestedatt--legacy_flags--enterprise_zone_quota"></a>
+### Nested Schema for `legacy_flags.enterprise_zone_quota`
+
+Read-Only:
+
+- `available` (Number) Number of additional Enterprise zones available. Returns 0 if the quota is not allocated or is exhausted.
+- `current` (Number) Current number of Enterprise zones.
+- `maximum` (Number) Maximum number of Enterprise zones allowed.
 
 ## Import
 

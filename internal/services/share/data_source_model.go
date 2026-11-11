@@ -24,6 +24,7 @@ type ShareDataSourceModel struct {
 	AccountID                    types.String                                                `tfsdk:"account_id" path:"account_id,required"`
 	IncludeRecipientCounts       types.Bool                                                  `tfsdk:"include_recipient_counts" query:"include_recipient_counts,optional"`
 	IncludeResources             types.Bool                                                  `tfsdk:"include_resources" query:"include_resources,optional"`
+	IncludeTagsFrom              types.String                                                `tfsdk:"include_tags_from" query:"include_tags_from,optional"`
 	AccountName                  types.String                                                `tfsdk:"account_name" json:"account_name,computed"`
 	AssociatedRecipientCount     types.Int64                                                 `tfsdk:"associated_recipient_count" json:"associated_recipient_count,computed"`
 	AssociatingRecipientCount    types.Int64                                                 `tfsdk:"associating_recipient_count" json:"associating_recipient_count,computed"`
@@ -36,6 +37,7 @@ type ShareDataSourceModel struct {
 	OrganizationID               types.String                                                `tfsdk:"organization_id" json:"organization_id,computed"`
 	Status                       types.String                                                `tfsdk:"status" json:"status,computed"`
 	TargetType                   types.String                                                `tfsdk:"target_type" json:"target_type,computed"`
+	Tags                         customfield.Map[types.String]                               `tfsdk:"tags" json:"tags,computed"`
 	Resources                    customfield.NestedObjectList[ShareResourcesDataSourceModel] `tfsdk:"resources" json:"resources,computed"`
 	Filter                       *ShareFindOneByDataSourceModel                              `tfsdk:"filter"`
 }
@@ -50,6 +52,9 @@ func (m *ShareDataSourceModel) toReadParams(_ context.Context) (params resource_
 	}
 	if !m.IncludeResources.IsNull() {
 		params.IncludeResources = cloudflare.F(m.IncludeResources.ValueBool())
+	}
+	if !m.IncludeTagsFrom.IsNull() {
+		params.IncludeTagsFrom = cloudflare.F(resource_sharing.ResourceSharingGetParamsIncludeTagsFrom(m.IncludeTagsFrom.ValueString()))
 	}
 
 	return
@@ -84,6 +89,9 @@ func (m *ShareDataSourceModel) toListParams(_ context.Context) (params resource_
 	if !m.IncludeResources.IsNull() {
 		params.IncludeResources = cloudflare.F(m.IncludeResources.ValueBool())
 	}
+	if !m.Filter.IncludeTagsFrom.IsNull() {
+		params.IncludeTagsFrom = cloudflare.F(resource_sharing.ResourceSharingListParamsIncludeTagsFrom(m.Filter.IncludeTagsFrom.ValueString()))
+	}
 	if !m.Filter.Kind.IsNull() {
 		params.Kind = cloudflare.F(resource_sharing.ResourceSharingListParamsKind(m.Filter.Kind.ValueString()))
 	}
@@ -113,11 +121,12 @@ type ShareResourcesDataSourceModel struct {
 }
 
 type ShareFindOneByDataSourceModel struct {
-	Direction     types.String    `tfsdk:"direction" query:"direction,computed_optional"`
-	Kind          types.String    `tfsdk:"kind" query:"kind,optional"`
-	Order         types.String    `tfsdk:"order" query:"order,computed_optional"`
-	ResourceTypes *[]types.String `tfsdk:"resource_types" query:"resource_types,optional"`
-	Status        types.String    `tfsdk:"status" query:"status,optional"`
-	Tag           *[]types.String `tfsdk:"tag" query:"tag,optional"`
-	TargetType    types.String    `tfsdk:"target_type" query:"target_type,optional"`
+	Direction       types.String    `tfsdk:"direction" query:"direction,computed_optional"`
+	IncludeTagsFrom types.String    `tfsdk:"include_tags_from" query:"include_tags_from,optional"`
+	Kind            types.String    `tfsdk:"kind" query:"kind,optional"`
+	Order           types.String    `tfsdk:"order" query:"order,computed_optional"`
+	ResourceTypes   *[]types.String `tfsdk:"resource_types" query:"resource_types,optional"`
+	Status          types.String    `tfsdk:"status" query:"status,optional"`
+	Tag             *[]types.String `tfsdk:"tag" query:"tag,optional"`
+	TargetType      types.String    `tfsdk:"target_type" query:"target_type,optional"`
 }

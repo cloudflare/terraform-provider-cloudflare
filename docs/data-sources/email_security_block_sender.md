@@ -38,6 +38,7 @@ data "cloudflare_email_security_block_sender" "example_email_security_block_send
 
 - `comments` (String)
 - `created_at` (String)
+- `expires_at` (String) Timestamp at which the pattern expires. After this time, Email Security ignores the pattern. The value must lie in the future. Send `null` to clear the expiration.
 - `id` (String) Blocked sender pattern identifier.
 - `is_regex` (Boolean) Whether `pattern` is a regular expression instead of a literal value.
 - `last_modified` (String, Deprecated) Deprecated, use `modified_at` instead. End of life: November 1, 2026.
@@ -57,6 +58,7 @@ Optional:
 
 - `direction` (String) The sorting direction.
 Available values: "asc", "desc".
+- `expired` (Boolean) Filter to return only expired patterns (`true`) or only patterns that still apply (`false`). Omit to return both.
 - `order` (String) Field to sort by.
 Available values: "pattern", "created_at".
 - `pattern` (String) Filter by pattern value.

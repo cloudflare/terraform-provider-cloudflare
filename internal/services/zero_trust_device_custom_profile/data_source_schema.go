@@ -28,7 +28,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 			},
 			"account_id": schema.StringAttribute{
-				Optional:    true,
+				Optional: true,
 			},
 			"allow_mode_switch": schema.BoolAttribute{
 				Description: "Whether to allow the user to switch WARP between modes.",
@@ -60,6 +60,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"disable_auto_fallback": schema.BoolAttribute{
 				Description: "If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.",
+				Computed:    true,
+			},
+			"enable_device_credential_authentication": schema.BoolAttribute{
+				Description: "Determines whether the WARP client can silently reauthenticate the user with device credentials (Microsoft Entra) instead of prompting for browser-based reauthentication.",
 				Computed:    true,
 			},
 			"enabled": schema.BoolAttribute{

@@ -29,6 +29,7 @@ resource "cloudflare_workflow" "example_workflow" {
     error_retention = "5 minutes"
     success_retention = "5 minutes"
   }
+  jurisdiction = "eu"
   limits = {
     steps = 1
   }
@@ -52,6 +53,8 @@ resource "cloudflare_workflow" "example_workflow" {
 
 - `concurrency` (Attributes) (see [below for nested schema](#nestedatt--concurrency))
 - `default_retention` (Attributes) Default retention applied to instances of this version when they do not set their own retention. (see [below for nested schema](#nestedatt--default_retention))
+- `jurisdiction` (String) Jurisdiction where instances of this workflow run and store data. Can only be set when the workflow is created and cannot be changed afterwards; omit it to keep the existing jurisdiction.
+Available values: "eu", "fedramp", "us".
 - `limits` (Attributes) (see [below for nested schema](#nestedatt--limits))
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
 

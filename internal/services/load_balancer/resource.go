@@ -20,7 +20,6 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*LoadBalancerResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*LoadBalancerResource)(nil)
 var _ resource.ResourceWithImportState = (*LoadBalancerResource)(nil)
 
 func NewResource() resource.Resource {
@@ -264,8 +263,4 @@ func (r *LoadBalancerResource) ImportState(ctx context.Context, req resource.Imp
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *LoadBalancerResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-
 }

@@ -47,8 +47,9 @@ func Transform(ctx context.Context, source *SourceCloudflareTeamsRuleModel) (*Ta
 		Traffic:       source.Traffic,
 		Identity:      source.Identity,
 		DevicePosture: source.DevicePosture,
-		Precedence:    normalizeGatewayPolicyPrecedence(source.Precedence),
-		Version:       source.Version, // Direct copy - both are types.Int64
+		// Preserve source precedence; a large value is not proof of a v4 hash suffix.
+		Precedence: source.Precedence,
+		Version:    source.Version, // Direct copy - both are types.Int64
 	}
 
 	// Step 3: Handle description (Required in v4, Optional in v5)
@@ -100,22 +101,6 @@ func Transform(ctx context.Context, source *SourceCloudflareTeamsRuleModel) (*Ta
 	return target, diags
 }
 
-func normalizeGatewayPolicyPrecedence(v types.Int64) types.Int64 {
-	if v.IsNull() || v.IsUnknown() {
-		return v
-	}
-
-	value := v.ValueInt64()
-	// v4 API-backed state may persist precedence with a three-digit suffix
-	// (e.g. 400412 for configured 400). During migration we normalize to
-	// user-configured precedence when this suffix encoding is detected.
-	if value >= 10000 {
-		return types.Int64Value(value / 1000)
-	}
-
-	return v
-}
-
 // transformRuleSettings converts v4 rule_settings (nested block) to v5 rule_settings (nested object).
 func transformRuleSettings(ctx context.Context, source *SourceRuleSettingsModel) (*TargetRuleSettingsModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
@@ -159,9 +144,13 @@ func transformRuleSettings(ctx context.Context, source *SourceRuleSettingsModel)
 
 	// Transform nested structures (array[0] → pointer)
 
-	// audit_ssh
+	// audit_ssh: Gateway retired the audit_ssh action and v5 has no audit_ssh
+	// setting, so the v4 value is dropped.
 	if len(source.AuditSSH) > 0 {
-		target.AuditSSH = transformAuditSSH(&source.AuditSSH[0])
+		diags.AddWarning(
+			"Dropped rule_settings.audit_ssh",
+			"Gateway no longer supports the audit_ssh action, and cloudflare_zero_trust_gateway_policy has no audit_ssh setting. The v4 rule_settings.audit_ssh value was dropped during migration. Remove audit_ssh from your configuration.",
+		)
 	}
 
 	// l4override
@@ -227,15 +216,6 @@ func normalizeGatewayPolicyFalseBoolToNull(v types.Bool) types.Bool {
 }
 
 // Helper transformation functions for nested structures
-
-func transformAuditSSH(source *SourceAuditSSHModel) *TargetAuditSSHModel {
-	if source == nil {
-		return nil
-	}
-	return &TargetAuditSSHModel{
-		CommandLogging: source.CommandLogging,
-	}
-}
 
 func transformL4override(source *SourceL4overrideModel) *TargetL4overrideModel {
 	if source == nil {

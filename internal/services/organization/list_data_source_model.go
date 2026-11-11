@@ -18,10 +18,13 @@ type OrganizationsResultListDataSourceEnvelope struct {
 }
 
 type OrganizationsDataSourceModel struct {
+	Direction  types.String                                                     `tfsdk:"direction" query:"direction,optional"`
+	OrderBy    types.String                                                     `tfsdk:"order_by" query:"order_by,optional"`
 	PageSize   types.Int64                                                      `tfsdk:"page_size" query:"page_size,optional"`
 	PageToken  types.String                                                     `tfsdk:"page_token" query:"page_token,optional"`
 	ID         *[]types.String                                                  `tfsdk:"id" query:"id,optional"`
 	Containing *OrganizationsContainingDataSourceModel                          `tfsdk:"containing" query:"containing,optional"`
+	Member     *OrganizationsMemberDataSourceModel                              `tfsdk:"member" query:"member,optional"`
 	Name       *OrganizationsNameDataSourceModel                                `tfsdk:"name" query:"name,optional"`
 	Parent     *OrganizationsParentDataSourceModel                              `tfsdk:"parent" query:"parent,optional"`
 	MaxItems   types.Int64                                                      `tfsdk:"max_items"`
@@ -53,6 +56,16 @@ func (m *OrganizationsDataSourceModel) toListParams(_ context.Context) (params o
 		}
 		params.Containing = cloudflare.F(paramsContaining)
 	}
+	if !m.Direction.IsNull() {
+		params.Direction = cloudflare.F(organizations.OrganizationListParamsDirection(m.Direction.ValueString()))
+	}
+	if m.Member != nil {
+		paramsMember := organizations.OrganizationListParamsMember{}
+		if !m.Member.Email.IsNull() {
+			paramsMember.Email = cloudflare.F(m.Member.Email.ValueString())
+		}
+		params.Member = cloudflare.F(paramsMember)
+	}
 	if m.Name != nil {
 		paramsName := organizations.OrganizationListParamsName{}
 		if !m.Name.Contains.IsNull() {
@@ -65,6 +78,9 @@ func (m *OrganizationsDataSourceModel) toListParams(_ context.Context) (params o
 			paramsName.StartsWith = cloudflare.F(m.Name.StartsWith.ValueString())
 		}
 		params.Name = cloudflare.F(paramsName)
+	}
+	if !m.OrderBy.IsNull() {
+		params.OrderBy = cloudflare.F(organizations.OrganizationListParamsOrderBy(m.OrderBy.ValueString()))
 	}
 	if !m.PageSize.IsNull() {
 		params.PageSize = cloudflare.F(m.PageSize.ValueInt64())
@@ -89,6 +105,10 @@ type OrganizationsContainingDataSourceModel struct {
 	User         types.String `tfsdk:"user" json:"user,optional"`
 }
 
+type OrganizationsMemberDataSourceModel struct {
+	Email types.String `tfsdk:"email" json:"email,optional"`
+}
+
 type OrganizationsNameDataSourceModel struct {
 	Contains   types.String `tfsdk:"contains" json:"contains,optional"`
 	EndsWith   types.String `tfsdk:"ends_with" json:"endsWith,optional"`
@@ -110,9 +130,11 @@ type OrganizationsResultDataSourceModel struct {
 }
 
 type OrganizationsMetaDataSourceModel struct {
-	HierarchyTags customfield.List[types.String]                                        `tfsdk:"hierarchy_tags" json:"hierarchy_tags,computed"`
-	ManagedBy     types.String                                                          `tfsdk:"managed_by" json:"managed_by,computed"`
-	TenantFlags   customfield.NestedObject[OrganizationsMetaTenantFlagsDataSourceModel] `tfsdk:"tenant_flags" json:"tenant_flags,computed"`
+	AreChildAccountsAccessibleByOrgMembers types.Bool                                                            `tfsdk:"are_child_accounts_accessible_by_org_members" json:"are_child_accounts_accessible_by_org_members,computed"`
+	HierarchyTags                          customfield.List[types.String]                                        `tfsdk:"hierarchy_tags" json:"hierarchy_tags,computed"`
+	ManagedBy                              types.String                                                          `tfsdk:"managed_by" json:"managed_by,computed"`
+	TenantFlags                            customfield.NestedObject[OrganizationsMetaTenantFlagsDataSourceModel] `tfsdk:"tenant_flags" json:"tenant_flags,computed"`
+	TenantType                             types.String                                                          `tfsdk:"tenant_type" json:"tenant_type,computed"`
 }
 
 type OrganizationsMetaTenantFlagsDataSourceModel struct {

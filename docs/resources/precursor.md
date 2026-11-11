@@ -14,13 +14,14 @@ description: |-
 ```terraform
 resource "cloudflare_precursor" "example_precursor" {
   zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  default_mode = "min-friction"
-  enforcement_rules = [{
+  mode = "monitor"
+  rules = [{
     expression = "http.request.uri.path eq \"/login\""
-    mode = "max-security"
-    description = "Ease friction on the login path"
+    show_interstitial = true
+    description = "Show an interstitial on the login path"
     enabled = true
   }]
+  show_interstitial = true
 }
 ```
 
@@ -33,24 +34,26 @@ resource "cloudflare_precursor" "example_precursor" {
 
 ### Optional
 
-- `default_mode` (String, Deprecated) The zone-level Precursor enforcement mode applied to requests that do
-not match a more specific enforcement rule.
-Available values: "off", "min-friction", "max-security".
-- `enforcement_rules` (Attributes List, Deprecated) The ordered list of enforcement rules for the zone. (see [below for nested schema](#nestedatt--enforcement_rules))
+- `mode` (String) Controls Precursor detection for the zone. `off` disables detection,
+`monitor` records detections without affecting bot scores, and `arm`
+allows detections to affect bot scores.
+Available values: "off", "monitor", "arm".
+- `rules` (Attributes List) The ordered list of Precursor rules for the zone. (see [below for nested schema](#nestedatt--rules))
+- `show_interstitial` (Boolean) Whether Precursor shows an interstitial when it takes action on a
+request.
 
 ### Read-Only
 
 - `id` (String) Identifier.
 
-<a id="nestedatt--enforcement_rules"></a>
-### Nested Schema for `enforcement_rules`
+<a id="nestedatt--rules"></a>
+### Nested Schema for `rules`
 
 Required:
 
 - `expression` (String) The filter expression that determines which requests the rule matches.
-- `mode` (String) The override mode Precursor applies to requests matching an enforcement
-rule. Unlike `default_mode`, this cannot be `off`.
-Available values: "min-friction", "max-security".
+- `show_interstitial` (Boolean) Whether Precursor shows an interstitial when it takes action on a
+request.
 
 Optional:
 
@@ -66,7 +69,7 @@ Read-Only:
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_precursor.example '<zone_id>'
+$ terraform import cloudflare_precursor.example '<zone_id>/<cloudflare_version>'
 ```
 
 

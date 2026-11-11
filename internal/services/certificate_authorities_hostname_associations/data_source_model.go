@@ -17,10 +17,10 @@ type CertificateAuthoritiesHostnameAssociationsResultDataSourceEnvelope struct {
 }
 
 type CertificateAuthoritiesHostnameAssociationsDataSourceModel struct {
-	ID                types.String                   `tfsdk:"id" path:"zone_id,computed"`
-	ZoneID            types.String                   `tfsdk:"zone_id" path:"zone_id,optional"`
-	MTLSCertificateID types.String                   `tfsdk:"mtls_certificate_id" query:"mtls_certificate_id,optional"`
-	Hostnames         customfield.List[types.String] `tfsdk:"hostnames" json:"hostnames,computed"`
+	ID                types.String                  `tfsdk:"id" path:"zone_id,computed"`
+	ZoneID            types.String                  `tfsdk:"zone_id" path:"zone_id,optional"`
+	MTLSCertificateID types.String                  `tfsdk:"mtls_certificate_id" query:"mtls_certificate_id,optional"`
+	Hostnames         customfield.Set[types.String] `tfsdk:"hostnames" json:"hostnames,computed"`
 }
 
 func (m *CertificateAuthoritiesHostnameAssociationsDataSourceModel) toReadParams(_ context.Context) (params certificate_authorities.HostnameAssociationGetParams, diags diag.Diagnostics) {

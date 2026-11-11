@@ -33,7 +33,7 @@ func testAccCloudflareZoneConfigBasic(rnd string) string {
 	return fmt.Sprintf(`
 data "cloudflare_zone" "%[1]s" {
   filter = {
-  	name = "terraform.cfapi.net"
+    name = "terraform.cfapi.net"
   }
 }
 `, rnd)

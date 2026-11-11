@@ -31,6 +31,9 @@ resource "cloudflare_workers_script" "example_workers_script" {
       enabled = true
       cross_version_cache = true
     }
+    code_update_strategy = {
+      mode = "immediate"
+    }
     compatibility_date = "2021-01-01T00:00:00Z"
     compatibility_flags = ["nodejs_compat"]
     exports = {

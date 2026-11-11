@@ -53,7 +53,7 @@ resource "cloudflare_hyperdrive_config" "example_hyperdrive_config" {
 ### Optional
 
 - `caching` (Attributes) (see [below for nested schema](#nestedatt--caching))
-- `integration` (String)
+- `integration` (String) Selects a PlanetScale database and provisions credentials managed by Cloudflare when creating a Hyperdrive configuration. The Cloudflare account must already be linked to PlanetScale in the Hyperdrive dashboard. The selection is returned as read-only metadata and cannot be changed with replace or update operations.
 - `mtls` (Attributes) mTLS configuration for the origin connection. Cannot be used with VPC Service origins; TLS must be managed on the VPC Service. (see [below for nested schema](#nestedatt--mtls))
 - `origin` (Attributes) Combines database connection fields with exactly one supported network location. (see [below for nested schema](#nestedatt--origin))
 - `origin_connection_limit` (Number) The (soft) maximum number of connections the Hyperdrive is allowed to make to the origin database.
@@ -76,8 +76,8 @@ Contact Cloudflare if you need a higher limit.
 Optional:
 
 - `disabled` (Boolean)
-- `max_age` (Number)
-- `stale_while_revalidate` (Number)
+- `max_age` (Number) Specify the maximum duration (in seconds) items should persist in the cache. Defaults to 60 seconds if not specified.
+- `stale_while_revalidate` (Number) Specify the number of seconds the cache may serve a stale response. Defaults to 15 seconds if not specified.
 
 
 <a id="nestedatt--mtls"></a>
@@ -106,6 +106,8 @@ Optional:
 - `access_client_id` (String) Defines the Client ID of the Access token to use when connecting to the origin database.
 - `access_client_secret` (String, Sensitive) Defines the Client Secret of the Access Token to use when connecting to the origin database. The API never returns this write-only value.
 - `host` (String) Defines the publicly reachable hostname or IP of your origin database. Private, loopback, and link-local IP addresses are not allowed.
+
+Defines the host (hostname or IP) of your origin database.
 - `port` (Number) Defines the port of your origin database. Defaults to 5432 for PostgreSQL or 3306 for MySQL if not specified.
 - `service_id` (String) The identifier of the Workers VPC Service to connect through. Hyperdrive will egress through the specified VPC Service to reach the origin database.
 

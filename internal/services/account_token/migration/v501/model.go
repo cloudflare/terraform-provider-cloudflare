@@ -52,6 +52,8 @@ type AccountTokenModelV501 struct {
 	CreatorEmailAtCreation types.String `tfsdk:"creator_email_at_creation"`
 	ProvisionerID          types.String `tfsdk:"provisioner_id"`
 	ProvisionerType        types.String `tfsdk:"provisioner_type"`
+	TokenPrefix            types.String `tfsdk:"token_prefix"`
+	TokenSuffix            types.String `tfsdk:"token_suffix"`
 }
 
 // PolicyV500 represents a policy in v500 state.

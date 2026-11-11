@@ -661,19 +661,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"mfa_config": schema.SingleNestedAttribute{
-				Description: "Configures multi-factor authentication (MFA) settings for the application. Only valid for self_hosted, ssh, vnc, and rdp application types.",
+				Description: "Configures multi-factor authentication (MFA) settings for the application. Only valid for self_hosted, ssh, vnc, rdp, and infrastructure application types. For infrastructure applications, supported authenticators are `piv_key` and `ssh_fido2_key`; for other application types use `totp`, `biometrics`, or `security_key`.",
 				Optional:    true,
 				Validators: []validator.Object{
 					customvalidator.RequiresOtherStringAttributeToBeOneOf(path.MatchRoot("type"), mfaConfigCompatibleAppTypes...),
 				},
 				Attributes: map[string]schema.Attribute{
 					"allowed_authenticators": schema.ListAttribute{
-						Description: "The authenticators allowed for MFA.\nAvailable values: \"totp\", \"biometrics\", \"security_key\".",
+						Description: "The authenticators allowed for MFA.\nAvailable values: \"totp\", \"biometrics\", \"security_key\", \"piv_key\", \"ssh_fido2_key\".",
 						Optional:    true,
 						ElementType: types.StringType,
 						Validators: []validator.List{
 							listvalidator.ValueStringsAre(
-								stringvalidator.OneOfCaseInsensitive("totp", "biometrics", "security_key"),
+								stringvalidator.OneOfCaseInsensitive("totp", "biometrics", "security_key", "piv_key", "ssh_fido2_key"),
 							),
 						},
 					},
@@ -1048,19 +1048,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"mfa_config": schema.SingleNestedAttribute{
-							Description: "Configures multi-factor authentication (MFA) settings for this policy. For infrastructure applications only `ssh_piv_key` is a supported authenticator; for other application types use `totp`, `biometrics`, or `security_key`.",
+							Description: "Configures multi-factor authentication (MFA) settings for this policy. For infrastructure applications, supported authenticators are `piv_key` and `ssh_fido2_key`; for other application types use `totp`, `biometrics`, or `security_key`.",
 							Optional:    true,
 							Validators: []validator.Object{
 								objectvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("include")),
 							},
 							Attributes: map[string]schema.Attribute{
 								"allowed_authenticators": schema.ListAttribute{
-									Description: "The authenticators allowed for MFA.\nAvailable values: \"totp\", \"biometrics\", \"security_key\", \"ssh_piv_key\".",
+									Description: "The authenticators allowed for MFA.\nAvailable values: \"totp\", \"biometrics\", \"security_key\", \"piv_key\", \"ssh_fido2_key\".",
 									Optional:    true,
 									ElementType: types.StringType,
 									Validators: []validator.List{
 										listvalidator.ValueStringsAre(
-											stringvalidator.OneOfCaseInsensitive("totp", "biometrics", "security_key", "ssh_piv_key"),
+											stringvalidator.OneOfCaseInsensitive("totp", "biometrics", "security_key", "piv_key", "ssh_fido2_key"),
 										),
 									},
 								},

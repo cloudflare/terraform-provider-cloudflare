@@ -32,7 +32,7 @@ data "cloudflare_certificate_authorities_hostname_associations" "example_certifi
 
 ### Read-Only
 
-- `hostnames` (List of String)
+- `hostnames` (Set of String) Hostnames are returned in lowercase punycode, in no particular order. Null when there are no associations.
 - `id` (String) Identifier.
 
 

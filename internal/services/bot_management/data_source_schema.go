@@ -175,6 +175,68 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "A read-only field that indicates whether the zone currently is running the latest ML model.",
 				Computed:    true,
 			},
+			"ai_agents": schema.SingleNestedAttribute{
+				Description: "Configure blocking behavior for supported personal AI agents.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[BotManagementAIAgentsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"anthropic_agent": schema.StringAttribute{
+						Description: "Action to apply to one supported personal AI agent.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"disabled",
+								"block",
+								"only_on_ad_pages",
+							),
+						},
+					},
+					"google_agent": schema.StringAttribute{
+						Description: "Action to apply to one supported personal AI agent.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"disabled",
+								"block",
+								"only_on_ad_pages",
+							),
+						},
+					},
+					"instinct": schema.StringAttribute{
+						Description: "Action to apply to one supported personal AI agent.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"disabled",
+								"block",
+								"only_on_ad_pages",
+							),
+						},
+					},
+					"muse": schema.StringAttribute{
+						Description: "Action to apply to one supported personal AI agent.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"disabled",
+								"block",
+								"only_on_ad_pages",
+							),
+						},
+					},
+					"openai_agent": schema.StringAttribute{
+						Description: "Action to apply to one supported personal AI agent.\nAvailable values: \"disabled\", \"block\", \"only_on_ad_pages\".",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"disabled",
+								"block",
+								"only_on_ad_pages",
+							),
+						},
+					},
+				},
+			},
 			"stale_zone_configuration": schema.SingleNestedAttribute{
 				Description: "A read-only field that shows which unauthorized settings are currently active on the zone. These settings typically result from upgrades or downgrades.",
 				Computed:    true,

@@ -53,6 +53,7 @@ Read-Only:
 - `name` (String)
 - `nat` (Attributes) (see [below for nested schema](#nestedatt--result--nat))
 - `physport` (Number)
+- `remote_subnets` (Attributes List) (see [below for nested schema](#nestedatt--result--remote_subnets))
 - `routed_subnets` (Attributes List) (see [below for nested schema](#nestedatt--result--routed_subnets))
 - `site_id` (String) Identifier
 - `static_addressing` (Attributes) If the site is not configured in high availability mode, this configuration is optional (if omitted, use DHCP). However, if in high availability mode, static_address is required along with secondary and virtual address. (see [below for nested schema](#nestedatt--result--static_addressing))
@@ -64,6 +65,15 @@ Read-Only:
 Read-Only:
 
 - `static_prefix` (String) A valid CIDR notation representing an IP range.
+
+
+<a id="nestedatt--result--remote_subnets"></a>
+### Nested Schema for `result.remote_subnets`
+
+Read-Only:
+
+- `local_alias_prefix` (String) A valid CIDR notation representing an IP range.
+- `remote_prefix` (String) A valid CIDR notation representing an IP range.
 
 
 <a id="nestedatt--result--routed_subnets"></a>

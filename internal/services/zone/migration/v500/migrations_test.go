@@ -57,6 +57,15 @@ func TestMigrateZone_Basic(t *testing.T) {
 			},
 		},
 		{
+			// 5.16.0 is the last release that wrote zone state at schema
+			// version 0, which must not be parsed as v4 (BUGS-2027).
+			name:    "from_v5_early",
+			version: "5.16.0",
+			configFn: func(rnd, zoneName, accountID string) string {
+				return fmt.Sprintf(v5BasicConfig, rnd, zoneName, accountID)
+			},
+		},
+		{
 			name:    "from_v5",
 			version: currentProviderVersion,
 			configFn: func(rnd, zoneName, accountID string) string {

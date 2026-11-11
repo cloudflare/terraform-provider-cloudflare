@@ -34,6 +34,7 @@ resource "cloudflare_zero_trust_access_policy" "example_zero_trust_access_policy
     mfa_disabled = false
     session_duration = "24h"
   }
+  policy_resolution_account_id = "policy_resolution_account_id"
   purpose_justification_prompt = "Please enter a justification for entering this protected domain."
   purpose_justification_required = true
   require = [{

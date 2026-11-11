@@ -72,15 +72,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"source": schema.SingleNestedAttribute{
-				Description: "AWS S3 bucket to copy objects from.",
+				Description: "AWS S3 bucket to copy objects from.\n\nGCS bucket to copy objects from.\n\nGeneral S3-compatible provider to copy objects from.\n\nAzure Blob Storage container to copy objects from.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"access_key_id": schema.StringAttribute{
-						Description: "Access Key ID of an IAM credential (ideally scoped to a single S3 bucket).",
+						Description: "For `r2_bucket_sippy_provider: aws` or `r2_bucket_sippy_provider: s3`: Access Key ID of an IAM credential (ideally scoped to a single S3 bucket).",
 						Optional:    true,
 					},
 					"bucket": schema.StringAttribute{
-						Description: "Name of the AWS S3 bucket.",
+						Description: "For `r2_bucket_sippy_provider: aws`: Name of the AWS S3 bucket.\n\nFor `r2_bucket_sippy_provider: gcs`: Name of the GCS bucket.",
 						Optional:    true,
 					},
 					"cloud_provider": schema.StringAttribute{
@@ -96,42 +96,42 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"region": schema.StringAttribute{
-						Description: "AWS region containing the source S3 bucket.",
+						Description: "For `r2_bucket_sippy_provider: aws`: AWS region containing the source S3 bucket.",
 						Optional:    true,
 					},
 					"secret_access_key": schema.StringAttribute{
-						Description: "Secret Access Key of an IAM credential (ideally scoped to a single S3 bucket).",
+						Description: "For `r2_bucket_sippy_provider: aws` or `r2_bucket_sippy_provider: s3`: Secret Access Key of an IAM credential (ideally scoped to a single S3 bucket).",
 						Optional:    true,
 						Sensitive:   true,
 					},
 					"client_email": schema.StringAttribute{
-						Description: "Client email of an IAM credential (ideally scoped to a single GCS bucket).",
+						Description: "For `r2_bucket_sippy_provider: gcs`: Client email of an IAM credential (ideally scoped to a single GCS bucket).",
 						Optional:    true,
 					},
 					"private_key": schema.StringAttribute{
-						Description: "Private Key of an IAM credential (ideally scoped to a single GCS bucket).",
+						Description: "For `r2_bucket_sippy_provider: gcs`: Private Key of an IAM credential (ideally scoped to a single GCS bucket).",
 						Optional:    true,
 						Sensitive:   true,
 					},
 					"bucket_url": schema.StringAttribute{
-						Description: "URL to the S3-compatible API of the bucket.",
+						Description: "For `r2_bucket_sippy_provider: s3`: URL to the S3-compatible API of the bucket.",
 						Optional:    true,
 					},
 					"account_key": schema.StringAttribute{
-						Description: "Access key for the Azure Storage account. Mutually exclusive with sasToken.",
+						Description: "For `r2_bucket_sippy_provider: azure`: Access key for the Azure Storage account. Mutually exclusive with sasToken.",
 						Optional:    true,
 						Sensitive:   true,
 					},
 					"account_name": schema.StringAttribute{
-						Description: "Name of the Azure Storage account.",
+						Description: "For `r2_bucket_sippy_provider: azure`: Name of the Azure Storage account.",
 						Optional:    true,
 					},
 					"container": schema.StringAttribute{
-						Description: "Name of the Azure Blob Storage container.",
+						Description: "For `r2_bucket_sippy_provider: azure`: Name of the Azure Blob Storage container.",
 						Optional:    true,
 					},
 					"sas_token": schema.StringAttribute{
-						Description: "Shared Access Signature token for the Azure Storage account. Mutually exclusive with accountKey.",
+						Description: "For `r2_bucket_sippy_provider: azure`: Shared Access Signature token for the Azure Storage account. Mutually exclusive with accountKey.",
 						Optional:    true,
 						Sensitive:   true,
 					},

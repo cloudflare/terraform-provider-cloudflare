@@ -59,8 +59,18 @@ type TargetBotManagementModel struct {
 	BotPreferenceSyncEnabled     types.Bool                                                        `tfsdk:"bot_preference_sync_enabled"`
 	SuppressSessionScore         types.Bool                                                        `tfsdk:"suppress_session_score"`
 	ContentBotsProtection        types.String                                                      `tfsdk:"content_bots_protection"`
+	AIAgents                     customfield.NestedObject[TargetBotManagementAIAgentsModel]        `tfsdk:"ai_agents"`
 	UsingLatestModel             types.Bool                                                        `tfsdk:"using_latest_model"`
 	StaleZoneConfiguration       customfield.NestedObject[TargetBotManagementStaleZoneConfigModel] `tfsdk:"stale_zone_configuration"`
+}
+
+// TargetBotManagementAIAgentsModel represents the nested ai_agents in v5.
+type TargetBotManagementAIAgentsModel struct {
+	AnthropicAgent types.String `tfsdk:"anthropic_agent"`
+	GoogleAgent    types.String `tfsdk:"google_agent"`
+	Instinct       types.String `tfsdk:"instinct"`
+	Muse           types.String `tfsdk:"muse"`
+	OpenAIAgent    types.String `tfsdk:"openai_agent"`
 }
 
 // TargetBotManagementStaleZoneConfigModel represents the nested stale_zone_configuration in v5.

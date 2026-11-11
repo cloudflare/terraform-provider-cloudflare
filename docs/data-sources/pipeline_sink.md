@@ -48,7 +48,11 @@ Available values: "r2", "r2_data_catalog", "basin_catalog".
 
 Optional:
 
+- `direction` (String) Sort direction.
+Available values: "asc", "desc".
 - `name` (String) Filters sinks by name (case-insensitive substring).
+- `order_by` (String) Sorts sinks by this field. Defaults to `created_at`.
+Available values: "name", "created_at".
 - `pipeline_id` (String)
 
 
@@ -58,7 +62,11 @@ Optional:
 Read-Only:
 
 - `account_id` (String) Cloudflare Account ID for the bucket
+
+Cloudflare Account ID
 - `bucket` (String) R2 Bucket to write to
+
+The R2 Bucket that hosts this catalog
 - `file_naming` (Attributes) Controls filename prefix/suffix and strategy. (see [below for nested schema](#nestedatt--config--file_naming))
 - `jurisdiction` (String) Jurisdiction this bucket is hosted in
 - `namespace` (String) Table namespace
@@ -102,7 +110,7 @@ Read-Only:
 
 Read-Only:
 
-- `compression` (String) Specifies the compression applied to JSON sink output.
+- `compression` (String) For `type: json`: Specifies the compression applied to JSON sink output.
 Available values: "uncompressed", "gzip", "snappy", "zstd", "lz4".
 - `decimal_encoding` (String) Available values: "number", "string", "bytes".
 - `row_group_bytes` (Number)

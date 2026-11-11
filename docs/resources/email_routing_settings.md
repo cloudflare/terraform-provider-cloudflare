@@ -30,7 +30,7 @@ resource "cloudflare_email_routing_settings" "example_email_routing_settings" {
 
 ### Optional
 
-- `support_subaddress` (Boolean) Whether subaddressing (plus-addressing) is honored when matching incoming mail against routing rules.
+- `support_subaddress` (Boolean) Whether subaddressing (plus-addressing) is honored when matching incoming mail against routing rules. When omitted, preserves the existing setting.
 
 ### Read-Only
 

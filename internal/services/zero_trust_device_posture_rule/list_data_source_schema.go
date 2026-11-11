@@ -58,7 +58,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewNestedObjectType[ZeroTrustDevicePostureRulesInputDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"operating_system": schema.StringAttribute{
-									Description: "Operating system.\nAvailable values: \"windows\", \"linux\", \"mac\", \"android\", \"ios\", \"chromeos\".",
+									Description: "Operating system.\n\nOperating System.\nAvailable values: \"windows\", \"linux\", \"mac\", \"android\", \"ios\", \"chromeos\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -72,7 +72,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"path": schema.StringAttribute{
-									Description: "File path.",
+									Description: "File path.\n\nPath for the application.",
 									Computed:    true,
 								},
 								"exists": schema.BoolAttribute{
@@ -88,7 +88,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"id": schema.StringAttribute{
-									Description: "List ID.",
+									Description: "List ID.\n\nUUID of Access List.",
 									Computed:    true,
 								},
 								"domain": schema.StringAttribute{
@@ -96,7 +96,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"operator": schema.StringAttribute{
-									Description: "Operator.\nAvailable values: \"<\", \"<=\", \">\", \">=\", \"==\".",
+									Description: "Operator.\n\nOperator to evaluate risk_level or eid_last_seen.\nAvailable values: \"<\", \"<=\", \">\", \">=\", \"==\".",
 									Computed:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
@@ -109,7 +109,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"version": schema.StringAttribute{
-									Description: "Version of OS.",
+									Description: "Version of OS.\n\nVersion.",
 									Computed:    true,
 								},
 								"os_distro_name": schema.StringAttribute{
@@ -143,7 +143,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"cn": schema.StringAttribute{
-									Description: "Common Name that is protected by the certificate.",
+									Description: "Common Name that is protected by the certificate.\n\nCertificate Common Name. This may include one or more variables in the ${ } notation. Only ${serial_number} and ${hostname} are valid variables.",
 									Computed:    true,
 								},
 								"check_private_key": schema.BoolAttribute{

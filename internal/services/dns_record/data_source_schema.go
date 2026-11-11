@@ -59,7 +59,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"content": schema.StringAttribute{
-				Description: "A valid IPv4 address.",
+				Description: "A valid IPv4 address.\n\nA valid IPv6 address.\n\nA valid hostname. Must not match the record's name.\n\nA valid mail server hostname.\n\nA valid name server host name.\n\nA single Base64-encoded OpenPGP Transferable Public Key (RFC 4880 Section 11.1)\n\nDomain name pointing to the address.\n\nText content for the record. The content must consist of quoted \"character strings\" (RFC 1035), each with a length of up to 255 bytes. Strings exceeding this allowed maximum length are automatically split.\n\nLearn more at <https://www.cloudflare.com/learning/dns/dns-records/dns-txt-record/>.\n\nFormatted CAA content. See 'data' to set CAA properties.\n\nFormatted CERT content. See 'data' to set CERT properties.\n\nFormatted DNSKEY content. See 'data' to set DNSKEY properties.\n\nFormatted DS content. See 'data' to set DS properties.\n\nFormatted HTTPS content. See 'data' to set HTTPS properties.\n\nFormatted LOC content. See 'data' to set LOC properties.\n\nFormatted NAPTR content. See 'data' to set NAPTR properties.\n\nFormatted SMIMEA content. See 'data' to set SMIMEA properties.\n\nPriority, weight, port, and SRV target. See 'data' for setting the individual component values.\n\nFormatted SSHFP content. See 'data' to set SSHFP properties.\n\nFormatted SVCB content. See 'data' to set SVCB properties.\n\nFormatted TLSA content. See 'data' to set TLSA properties.\n\nFormatted URI content. See 'data' to set URI properties.",
 				Computed:    true,
 			},
 			"created_on": schema.StringAttribute{
@@ -140,7 +140,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 			},
 			"data": schema.SingleNestedAttribute{
-				Description: "Components of a MX record.",
+				Description: "Components of a CAA record.\n\nComponents of a CERT record.\n\nComponents of a DNSKEY record.\n\nComponents of a DS record.\n\nComponents of a HTTPS record.\n\nComponents of a LOC record.\n\nComponents of a NAPTR record.\n\nComponents of a SMIMEA record.\n\nComponents of a SRV record.\n\nComponents of a SSHFP record.\n\nComponents of a SVCB record.\n\nComponents of a TLSA record.\n\nComponents of a URI record.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[DNSRecordDataDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
@@ -156,7 +156,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"flags": schema.DynamicAttribute{
-						Description: "Flags for the CAA record.",
+						Description: "Flags for the CAA record.\n\nFlags.",
 						Computed:    true,
 						Validators: []validator.Dynamic{
 							customvalidator.AllowedSubtypes(basetypes.Float64Type{}, basetypes.StringType{}),
@@ -168,7 +168,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"value": schema.StringAttribute{
-						Description: "Value of the record. This field's semantics depend on the chosen tag.",
+						Description: "Value of the record. This field's semantics depend on the chosen tag.\n\nValue.",
 						Computed:    true,
 					},
 					"algorithm": schema.Float64Attribute{

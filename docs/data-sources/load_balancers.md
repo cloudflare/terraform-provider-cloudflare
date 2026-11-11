@@ -123,7 +123,7 @@ Read-Only:
 - `fixed_response` (Attributes) A collection of fields used to directly respond to the eyeball instead of routing to a pool. If a fixed_response is supplied the rule will be marked as terminates. (see [below for nested schema](#nestedatt--result--rules--fixed_response))
 - `name` (String) Name of this rule. Only used for human readability.
 - `overrides` (Attributes) A collection of overrides to apply to the load balancer when this rule's condition is true. All fields are optional. (see [below for nested schema](#nestedatt--result--rules--overrides))
-- `priority` (Number) The order in which rules should be executed in relation to each other. Lower values are executed first. Values do not need to be sequential. If no value is provided for any rule the array order of the rules field will be used to assign a priority.
+- `priority` (Number) The order in which rules should be executed in relation to each other. Lower values are executed first. Values do not need to be sequential. If all priorities are omitted or zero, the API assigns priorities based on the array order of the rules field.
 - `terminates` (Boolean) If this rule's condition is true, this causes rule evaluation to stop after processing this rule.
 
 <a id="nestedatt--result--rules--fixed_response"></a>
@@ -152,7 +152,7 @@ Read-Only:
 - `default_pools` (List of String) A list of pool IDs ordered by their failover priority. Pools defined here are used by default, or when region_pools are not configured for a given region.
 - `fallback_pool` (String) The pool ID to use when all other pools are detected as unhealthy.
 - `location_strategy` (Attributes) Controls location-based steering for non-proxied requests. See `steering_policy` to learn how steering is affected. (see [below for nested schema](#nestedatt--result--rules--overrides--location_strategy))
-- `random_steering` (Attributes) Configures pool weights.
+- `random_steering` (Attributes) Configures pool weights for a rule override. An omitted default_weight inherits the load balancer's default weight.
 - `steering_policy="random"`: A random pool is selected with probability proportional to pool weights.
 - `steering_policy="least_outstanding_requests"`: Use pool weights to scale each pool's outstanding requests.
 - `steering_policy="least_connections"`: Use pool weights to scale each pool's open connections. (see [below for nested schema](#nestedatt--result--rules--overrides--random_steering))
@@ -202,7 +202,7 @@ Available values: "always", "never", "proximity", "geo".
 
 Read-Only:
 
-- `default_weight` (Number) The default weight for pools in the load balancer that are not specified in the pool_weights map.
+- `default_weight` (Number) The default weight for pools in the load balancer that are not specified in the pool_weights map. An omitted value inherits the load balancer's default weight.
 - `pool_weights` (Map of Number) A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.
 
 

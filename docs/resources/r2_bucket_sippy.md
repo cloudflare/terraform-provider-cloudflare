@@ -45,7 +45,13 @@ resource "cloudflare_r2_bucket_sippy" "example_r2_bucket_sippy" {
 
 - `destination` (Attributes) R2 bucket to copy objects to. (see [below for nested schema](#nestedatt--destination))
 - `jurisdiction` (String) Jurisdiction of the bucket
-- `source` (Attributes) AWS S3 bucket to copy objects from. (see [below for nested schema](#nestedatt--source))
+- `source` (Attributes) AWS S3 bucket to copy objects from.
+
+GCS bucket to copy objects from.
+
+General S3-compatible provider to copy objects from.
+
+Azure Blob Storage container to copy objects from. (see [below for nested schema](#nestedatt--source))
 
 ### Read-Only
 
@@ -76,18 +82,20 @@ best to scope this token to the bucket you're enabling Sippy for.
 
 Optional:
 
-- `access_key_id` (String) Access Key ID of an IAM credential (ideally scoped to a single S3 bucket).
-- `account_key` (String, Sensitive) Access key for the Azure Storage account. Mutually exclusive with sasToken.
-- `account_name` (String) Name of the Azure Storage account.
-- `bucket` (String) Name of the AWS S3 bucket.
-- `bucket_url` (String) URL to the S3-compatible API of the bucket.
-- `client_email` (String) Client email of an IAM credential (ideally scoped to a single GCS bucket).
+- `access_key_id` (String) For `r2_bucket_sippy_provider: aws` or `r2_bucket_sippy_provider: s3`: Access Key ID of an IAM credential (ideally scoped to a single S3 bucket).
+- `account_key` (String, Sensitive) For `r2_bucket_sippy_provider: azure`: Access key for the Azure Storage account. Mutually exclusive with sasToken.
+- `account_name` (String) For `r2_bucket_sippy_provider: azure`: Name of the Azure Storage account.
+- `bucket` (String) For `r2_bucket_sippy_provider: aws`: Name of the AWS S3 bucket.
+
+For `r2_bucket_sippy_provider: gcs`: Name of the GCS bucket.
+- `bucket_url` (String) For `r2_bucket_sippy_provider: s3`: URL to the S3-compatible API of the bucket.
+- `client_email` (String) For `r2_bucket_sippy_provider: gcs`: Client email of an IAM credential (ideally scoped to a single GCS bucket).
 - `cloud_provider` (String) Available values: "aws", "gcs", "s3", "azure".
-- `container` (String) Name of the Azure Blob Storage container.
-- `private_key` (String, Sensitive) Private Key of an IAM credential (ideally scoped to a single GCS bucket).
-- `region` (String) AWS region containing the source S3 bucket.
-- `sas_token` (String, Sensitive) Shared Access Signature token for the Azure Storage account. Mutually exclusive with accountKey.
-- `secret_access_key` (String, Sensitive) Secret Access Key of an IAM credential (ideally scoped to a single S3 bucket).
+- `container` (String) For `r2_bucket_sippy_provider: azure`: Name of the Azure Blob Storage container.
+- `private_key` (String, Sensitive) For `r2_bucket_sippy_provider: gcs`: Private Key of an IAM credential (ideally scoped to a single GCS bucket).
+- `region` (String) For `r2_bucket_sippy_provider: aws`: AWS region containing the source S3 bucket.
+- `sas_token` (String, Sensitive) For `r2_bucket_sippy_provider: azure`: Shared Access Signature token for the Azure Storage account. Mutually exclusive with accountKey.
+- `secret_access_key` (String, Sensitive) For `r2_bucket_sippy_provider: aws` or `r2_bucket_sippy_provider: s3`: Secret Access Key of an IAM credential (ideally scoped to a single S3 bucket).
 
 ## Import
 

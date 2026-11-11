@@ -21,5 +21,8 @@ resource "cloudflare_flagship_flag" "example_flagship_flag" {
     foo = "string"
   }
   description = "description"
+  metadata = {
+    foo = true
+  }
   type = "boolean"
 }

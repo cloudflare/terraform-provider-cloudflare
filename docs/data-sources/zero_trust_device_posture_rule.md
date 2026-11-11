@@ -53,6 +53,8 @@ Read-Only:
 - `check_disks` (List of String) List of volume names to be checked for encryption.
 - `check_private_key` (Boolean) Confirm the certificate was not imported from another device. We recommend keeping this enabled unless the certificate was deployed without a private key.
 - `cn` (String) Common Name that is protected by the certificate.
+
+Certificate Common Name. This may include one or more variables in the ${ } notation. Only ${serial_number} and ${hostname} are valid variables.
 - `compliance_status` (String) Compliance Status.
 Available values: "compliant", "noncompliant", "unknown", "notapplicable", "ingraceperiod", "error".
 - `connection_id` (String) Posture Integration ID.
@@ -64,6 +66,8 @@ Available values: "<", "<=", ">", ">=", "==".
 - `exists` (Boolean) Whether or not file exists.
 - `extended_key_usage` (List of String) List of values indicating purposes for which the certificate public key can be used.
 - `id` (String) List ID.
+
+UUID of Access List.
 - `infected` (Boolean) Whether device is infected.
 - `is_active` (Boolean) Whether device is active.
 - `issue_count` (String) The Number of Issues.
@@ -72,10 +76,14 @@ Available values: "<", "<=", ">", ">=", "==".
 - `network_status` (String) Network status of device.
 Available values: "connected", "disconnected", "disconnecting", "connecting".
 - `operating_system` (String) Operating system.
+
+Operating System.
 Available values: "windows", "linux", "mac", "android", "ios", "chromeos".
 - `operational_state` (String) Agent operational state.
 Available values: "na", "partially_disabled", "auto_fully_disabled", "fully_disabled", "auto_partially_disabled", "disabled_error", "db_corruption".
 - `operator` (String) Operator.
+
+Operator to evaluate risk_level or eid_last_seen.
 Available values: "<", "<=", ">", ">=", "==".
 - `os` (String) Os Version.
 - `os_distro_name` (String) Operating System Distribution Name (linux only).
@@ -83,6 +91,8 @@ Available values: "<", "<=", ">", ">=", "==".
 - `os_version_extra` (String) Additional operating system version details. For Windows, the UBR (Update Build Revision). For Mac or iOS, the Product Version Extra. For Linux, the distribution name and version.
 - `overall` (String) Overall.
 - `path` (String) File path.
+
+Path for the application.
 - `require_all` (Boolean) Whether to check all disks for encryption.
 - `risk_level` (String) For more details on risk level, refer to the Tanium documentation.
 Available values: "low", "medium", "high", "critical".
@@ -98,6 +108,8 @@ Available values: "online", "offline", "unknown".
 - `total_score` (Number) For more details on total score, refer to the Tanium documentation.
 - `update_window_days` (Number) Number of days that the antivirus should be updated within.
 - `version` (String) Version of OS.
+
+Version.
 - `version_operator` (String) Version Operator.
 Available values: "<", "<=", ">", ">=", "==".
 

@@ -35,9 +35,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The UUID to match against for a certificate that was uploaded to the mTLS Certificate Management endpoint. If no mtls_certificate_id is given, the results will be the hostnames associated to your active Cloudflare Managed CA.",
 				Optional:    true,
 			},
-			"hostnames": schema.ListAttribute{
+			"hostnames": schema.SetAttribute{
+				Description: "Hostnames are returned in lowercase punycode, in no particular order. Null when there are no associations.",
 				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
+				CustomType:  customfield.NewSetType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 		},

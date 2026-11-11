@@ -3,13 +3,19 @@ page_title: "cloudflare_worker_version Resource - Cloudflare"
 subcategory: ""
 description: |-
   Accepted Permissions
-  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
+  Individual Workers AdminIndividual Workers Content Read-OnlyIndividual Workers EditorWorkers AdminWorkers Content Read-OnlyWorkers EditorWorkers Scripts ReadWorkers Scripts WriteWorkers Tail Read
 ---
 
 # cloudflare_worker_version (Resource)
 
 Accepted Permissions
 
+- `Individual Workers Admin`
+- `Individual Workers Content Read-Only`
+- `Individual Workers Editor`
+- `Workers Admin`
+- `Workers Content Read-Only`
+- `Workers Editor`
 - `Workers Scripts Read`
 - `Workers Scripts Write`
 - `Workers Tail Read`
@@ -134,7 +140,9 @@ the platform provisions a `cloudflare.app` zone for the Worker.
 A `type: worker` entry in the `exports` map can override this
 value for a single entrypoint. (see [below for nested schema](#nestedatt--cache_options))
 - `compatibility_date` (String) Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
-- `compatibility_flags` (Set of String) Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
+- `compatibility_flags` (Set of String) Enables or disables specific Workers runtime features, such as upcoming features or changes outside the `compatibility_date`.
+
+Responses list only the flags this version sets explicitly and exclude behavior that `compatibility_date` enables. Responses omit the field when the list is empty, so a missing field means the version sets zero flags.
 - `containers` (Attributes Set) List of containers attached to a Worker. Containers can only be attached to Durable Object classes of this Worker script. (see [below for nested schema](#nestedatt--containers))
 - `deploy` (Boolean) If true, a deployment will be created that sends 100% of traffic to the new version.
 - `exports` (Attributes Map) Declarative exports for the version, including Durable Object
@@ -143,12 +151,16 @@ entrypoints. On reads, tombstoned lifecycle entries are
 omitted, so only live exports (`created` and
 `expecting-transfer`) are returned. `exports` and `migrations`
 are mutually exclusive on upload. (see [below for nested schema](#nestedatt--exports))
-- `include` (String) Whether to include the `modules` property of the version in the response, which contains code and sourcemap content and may add several megabytes to the response size.
-Available values: "modules".
+- `include` (String) Optional properties to include in the response. `modules` includes the `modules` property, which contains code and may add several megabytes to the response size. `modules,sourcemaps` also includes the version's source maps in `modules`.
+Available values: "modules", "modules,sourcemaps".
 - `limits` (Attributes) Resource limits enforced at runtime. (see [below for nested schema](#nestedatt--limits))
 - `main_module` (String) The name of the main module in the `modules` array (e.g. the name of the module that exports a `fetch` handler).
 - `migrations` (Attributes) Migrations for Durable Objects associated with the version. Migrations are applied when the version is deployed. (see [below for nested schema](#nestedatt--migrations))
 - `modules` (Attributes Set) Code, sourcemaps, and other content used at runtime.
+
+Source maps use content type `application/source-map`. Responses include them only when requested with
+`include=modules,sourcemaps`. Workers stores the source map fields used to remap stack traces, so a returned
+source map is equivalent to the uploaded file but not byte-identical.
 
 This includes [`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#custom-headers) and
 [`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects/) files used to configure
@@ -219,58 +231,83 @@ Available values: "none", "404-page", "single-page-application".
 
 Required:
 
-- `name` (String) A JavaScript variable name for the binding.
+- `name` (String) For `type: ai` or `type: ai_search` or `type: ai_search_namespace` or `type: messaging` or `type: analytics_engine` or `type: artifacts` or `type: assets` or `type: browser` or `type: d1` or `type: data_blob` or `type: dispatch_namespace` or `type: durable_object_namespace` or `type: hyperdrive` or `type: images` or `type: json` or `type: kv_namespace` or `type: media` or `type: mtls_certificate` or `type: plain_text` or `type: pipelines` or `type: k2` or `type: queue` or `type: ratelimit` or `type: r2_bucket` or `type: secret_text` or `type: send_email` or `type: service` or `type: text_blob` or `type: vectorize` or `type: version_metadata` or `type: secrets_store_secret` or `type: flagship` or `type: secret_key` or `type: workflow` or `type: wasm_module` or `type: vpc_service` or `type: vpc_network` or `type: worker_loader`: A JavaScript variable name for the binding.
+
+For `type: inherit`: The name of the inherited binding.
 - `type` (String) The kind of resource that the binding provides.
-Available values: "ai", "ai_search", "ai_search_namespace", "messaging", "analytics_engine", "artifacts", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "media", "mtls_certificate", "plain_text", "pipelines", "k2", "queue", "ratelimit", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "flagship", "secret_key", "workflow", "wasm_module", "vpc_service", "vpc_network".
+Available values: "ai", "ai_search", "ai_search_namespace", "messaging", "analytics_engine", "artifacts", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "media", "mtls_certificate", "plain_text", "pipelines", "k2", "queue", "ratelimit", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "flagship", "secret_key", "workflow", "wasm_module", "vpc_service", "vpc_network", "worker_loader".
 
 Optional:
 
-- `algorithm` (String) Algorithm-specific key parameters. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm).
-- `allowed_destination_addresses` (List of String) List of allowed destination addresses.
-- `allowed_sender_addresses` (List of String) List of allowed sender addresses.
-- `app_id` (String) ID of the Flagship app to bind to for feature flag evaluation.
-- `bucket_name` (String) R2 bucket to bind to.
-- `certificate_id` (String) Identifier of the certificate to bind to.
-- `class_name` (String) The exported class name of the Durable Object.
-- `database_id` (String) Identifier of the D1 database to bind to.
-- `dataset` (String) The name of the dataset to bind to.
-- `destination_address` (String) Destination address for the email.
-- `dispatch_namespace` (String) The dispatch namespace the Durable Object script belongs to.
-- `entrypoint` (String) Entrypoint to invoke on the target Worker.
-- `environment` (String) The environment of the script_name to bind to.
-- `format` (String) Data format of the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#format).
+- `algorithm` (String) For `type: secret_key`: Algorithm-specific key parameters. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm).
+- `allowed_destination_addresses` (List of String) For `type: send_email`: List of allowed destination addresses.
+- `allowed_sender_addresses` (List of String) For `type: send_email`: List of allowed sender addresses.
+- `app_id` (String) For `type: flagship`: ID of the Flagship app to bind to for feature flag evaluation.
+- `bucket_name` (String) For `type: r2_bucket`: R2 bucket to bind to.
+- `certificate_id` (String) For `type: mtls_certificate`: Identifier of the certificate to bind to.
+- `class_name` (String) For `type: durable_object_namespace`: The exported class name of the Durable Object.
+
+For `type: workflow`: Class name of the Workflow. Should only be provided if the Workflow belongs to this script.
+- `database_id` (String) For `type: d1`: Identifier of the D1 database to bind to.
+- `dataset` (String) For `type: analytics_engine`: The name of the dataset to bind to.
+- `destination_address` (String) For `type: send_email`: Destination address for the email.
+- `dispatch_namespace` (String) For `type: durable_object_namespace`: The dispatch namespace the Durable Object script belongs to.
+- `entrypoint` (String) For `type: service`: Entrypoint to invoke on the target Worker.
+- `environment` (String) For `type: durable_object_namespace`: The environment of the script_name to bind to.
+
+For `type: service`: Optional environment if the Worker utilizes one.
+- `format` (String) For `type: secret_key`: Data format of the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#format).
 Available values: "raw", "pkcs8", "spki", "jwk".
-- `id` (String) Identifier of the D1 database to bind to.
-- `identity` (String) Enables Gateway identity for the binding. Requires network_id to be "cf1:network" and cannot be combined with tunnel_id.
+- `id` (String) For `type: d1`: Identifier of the D1 database to bind to.
+
+For `type: hyperdrive`: Identifier of the Hyperdrive connection to bind to.
+- `identity` (String) For `type: vpc_network`: Enables Gateway identity for the binding. Requires network_id to be "cf1:network" and cannot be combined with tunnel_id or an explicit "cf1:vnet:<UUID>" network_id.
 Available values: "runtime-email-alpha".
-- `index_name` (String) Name of the Vectorize index to bind to.
-- `instance_name` (String) The user-chosen instance name. Must exist at deploy time. The worker can search, chat, update, and manage items/jobs on this instance.
-- `json` (String) JSON data to use.
-- `jurisdiction` (String) The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.
+- `index_name` (String) For `type: vectorize`: Name of the Vectorize index to bind to.
+- `instance_name` (String) For `type: ai_search`: The user-chosen instance name. Must exist at deploy time. The worker can search, chat, update, and manage items/jobs on this instance.
+- `json` (String) For `type: json`: JSON data to use.
+- `jurisdiction` (String) For `type: r2_bucket`: The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.
 Available values: "eu", "fedramp", "fedramp-high", "us".
-- `key_base64` (String, Sensitive) Base64-encoded key data. Required if `format` is "raw", "pkcs8", or "spki".
-- `key_jwk` (String, Sensitive) Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is "jwk".
-- `namespace` (String) The namespace the instance belongs to. Defaults to "default" if omitted. Customers who don't use namespaces can simply omit this field.
-- `namespace_id` (String) Namespace identifier tag.
-- `network_id` (String) Identifier of the network to bind to. Only "cf1:network" is currently supported. Mutually exclusive with tunnel_id.
-- `old_name` (String) The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.
-- `outbound` (Attributes) Outbound worker. (see [below for nested schema](#nestedatt--bindings--outbound))
-- `part` (String) The name of the file containing the data content. Only accepted for `service worker syntax` Workers.
-- `pipeline` (String) Name of the Pipeline to bind to.
-- `queue_name` (String) Name of the Queue to bind to.
-- `retry` (Attributes) Retry policy for calls made to the Durable Object through this binding. Omitted or null properties use the runtime defaults. These limits are upper bounds and do not enable retries for otherwise ineligible calls. (see [below for nested schema](#nestedatt--bindings--retry))
-- `script_name` (String) The script where the Durable Object is defined, if it is external to this Worker.
-- `secret_name` (String) Name of the secret in the store.
-- `service` (String) Name of Worker to bind to.
-- `service_id` (String) Identifier of the VPC service to bind to.
-- `simple` (Attributes) The rate limit configuration. (see [below for nested schema](#nestedatt--bindings--simple))
-- `store_id` (String) ID of the store containing the secret.
-- `stream` (String) ID of a K2 stream owned by the account deploying the Worker.
-- `text` (String, Sensitive) The text value to use.
-- `tunnel_id` (String) UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.
-- `usages` (Set of String) Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
-- `version_id` (String) Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.
-- `workflow_name` (String) Name of the Workflow to bind to.
+- `key_base64` (String, Sensitive) For `type: secret_key`: Base64-encoded key data. Required if `format` is "raw", "pkcs8", or "spki".
+- `key_jwk` (String, Sensitive) For `type: secret_key`: Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is "jwk".
+- `namespace` (String) For `type: ai_search`: The namespace the instance belongs to. Defaults to "default" if omitted. Customers who don't use namespaces can simply omit this field.
+
+For `type: ai_search_namespace`: The user-chosen namespace name. Must exist before deploy -- Wrangler handles auto-creation on deploy failure (R2 bucket pattern). The "default" namespace is auto-created by config-api for new accounts. Grants full access (CRUD + search + chat) to all instances within the namespace.
+
+For `type: messaging`: The Messaging namespace to bind to.
+
+For `type: artifacts`: The Artifacts namespace exposed to the Worker in the Worker's account. Must be 2-63 characters, start with an ASCII alphanumeric character, contain only ASCII alphanumeric characters, dots, underscores, and hyphens, and must not end with a hyphen. The namespace does not need to be created before binding it.
+
+For `type: dispatch_namespace`: The name of the dispatch namespace.
+- `namespace_id` (String) For `type: durable_object_namespace` or `type: kv_namespace`: Namespace identifier tag.
+
+For `type: ratelimit`: Identifier of the rate limit namespace to bind to.
+- `network_id` (String) For `type: vpc_network`: Identifier of the network to bind to. Use "cf1:network" to select the account's default virtual network at runtime, or "cf1:vnet:<UUID>" to select an explicit virtual network in the Worker's account. Mutually exclusive with tunnel_id.
+- `old_name` (String) For `type: inherit`: The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.
+- `outbound` (Attributes) For `type: dispatch_namespace`: Outbound worker. (see [below for nested schema](#nestedatt--bindings--outbound))
+- `part` (String) For `type: data_blob`: The name of the file containing the data content. Only accepted for `service worker syntax` Workers.
+
+For `type: text_blob`: The name of the file containing the text content. Only accepted for `service worker syntax` Workers.
+
+For `type: wasm_module`: The name of the file containing the WebAssembly module content. Only accepted for `service worker syntax` Workers.
+- `pipeline` (String) For `type: pipelines`: Name of the Pipeline to bind to.
+- `queue_name` (String) For `type: queue`: Name of the Queue to bind to.
+- `script_name` (String) For `type: durable_object_namespace`: The script where the Durable Object is defined, if it is external to this Worker.
+
+For `type: workflow`: Script name that contains the Workflow. If not provided, defaults to this script name.
+- `secret_name` (String) For `type: secrets_store_secret`: Name of the secret in the store.
+- `service` (String) For `type: service`: Name of Worker to bind to.
+- `service_id` (String) For `type: vpc_service`: Identifier of the VPC service to bind to.
+- `simple` (Attributes) For `type: ratelimit`: The rate limit configuration. (see [below for nested schema](#nestedatt--bindings--simple))
+- `store_id` (String) For `type: secrets_store_secret`: ID of the store containing the secret.
+- `stream` (String) For `type: k2`: ID of a K2 stream owned by the account deploying the Worker.
+- `text` (String, Sensitive) For `type: plain_text`: The text value to use.
+
+For `type: secret_text`: The secret value to use.
+- `tunnel_id` (String) For `type: vpc_network`: UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.
+- `usages` (Set of String) For `type: secret_key`: Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
+- `version_id` (String) For `type: inherit`: Identifier for the version to inherit the binding from. This can be a version ID, or the literal "latest" to inherit from the most recently uploaded version, which may not be the deployed version. Defaults to "latest". Only the Workers API version endpoints under `/accounts/{account_id}/workers/workers/{worker_id}/versions` accept a version ID. Other endpoints, including script upload and script version upload, accept only "latest" and reject a version ID with error 10057.
+- `workflow_name` (String) For `type: workflow`: Name of the Workflow to bind to.
 
 <a id="nestedatt--bindings--outbound"></a>
 ### Nested Schema for `bindings.outbound`
@@ -297,15 +334,6 @@ Optional:
 - `environment` (String) Environment of the outbound worker.
 - `service` (String) Name of the outbound worker.
 
-
-
-<a id="nestedatt--bindings--retry"></a>
-### Nested Schema for `bindings.retry`
-
-Optional:
-
-- `max_attempts` (Number) Maximum number of retries after the initial request, not the total number of attempts. Defaults to 4. Zero disables retries.
-- `timeout_ms` (Number) Retry timeout in milliseconds, measured from the start of the call. No retry starts after it expires, and a retry still running when it expires is cancelled. This is not a request timeout; it does not limit the initial request, which is still subject to any timeouts set by your Worker. Defaults to 10000.
 
 
 <a id="nestedatt--bindings--simple"></a>
@@ -347,43 +375,54 @@ Required:
 
 Required:
 
-- `type` (String) The kind of export.
+- `type` (String) For `type: worker`: Marks this entry as a Worker entrypoint export.
+
+For `type: durable-object`: Marks this entry as a Durable Object export.
 Available values: "worker", "durable-object".
 
 Optional:
 
-- `cache` (Attributes) Cache override for this entrypoint. It applies only to
-`type: worker` entries and overrides the Worker's global
-`cache_options.enabled` for that entrypoint. (see [below for nested schema](#nestedatt--exports--cache))
-- `renamed_to` (String) Destination class name for a `state: renamed` tombstone. The
-target must appear as a live (`created`) entry in the same
-`exports` map. Write-only: never present in GET responses.
-- `state` (String) Lifecycle state of the export entry. Defaults to `created`
-(a normal, live export) when omitted.
+- `cache` (Attributes) For `type: worker`: Cache override for this entrypoint. Overrides the Worker's
+global `cache_options.enabled` for this entrypoint only. (see [below for nested schema](#nestedatt--exports--cache))
+- `container` (String) For `type: durable-object` and `state: created`: Name of the container (declared in the upload's
+`metadata.containers`) that backs this Durable Object. When
+set, the namespace is container-enabled. Valid only on live
+entries.
 
-`deleted`, `renamed`, and `transferred` are tombstones:
-write-only lifecycle operations that retire, rename, or hand
-off a provisioned Durable Object namespace. They are applied
-at upload and are filtered out of GET responses, so a read
-only ever returns `created` or `expecting-transfer`.
-
-`expecting-transfer` is a live export whose data is being
-received from another script via the two-phase transfer flow;
-it carries `storage` and `transfer_from`.
-Available values: "created", "deleted", "renamed", "transferred", "expecting-transfer".
-- `storage` (String) Storage backend for a `type: durable-object` export. Required
-for live Durable Object entries (`created` and
-`expecting-transfer`). `sqlite` selects SQLite-backed storage;
-`legacy-kv` selects the legacy key-value storage.
-Available values: "sqlite", "legacy-kv".
-- `transfer_from` (String) Source script for a `state: expecting-transfer` entry. The
-namespace on this script is materialised from the source
-script's data via the pending-transfer flow. Present on reads
-for `expecting-transfer` entries.
-- `transferred_to` (String) Destination script for a `state: transferred` tombstone. Must
-reference a script in the same account; cross-dispatch-namespace
-transfers are rejected. Write-only: never present in GET
+For `state: expecting-transfer`: Name of the container (declared in the upload's
+`metadata.containers`) that backs this Durable Object once the
+transfer settles. Valid only on live entries.
+- `renamed_to` (String) For `state: renamed`: The destination class name. Must differ from the source class
+(the map key) and must be declared as a live (`created`) entry
+in the same `exports` map. Write-only: never present in GET
 responses.
+- `state` (String) For `state: created`: Live export. May be omitted; defaults to `created`.
+
+For `state: deleted`: Tombstone that deletes the namespace.
+
+For `state: renamed`: Tombstone that renames the namespace's class.
+
+For `state: transferred`: Tombstone that transfers the namespace to another script.
+
+For `state: expecting-transfer`: Target side of a two-phase transfer.
+Available values: "created", "deleted", "renamed", "transferred", "expecting-transfer".
+- `storage` (String) For `type: durable-object` and `state: created`: Durable Object storage backend. `sqlite` is the recommended (and
+only) backend for new namespaces. `legacy-kv` is accepted only for
+a class whose namespace already exists as KV-backed; the `exports`
+flow never provisions a new `legacy-kv` namespace.
+
+For `type: durable-object` and `state: expecting-transfer`: Durable Object storage backend. `sqlite` is the recommended (and
+only) backend for new namespaces. `legacy-kv` is accepted only for
+a class whose namespace already exists as KV-backed; the `exports`
+flow never provisions a new `legacy-kv` namespace.
+Available values: "sqlite", "legacy-kv".
+- `transfer_from` (String) For `state: expecting-transfer`: The source script name to receive the namespace from. Must be
+in the same account and dispatch-namespace context. Present on
+reads for `expecting-transfer` entries.
+- `transferred_to` (String) For `state: transferred`: The destination script name. Must be in the same account and
+the same dispatch-namespace context (or both non-dispatch).
+Cross-dispatch-namespace transfers are rejected. Write-only:
+never present in GET responses.
 
 <a id="nestedatt--exports--cache"></a>
 ### Nested Schema for `exports.cache`
@@ -504,6 +543,8 @@ Optional:
 - `host` (String) TCP host and port for targeted placement.
 - `hostname` (String) HTTP hostname for targeted placement.
 - `mode` (String) Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+
+Targeted placement mode.
 Available values: "smart", "targeted".
 - `region` (String) Cloud region for targeted placement in format 'provider:region'.
 - `target` (Attributes List) Array of placement targets (currently limited to single target). (see [below for nested schema](#nestedatt--placement--target))

@@ -71,7 +71,7 @@ func (r *BotManagementResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
-	
+
 	res := new(http.Response)
 	_, err = r.client.BotManagement.Update(
 		ctx,
@@ -86,7 +86,7 @@ func (r *BotManagementResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	
+
 	bytes, _ := io.ReadAll(res.Body)
 	var env BotManagementResultEnvelope
 	err = json.Unmarshal(bytes, &env)
@@ -94,7 +94,7 @@ func (r *BotManagementResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	
+
 	// Update the state from API response
 	data.UpdateFromAPIModel(env.Result)
 	data.ID = data.ZoneID
@@ -126,7 +126,7 @@ func (r *BotManagementResource) Update(ctx context.Context, req resource.UpdateR
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
-	
+
 	res := new(http.Response)
 	_, err = r.client.BotManagement.Update(
 		ctx,
@@ -141,7 +141,7 @@ func (r *BotManagementResource) Update(ctx context.Context, req resource.UpdateR
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	
+
 	bytes, _ := io.ReadAll(res.Body)
 	var env BotManagementResultEnvelope
 	err = json.Unmarshal(bytes, &env)
@@ -149,7 +149,7 @@ func (r *BotManagementResource) Update(ctx context.Context, req resource.UpdateR
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	
+
 	// Start with current state, then update from API response (preserves values for missing fields)
 	*data = *state
 	data.UpdateFromAPIModel(env.Result)
@@ -185,7 +185,7 @@ func (r *BotManagementResource) Read(ctx context.Context, req resource.ReadReque
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	
+
 	bytes, _ := io.ReadAll(res.Body)
 	var env BotManagementResultEnvelope
 	err = json.Unmarshal(bytes, &env)
@@ -193,7 +193,7 @@ func (r *BotManagementResource) Read(ctx context.Context, req resource.ReadReque
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	
+
 	// Update the state from API response (preserves existing values for missing fields)
 	data.UpdateFromAPIModel(env.Result)
 	data.ID = data.ZoneID
@@ -234,7 +234,7 @@ func (r *BotManagementResource) ImportState(ctx context.Context, req resource.Im
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	
+
 	bytes, _ := io.ReadAll(res.Body)
 	var env BotManagementResultEnvelope
 	err = json.Unmarshal(bytes, &env)
@@ -242,7 +242,7 @@ func (r *BotManagementResource) ImportState(ctx context.Context, req resource.Im
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	
+
 	// Update the state from API response
 	data.UpdateFromAPIModel(env.Result)
 	data.ID = data.ZoneID

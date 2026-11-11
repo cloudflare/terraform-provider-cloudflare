@@ -1235,12 +1235,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"mfa_config": schema.SingleNestedAttribute{
-										Description: "Configures multi-factor authentication (MFA) settings for this policy.",
+										Description: "Configures multi-factor authentication (MFA) settings for this policy. For infrastructure applications, supported authenticators are `piv_key` and `ssh_fido2_key`; for other application types use `totp`, `biometrics`, or `security_key`.",
 										Computed:    true,
 										CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessApplicationsPoliciesMFAConfigDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"allowed_authenticators": schema.ListAttribute{
-												Description: "The authenticators allowed for MFA.\nAvailable values: \"totp\", \"biometrics\", \"security_key\", \"ssh_piv_key\".",
+												Description: "The authenticators allowed for MFA.\nAvailable values: \"totp\", \"biometrics\", \"security_key\", \"piv_key\", \"ssh_fido2_key\".",
 												Computed:    true,
 												CustomType:  customfield.NewListType[types.String](ctx),
 												ElementType: types.StringType,
@@ -1719,12 +1719,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"mfa_config": schema.SingleNestedAttribute{
-							Description: "Configures multi-factor authentication (MFA) settings for the application. Only valid for self_hosted, ssh, vnc, and rdp application types.",
+							Description: "Configures multi-factor authentication (MFA) settings for the application. Only valid for self_hosted, ssh, vnc, rdp, and infrastructure application types. For infrastructure applications, supported authenticators are `piv_key` and `ssh_fido2_key`; for other application types use `totp`, `biometrics`, or `security_key`.",
 							Computed:    true,
 							CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessApplicationsMFAConfigDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"allowed_authenticators": schema.ListAttribute{
-									Description: "The authenticators allowed for MFA.\nAvailable values: \"totp\", \"biometrics\", \"security_key\".",
+									Description: "The authenticators allowed for MFA.\nAvailable values: \"totp\", \"biometrics\", \"security_key\", \"piv_key\", \"ssh_fido2_key\".",
 									Computed:    true,
 									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,

@@ -877,13 +877,22 @@ func testAccCheckCloudflareManagedTransformsDestroy(s *terraform.State) error {
 			return fmt.Errorf("error listing managed headers: %w", err)
 		}
 
+		if managedHeaders == nil {
+			return fmt.Errorf("managed transforms response is nil")
+		}
+
+		headers, ok := managedHeaders.AsUnion().(managed_transforms.ManagedTransformListResponseObject)
+		if !ok {
+			return fmt.Errorf("unexpected managed transforms response type: %T", managedHeaders.AsUnion())
+		}
+
 		// Check if any headers are still enabled
-		for _, h := range managedHeaders.ManagedRequestHeaders {
+		for _, h := range headers.ManagedRequestHeaders {
 			if h.Enabled {
 				return fmt.Errorf("managed request header %s is still enabled", h.ID)
 			}
 		}
-		for _, h := range managedHeaders.ManagedResponseHeaders {
+		for _, h := range headers.ManagedResponseHeaders {
 			if h.Enabled {
 				return fmt.Errorf("managed response header %s is still enabled", h.ID)
 			}

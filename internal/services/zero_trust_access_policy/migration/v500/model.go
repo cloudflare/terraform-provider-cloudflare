@@ -140,6 +140,7 @@ type TargetAccessPolicyModel struct {
 	Name                         types.String                  `tfsdk:"name"`
 	ApprovalRequired             types.Bool                    `tfsdk:"approval_required"`
 	IsolationRequired            types.Bool                    `tfsdk:"isolation_required"`
+	PolicyResolutionAccountID    types.String                  `tfsdk:"policy_resolution_account_id"`
 	PurposeJustificationPrompt   types.String                  `tfsdk:"purpose_justification_prompt"`
 	PurposeJustificationRequired types.Bool                    `tfsdk:"purpose_justification_required"`
 	ApprovalGroups               *[]*TargetApprovalGroupsModel `tfsdk:"approval_groups"`
@@ -149,7 +150,6 @@ type TargetAccessPolicyModel struct {
 	Exclude                      []TargetConditionModel        `tfsdk:"exclude"`
 	Include                      []TargetConditionModel        `tfsdk:"include"`
 	Require                      []TargetConditionModel        `tfsdk:"require"`
-	AppCount                     types.Int64                   `tfsdk:"app_count"`
 	CreatedAt                    timetypes.RFC3339             `tfsdk:"created_at"`
 	Reusable                     types.Bool                    `tfsdk:"reusable"`
 	UpdatedAt                    timetypes.RFC3339             `tfsdk:"updated_at"`
@@ -179,32 +179,38 @@ type TargetMfaConfigModel struct {
 // TargetConditionModel represents a single condition in v5 format.
 // In v5, each condition is a separate object with only one field populated.
 type TargetConditionModel struct {
-	Group                *TargetGroupModel                `tfsdk:"group"`
-	AnyValidServiceToken *TargetAnyValidServiceTokenModel `tfsdk:"any_valid_service_token"`
-	AuthContext          *TargetAuthContextModel          `tfsdk:"auth_context"`
-	AuthMethod           *TargetAuthMethodModel           `tfsdk:"auth_method"`
-	AzureAD              *TargetAzureADModel              `tfsdk:"azure_ad"`
-	Certificate          *TargetCertificateModel          `tfsdk:"certificate"`
-	CommonName           *TargetCommonNameModel           `tfsdk:"common_name"`
-	Geo                  *TargetGeoModel                  `tfsdk:"geo"`
-	DevicePosture        *TargetDevicePostureModel        `tfsdk:"device_posture"`
-	EmailDomain          *TargetEmailDomainModel          `tfsdk:"email_domain"`
-	EmailList            *TargetEmailListModel            `tfsdk:"email_list"`
-	Email                *TargetEmailModel                `tfsdk:"email"`
-	Everyone             *TargetEveryoneModel             `tfsdk:"everyone"`
-	ExternalEvaluation   *TargetExternalEvaluationModel   `tfsdk:"external_evaluation"`
-	GitHubOrganization   *TargetGitHubOrganizationModel   `tfsdk:"github_organization"`
-	GSuite               *TargetGSuiteModel               `tfsdk:"gsuite"`
-	LoginMethod          *TargetLoginMethodModel          `tfsdk:"login_method"`
-	IPList               *TargetIPListModel               `tfsdk:"ip_list"`
-	IP                   *TargetIPModel                   `tfsdk:"ip"`
-	Okta                 *TargetOktaModel                 `tfsdk:"okta"`
-	SAML                 *TargetSAMLModel                 `tfsdk:"saml"`
-	OIDC                 *TargetOIDCModel                 `tfsdk:"oidc"`
+	Group                   *TargetGroupModel                   `tfsdk:"group"`
+	AnyValidServiceToken    *TargetAnyValidServiceTokenModel    `tfsdk:"any_valid_service_token"`
+	AuthContext             *TargetAuthContextModel             `tfsdk:"auth_context"`
+	AuthMethod              *TargetAuthMethodModel              `tfsdk:"auth_method"`
+	AzureAD                 *TargetAzureADModel                 `tfsdk:"azure_ad"`
+	Certificate             *TargetCertificateModel             `tfsdk:"certificate"`
+	CommonName              *TargetCommonNameModel              `tfsdk:"common_name"`
+	Geo                     *TargetGeoModel                     `tfsdk:"geo"`
+	DevicePosture           *TargetDevicePostureModel           `tfsdk:"device_posture"`
+	EmailDomain             *TargetEmailDomainModel             `tfsdk:"email_domain"`
+	EmailList               *TargetEmailListModel               `tfsdk:"email_list"`
+	Email                   *TargetEmailModel                   `tfsdk:"email"`
+	Everyone                *TargetEveryoneModel                `tfsdk:"everyone"`
+	ExternalEvaluation      *TargetExternalEvaluationModel      `tfsdk:"external_evaluation"`
+	GitHubOrganization      *TargetGitHubOrganizationModel      `tfsdk:"github_organization"`
+	GSuite                  *TargetGSuiteModel                  `tfsdk:"gsuite"`
+	LoginMethod             *TargetLoginMethodModel             `tfsdk:"login_method"`
+	IPList                  *TargetIPListModel                  `tfsdk:"ip_list"`
+	IP                      *TargetIPModel                      `tfsdk:"ip"`
+	Okta                    *TargetOktaModel                    `tfsdk:"okta"`
+	SAML                    *TargetSAMLModel                    `tfsdk:"saml"`
+	OIDC                    *TargetOIDCModel                    `tfsdk:"oidc"`
 	ServiceToken            *TargetServiceTokenModel            `tfsdk:"service_token"`
+	ServiceTokenTag         *TargetServiceTokenTagModel         `tfsdk:"service_token_tag"`
 	LinkedAppToken          *TargetLinkedAppTokenModel          `tfsdk:"linked_app_token"`
 	UserRiskScore           *TargetUserRiskScoreModel           `tfsdk:"user_risk_score"`
 	CloudflareAccountMember *TargetCloudflareAccountMemberModel `tfsdk:"cloudflare_account_member"`
+}
+
+type TargetServiceTokenTagModel struct {
+	Key   types.String `tfsdk:"key"`
+	Value types.String `tfsdk:"value"`
 }
 
 type TargetCloudflareAccountMemberModel struct {

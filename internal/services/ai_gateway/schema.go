@@ -206,6 +206,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
 								},
 							},
+							"s14": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
 							"s2": schema.StringAttribute{
 								Description: `Available values: "FLAG", "BLOCK".`,
 								Optional:    true,
@@ -309,6 +316,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
 								},
 							},
+							"s14": schema.StringAttribute{
+								Description: `Available values: "FLAG", "BLOCK".`,
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+								},
+							},
 							"s2": schema.StringAttribute{
 								Description: `Available values: "FLAG", "BLOCK".`,
 								Optional:    true,
@@ -388,6 +402,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"authentication": schema.BoolAttribute{
+				Description:   "Require authentication for gateway access. New gateways must have authentication enabled. Once enabled, authentication cannot be disabled.",
 				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
@@ -426,6 +441,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"store_id": schema.StringAttribute{
+				Description:   "Secrets Store used by this gateway. Omit on update to keep the current store. Cannot be cleared while stored keys or secret references depend on it.",
 				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
@@ -588,6 +604,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				CustomType:    timetypes.RFC3339Type{},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+			},
+			"fedramp_level": schema.StringAttribute{
+				Description: "FedRAMP compliance level: fedramp-medium or fedramp-high.\nAvailable values: \"fedramp-medium\", \"fedramp-high\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("fedramp-medium", "fedramp-high"),
+				},
+			},
+			"fedramp_mode": schema.StringAttribute{
+				Description: "FedRAMP enforcement mode. \"prefer\" prioritizes compliant connectors but allows fallback. \"require\" strictly filters.\nAvailable values: \"prefer\", \"require\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("prefer", "require"),
+				},
 			},
 			"is_default": schema.BoolAttribute{
 				Computed: true,

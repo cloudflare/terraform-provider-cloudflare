@@ -257,6 +257,16 @@ func normalizeRequireItems(items *[]*ZeroTrustAccessGroupRequireModel) {
 	}
 }
 
+// The API returns every rule in full, in its own order. Decoding onto the prior
+// state merges the response into the existing list elements by index, so when the
+// order differs, selectors from one rule leak into another. Clear the prior rules
+// so they decode fresh.
+func clearPriorRules(data *ZeroTrustAccessGroupModel) {
+	data.Include = nil
+	data.Exclude = nil
+	data.Require = nil
+}
+
 // Normalizing function to ensure consistency between the state/plan and the meaning of the API response.
 // Alters the API response before applying it to the state by laxing equalities between null & zero-value
 // for some attributes, and nullifies fields that terraform should not be saving in the state.

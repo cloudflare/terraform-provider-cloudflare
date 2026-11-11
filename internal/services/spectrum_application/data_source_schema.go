@@ -65,6 +65,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: `Optional Worker script tag (worker ID) to use as the application's origin. Only supported for TCP applications with traffic_type "worker"; mutually exclusive with origin_direct, origin_dns, origin_port, proxy_protocol, and argo_smart_routing. tls may only be "off" or "flexible".`,
 				Computed:    true,
 			},
+			"origin_worker_name": schema.StringAttribute{
+				Description: "Name of the Worker origin. Omitted when the Worker is not found or its name cannot be resolved.",
+				Computed:    true,
+			},
+			"origin_worker_status": schema.StringAttribute{
+				Description: "Lookup status of the Worker origin. Unknown indicates that its name could not be resolved. Only returned for Worker origins.\nAvailable values: \"available\", \"not_found\", \"unknown\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"available",
+						"not_found",
+						"unknown",
+					),
+				},
+			},
 			"protocol": schema.StringAttribute{
 				Description: "The port configuration at Cloudflare's edge. May specify a single port, for example `\"tcp/1000\"`, or a range of ports, for example `\"tcp/1000-2000\"`.",
 				Computed:    true,
@@ -139,7 +154,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[SpectrumApplicationEdgeIPsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"connectivity": schema.StringAttribute{
-						Description: "The IP versions supported for inbound connections on Spectrum anycast IPs.\nAvailable values: \"all\", \"ipv4\", \"ipv6\".",
+						Description: "For `type: dynamic`: The IP versions supported for inbound connections on Spectrum anycast IPs.\nAvailable values: \"all\", \"ipv4\", \"ipv6\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -150,14 +165,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"type": schema.StringAttribute{
-						Description: "The type of edge IP configuration specified. Dynamically allocated edge IPs use Spectrum anycast IPs in accordance with the connectivity you specify. Only valid with CNAME DNS names.\nAvailable values: \"dynamic\", \"static\".",
+						Description: "For `type: dynamic`: The type of edge IP configuration specified. Dynamically allocated edge IPs use Spectrum anycast IPs in accordance with the connectivity you specify. Only valid with CNAME DNS names.\n\nFor `type: static`: The type of edge IP configuration specified. Statically allocated edge IPs use customer IPs in accordance with the ips array you specify. Only valid with ADDRESS DNS names.\nAvailable values: \"dynamic\", \"static\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("dynamic", "static"),
 						},
 					},
 					"ips": schema.ListAttribute{
-						Description: "The array of customer owned IPs we broadcast via anycast for this hostname and application.",
+						Description: "For `type: static`: The array of customer owned IPs we broadcast via anycast for this hostname and application.",
 						Computed:    true,
 						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,

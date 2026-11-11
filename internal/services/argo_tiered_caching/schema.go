@@ -31,7 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"value": schema.StringAttribute{
-				Description: "Enables Tiered Caching.\nAvailable values: \"on\", \"off\".",
+				Description: "Enables or disables Tiered Cache.\nAvailable values: \"on\", \"off\".",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("on", "off"),

@@ -2,12 +2,15 @@
 page_title: "cloudflare_share Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Resource Sharing Read
 ---
 
 # cloudflare_share (Data Source)
 
+Accepted Permissions
 
+- `Resource Sharing Read`
 
 ## Example Usage
 
@@ -17,6 +20,7 @@ data "cloudflare_share" "example_share" {
   share_id = "3fd85f74b32742f1bff64a85009dda07"
   include_recipient_counts = true
   include_resources = true
+  include_tags_from = "api"
 }
 ```
 
@@ -32,6 +36,8 @@ data "cloudflare_share" "example_share" {
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `include_recipient_counts` (Boolean) Include recipient counts in the response.
 - `include_resources` (Boolean) Include resources in the response.
+- `include_tags_from` (String) Include share tags in the response. `api` reads tags from the tag service; `mirror` reads a local, eventually consistent replica. If the tag lookup fails, the response omits `tags`.
+Available values: "api", "mirror".
 - `share_id` (String) Share identifier tag.
 
 ### Read-Only
@@ -39,16 +45,17 @@ data "cloudflare_share" "example_share" {
 - `account_name` (String) The display name of an account.
 - `associated_recipient_count` (Number) The number of recipients in the 'associated' state. This field is only included when requested via the 'include_recipient_counts' parameter.
 - `associating_recipient_count` (Number) The number of recipients in the 'associating' state. This field is only included when requested via the 'include_recipient_counts' parameter.
-- `created` (String) When the share was created.
+- `created` (String) When the object was created.
 - `disassociated_recipient_count` (Number) The number of recipients in the 'disassociated' state. This field is only included when requested via the 'include_recipient_counts' parameter.
 - `disassociating_recipient_count` (Number) The number of recipients in the 'disassociating' state. This field is only included when requested via the 'include_recipient_counts' parameter.
 - `id` (String) Share identifier tag.
 - `kind` (String) Available values: "sent", "received".
-- `modified` (String) When the share was modified.
+- `modified` (String) When the object was last modified.
 - `name` (String) The name of the share.
 - `organization_id` (String) Organization identifier.
 - `resources` (Attributes List) A list of resources that are part of the share. This field is only included when requested via the 'include_resources' parameter. (see [below for nested schema](#nestedatt--resources))
 - `status` (String) Available values: "active", "deleting", "deleted".
+- `tags` (Map of String) Tags associated with the share. Included in create and update responses when tags are supplied, and in read responses when the `include_tags_from` parameter is set.
 - `target_type` (String) Available values: "account", "organization".
 
 <a id="nestedatt--filter"></a>
@@ -58,6 +65,8 @@ Optional:
 
 - `direction` (String) Direction to sort objects.
 Available values: "asc", "desc".
+- `include_tags_from` (String) Include share tags in the response. `api` reads tags from the tag service; `mirror` reads a local, eventually consistent replica. If the tag lookup fails, the response omits `tags`.
+Available values: "api", "mirror".
 - `kind` (String) Filter shares by kind.
 Available values: "sent", "received".
 - `order` (String) Order shares by values in the given field.
@@ -75,12 +84,12 @@ Available values: "account", "organization".
 
 Read-Only:
 
-- `created` (String) When the share was created.
+- `created` (String) When the object was created.
 - `id` (String) Share Resource identifier.
 - `meta` (String) Resource Metadata.
-- `modified` (String) When the share was modified.
+- `modified` (String) When the object was last modified.
 - `resource_account_id` (String) Account identifier.
-- `resource_id` (String) Share Resource identifier.
+- `resource_id` (String) Identifier assigned by the service that owns the shared resource.
 - `resource_type` (String) Resource Type.
 Available values: "custom-ruleset", "gateway-policy", "gateway-destination-ip", "gateway-block-page-settings", "gateway-extended-email-matching", "idp-federation-grant", "trust-grant".
 - `resource_version` (Number) Resource Version.

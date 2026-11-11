@@ -20,6 +20,7 @@ type AISearchInstanceResultDataSourceEnvelope struct {
 type AISearchInstanceDataSourceModel struct {
 	ID                   types.String                                                                  `tfsdk:"id" path:"id,computed_optional"`
 	AccountID            types.String                                                                  `tfsdk:"account_id" path:"account_id,optional"`
+	Namespace            types.String                                                                  `tfsdk:"namespace" path:"namespace,computed_optional"`
 	AIGatewayID          types.String                                                                  `tfsdk:"ai_gateway_id" json:"ai_gateway_id,computed"`
 	AISearchModel        types.String                                                                  `tfsdk:"aisearch_model" json:"ai_search_model,computed"`
 	Cache                types.Bool                                                                    `tfsdk:"cache" json:"cache,computed"`
@@ -38,7 +39,6 @@ type AISearchInstanceDataSourceModel struct {
 	MaxNumResults        types.Int64                                                                   `tfsdk:"max_num_results" json:"max_num_results,computed"`
 	ModifiedAt           timetypes.RFC3339                                                             `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	ModifiedBy           types.String                                                                  `tfsdk:"modified_by" json:"modified_by,computed"`
-	Namespace            types.String                                                                  `tfsdk:"namespace" json:"namespace,computed"`
 	Paused               types.Bool                                                                    `tfsdk:"paused" json:"paused,computed"`
 	PublicEndpointID     types.String                                                                  `tfsdk:"public_endpoint_id" json:"public_endpoint_id,computed"`
 	Reranking            types.Bool                                                                    `tfsdk:"reranking" json:"reranking,computed"`
@@ -61,30 +61,27 @@ type AISearchInstanceDataSourceModel struct {
 	Filter               *AISearchInstanceFindOneByDataSourceModel                                     `tfsdk:"filter"`
 }
 
-func (m *AISearchInstanceDataSourceModel) toReadParams(_ context.Context) (params ai_search.InstanceReadParams, diags diag.Diagnostics) {
-	params = ai_search.InstanceReadParams{
+func (m *AISearchInstanceDataSourceModel) toReadParams(_ context.Context) (params ai_search.NamespaceInstanceReadParams, diags diag.Diagnostics) {
+	params = ai_search.NamespaceInstanceReadParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
-func (m *AISearchInstanceDataSourceModel) toListParams(_ context.Context) (params ai_search.InstanceListParams, diags diag.Diagnostics) {
-	params = ai_search.InstanceListParams{
+func (m *AISearchInstanceDataSourceModel) toListParams(_ context.Context) (params ai_search.NamespaceInstanceListParams, diags diag.Diagnostics) {
+	params = ai_search.NamespaceInstanceListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	if !m.Filter.Hostname.IsNull() {
 		params.Hostname = cloudflare.F(m.Filter.Hostname.ValueString())
 	}
-	if !m.Filter.Namespace.IsNull() {
-		params.Namespace = cloudflare.F(m.Filter.Namespace.ValueString())
-	}
 	if !m.Filter.OrderBy.IsNull() {
-		params.OrderBy = cloudflare.F(ai_search.InstanceListParamsOrderBy(m.Filter.OrderBy.ValueString()))
+		params.OrderBy = cloudflare.F(ai_search.NamespaceInstanceListParamsOrderBy(m.Filter.OrderBy.ValueString()))
 	}
 	if !m.Filter.OrderByDirection.IsNull() {
-		params.OrderByDirection = cloudflare.F(ai_search.InstanceListParamsOrderByDirection(m.Filter.OrderByDirection.ValueString()))
+		params.OrderByDirection = cloudflare.F(ai_search.NamespaceInstanceListParamsOrderByDirection(m.Filter.OrderByDirection.ValueString()))
 	}
 	if !m.Filter.Search.IsNull() {
 		params.Search = cloudflare.F(m.Filter.Search.ValueString())
@@ -171,7 +168,6 @@ type AISearchInstanceSourceParamsWebCrawlerDataSourceModel struct {
 	DiscoverOptions customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerDiscoverOptionsDataSourceModel] `tfsdk:"discover_options" json:"discover_options,computed"`
 	ParseOptions    customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerParseOptionsDataSourceModel]    `tfsdk:"parse_options" json:"parse_options,computed"`
 	ParseType       types.String                                                                                   `tfsdk:"parse_type" json:"parse_type,computed"`
-	StoreOptions    customfield.NestedObject[AISearchInstanceSourceParamsWebCrawlerStoreOptionsDataSourceModel]    `tfsdk:"store_options" json:"store_options,computed"`
 }
 
 type AISearchInstanceSourceParamsWebCrawlerDiscoverOptionsDataSourceModel struct {
@@ -196,15 +192,8 @@ type AISearchInstanceSourceParamsWebCrawlerParseOptionsContentSelectorDataSource
 	Selector types.String `tfsdk:"selector" json:"selector,computed"`
 }
 
-type AISearchInstanceSourceParamsWebCrawlerStoreOptionsDataSourceModel struct {
-	StorageID      types.String `tfsdk:"storage_id" json:"storage_id,computed"`
-	R2Jurisdiction types.String `tfsdk:"r2_jurisdiction" json:"r2_jurisdiction,computed"`
-	StorageType    types.String `tfsdk:"storage_type" json:"storage_type,computed"`
-}
-
 type AISearchInstanceFindOneByDataSourceModel struct {
 	Hostname         types.String `tfsdk:"hostname" query:"hostname,optional"`
-	Namespace        types.String `tfsdk:"namespace" query:"namespace,optional"`
 	OrderBy          types.String `tfsdk:"order_by" query:"order_by,computed_optional"`
 	OrderByDirection types.String `tfsdk:"order_by_direction" query:"order_by_direction,computed_optional"`
 	Search           types.String `tfsdk:"search" query:"search,optional"`

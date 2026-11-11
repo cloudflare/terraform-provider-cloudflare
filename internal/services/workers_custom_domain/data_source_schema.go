@@ -33,10 +33,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier.",
-				Optional:    true,
+				Required:    true,
 			},
 			"cert_id": schema.StringAttribute{
 				Description: "ID of the TLS certificate issued for the domain.",
+				Computed:    true,
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "Whether the configured hostname is routable for the domain. If disabled, then requests to the configured hostname will not be routed to the configured Worker. If disabled, then preview routing must be enabled, and only subdomains of the configured hostname will be routable.",
 				Computed:    true,
 			},
 			"environment": schema.StringAttribute{
@@ -46,6 +50,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"hostname": schema.StringAttribute{
 				Description: "Hostname of the domain. Can be either the zone apex or a subdomain of the zone. Requests to this hostname will be routed to the configured Worker.",
+				Computed:    true,
+			},
+			"previews_enabled": schema.BoolAttribute{
+				Description: "Whether previews are routable for the domain. If enabled, previews will be routable as subdomains of the configured hostname. For example, if the configured hostname is `app.example.com`, then requests to `my-feature.app.example.com` will be routed to the preview with slug `my-feature`, if such a preview exists. If preview routing is disabled, then hostname routing must be enabled.",
 				Computed:    true,
 			},
 			"service": schema.StringAttribute{
@@ -63,12 +71,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Description: "Whether the configured hostname is routable for the domain.",
+						Optional:    true,
+					},
 					"environment": schema.StringAttribute{
 						Description: "Worker environment associated with the domain.",
 						Optional:    true,
 					},
 					"hostname": schema.StringAttribute{
 						Description: "Hostname of the domain.",
+						Optional:    true,
+					},
+					"previews_enabled": schema.BoolAttribute{
+						Description: "Whether previews are routable for the domain.",
 						Optional:    true,
 					},
 					"service": schema.StringAttribute{

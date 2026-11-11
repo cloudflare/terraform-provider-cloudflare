@@ -3,7 +3,6 @@ resource "cloudflare_account_dns_settings" "example_account_dns_settings" {
   enforce_dns_only = false
   zone_defaults = {
     flatten_all_cnames = false
-    foundation_dns = false
     internal_dns = {
       reference_zone_id = "reference_zone_id"
     }

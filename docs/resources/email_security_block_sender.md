@@ -22,6 +22,7 @@ resource "cloudflare_email_security_block_sender" "example_email_security_block_
   pattern = "test@example.com"
   pattern_type = "EMAIL"
   comments = "Block sender with email test@example.com"
+  expires_at = "2027-01-01T00:00:00Z"
 }
 ```
 
@@ -43,6 +44,7 @@ Available values: "EMAIL", "DOMAIN", "IP", "UNKNOWN".
 ### Optional
 
 - `comments` (String)
+- `expires_at` (String) Timestamp at which the pattern expires. After this time, Email Security ignores the pattern. The value must lie in the future. Send `null` to clear the expiration.
 
 ### Read-Only
 

@@ -19,6 +19,7 @@ Accepted Permissions
 data "cloudflare_pipeline_sinks" "example_pipeline_sinks" {
   account_id = "0123105f4ecef8ad9ca31a8372d0c353"
   name = "x"
+  order_by = "name"
   pipeline_id = "pipeline_id"
 }
 ```
@@ -29,8 +30,12 @@ data "cloudflare_pipeline_sinks" "example_pipeline_sinks" {
 ### Optional
 
 - `account_id` (String) Specifies the public ID of the account.
+- `direction` (String) Sort direction.
+Available values: "asc", "desc".
 - `max_items` (Number) Max items to fetch, default: 1000
 - `name` (String) Filters sinks by name (case-insensitive substring).
+- `order_by` (String) Sorts sinks by this field. Defaults to `created_at`.
+Available values: "name", "created_at".
 - `pipeline_id` (String)
 
 ### Read-Only
@@ -58,7 +63,11 @@ Available values: "r2", "r2_data_catalog", "basin_catalog".
 Read-Only:
 
 - `account_id` (String) Cloudflare Account ID for the bucket
+
+Cloudflare Account ID
 - `bucket` (String) R2 Bucket to write to
+
+The R2 Bucket that hosts this catalog
 - `file_naming` (Attributes) Controls filename prefix/suffix and strategy. (see [below for nested schema](#nestedatt--result--config--file_naming))
 - `jurisdiction` (String) Jurisdiction this bucket is hosted in
 - `namespace` (String) Table namespace
@@ -102,7 +111,7 @@ Read-Only:
 
 Read-Only:
 
-- `compression` (String) Specifies the compression applied to JSON sink output.
+- `compression` (String) For `type: json`: Specifies the compression applied to JSON sink output.
 Available values: "uncompressed", "gzip", "snappy", "zstd", "lz4".
 - `decimal_encoding` (String) Available values: "number", "string", "bytes".
 - `row_group_bytes` (Number)

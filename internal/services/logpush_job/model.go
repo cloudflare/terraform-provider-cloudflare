@@ -17,7 +17,7 @@ type LogpushJobModel struct {
 	AccountID                types.String                  `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID                   types.String                  `tfsdk:"zone_id" path:"zone_id,optional"`
 	Dataset                  types.String                  `tfsdk:"dataset" json:"dataset,computed_optional"`
-	DestinationConf          types.String                  `tfsdk:"destination_conf" json:"destination_conf,required"`
+	DestinationConf          types.String                  `tfsdk:"destination_conf" json:"destination_conf,required,no_refresh"`
 	Filter                   types.String                  `tfsdk:"filter" json:"filter,computed_optional,decode_null_to_zero"`
 	LogpullOptions           types.String                  `tfsdk:"logpull_options" json:"logpull_options,computed_optional,decode_null_to_zero"`
 	MaxUploadBytes           types.Int64                   `tfsdk:"max_upload_bytes" json:"max_upload_bytes,computed_optional,decode_null_to_zero"`

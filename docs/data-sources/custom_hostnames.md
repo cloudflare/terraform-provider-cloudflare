@@ -118,9 +118,7 @@ Read-Only:
 Available values: "ubiquitous", "optimal", "force".
 - `certificate_authority` (String) The Certificate Authority that will issue the certificate.
 Available values: "digicert", "google", "lets_encrypt", "ssl_com".
-- `custom_certificate` (String) If a custom uploaded certificate is used.
 - `custom_csr_id` (String) The identifier for the Custom CSR that was used.
-- `custom_key` (String, Sensitive) The key for a custom uploaded certificate.
 - `dcv_delegation_records` (Attributes List) DCV Delegation records for domain validation. (see [below for nested schema](#nestedatt--result--ssl--dcv_delegation_records))
 - `expires_on` (String) The time the custom certificate expires on.
 - `hosts` (List of String) A list of Hostnames on a custom uploaded certificate.

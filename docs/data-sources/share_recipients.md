@@ -57,9 +57,9 @@ drives `current_association_status` toward it.
 - `disassociated` — Shared resources have been removed from the
   recipient account. The recipient record remains in the database.
 Available values: "associating", "associated", "disassociating", "disassociated".
-- `created` (String) When the share was created.
+- `created` (String) When the object was created.
 - `id` (String) Share Recipient identifier tag.
-- `modified` (String) When the share was modified.
+- `modified` (String) When the object was last modified.
 - `resources` (Attributes List) (see [below for nested schema](#nestedatt--result--resources))
 
 <a id="nestedatt--result--resources"></a>
@@ -67,9 +67,9 @@ Available values: "associating", "associated", "disassociating", "disassociated"
 
 Read-Only:
 
-- `error` (String) Share Recipient error message.
-- `resource_id` (String) Share Resource identifier.
-- `resource_version` (Number) Resource Version.
+- `error` (String) Error from the most recent attempt to apply the resource to the recipient. Empty string when no error has been recorded.
+- `resource_id` (String) Identifier assigned by the service that owns the shared resource.
+- `resource_version` (Number) Resource version applied to the recipient, if reconciliation has occurred.
 - `terminal` (Boolean) Whether the error is terminal or will be continually retried.
 
 

@@ -216,6 +216,7 @@ func (r *ZeroTrustAccessApplicationResource) Read(ctx context.Context, req resou
 	// pointers so omitted rules and selectors become null rather than empty
 	// objects retained from state.
 	env.Result.TargetCriteria = nil
+	clearPriorPolicyRules(ctx, &env.Result)
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())

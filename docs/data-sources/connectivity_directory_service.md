@@ -37,9 +37,7 @@ data "cloudflare_connectivity_directory_service" "example_connectivity_directory
 - `id` (String) The ID of this resource.
 - `name` (String)
 - `tcp_port` (Number)
-- `tls_settings` (Attributes) TLS settings for a connectivity service.
-
-If omitted, the default mode (`verify_full`) is used. (see [below for nested schema](#nestedatt--tls_settings))
+- `tls_settings` (Attributes) TLS settings for a connectivity service. (see [below for nested schema](#nestedatt--tls_settings))
 - `type` (String) Available values: "tcp", "http".
 - `updated_at` (String)
 
@@ -90,5 +88,10 @@ Read-Only:
 - `"verify_full"` — verify certificate chain and hostname (default)
 - `"verify_ca"` — verify certificate chain only, skip hostname check
 - `"disabled"` — do not verify the server certificate at all
+
+`disabled` cannot be combined with `certificate_authority`: a custom CA is
+only used to verify the server certificate.
+- `certificate_authority` (String) UUID of the custom CA certificate or chain.
+- `client_certificate` (String) UUID of the mTLS client certificate and private key.
 
 

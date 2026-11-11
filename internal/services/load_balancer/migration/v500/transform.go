@@ -301,7 +301,15 @@ func transformRulesOverrides(ctx context.Context, source SourceRulesOverridesMod
 
 	// Transform session_affinity_attributes (Array[0] → single object)
 	if len(source.SessionAffinityAttributes) > 0 {
-		target.SessionAffinityAttributes = transformSessionAffinityAttributes(ctx, source.SessionAffinityAttributes[0])
+		attrs := source.SessionAffinityAttributes[0]
+		target.SessionAffinityAttributes = transformSessionAffinityAttributes(ctx, SourceSessionAffinityAttributesModel{
+			Samesite:             attrs.Samesite,
+			Secure:               attrs.Secure,
+			DrainDuration:        types.Int64Null(),
+			ZeroDowntimeFailover: attrs.ZeroDowntimeFailover,
+			Headers:              attrs.Headers,
+			RequireAllHeaders:    attrs.RequireAllHeaders,
+		})
 	} else {
 		target.SessionAffinityAttributes = customfield.NullObject[TargetSessionAffinityAttributesModel](ctx)
 	}

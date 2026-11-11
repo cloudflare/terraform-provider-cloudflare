@@ -192,25 +192,28 @@ func (r *PrecursorResource) Delete(ctx context.Context, req resource.DeleteReque
 func (r *PrecursorResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data = new(PrecursorModel)
 
-	path := ""
+	path_zone_id := ""
+	path_cloudflare_version := ""
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<zone_id>",
-		&path,
+		"<zone_id>/<cloudflare_version>",
+		&path_zone_id,
+		&path_cloudflare_version,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.ZoneID = types.StringValue(path)
+	data.ZoneID = types.StringValue(path_zone_id)
 
 	res := new(http.Response)
 	env := PrecursorResultEnvelope{*data}
 	_, err := r.client.Precursor.Get(
 		ctx,
 		precursor.PrecursorGetParams{
-			ZoneID: cloudflare.F(path),
+			ZoneID:            cloudflare.F(path_zone_id),
+			CloudflareVersion: cloudflare.F(precursor.PrecursorGetParamsCloudflareVersion(path_cloudflare_version)),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

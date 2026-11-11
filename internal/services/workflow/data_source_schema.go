@@ -9,9 +9,11 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -42,6 +44,17 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"created_on": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
+			},
+			"jurisdiction": schema.StringAttribute{
+				Description: "Jurisdiction where instances of this workflow run and store data. Set when the workflow is created and cannot be changed.\nAvailable values: \"eu\", \"fedramp\", \"us\".",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"eu",
+						"fedramp",
+						"us",
+					),
+				},
 			},
 			"modified_on": schema.StringAttribute{
 				Computed:   true,

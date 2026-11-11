@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -382,5 +383,90 @@ func TestUnmarshalCustom_SortsPermissionGroups(t *testing.T) {
 		if got != exp {
 			t.Fatalf("permission_groups[%d]: expected %q, got %q", i, exp, got)
 		}
+	}
+}
+
+// GitHub #7131: removing expires_on, not_before or condition must clear them.
+// The API keeps an omitted field and clears it only on an explicit null.
+func TestMarshalJSONForUpdate_ClearsRemovedFields(t *testing.T) {
+	newModel := func(expiresOn, notBefore timetypes.RFC3339, condition *AccountTokenConditionModel) AccountTokenModel {
+		permGroups := []*AccountTokenPoliciesPermissionGroupsModel{{ID: types.StringValue("permgroup1")}}
+		policies := []*AccountTokenPoliciesModel{{
+			Effect:           types.StringValue("allow"),
+			PermissionGroups: &permGroups,
+			Resources:        types.StringValue(`{"com.cloudflare.api.account.123":"*"}`),
+		}}
+		return AccountTokenModel{
+			ID:        types.StringValue("id"),
+			Name:      types.StringValue("name"),
+			Policies:  &policies,
+			ExpiresOn: expiresOn,
+			NotBefore: notBefore,
+			Condition: condition,
+		}
+	}
+	exp := timetypes.NewRFC3339ValueMust("2030-01-01T00:00:00Z")
+	nbf := timetypes.NewRFC3339ValueMust("2020-01-01T00:00:00Z")
+	null := timetypes.NewRFC3339Null()
+	in := []types.String{types.StringValue("192.0.2.0/24")}
+	cond := &AccountTokenConditionModel{RequestIP: &AccountTokenConditionRequestIPModel{In: &in}}
+
+	tests := []struct {
+		name  string
+		plan  AccountTokenModel
+		state AccountTokenModel
+		want  map[string]string // expected raw JSON per key; "" means omitted
+	}{
+		{
+			name:  "removed from plan sends null",
+			plan:  newModel(null, null, nil),
+			state: newModel(exp, nbf, cond),
+			want:  map[string]string{"expires_on": "null", "not_before": "null", "condition": "null"},
+		},
+		{
+			name:  "null in plan and state is omitted",
+			plan:  newModel(null, null, nil),
+			state: newModel(null, null, nil),
+			want:  map[string]string{"expires_on": "", "not_before": "", "condition": ""},
+		},
+		{
+			name:  "set in plan sends the value",
+			plan:  newModel(exp, nbf, cond),
+			state: newModel(null, null, nil),
+			want: map[string]string{
+				"expires_on": `"2030-01-01T00:00:00Z"`,
+				"not_before": `"2020-01-01T00:00:00Z"`,
+				"condition":  `{"request_ip":{"in":["192.0.2.0/24"]}}`,
+			},
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			data, err := tc.plan.MarshalJSONForUpdate(tc.state)
+			if err != nil {
+				t.Fatal(err)
+			}
+			var body map[string]json.RawMessage
+			if err := json.Unmarshal(data, &body); err != nil {
+				t.Fatal(err)
+			}
+			for key, want := range tc.want {
+				got, ok := body[key]
+				if want == "" {
+					if ok {
+						t.Errorf("%s: expected omitted, got %s", key, got)
+					}
+					continue
+				}
+				if !ok {
+					t.Errorf("%s: expected %s, got omitted (body %s)", key, want, data)
+				} else if string(got) != want {
+					t.Errorf("%s: expected %s, got %s (body %s)", key, want, got, data)
+				}
+			}
+			if want := `[{"effect":"allow","permission_groups":[{"id":"permgroup1"}],"resources":{"com.cloudflare.api.account.123":"*"}}]`; string(body["policies"]) != want {
+				t.Errorf("policies: expected %s, got %s", want, body["policies"])
+			}
+		})
 	}
 }

@@ -38,6 +38,8 @@ data "cloudflare_workflow" "example_workflow" {
 - `created_on` (String)
 - `id` (String) The ID of this resource.
 - `instances` (Map of Number)
+- `jurisdiction` (String) Jurisdiction where instances of this workflow run and store data. Set when the workflow is created and cannot be changed.
+Available values: "eu", "fedramp", "us".
 - `modified_on` (String)
 - `name` (String)
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))

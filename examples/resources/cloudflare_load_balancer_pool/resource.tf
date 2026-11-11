@@ -13,8 +13,10 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
     virtual_network_id = "a5624d4e-044a-4ff0-b3e1-e2465353d4b4"
     weight = 0.6
   }]
+  check_regions = ["WEU", "ENAM"]
   description = "Primary data center - Provider XYZ"
   enabled = false
+  health_sources = ["regional", "global"]
   latitude = 0
   load_shedding = {
     default_percent = 0
@@ -26,6 +28,7 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
   minimum_origins = 0
   monitor = "monitor"
   monitor_group = "monitor_group"
+  networks = ["cloudflare", "jdcloud"]
   notification_email = "someone@example.com,sometwo@example.com"
   notification_filter = {
     origin = {

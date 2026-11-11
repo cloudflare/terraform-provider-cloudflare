@@ -154,7 +154,7 @@ resource "cloudflare_worker_version" "%[1]s" {
     }
   ]
   main_module = "index.js"
-  
+
   bindings = [
     {
       name = "PLATFORM_DOMAIN"
@@ -181,7 +181,7 @@ resource "cloudflare_worker_version" "%[1]s" {
     }
   ]
   main_module = "index.js"
-  
+
   bindings = [
     {
       name = "PLATFORM_DOMAIN"

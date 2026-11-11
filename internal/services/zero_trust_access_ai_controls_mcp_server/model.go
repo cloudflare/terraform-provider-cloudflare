@@ -35,6 +35,7 @@ type ZeroTrustAccessAIControlsMcpServerModel struct {
 	LastSynced                   timetypes.RFC3339                                                                  `tfsdk:"last_synced" json:"last_synced,computed" format:"date-time"`
 	ModifiedAt                   timetypes.RFC3339                                                                  `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	ModifiedBy                   types.String                                                                       `tfsdk:"modified_by" json:"modified_by,computed"`
+	RegisteredAt                 timetypes.RFC3339                                                                  `tfsdk:"registered_at" json:"registered_at,computed" format:"date-time"`
 	Status                       types.String                                                                       `tfsdk:"status" json:"status,computed"`
 	Prompts                      customfield.List[customfield.Map[jsontypes.Normalized]]                            `tfsdk:"prompts" json:"prompts,computed"`
 	Tools                        customfield.List[customfield.Map[jsontypes.Normalized]]                            `tfsdk:"tools" json:"tools,computed"`

@@ -47,7 +47,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
-							Description: "The name of the characteristic field, i.e., the header or cookie name.",
+							Description: "For `type: header` or `type: cookie`: The name of the characteristic field, i.e., the header or cookie name.\n\nFor `type: jwt`: Claim location expressed as `$(token_config_id):$(json_path)`, where `token_config_id` \nis the ID of the token configuration used in validating the JWT, and `json_path` is a RFC 9535 \nJSONPath (https://goessner.net/articles/JsonPath/, https://www.rfc-editor.org/rfc/rfc9535.html).\nThe JSONPath expression may be in dot or bracket notation, may only specify literal keys\nor array indexes, and must return a singleton value, which will be interpreted as a string.",
 							Required:    true,
 						},
 						"type": schema.StringAttribute{

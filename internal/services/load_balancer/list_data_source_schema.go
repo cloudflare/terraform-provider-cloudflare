@@ -280,12 +280,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												},
 											},
 											"random_steering": schema.SingleNestedAttribute{
-												Description: "Configures pool weights.\n- `steering_policy=\"random\"`: A random pool is selected with probability proportional to pool weights.\n- `steering_policy=\"least_outstanding_requests\"`: Use pool weights to scale each pool's outstanding requests.\n- `steering_policy=\"least_connections\"`: Use pool weights to scale each pool's open connections.",
+												Description: "Configures pool weights for a rule override. An omitted default_weight inherits the load balancer's default weight.\n- `steering_policy=\"random\"`: A random pool is selected with probability proportional to pool weights.\n- `steering_policy=\"least_outstanding_requests\"`: Use pool weights to scale each pool's outstanding requests.\n- `steering_policy=\"least_connections\"`: Use pool weights to scale each pool's open connections.",
 												Computed:    true,
 												CustomType:  customfield.NewNestedObjectType[LoadBalancersRulesOverridesRandomSteeringDataSourceModel](ctx),
 												Attributes: map[string]schema.Attribute{
 													"default_weight": schema.Float64Attribute{
-														Description: "The default weight for pools in the load balancer that are not specified in the pool_weights map.",
+														Description: "The default weight for pools in the load balancer that are not specified in the pool_weights map. An omitted value inherits the load balancer's default weight.",
 														Computed:    true,
 														Validators: []validator.Float64{
 															float64validator.Between(0, 1),
@@ -403,7 +403,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"priority": schema.Int64Attribute{
-										Description: "The order in which rules should be executed in relation to each other. Lower values are executed first. Values do not need to be sequential. If no value is provided for any rule the array order of the rules field will be used to assign a priority.",
+										Description: "The order in which rules should be executed in relation to each other. Lower values are executed first. Values do not need to be sequential. If all priorities are omitted or zero, the API assigns priorities based on the array order of the rules field.",
 										Computed:    true,
 										Validators: []validator.Int64{
 											int64validator.AtLeast(0),

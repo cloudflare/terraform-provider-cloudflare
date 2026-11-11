@@ -10,6 +10,7 @@ resource "cloudflare_workflow" "example_workflow" {
     error_retention = "5 minutes"
     success_retention = "5 minutes"
   }
+  jurisdiction = "eu"
   limits = {
     steps = 1
   }

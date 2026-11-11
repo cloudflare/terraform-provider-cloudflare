@@ -49,7 +49,11 @@ data "cloudflare_pipeline_stream" "example_pipeline_stream" {
 
 Optional:
 
+- `direction` (String) Sort direction.
+Available values: "asc", "desc".
 - `name` (String) Filters streams by name (case-insensitive substring).
+- `order_by` (String) Sorts streams by this field. Defaults to `created_at`.
+Available values: "name", "created_at".
 - `pipeline_id` (String) Specifies the public ID of the pipeline.
 
 

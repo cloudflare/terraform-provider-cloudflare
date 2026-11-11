@@ -2,12 +2,16 @@
 page_title: "cloudflare_dls_prefix_binding Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  DLS: ReadDLS: Write
 ---
 
 # cloudflare_dls_prefix_binding (Data Source)
 
+Accepted Permissions
 
+- `DLS: Read`
+- `DLS: Write`
 
 ## Example Usage
 

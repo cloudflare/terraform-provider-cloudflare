@@ -47,6 +47,6 @@ type CustomOriginTrustStoresResultDataSourceModel struct {
 	Issuer      types.String      `tfsdk:"issuer" json:"issuer,computed"`
 	Signature   types.String      `tfsdk:"signature" json:"signature,computed"`
 	Status      types.String      `tfsdk:"status" json:"status,computed"`
-	UpdatedAt   timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	UploadedOn  timetypes.RFC3339 `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
+	UpdatedAt   timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }

@@ -23,6 +23,7 @@ type MagicTransitSiteLANModel struct {
 	Physport         types.Int64                               `tfsdk:"physport" json:"physport,optional"`
 	VlanTag          types.Int64                               `tfsdk:"vlan_tag" json:"vlan_tag,optional"`
 	Nat              *MagicTransitSiteLANNatModel              `tfsdk:"nat" json:"nat,optional"`
+	RemoteSubnets    *[]*MagicTransitSiteLANRemoteSubnetsModel `tfsdk:"remote_subnets" json:"remote_subnets,optional"`
 	RoutedSubnets    *[]*MagicTransitSiteLANRoutedSubnetsModel `tfsdk:"routed_subnets" json:"routed_subnets,optional"`
 	StaticAddressing *MagicTransitSiteLANStaticAddressingModel `tfsdk:"static_addressing" json:"static_addressing,optional"`
 }
@@ -37,6 +38,11 @@ func (m MagicTransitSiteLANModel) MarshalJSONForUpdate(state MagicTransitSiteLAN
 
 type MagicTransitSiteLANNatModel struct {
 	StaticPrefix types.String `tfsdk:"static_prefix" json:"static_prefix,optional"`
+}
+
+type MagicTransitSiteLANRemoteSubnetsModel struct {
+	LocalAliasPrefix types.String `tfsdk:"local_alias_prefix" json:"local_alias_prefix,required"`
+	RemotePrefix     types.String `tfsdk:"remote_prefix" json:"remote_prefix,required"`
 }
 
 type MagicTransitSiteLANRoutedSubnetsModel struct {

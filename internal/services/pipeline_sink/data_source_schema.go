@@ -69,11 +69,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[PipelineSinkConfigDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{
-						Description: "Cloudflare Account ID for the bucket",
+						Description: "Cloudflare Account ID for the bucket\n\nCloudflare Account ID",
 						Computed:    true,
 					},
 					"bucket": schema.StringAttribute{
-						Description: "R2 Bucket to write to",
+						Description: "R2 Bucket to write to\n\nThe R2 Bucket that hosts this catalog",
 						Computed:    true,
 					},
 					"file_naming": schema.SingleNestedAttribute{
@@ -173,7 +173,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"compression": schema.StringAttribute{
-						Description: "Specifies the compression applied to JSON sink output.\nAvailable values: \"uncompressed\", \"gzip\", \"snappy\", \"zstd\", \"lz4\".",
+						Description: "For `type: json`: Specifies the compression applied to JSON sink output.\nAvailable values: \"uncompressed\", \"gzip\", \"snappy\", \"zstd\", \"lz4\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -276,9 +276,24 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
+					"direction": schema.StringAttribute{
+						Description: "Sort direction.\nAvailable values: \"asc\", \"desc\".",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+						},
+					},
 					"name": schema.StringAttribute{
 						Description: "Filters sinks by name (case-insensitive substring).",
 						Optional:    true,
+					},
+					"order_by": schema.StringAttribute{
+						Description: "Sorts sinks by this field. Defaults to `created_at`.\nAvailable values: \"name\", \"created_at\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("name", "created_at"),
+						},
 					},
 					"pipeline_id": schema.StringAttribute{
 						Optional: true,

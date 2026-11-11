@@ -67,7 +67,7 @@ Read-Only:
 
 - `created_at` (String)
 - `id` (String)
-- `ips` (List of String) Specify the list of CIDRs to restrict ingress connections.
+- `ips` (List of String) For `kind: ip`: Specify the list of CIDRs to restrict ingress connections.
 - `kind` (String) The proxy endpoint kind
 Available values: "ip", "identity".
 - `name` (String) Specify the name of the proxy endpoint.

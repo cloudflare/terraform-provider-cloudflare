@@ -95,7 +95,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectType[AccessRuleConfigurationDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"target": schema.StringAttribute{
-						Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the rule.\nAvailable values: \"ip\", \"ip6\", \"ip_range\", \"asn\", \"country\".",
+						Description: "For `target: ip`: The configuration target. You must set the target to `ip` when specifying an IP address in the rule.\n\nFor `target: ip6`: The configuration target. You must set the target to `ip6` when specifying an IPv6 address in the rule.\n\nFor `target: ip_range`: The configuration target. You must set the target to `ip_range` when specifying an IP address range in the rule.\n\nFor `target: asn`: The configuration target. You must set the target to `asn` when specifying an Autonomous System Number (ASN) in the rule.\n\nFor `target: country`: The configuration target. You must set the target to `country` when specifying a country code in the rule.\nAvailable values: \"ip\", \"ip6\", \"ip_range\", \"asn\", \"country\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -108,7 +108,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"value": schema.StringAttribute{
-						Description: "The IP address to match. This address will be compared to the IP address of incoming requests.",
+						Description: "For `target: ip`: The IP address to match. This address will be compared to the IP address of incoming requests.\n\nFor `target: ip6`: The IPv6 address to match.\n\nFor `target: ip_range`: The IP address range to match. You can only use prefix lengths `/16` and `/24` for IPv4 ranges, and prefix lengths `/32`, `/48`, and `/64` for IPv6 ranges.\n\nFor `target: asn`: The AS number to match.\n\nFor `target: country`: The two-letter ISO-3166-1 alpha-2 code to match. For more information, refer to [IP Access rules: Parameters](https://developers.cloudflare.com/waf/tools/ip-access-rules/parameters/#country).",
 						Computed:    true,
 					},
 				},

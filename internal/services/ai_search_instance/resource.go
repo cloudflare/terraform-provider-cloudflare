@@ -71,9 +71,10 @@ func (r *AISearchInstanceResource) Create(ctx context.Context, req resource.Crea
 	}
 	res := new(http.Response)
 	env := AISearchInstanceResultEnvelope{*data}
-	_, err = r.client.AISearch.Instances.New(
+	_, err = r.client.AISearch.Namespaces.Instances.New(
 		ctx,
-		ai_search.InstanceNewParams{
+		data.Namespace.ValueString(),
+		ai_search.NamespaceInstanceNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -119,10 +120,11 @@ func (r *AISearchInstanceResource) Update(ctx context.Context, req resource.Upda
 	}
 	res := new(http.Response)
 	env := AISearchInstanceResultEnvelope{*data}
-	_, err = r.client.AISearch.Instances.Update(
+	_, err = r.client.AISearch.Namespaces.Instances.Update(
 		ctx,
+		data.Namespace.ValueString(),
 		data.ID.ValueString(),
-		ai_search.InstanceUpdateParams{
+		ai_search.NamespaceInstanceUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -155,10 +157,11 @@ func (r *AISearchInstanceResource) Read(ctx context.Context, req resource.ReadRe
 
 	res := new(http.Response)
 	env := AISearchInstanceResultEnvelope{*data}
-	_, err := r.client.AISearch.Instances.Read(
+	_, err := r.client.AISearch.Namespaces.Instances.Read(
 		ctx,
+		data.Namespace.ValueString(),
 		data.ID.ValueString(),
-		ai_search.InstanceReadParams{
+		ai_search.NamespaceInstanceReadParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -193,10 +196,11 @@ func (r *AISearchInstanceResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
-	_, err := r.client.AISearch.Instances.Delete(
+	_, err := r.client.AISearch.Namespaces.Instances.Delete(
 		ctx,
+		data.Namespace.ValueString(),
 		data.ID.ValueString(),
-		ai_search.InstanceDeleteParams{
+		ai_search.NamespaceInstanceDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -213,11 +217,13 @@ func (r *AISearchInstanceResource) ImportState(ctx context.Context, req resource
 	var data = new(AISearchInstanceModel)
 
 	path_account_id := ""
+	path_namespace := ""
 	path_id := ""
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_id>/<id>",
+		"<account_id>/<namespace>/<id>",
 		&path_account_id,
+		&path_namespace,
 		&path_id,
 	)
 	resp.Diagnostics.Append(diags...)
@@ -226,14 +232,16 @@ func (r *AISearchInstanceResource) ImportState(ctx context.Context, req resource
 	}
 
 	data.AccountID = types.StringValue(path_account_id)
+	data.Namespace = types.StringValue(path_namespace)
 	data.ID = types.StringValue(path_id)
 
 	res := new(http.Response)
 	env := AISearchInstanceResultEnvelope{*data}
-	_, err := r.client.AISearch.Instances.Read(
+	_, err := r.client.AISearch.Namespaces.Instances.Read(
 		ctx,
+		path_namespace,
 		path_id,
-		ai_search.InstanceReadParams{
+		ai_search.NamespaceInstanceReadParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
 		option.WithResponseBodyInto(&res),

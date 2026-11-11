@@ -9,6 +9,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -91,6 +92,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "An IPv4 address, an IPv4 CIDR, an IPv6 address, or an IPv6 CIDR.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Validators:    []validator.String{list.IPValidator()},
 			},
 			"redirect": schema.SingleNestedAttribute{
 				Description: "The definition of the redirect.",

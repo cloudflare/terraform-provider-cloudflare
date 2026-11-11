@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
@@ -22,6 +23,11 @@ var _ datasource.DataSourceWithConfigValidators = (*ShareDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		MarkdownDescription: schemata.Description{
+			Scopes: []string{
+				"Resource Sharing Read",
+			},
+		}.String(),
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Share identifier tag.",
@@ -43,6 +49,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Include resources in the response.",
 				Optional:    true,
 			},
+			"include_tags_from": schema.StringAttribute{
+				Description: "Include share tags in the response. `api` reads tags from the tag service; `mirror` reads a local, eventually consistent replica. If the tag lookup fails, the response omits `tags`.\nAvailable values: \"api\", \"mirror\".",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("api", "mirror"),
+				},
+			},
 			"account_name": schema.StringAttribute{
 				Description: "The display name of an account.",
 				Computed:    true,
@@ -56,7 +69,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"created": schema.StringAttribute{
-				Description: "When the share was created.",
+				Description: "When the object was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
@@ -76,7 +89,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"modified": schema.StringAttribute{
-				Description: "When the share was modified.",
+				Description: "When the object was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
@@ -106,6 +119,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("account", "organization"),
 				},
 			},
+			"tags": schema.MapAttribute{
+				Description: "Tags associated with the share. Included in create and update responses when tags are supplied, and in read responses when the `include_tags_from` parameter is set.",
+				Computed:    true,
+				CustomType:  customfield.NewMapType[types.String](ctx),
+				ElementType: types.StringType,
+			},
 			"resources": schema.ListNestedAttribute{
 				Description: "A list of resources that are part of the share. This field is only included when requested via the 'include_resources' parameter.",
 				Computed:    true,
@@ -117,7 +136,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"created": schema.StringAttribute{
-							Description: "When the share was created.",
+							Description: "When the object was created.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
@@ -127,7 +146,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  jsontypes.NormalizedType{},
 						},
 						"modified": schema.StringAttribute{
-							Description: "When the share was modified.",
+							Description: "When the object was last modified.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
@@ -136,7 +155,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"resource_id": schema.StringAttribute{
-							Description: "Share Resource identifier.",
+							Description: "Identifier assigned by the service that owns the shared resource.",
 							Computed:    true,
 						},
 						"resource_type": schema.StringAttribute{
@@ -181,6 +200,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+						},
+					},
+					"include_tags_from": schema.StringAttribute{
+						Description: "Include share tags in the response. `api` reads tags from the tag service; `mirror` reads a local, eventually consistent replica. If the tag lookup fails, the response omits `tags`.\nAvailable values: \"api\", \"mirror\".",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("api", "mirror"),
 						},
 					},
 					"kind": schema.StringAttribute{

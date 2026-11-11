@@ -16,12 +16,12 @@ type ZeroTrustAccessPolicyResultEnvelope struct {
 type ZeroTrustAccessPolicyModel struct {
 	ID                           types.String                                                   `tfsdk:"id" json:"id,computed"`
 	AccountID                    types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
-	AppCount                     types.Int64                                                    `tfsdk:"app_count" json:"app_count,computed"`
 	Decision                     types.String                                                   `tfsdk:"decision" json:"decision,required"`
 	Name                         types.String                                                   `tfsdk:"name" json:"name,required"`
 	ApprovalRequired             types.Bool                                                     `tfsdk:"approval_required" json:"approval_required,optional"`
 	CreatedAt                    timetypes.RFC3339                                              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IsolationRequired            types.Bool                                                     `tfsdk:"isolation_required" json:"isolation_required,optional"`
+	PolicyResolutionAccountID    types.String                                                   `tfsdk:"policy_resolution_account_id" json:"policy_resolution_account_id,optional"`
 	PurposeJustificationPrompt   types.String                                                   `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,optional"`
 	PurposeJustificationRequired types.Bool                                                     `tfsdk:"purpose_justification_required" json:"purpose_justification_required,optional"`
 	Reusable                     types.Bool                                                     `tfsdk:"reusable" json:"reusable,computed"`
@@ -88,6 +88,7 @@ type ZeroTrustAccessPolicyExcludeModel struct {
 	SAML                    *ZeroTrustAccessPolicyExcludeSAMLModel                    `tfsdk:"saml" json:"saml,optional"`
 	OIDC                    *ZeroTrustAccessPolicyExcludeOIDCModel                    `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken            *ZeroTrustAccessPolicyExcludeServiceTokenModel            `tfsdk:"service_token" json:"service_token,optional"`
+	ServiceTokenTag         *ZeroTrustAccessPolicyExcludeServiceTokenTagModel         `tfsdk:"service_token_tag" json:"service_token_tag,optional"`
 	LinkedAppToken          *ZeroTrustAccessPolicyExcludeLinkedAppTokenModel          `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
 	UserRiskScore           *ZeroTrustAccessPolicyExcludeUserRiskScoreModel           `tfsdk:"user_risk_score" json:"user_risk_score,optional"`
 	CloudflareAccountMember *ZeroTrustAccessPolicyExcludeCloudflareAccountMemberModel `tfsdk:"cloudflare_account_member" json:"cloudflare_account_member,optional"`
@@ -195,6 +196,11 @@ type ZeroTrustAccessPolicyExcludeServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
 }
 
+type ZeroTrustAccessPolicyExcludeServiceTokenTagModel struct {
+	Key   types.String `tfsdk:"key" json:"key,required"`
+	Value types.String `tfsdk:"value" json:"value,required"`
+}
+
 type ZeroTrustAccessPolicyExcludeLinkedAppTokenModel struct {
 	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
 }
@@ -231,6 +237,7 @@ type ZeroTrustAccessPolicyIncludeModel struct {
 	SAML                    *ZeroTrustAccessPolicyIncludeSAMLModel                    `tfsdk:"saml" json:"saml,optional"`
 	OIDC                    *ZeroTrustAccessPolicyIncludeOIDCModel                    `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken            *ZeroTrustAccessPolicyIncludeServiceTokenModel            `tfsdk:"service_token" json:"service_token,optional"`
+	ServiceTokenTag         *ZeroTrustAccessPolicyIncludeServiceTokenTagModel         `tfsdk:"service_token_tag" json:"service_token_tag,optional"`
 	LinkedAppToken          *ZeroTrustAccessPolicyIncludeLinkedAppTokenModel          `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
 	UserRiskScore           *ZeroTrustAccessPolicyIncludeUserRiskScoreModel           `tfsdk:"user_risk_score" json:"user_risk_score,optional"`
 	CloudflareAccountMember *ZeroTrustAccessPolicyIncludeCloudflareAccountMemberModel `tfsdk:"cloudflare_account_member" json:"cloudflare_account_member,optional"`
@@ -338,6 +345,11 @@ type ZeroTrustAccessPolicyIncludeServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
 }
 
+type ZeroTrustAccessPolicyIncludeServiceTokenTagModel struct {
+	Key   types.String `tfsdk:"key" json:"key,required"`
+	Value types.String `tfsdk:"value" json:"value,required"`
+}
+
 type ZeroTrustAccessPolicyIncludeLinkedAppTokenModel struct {
 	AppUID types.String `tfsdk:"app_uid" json:"app_uid,required"`
 }
@@ -374,6 +386,7 @@ type ZeroTrustAccessPolicyRequireModel struct {
 	SAML                    *ZeroTrustAccessPolicyRequireSAMLModel                    `tfsdk:"saml" json:"saml,optional"`
 	OIDC                    *ZeroTrustAccessPolicyRequireOIDCModel                    `tfsdk:"oidc" json:"oidc,optional"`
 	ServiceToken            *ZeroTrustAccessPolicyRequireServiceTokenModel            `tfsdk:"service_token" json:"service_token,optional"`
+	ServiceTokenTag         *ZeroTrustAccessPolicyRequireServiceTokenTagModel         `tfsdk:"service_token_tag" json:"service_token_tag,optional"`
 	LinkedAppToken          *ZeroTrustAccessPolicyRequireLinkedAppTokenModel          `tfsdk:"linked_app_token" json:"linked_app_token,optional"`
 	UserRiskScore           *ZeroTrustAccessPolicyRequireUserRiskScoreModel           `tfsdk:"user_risk_score" json:"user_risk_score,optional"`
 	CloudflareAccountMember *ZeroTrustAccessPolicyRequireCloudflareAccountMemberModel `tfsdk:"cloudflare_account_member" json:"cloudflare_account_member,optional"`
@@ -479,6 +492,11 @@ type ZeroTrustAccessPolicyRequireOIDCModel struct {
 
 type ZeroTrustAccessPolicyRequireServiceTokenModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,required"`
+}
+
+type ZeroTrustAccessPolicyRequireServiceTokenTagModel struct {
+	Key   types.String `tfsdk:"key" json:"key,required"`
+	Value types.String `tfsdk:"value" json:"value,required"`
 }
 
 type ZeroTrustAccessPolicyRequireLinkedAppTokenModel struct {

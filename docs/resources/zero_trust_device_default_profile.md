@@ -27,6 +27,7 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
     suffix = "internal.corp"
     description = "Example internal domains"
   }]
+  enable_device_credential_authentication = false
   exclude = [{
     address = "192.0.2.0/24"
     description = "Exclude testing domains from the tunnel"
@@ -37,6 +38,8 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
     enabled = true
     masque_endpoints = ["198.51.100.1:443"]
     wireguard_endpoints = ["198.51.100.1:2408"]
+    allow_manual_override = true
+    autoswitch = true
   }
   include = [{
     address = "192.0.2.0/24"
@@ -77,6 +80,7 @@ resource "cloudflare_zero_trust_device_default_profile" "example_zero_trust_devi
 - `captive_portal` (Number) Turn on the captive portal after the specified amount of time.
 - `disable_auto_fallback` (Boolean) If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.
 - `dns_search_suffixes` (Attributes List) List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear. (see [below for nested schema](#nestedatt--dns_search_suffixes))
+- `enable_device_credential_authentication` (Boolean) Determines whether the WARP client can silently reauthenticate the user with device credentials (Microsoft Entra) instead of prompting for browser-based reauthentication.
 - `exclude` (Attributes List) List of routes excluded in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request. (see [below for nested schema](#nestedatt--exclude))
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.
 - `global_acceleration` (Attributes) Global Acceleration settings for China. When configured, WARP clients connect to the Global Accelerator addresses instead of the default ones. Please contact your account representative to enable this feature on your account. See https://developers.cloudflare.com/china-network/concepts/global-acceleration/. (see [below for nested schema](#nestedatt--global_acceleration))
@@ -134,6 +138,11 @@ Required:
 - `enabled` (Boolean) Global acceleration settings are used only when "enabled".
 - `masque_endpoints` (List of String) IP:port entries for the MASQUE tunnel endpoints. Either wireguard_endpoints or masque_endpoints must be provided.
 - `wireguard_endpoints` (List of String) IP:port entries for the WireGuard tunnel endpoints. Either wireguard_endpoints or masque_endpoints must be provided.
+
+Optional:
+
+- `allow_manual_override` (Boolean) Whether WARP users may manually override the automatic Global Acceleration decision. Defaults to true when not provided.
+- `autoswitch` (Boolean) Automatically switch Global Acceleration regions based on device location. Defaults to false when not provided.
 
 
 <a id="nestedatt--include"></a>

@@ -39,6 +39,7 @@ data "cloudflare_r2_data_catalog" "example_r2_data_catalog" {
 - `credential_status` (String) Shows the credential configuration status.
 Available values: "present", "absent".
 - `id` (String) Specifies the R2 bucket name.
+- `jurisdiction` (String) Specifies the data-locality jurisdiction of the catalog. The first enable sets it, and it cannot change. Currently always `default`.
 - `maintenance_config` (Attributes) Configures maintenance for the catalog. (see [below for nested schema](#nestedatt--maintenance_config))
 - `name` (String) Specifies the catalog name (generated from account and bucket name).
 - `status` (String) Indicates the status of the catalog.

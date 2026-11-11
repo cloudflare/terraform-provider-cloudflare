@@ -19,13 +19,13 @@ var _ resource.ResourceWithConfigValidators = (*EmailSecurityAllowPolicyResource
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Version: 500,
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
 				"Cloud Email Security: Read",
 				"Cloud Email Security: Write",
 			},
 		}.String(),
+		Version: 500,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Allow policy identifier.",
@@ -53,7 +53,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"pattern": schema.StringAttribute{
-				Description: "The pattern value to match. The format depends on `pattern_type`: a valid email address for EMAIL (e.g. `user@example.com`), a valid domain name for DOMAIN (e.g. `example.com`), or a plain IPv4 or IPv6 address or CIDR block for IP (e.g. `1.2.3.4`, `1.2.3.0/24`, `2606:4700:4700::1111`, or `2606:4700:4700::/48`); the API rejects private or unique-local, loopback, link-local, unspecified, and IPv4 broadcast addresses, including their IPv4-mapped IPv6 equivalents.",
+				Description: "The pattern value to match. The format depends on `pattern_type`: a valid email address for EMAIL (e.g. `user@example.com`), a valid domain name for DOMAIN (e.g. `example.com`), or a plain IPv4 or IPv6 address or CIDR block for IP (e.g. `1.2.3.4`, `1.2.3.0/24`, `2606:4700:4700::1111`, or `2606:4700:4700::/48`); the API rejects private or unique-local, loopback, link-local, unspecified, and IPv4 broadcast addresses, including their IPv4-mapped IPv6 equivalents. The API also rejects a pattern that equals a domain onboarded to the account, ignoring case.",
 				Required:    true,
 			},
 			"pattern_type": schema.StringAttribute{
@@ -74,6 +74,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"comments": schema.StringAttribute{
 				Optional: true,
+			},
+			"expires_at": schema.StringAttribute{
+				Description: "Timestamp at which the policy expires. After this time, Email Security ignores the policy. The value must lie in the future. Send `null` to clear the expiration.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"is_recipient": schema.BoolAttribute{
 				Description:        "Deprecated as of July 1, 2025. Use `is_exempt_recipient` instead. End of life: July 1, 2026.",

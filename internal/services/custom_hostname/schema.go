@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
@@ -173,8 +174,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"wildcard": schema.BoolAttribute{
-						Description: "Indicates whether the certificate covers a wildcard.",
-						Optional:    true,
+						Description:   "Indicates whether the certificate covers a wildcard.",
+						Computed:      true,
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseNonNullStateForUnknown()},
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.UseNonNullStateForUnknown()},

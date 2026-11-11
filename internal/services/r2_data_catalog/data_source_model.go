@@ -22,6 +22,7 @@ type R2DataCatalogDataSourceModel struct {
 	AccountID         types.String                                                            `tfsdk:"account_id" path:"account_id,optional"`
 	Bucket            types.String                                                            `tfsdk:"bucket" json:"bucket,computed"`
 	CredentialStatus  types.String                                                            `tfsdk:"credential_status" json:"credential_status,computed"`
+	Jurisdiction      types.String                                                            `tfsdk:"jurisdiction" json:"jurisdiction,computed"`
 	Name              types.String                                                            `tfsdk:"name" json:"name,computed"`
 	Status            types.String                                                            `tfsdk:"status" json:"status,computed"`
 	MaintenanceConfig customfield.NestedObject[R2DataCatalogMaintenanceConfigDataSourceModel] `tfsdk:"maintenance_config" json:"maintenance_config,computed"`

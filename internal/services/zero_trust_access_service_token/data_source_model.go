@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -25,7 +26,11 @@ type ZeroTrustAccessServiceTokenDataSourceModel struct {
 	Duration       types.String                                         `tfsdk:"duration" json:"duration,computed"`
 	Enabled        types.Bool                                           `tfsdk:"enabled" json:"enabled,computed"`
 	ExpiresAt      timetypes.RFC3339                                    `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
+	LeakReportURL  types.String                                         `tfsdk:"leak_report_url" json:"leak_report_url,computed"`
+	LeakReportedAt timetypes.RFC3339                                    `tfsdk:"leak_reported_at" json:"leak_reported_at,computed" format:"date-time"`
+	LeakReporter   types.String                                         `tfsdk:"leak_reporter" json:"leak_reporter,computed"`
 	Name           types.String                                         `tfsdk:"name" json:"name,computed"`
+	Tags           customfield.Map[types.String]                        `tfsdk:"tags" json:"tags,computed"`
 	Filter         *ZeroTrustAccessServiceTokenFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

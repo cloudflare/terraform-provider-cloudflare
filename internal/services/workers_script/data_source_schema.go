@@ -18,6 +18,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		MarkdownDescription: schemata.Description{
 			Scopes: []string{
+				"Individual Workers Admin",
+				"Individual Workers Content Read-Only",
+				"Individual Workers Editor",
+				"Individual Workers Metadata Read-Only",
+				"Workers Admin",
+				"Workers Content Read-Only",
+				"Workers Editor",
+				"Workers Metadata Read-Only",
 				"Workers Scripts Read",
 				"Workers Scripts Write",
 				"Workers Tail Read",

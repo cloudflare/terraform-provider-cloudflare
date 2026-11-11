@@ -32,13 +32,13 @@ resource "cloudflare_secrets_store_secret" "example_secrets_store_secret" {
 
 - `account_id` (String) Account Identifier
 - `name` (String) The name of the secret
-- `scopes` (List of String) The list of services that can use this secret. Valid values are `workers`, `ai_gateway`, `dex`, and `access`. Must be listed in alphabetical order.
 - `store_id` (String) Store Identifier
 - `value` (String, Sensitive) The value of the secret. Maximum 64 KiB (65,536 bytes). Note that this is 'write only' - no API response will provide this value, it is only used to create/modify secrets.
 
 ### Optional
 
 - `comment` (String) Freeform text describing the secret
+- `scopes` (List of String) The list of services that can use this secret, or null when the secret inherits its store's scopes. Set it to null in a patch to inherit again. An empty list lets no service use the secret. Explicit scopes must be listed in alphabetical order.
 
 ### Read-Only
 

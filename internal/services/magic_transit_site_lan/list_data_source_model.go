@@ -40,6 +40,7 @@ type MagicTransitSiteLANsResultDataSourceModel struct {
 	Name             types.String                                                                   `tfsdk:"name" json:"name,computed"`
 	Nat              customfield.NestedObject[MagicTransitSiteLANsNatDataSourceModel]               `tfsdk:"nat" json:"nat,computed"`
 	Physport         types.Int64                                                                    `tfsdk:"physport" json:"physport,computed"`
+	RemoteSubnets    customfield.NestedObjectList[MagicTransitSiteLANsRemoteSubnetsDataSourceModel] `tfsdk:"remote_subnets" json:"remote_subnets,computed"`
 	RoutedSubnets    customfield.NestedObjectList[MagicTransitSiteLANsRoutedSubnetsDataSourceModel] `tfsdk:"routed_subnets" json:"routed_subnets,computed"`
 	SiteID           types.String                                                                   `tfsdk:"site_id" json:"site_id,computed"`
 	StaticAddressing customfield.NestedObject[MagicTransitSiteLANsStaticAddressingDataSourceModel]  `tfsdk:"static_addressing" json:"static_addressing,computed"`
@@ -48,6 +49,11 @@ type MagicTransitSiteLANsResultDataSourceModel struct {
 
 type MagicTransitSiteLANsNatDataSourceModel struct {
 	StaticPrefix types.String `tfsdk:"static_prefix" json:"static_prefix,computed"`
+}
+
+type MagicTransitSiteLANsRemoteSubnetsDataSourceModel struct {
+	LocalAliasPrefix types.String `tfsdk:"local_alias_prefix" json:"local_alias_prefix,computed"`
+	RemotePrefix     types.String `tfsdk:"remote_prefix" json:"remote_prefix,computed"`
 }
 
 type MagicTransitSiteLANsRoutedSubnetsDataSourceModel struct {

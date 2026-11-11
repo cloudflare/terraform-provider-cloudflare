@@ -14,16 +14,17 @@ type WorkersDeploymentResultEnvelope struct {
 }
 
 type WorkersDeploymentModel struct {
-	ID          types.String                                                `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String                                                `tfsdk:"account_id" path:"account_id,required"`
-	ScriptName  types.String                                                `tfsdk:"script_name" path:"script_name,required"`
-	Force       types.Bool                                                  `tfsdk:"force" query:"force,optional"`
-	Strategy    types.String                                                `tfsdk:"strategy" json:"strategy,required"`
-	Versions    *[]*WorkersDeploymentVersionsModel                          `tfsdk:"versions" json:"versions,required"`
-	Annotations customfield.NestedObject[WorkersDeploymentAnnotationsModel] `tfsdk:"annotations" json:"annotations,computed_optional"`
-	AuthorEmail types.String                                                `tfsdk:"author_email" json:"author_email,computed"`
-	CreatedOn   timetypes.RFC3339                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Source      types.String                                                `tfsdk:"source" json:"source,computed"`
+	ID                 types.String                                                `tfsdk:"id" json:"id,computed"`
+	AccountID          types.String                                                `tfsdk:"account_id" path:"account_id,required"`
+	ScriptName         types.String                                                `tfsdk:"script_name" path:"script_name,required"`
+	Force              types.Bool                                                  `tfsdk:"force" query:"force,optional"`
+	Strategy           types.String                                                `tfsdk:"strategy" json:"strategy,required"`
+	Versions           *[]*WorkersDeploymentVersionsModel                          `tfsdk:"versions" json:"versions,required"`
+	CodeUpdateStrategy *WorkersDeploymentCodeUpdateStrategyModel                   `tfsdk:"code_update_strategy" json:"code_update_strategy,optional"`
+	Annotations        customfield.NestedObject[WorkersDeploymentAnnotationsModel] `tfsdk:"annotations" json:"annotations,computed_optional"`
+	AuthorEmail        types.String                                                `tfsdk:"author_email" json:"author_email,computed"`
+	CreatedOn          timetypes.RFC3339                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Source             types.String                                                `tfsdk:"source" json:"source,computed"`
 }
 
 func (m WorkersDeploymentModel) MarshalJSON() (data []byte, err error) {
@@ -37,6 +38,11 @@ func (m WorkersDeploymentModel) MarshalJSONForUpdate(state WorkersDeploymentMode
 type WorkersDeploymentVersionsModel struct {
 	Percentage types.Float64 `tfsdk:"percentage" json:"percentage,required"`
 	VersionID  types.String  `tfsdk:"version_id" json:"version_id,required"`
+}
+
+type WorkersDeploymentCodeUpdateStrategyModel struct {
+	Mode     types.String  `tfsdk:"mode" json:"mode,required"`
+	MaxDelay types.Float64 `tfsdk:"max_delay" json:"max_delay,optional"`
 }
 
 type WorkersDeploymentAnnotationsModel struct {

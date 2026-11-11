@@ -62,6 +62,12 @@ unavailable.
 provisioned Account Owned API Tokens.
 - `status` (String) Status of the token.
 Available values: "active", "disabled", "expired".
+- `token_prefix` (String) The prefix of the token value, before the first underscore. Use it with
+`token_suffix` to identify a token. Only present for tokens created or
+rolled after this field was added.
+- `token_suffix` (String) The last 4 characters of the token value. Use it with `token_prefix` to
+identify a token. It is not unique. Only present for tokens created or
+rolled after this field was added.
 
 <a id="nestedatt--result--condition"></a>
 ### Nested Schema for `result.condition`

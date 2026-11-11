@@ -1,5 +1,5 @@
 resource "cloudflare_organization" "example_organization" {
-  name = "name"
+  name = "x"
   parent = {
     id = "a7b9c3d2e8f4a1b5c6d0e9f2a3b7c4d8"
   }

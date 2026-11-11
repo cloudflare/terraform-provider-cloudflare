@@ -12,5 +12,7 @@ resource "cloudflare_connectivity_directory_service" "example_connectivity_direc
   https_port = 8443
   tls_settings = {
     cert_verification_mode = "verify_full"
+    certificate_authority = "705db030-8247-489b-80dd-0d6256e5950d"
+    client_certificate = "a493fbb4-34bc-4218-a63c-61a9323ac725"
   }
 }

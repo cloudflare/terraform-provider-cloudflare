@@ -52,6 +52,7 @@ Available values: "allow", "deny", "non_identity", "bypass".
 - `isolation_required` (Boolean) Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.
 - `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings. (see [below for nested schema](#nestedatt--result--mfa_config))
 - `name` (String) The name of the Access policy.
+- `policy_resolution_account_id` (String) The account ID used to resolve policy resources and identity for cross-account WARP authentication. The account must be trusted by the account that owns this policy.
 - `purpose_justification_prompt` (String) A custom message that will appear on the purpose justification screen.
 - `purpose_justification_required` (Boolean) Require users to enter a justification when they log in to the application.
 - `require` (Attributes Set) Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--result--require))
@@ -116,6 +117,7 @@ Read-Only:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--service_token))
+- `service_token_tag` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--service_token_tag))
 - `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--user_risk_score))
 
 <a id="nestedatt--result--exclude--any_valid_service_token"></a>
@@ -319,6 +321,15 @@ Read-Only:
 - `token_id` (String) The ID of a Service Token.
 
 
+<a id="nestedatt--result--exclude--service_token_tag"></a>
+### Nested Schema for `result.exclude.service_token_tag`
+
+Read-Only:
+
+- `key` (String) The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.
+- `value` (String) The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.
+
+
 <a id="nestedatt--result--exclude--user_risk_score"></a>
 ### Nested Schema for `result.exclude.user_risk_score`
 
@@ -358,6 +369,7 @@ Read-Only:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--include--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--include--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--include--service_token))
+- `service_token_tag` (Attributes) (see [below for nested schema](#nestedatt--result--include--service_token_tag))
 - `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--result--include--user_risk_score))
 
 <a id="nestedatt--result--include--any_valid_service_token"></a>
@@ -561,6 +573,15 @@ Read-Only:
 - `token_id` (String) The ID of a Service Token.
 
 
+<a id="nestedatt--result--include--service_token_tag"></a>
+### Nested Schema for `result.include.service_token_tag`
+
+Read-Only:
+
+- `key` (String) The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.
+- `value` (String) The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.
+
+
 <a id="nestedatt--result--include--user_risk_score"></a>
 ### Nested Schema for `result.include.user_risk_score`
 
@@ -610,6 +631,7 @@ Read-Only:
 - `okta` (Attributes) (see [below for nested schema](#nestedatt--result--require--okta))
 - `saml` (Attributes) (see [below for nested schema](#nestedatt--result--require--saml))
 - `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--require--service_token))
+- `service_token_tag` (Attributes) (see [below for nested schema](#nestedatt--result--require--service_token_tag))
 - `user_risk_score` (Attributes) (see [below for nested schema](#nestedatt--result--require--user_risk_score))
 
 <a id="nestedatt--result--require--any_valid_service_token"></a>
@@ -811,6 +833,15 @@ Read-Only:
 Read-Only:
 
 - `token_id` (String) The ID of a Service Token.
+
+
+<a id="nestedatt--result--require--service_token_tag"></a>
+### Nested Schema for `result.require.service_token_tag`
+
+Read-Only:
+
+- `key` (String) The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.
+- `value` (String) The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.
 
 
 <a id="nestedatt--result--require--user_risk_score"></a>

@@ -45,6 +45,8 @@ Read-Only:
 - `created_on` (String)
 - `id` (String)
 - `instances` (Map of Number)
+- `jurisdiction` (String) Jurisdiction where instances of this workflow run and store data. Set when the workflow is created and cannot be changed.
+Available values: "eu", "fedramp", "us".
 - `modified_on` (String)
 - `name` (String)
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--result--schedules))

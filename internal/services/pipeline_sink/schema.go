@@ -61,11 +61,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{
-						Description: "Cloudflare Account ID for the bucket",
+						Description: "Cloudflare Account ID for the bucket\n\nCloudflare Account ID",
 						Required:    true,
 					},
 					"bucket": schema.StringAttribute{
-						Description: "R2 Bucket to write to",
+						Description: "R2 Bucket to write to\n\nThe R2 Bucket that hosts this catalog",
 						Required:    true,
 					},
 					"credentials": schema.SingleNestedAttribute{
@@ -181,7 +181,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"compression": schema.StringAttribute{
-						Description: "Specifies the compression applied to JSON sink output.\nAvailable values: \"uncompressed\", \"gzip\", \"snappy\", \"zstd\", \"lz4\".",
+						Description: "For `type: json`: Specifies the compression applied to JSON sink output.\nAvailable values: \"uncompressed\", \"gzip\", \"snappy\", \"zstd\", \"lz4\".",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(

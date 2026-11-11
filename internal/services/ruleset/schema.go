@@ -1006,6 +1006,37 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										),
 									},
 								},
+								"webmcp_enabled": schema.BoolAttribute{
+									Description: "Whether to serve the WebMCP bridge script, which exposes the page's tools to browser AI agents.",
+									Optional:    true,
+									Validators: []validator.Bool{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+									},
+								},
+								"webmcp_packs": schema.ListAttribute{
+									Description: "Bundled WebMCP tool packs to activate for matching requests. An empty list disables all packs. Omitting this parameter leaves the pack selection unchanged. Does not enable the WebMCP bridge itself.",
+									Optional:    true,
+									Validators: []validator.List{
+										customvalidator.RequiresOtherStringAttributeToBe(
+											path.MatchRelative().AtParent().AtParent().AtName("action"),
+											"set_config",
+										),
+										listvalidator.SizeAtMost(100),
+										listvalidator.UniqueValues(),
+										listvalidator.ValueStringsAre(
+											stringvalidator.LengthBetween(1, 128),
+											stringvalidator.RegexMatches(
+												regexp.MustCompile(`^[A-Za-z0-9._:/@-]+$`),
+												"value must only contain letters, digits, and the characters . _ : / @ -",
+											),
+										),
+									},
+									CustomType:  customfield.NewListType[types.String](ctx),
+									ElementType: types.StringType,
+								},
 								// "phase": schema.StringAttribute{
 								// 	Description: "A phase to skip the execution of. This option is only compatible with the products option.\nAvailable values: \"current\".",
 								// 	Optional:    true,

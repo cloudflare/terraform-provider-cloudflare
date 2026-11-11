@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
@@ -79,14 +81,17 @@ func UpgradeFromSchemaV0(ctx context.Context, req resource.UpgradeStateRequest, 
 		return
 	}
 
-	// Early v5 state (v5.12-v5.15) — pass through unchanged
+	// Early v5 state (v5.0-v5.15): pass through unchanged
 	tflog.Info(ctx, "Detected v5 format in schema_version=0 state, no-op upgrade")
 
 	// When PriorSchema is nil (as set in migrations.go for v4 compatibility),
 	// req.State is nil and only req.RawState is available. We need to unmarshal
-	// the raw state using the target schema type.
+	// the raw state using the target schema type. Attributes the schema no longer
+	// has, such as app_count from v5.0-v5.6, are dropped.
 	v5Type := resp.State.Schema.Type().TerraformType(ctx)
-	rawValue, err := req.RawState.Unmarshal(v5Type)
+	rawValue, err := req.RawState.UnmarshalWithOpts(v5Type, tfprotov6.UnmarshalOpts{
+		ValueFromJSONOpts: tftypes.ValueFromJSONOpts{IgnoreUndefinedAttributes: true},
+	})
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to unmarshal v5 state during upgrade",
 			fmt.Sprintf("Could not parse state as v5 format: %s", err))

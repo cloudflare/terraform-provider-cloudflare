@@ -3,13 +3,21 @@ page_title: "cloudflare_workers_cron_trigger Resource - Cloudflare"
 subcategory: ""
 description: |-
   Accepted Permissions
-  Workers Scripts ReadWorkers Scripts Write
+  Individual Workers AdminIndividual Workers Content Read-OnlyIndividual Workers EditorIndividual Workers Metadata Read-OnlyWorkers AdminWorkers Content Read-OnlyWorkers EditorWorkers Metadata Read-OnlyWorkers Scripts ReadWorkers Scripts Write
 ---
 
 # cloudflare_workers_cron_trigger (Resource)
 
 Accepted Permissions
 
+- `Individual Workers Admin`
+- `Individual Workers Content Read-Only`
+- `Individual Workers Editor`
+- `Individual Workers Metadata Read-Only`
+- `Workers Admin`
+- `Workers Content Read-Only`
+- `Workers Editor`
+- `Workers Metadata Read-Only`
 - `Workers Scripts Read`
 - `Workers Scripts Write`
 

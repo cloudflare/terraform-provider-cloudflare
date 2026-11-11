@@ -2,12 +2,16 @@
 page_title: "cloudflare_zone_tracing_rules Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  
+  Accepted Permissions
+  Zone Observability ReadZone Observability Write
 ---
 
 # cloudflare_zone_tracing_rules (Data Source)
 
+Accepted Permissions
 
+- `Zone Observability Read`
+- `Zone Observability Write`
 
 ## Example Usage
 

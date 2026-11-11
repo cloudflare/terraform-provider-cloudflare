@@ -30,6 +30,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"account_id": schema.StringAttribute{
 				Optional: true,
 			},
+			"namespace": schema.StringAttribute{
+				Computed: true,
+				Optional: true,
+			},
 			"ai_gateway_id": schema.StringAttribute{
 				Computed: true,
 			},
@@ -127,9 +131,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"modified_by": schema.StringAttribute{
 				Computed: true,
 			},
-			"namespace": schema.StringAttribute{
-				Computed: true,
-			},
 			"paused": schema.BoolAttribute{
 				Computed: true,
 			},
@@ -150,7 +151,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"score_threshold": schema.Float64Attribute{
-				Computed: true,
+				Description: "Minimum similarity score a chunk must reach to be returned. Defaults to 0.4.",
+				Computed:    true,
 				Validators: []validator.Float64{
 					float64validator.Between(0, 1),
 				},
@@ -162,7 +164,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"sync_interval": schema.Float64Attribute{
-				Description: "Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h).\nAvailable values: 900, 1800, 3600, 7200, 14400, 21600, 43200, 86400.",
+				Description: "Interval between automatic syncs, in seconds. Allowed values: 900 (15min), 1800 (30min), 3600 (1h), 7200 (2h), 14400 (4h), 21600 (6h), 43200 (12h), 86400 (24h). Defaults to 86400 (24h).\nAvailable values: 900, 1800, 3600, 7200, 14400, 21600, 43200, 86400.",
 				Computed:    true,
 				Validators: []validator.Float64{
 					float64validator.OneOf(
@@ -211,7 +213,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"index_method": schema.SingleNestedAttribute{
-				Description: "Controls which storage backends are used during indexing. Defaults to vector and keyword indexing for new instances.",
+				Description: "Controls which storage backends indexing uses. Defaults to vector and keyword indexing for new instances. When set, both vector and keyword are required.",
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectType[AISearchInstanceIndexMethodDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
@@ -284,7 +286,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType: customfield.NewNestedObjectType[AISearchInstancePublicEndpointParamsChatCompletionsEndpointDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"disabled": schema.BoolAttribute{
-								Description: "Disable chat completions endpoint for this public endpoint",
+								Description: "Disable chat completions endpoint for this public endpoint.",
 								Computed:    true,
 							},
 						},
@@ -310,7 +312,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed: true,
 							},
 							"disabled": schema.BoolAttribute{
-								Description: "Disable MCP endpoint for this public endpoint",
+								Description: "Disable MCP endpoint for this public endpoint.",
 								Computed:    true,
 							},
 						},
@@ -345,7 +347,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType: customfield.NewNestedObjectType[AISearchInstancePublicEndpointParamsSearchEndpointDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"disabled": schema.BoolAttribute{
-								Description: "Disable search endpoint for this public endpoint",
+								Description: "Disable search endpoint for this public endpoint.",
 								Computed:    true,
 							},
 						},
@@ -382,7 +384,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"keyword_match_mode": schema.StringAttribute{
-						Description: "Controls which documents are candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term, ranked by BM25 relevance. Defaults to 'and'.\nAvailable values: \"and\", \"or\".",
+						Description: "Controls which documents become candidates for BM25 scoring. 'and' restricts candidates to documents containing all query terms; 'or' includes any document containing at least one term and ranks results according to BM25 relevance. When omitted on an update, the existing stored value stays unchanged; when never set, search falls back to 'and'.\nAvailable values: \"and\", \"or\".",
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("and", "or"),
@@ -395,13 +397,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"exclude_items": schema.ListAttribute{
-						Description: "List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts are limited to 10 rules; contact support to raise it.",
+						Description: "List of path patterns to exclude. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /admin/** matches /admin/users and /admin/settings/advanced). Most accounts have a limit of 10 rules; contact support to raise it.",
 						Computed:    true,
 						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"include_items": schema.ListAttribute{
-						Description: "List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts are limited to 10 rules; contact support to raise it.",
+						Description: "List of path patterns to include. Uses micromatch glob syntax: * matches within a path segment, ** matches across path segments (e.g., /blog/** matches /blog/post and /blog/2024/post). Most accounts have a limit of 10 rules; contact support to raise it.",
 						Computed:    true,
 						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
@@ -417,7 +419,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsWebCrawlerDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"discover_options": schema.SingleNestedAttribute{
-								Description: "Options for parse_type 'discover', where Browser Run discovers URLs by link following and sitemaps. Ignored for 'sitemap'.",
+								Description: "Options for parse_type 'discover', where Browser Run discovers URLs through link following and sitemaps. Ignored for 'sitemap'.",
 								Computed:    true,
 								CustomType:  customfield.NewNestedObjectType[AISearchInstanceSourceParamsWebCrawlerDiscoverOptionsDataSourceModel](ctx),
 								Attributes: map[string]schema.Attribute{
@@ -429,7 +431,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"include_external_links": schema.BoolAttribute{
-										Description: "Follow links that point outside the source domain. Must stay `false` — discover crawls are restricted to the zone you own.",
+										Description: "Follow links that point outside the source domain. Must stay `false` because discover crawls only cover the zone you own.",
 										Computed:    true,
 									},
 									"include_subdomains": schema.BoolAttribute{
@@ -468,7 +470,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsWebCrawlerParseOptionsDataSourceModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"content_selector": schema.ListNestedAttribute{
-										Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. Only the matched HTML fragment is stored and indexed. Omit the field to disable content selection — empty arrays are rejected.",
+										Description: "List of path-to-selector mappings for extracting specific content from crawled pages. Each entry pairs a URL glob pattern with a CSS selector. The first matching path wins. The crawler stores and indexes only the matched HTML fragment. Omit the field to disable content selection; the API rejects empty arrays.",
 										Computed:    true,
 										CustomType:  customfield.NewNestedObjectListType[AISearchInstanceSourceParamsWebCrawlerParseOptionsContentSelectorDataSourceModel](ctx),
 										NestedObject: schema.NestedAttributeObject{
@@ -478,14 +480,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 													Computed:    true,
 												},
 												"selector": schema.StringAttribute{
-													Description: "CSS selector to extract content from pages matching the path pattern. Must not contain disallowed characters (;, `, $, {, }, \\). Must target a single element; if multiple elements match, the selector is ignored and the full page is used.",
+													Description: "CSS selector to extract content from pages matching the path pattern. Disallowed characters: ;, `, $, {, }, \\. Must target a single element; if multiple elements match, the crawler ignores the selector and uses the full page.",
 													Computed:    true,
 												},
 											},
 										},
 									},
 									"include_headers": schema.MapAttribute{
-										Description: "Up to 5 custom HTTP headers sent with each crawl request. Names must be RFC-7230 token characters (no spaces, colons, or control characters); values must be HTAB + printable ASCII (no CR/LF).",
+										Description: "Up to 5 custom HTTP headers sent with each crawl request. Names must use RFC-7230 token characters, excluding spaces, colons, and control characters. Values must use HTAB and printable ASCII only, excluding CR and LF.",
 										Computed:    true,
 										CustomType:  customfield.NewMapType[types.String](ctx),
 										ElementType: types.StringType,
@@ -505,33 +507,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"parse_type": schema.StringAttribute{
-							Description: "How URLs are discovered. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to be a Verified zone on this account.\nAvailable values: \"sitemap\", \"discover\".",
+								Description: "How the crawler finds URLs. 'sitemap' reads XML sitemaps; 'discover' follows links recursively and requires the source to belong to a Verified zone on this account.\nAvailable values: \"sitemap\", \"discover\".",
 								Computed:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"sitemap",
-										"feed-rss",
-										"crawl",
-									),
-								},
-							},
-							"store_options": schema.SingleNestedAttribute{
-								Computed:   true,
-								CustomType: customfield.NewNestedObjectType[AISearchInstanceSourceParamsWebCrawlerStoreOptionsDataSourceModel](ctx),
-								Attributes: map[string]schema.Attribute{
-									"storage_id": schema.StringAttribute{
-										Computed: true,
-									},
-									"r2_jurisdiction": schema.StringAttribute{
-										Computed: true,
-									},
-									"storage_type": schema.StringAttribute{
-										Description: `Available values: "r2".`,
-										Computed:    true,
-										Validators: []validator.String{
-											stringvalidator.OneOfCaseInsensitive("r2"),
-										},
-									},
+									stringvalidator.OneOfCaseInsensitive("sitemap", "discover"),
 								},
 							},
 						},
@@ -542,11 +521,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"hostname": schema.StringAttribute{
-						Description: "Filter by exact Search for Agents hostname (case-insensitive).",
-						Optional:    true,
-					},
-					"namespace": schema.StringAttribute{
-						Description: "Filter by namespace.",
+						Description: "Return only instances with this exact Search for Agents hostname (case-insensitive).",
 						Optional:    true,
 					},
 					"order_by": schema.StringAttribute{

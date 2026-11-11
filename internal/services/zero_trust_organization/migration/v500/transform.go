@@ -62,11 +62,12 @@ func Transform(ctx context.Context, source SourceCloudflareAccessOrganizationMod
 
 	// New v5 fields not present in v4:
 	// - deny_unmatched_requests: Leave as null
-	// - deny_unmatched_requests_exempted_zone_names: Leave as nil
-	// - mfa_config: Leave as nil
+	// - deny_unmatched_requests_exempted_zone_names: Leave as null
+	// - mfa_config, mfa_piv_key_requirements: Leave as null
 	// - mfa_configuration_allowed: Leave as null
 	// - mfa_required_for_all_apps: Leave as null
-	// These will be refreshed from API or remain unset
+	// These fields cannot be recovered from v4 state. Restore their live values
+	// into explicit v5 HCL from a pre-migration API snapshot before applying.
 
 	return target, diags
 }

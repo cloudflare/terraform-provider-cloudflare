@@ -45,6 +45,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Specify the location name.",
 				Required:    true,
 			},
+			"dns64_enabled": schema.BoolAttribute{
+				Description: "Enable DNS64 synthesis for DNS queries matched to this location. When updating a location, omitting this field resets it to false.",
+				Optional:    true,
+			},
 			"endpoints": schema.SingleNestedAttribute{
 				Description: "Configure the destination endpoints for this location.",
 				Optional:    true,

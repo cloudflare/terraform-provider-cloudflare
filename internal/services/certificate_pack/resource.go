@@ -166,6 +166,11 @@ func (r *CertificatePackResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 	data = &env.Result
+	if isDeletedCertificatePackStatus(data.Status.ValueString()) {
+		resp.Diagnostics.AddWarning(deletedCertificatePackWarning(stateData.ZoneID.ValueString(), stateData.ID.ValueString(), data.Status.ValueString()))
+		resp.State.RemoveResource(ctx)
+		return
+	}
 
 	// Preserve state values for optional+computed fields
 	// If cloudflare_branding was null in state (user didn't set it), keep it null even if API returns a value

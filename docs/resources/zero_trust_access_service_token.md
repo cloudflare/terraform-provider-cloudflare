@@ -23,6 +23,9 @@ resource "cloudflare_zero_trust_access_service_token" "example_zero_trust_access
   duration = "60m"
   enabled = true
   previous_client_secret_expires_at = "2014-01-01T05:20:00.12345Z"
+  tags = {
+    environment = "production"
+  }
 }
 ```
 
@@ -36,10 +39,11 @@ resource "cloudflare_zero_trust_access_service_token" "example_zero_trust_access
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
-- `client_secret_version` (Number) A version number identifying the current `client_secret` associated with the service token. Incrementing it triggers a rotation; the previous secret will still be accepted until the time indicated by `previous_client_secret_expires_at`.
+- `client_secret_version` (Number) A version number identifying the current `client_secret` associated with the service token. Incrementing it triggers a rotation; the previous secret will still be accepted until the time indicated by `previous_client_secret_expires_at`. If the service token was reported as leaked, `previous_client_secret_expires_at` is not required, may not be in the future, and the previous secret is discarded immediately.
 - `duration` (String) The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`, or the special value `forever` for non-expiring tokens. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).
-- `enabled` (Boolean) Whether the service token is enabled. A disabled service token cannot be used to authenticate; both its current and previous `client_secret` stop being accepted, but the token itself is preserved and can be re-enabled at any time. Defaults to enabled when omitted on create.
-- `previous_client_secret_expires_at` (String) The expiration of the previous `client_secret`. This can be modified at any point after a rotation. For example, you may extend it further into the future if you need more time to update services with the new secret; or move it into the past to immediately invalidate the previous token in case of compromise.
+- `enabled` (Boolean) Whether the service token is enabled. A disabled service token cannot be used to authenticate; both its current and previous `client_secret` stop being accepted, but the token itself is preserved and can be re-enabled. A service token reported as leaked is disabled automatically and cannot be re-enabled until its secret is rotated; attempting to do so returns a 409. Defaults to enabled when omitted on create.
+- `previous_client_secret_expires_at` (String) The expiration of the previous `client_secret`. This can be modified at any point after a rotation. For example, you may extend it further into the future if you need more time to update services with the new secret; or move it into the past to immediately invalidate the previous token in case of compromise. Rotating a service token that was reported as leaked discards the previous secret entirely, so no grace period can be set.
+- `tags` (Map of String) Tags associated with the service token, as key-value pairs. On update, replaces all existing tags.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 ### Read-Only
@@ -48,6 +52,9 @@ resource "cloudflare_zero_trust_access_service_token" "example_zero_trust_access
 - `client_secret` (String, Sensitive) The Client Secret for the service token. Access will check for this value in the `CF-Access-Client-Secret` request header.
 - `expires_at` (String)
 - `id` (String) The ID of the service token.
+- `leak_report_url` (String) Where the leaked `client_secret` was found, if provided by the reporter. Omitted if the token has not been reported as leaked.
+- `leak_reported_at` (String) When a secret scanning partner reported this service token's `client_secret` as leaked. A leaked service token is disabled and must be rotated before it can be re-enabled. Cleared once the secret is rotated. Omitted if the token has not been reported as leaked.
+- `leak_reporter` (String) The secret scanning partner that reported the leak. Omitted if the token has not been reported as leaked.
 
 ## Import
 

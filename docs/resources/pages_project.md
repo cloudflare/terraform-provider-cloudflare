@@ -345,7 +345,9 @@ Required:
 Required:
 
 - `type` (String) Available values: "plain_text", "secret_text".
-- `value` (String, Sensitive) Environment variable value.
+- `value` (String, Sensitive) For `type: plain_text`: Environment variable value.
+
+For `type: secret_text`: Secret value.
 
 
 <a id="nestedatt--deployment_configs--preview--hyperdrive_bindings"></a>
@@ -501,7 +503,9 @@ Required:
 Required:
 
 - `type` (String) Available values: "plain_text", "secret_text".
-- `value` (String, Sensitive) Environment variable value.
+- `value` (String, Sensitive) For `type: plain_text`: Environment variable value.
+
+For `type: secret_text`: Secret value.
 
 
 <a id="nestedatt--deployment_configs--production--hyperdrive_bindings"></a>
@@ -692,7 +696,9 @@ Read-Only:
 Read-Only:
 
 - `type` (String) Available values: "plain_text", "secret_text".
-- `value` (String, Sensitive) Environment variable value.
+- `value` (String, Sensitive) For `type: plain_text`: Environment variable value.
+
+For `type: secret_text`: Secret value.
 
 
 <a id="nestedatt--canonical_deployment--latest_stage"></a>
@@ -818,7 +824,9 @@ Read-Only:
 Read-Only:
 
 - `type` (String) Available values: "plain_text", "secret_text".
-- `value` (String, Sensitive) Environment variable value.
+- `value` (String, Sensitive) For `type: plain_text`: Environment variable value.
+
+For `type: secret_text`: Secret value.
 
 
 <a id="nestedatt--latest_deployment--latest_stage"></a>

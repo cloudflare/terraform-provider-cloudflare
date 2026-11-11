@@ -13,7 +13,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/cloudflare-go/v7/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -109,9 +108,9 @@ func (r *ListResource) Create(ctx context.Context, req resource.CreateRequest, r
 
 		normalizeListItems(ctx, itemsSet)
 
-		var items customfield.NestedObjectSet[ListItemModel]
+		var items ListItemsSet
 
-		items, diags = customfield.NewObjectSet[ListItemModel](ctx, itemsSet)
+		items, diags = NewListItemsSet(ctx, itemsSet)
 		resp.Diagnostics.Append(diags...)
 
 		data.Items = items
@@ -172,12 +171,12 @@ func (r *ListResource) Update(ctx context.Context, req resource.UpdateRequest, r
 
 		normalizeListItems(ctx, itemsSet)
 
-		var items customfield.NestedObjectSet[ListItemModel]
+		var items ListItemsSet
 
 		if plan.Items.IsNull() && len(itemsSet) == 0 {
-			items = customfield.NullObjectSet[ListItemModel](ctx)
+			items = NullListItemsSet(ctx)
 		} else {
-			items, diags = customfield.NewObjectSet[ListItemModel](ctx, itemsSet)
+			items, diags = NewListItemsSet(ctx, itemsSet)
 			resp.Diagnostics.Append(diags...)
 		}
 		data.Items = items
@@ -237,9 +236,9 @@ func (r *ListResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 
 		normalizeListItems(ctx, itemsSet)
 
-		var items customfield.NestedObjectSet[ListItemModel]
+		var items ListItemsSet
 
-		items, diags = customfield.NewObjectSet[ListItemModel](ctx, itemsSet)
+		items, diags = NewListItemsSet(ctx, itemsSet)
 		resp.Diagnostics.Append(diags...)
 
 		data.Items = items
@@ -323,12 +322,12 @@ func (r *ListResource) ImportState(ctx context.Context, req resource.ImportState
 
 	normalizeListItems(ctx, itemsSet)
 
-	var items customfield.NestedObjectSet[ListItemModel]
+	var items ListItemsSet
 
 	if len(itemsSet) == 0 {
-		items = customfield.NullObjectSet[ListItemModel](ctx)
+		items = NullListItemsSet(ctx)
 	} else {
-		items, diags = customfield.NewObjectSet[ListItemModel](ctx, itemsSet)
+		items, diags = NewListItemsSet(ctx, itemsSet)
 		resp.Diagnostics.Append(diags...)
 	}
 	data.Items = items

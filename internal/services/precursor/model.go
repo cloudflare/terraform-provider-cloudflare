@@ -13,10 +13,11 @@ type PrecursorResultEnvelope struct {
 }
 
 type PrecursorModel struct {
-	ID               types.String                                                 `tfsdk:"id" json:"-,computed"`
-	ZoneID           types.String                                                 `tfsdk:"zone_id" path:"zone_id,required"`
-	DefaultMode      types.String                                                 `tfsdk:"default_mode" json:"default_mode,computed_optional"`
-	EnforcementRules customfield.NestedObjectList[PrecursorEnforcementRulesModel] `tfsdk:"enforcement_rules" json:"enforcement_rules,computed_optional"`
+	ID               types.String                                      `tfsdk:"id" json:"-,computed"`
+	ZoneID           types.String                                      `tfsdk:"zone_id" path:"zone_id,required"`
+	ShowInterstitial types.Bool                                        `tfsdk:"show_interstitial" json:"show_interstitial,optional"`
+	Mode             types.String                                      `tfsdk:"mode" json:"mode,computed_optional"`
+	Rules            customfield.NestedObjectList[PrecursorRulesModel] `tfsdk:"rules" json:"rules,computed_optional"`
 }
 
 func (m PrecursorModel) MarshalJSON() (data []byte, err error) {
@@ -27,10 +28,10 @@ func (m PrecursorModel) MarshalJSONForUpdate(state PrecursorModel) (data []byte,
 	return apijson.MarshalForUpdate(m, state)
 }
 
-type PrecursorEnforcementRulesModel struct {
-	Expression  types.String `tfsdk:"expression" json:"expression,required"`
-	Mode        types.String `tfsdk:"mode" json:"mode,required"`
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed_optional"`
-	Enabled     types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+type PrecursorRulesModel struct {
+	Expression       types.String `tfsdk:"expression" json:"expression,required"`
+	ShowInterstitial types.Bool   `tfsdk:"show_interstitial" json:"show_interstitial,required"`
+	ID               types.String `tfsdk:"id" json:"id,computed"`
+	Description      types.String `tfsdk:"description" json:"description,computed_optional"`
+	Enabled          types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
 }

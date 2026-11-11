@@ -4,6 +4,7 @@ package flagship_flag
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -13,18 +14,19 @@ type FlagshipFlagResultEnvelope struct {
 }
 
 type FlagshipFlagModel struct {
-	ID               types.String               `tfsdk:"id" json:"-,computed"`
-	Key              types.String               `tfsdk:"key" json:"key,required"`
-	AccountID        types.String               `tfsdk:"account_id" path:"account_id,required"`
-	AppID            types.String               `tfsdk:"app_id" path:"app_id,required"`
-	DefaultVariation types.String               `tfsdk:"default_variation" json:"default_variation,required"`
-	Enabled          types.Bool                 `tfsdk:"enabled" json:"enabled,required"`
-	Variations       *map[string]types.String   `tfsdk:"variations" json:"variations,required"`
-	Rules            *[]*FlagshipFlagRulesModel `tfsdk:"rules" json:"rules,required"`
-	Description      types.String               `tfsdk:"description" json:"description,optional"`
-	Type             types.String               `tfsdk:"type" json:"type,computed_optional"`
-	UpdatedAt        types.String               `tfsdk:"updated_at" json:"updated_at,computed"`
-	UpdatedBy        types.String               `tfsdk:"updated_by" json:"updated_by,computed"`
+	ID               types.String                       `tfsdk:"id" json:"-,computed"`
+	Key              types.String                       `tfsdk:"key" json:"key,required"`
+	AccountID        types.String                       `tfsdk:"account_id" path:"account_id,required"`
+	AppID            types.String                       `tfsdk:"app_id" path:"app_id,required"`
+	DefaultVariation types.String                       `tfsdk:"default_variation" json:"default_variation,required"`
+	Enabled          types.Bool                         `tfsdk:"enabled" json:"enabled,required"`
+	Variations       *map[string]types.String           `tfsdk:"variations" json:"variations,required"`
+	Rules            *[]*FlagshipFlagRulesModel         `tfsdk:"rules" json:"rules,required"`
+	Description      types.String                       `tfsdk:"description" json:"description,optional"`
+	Metadata         customfield.NormalizedDynamicValue `tfsdk:"metadata" json:"metadata,optional"`
+	Type             types.String                       `tfsdk:"type" json:"type,computed_optional"`
+	UpdatedAt        types.String                       `tfsdk:"updated_at" json:"updated_at,computed"`
+	UpdatedBy        types.String                       `tfsdk:"updated_by" json:"updated_by,computed"`
 }
 
 func (m FlagshipFlagModel) MarshalJSON() (data []byte, err error) {
@@ -83,11 +85,9 @@ type FlagshipFlagRulesConditionsClausesClausesClausesClausesModel struct {
 }
 
 type FlagshipFlagRulesConditionsClausesClausesClausesClausesClausesModel struct {
-	Attribute       types.String         `tfsdk:"attribute" json:"attribute,optional"`
-	Operator        types.String         `tfsdk:"operator" json:"operator,optional"`
-	Value           jsontypes.Normalized `tfsdk:"value" json:"value,optional"`
-	Clauses         *[]types.String      `tfsdk:"clauses" json:"clauses,optional"`
-	LogicalOperator types.String         `tfsdk:"logical_operator" json:"logical_operator,optional"`
+	Attribute types.String         `tfsdk:"attribute" json:"attribute,required"`
+	Operator  types.String         `tfsdk:"operator" json:"operator,required"`
+	Value     jsontypes.Normalized `tfsdk:"value" json:"value,required"`
 }
 
 type FlagshipFlagRulesRolloutModel struct {

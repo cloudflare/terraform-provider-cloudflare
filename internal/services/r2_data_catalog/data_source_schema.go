@@ -48,6 +48,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("present", "absent"),
 				},
 			},
+			"jurisdiction": schema.StringAttribute{
+				Description: "Specifies the data-locality jurisdiction of the catalog. The first enable sets it, and it cannot change. Currently always `default`.",
+				Computed:    true,
+			},
 			"name": schema.StringAttribute{
 				Description: "Specifies the catalog name (generated from account and bucket name).",
 				Computed:    true,

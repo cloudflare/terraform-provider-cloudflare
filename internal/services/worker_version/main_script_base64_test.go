@@ -134,4 +134,3 @@ func TestDataSourceMainScriptBase64Unmarshal(t *testing.T) {
 		t.Errorf("main_script_base64 mismatch:\n  got:  %q\n  want: %q", mainScriptBase64, expectedBase64)
 	}
 }
-

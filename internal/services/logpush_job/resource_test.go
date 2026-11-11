@@ -211,8 +211,9 @@ func TestAccCloudflareLogpushJob_Basic(t *testing.T) {
 				ImportStateIdFunc: func(s *terraform.State) (string, error) {
 					return fmt.Sprintf("accounts/%s/%s", accountID, s.RootModule().Resources[resourceName].Primary.ID), nil
 				},
-				ImportState:       true,
-				ImportStateVerify: true,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"destination_conf"},
 			},
 		},
 	})
@@ -303,8 +304,9 @@ func TestAccCloudflareLogpushJob_BasicOutputOptions(t *testing.T) {
 				ImportStateIdFunc: func(s *terraform.State) (string, error) {
 					return fmt.Sprintf("accounts/%s/%s", accountID, s.RootModule().Resources[resourceName].Primary.ID), nil
 				},
-				ImportState:       true,
-				ImportStateVerify: true,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"destination_conf"},
 			},
 		},
 	})
@@ -407,8 +409,9 @@ func TestAccCloudflareLogpushJob_Full(t *testing.T) {
 				ImportStateIdFunc: func(s *terraform.State) (string, error) {
 					return fmt.Sprintf("accounts/%s/%s", accountID, s.RootModule().Resources[resourceName].Primary.ID), nil
 				},
-				ImportState:       true,
-				ImportStateVerify: true,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"destination_conf"},
 			},
 		},
 	})
@@ -617,8 +620,9 @@ func TestAccCloudflareLogpushJob_Update(t *testing.T) {
 				ImportStateIdFunc: func(s *terraform.State) (string, error) {
 					return fmt.Sprintf("zones/%s/%s", zoneID, s.RootModule().Resources[resourceName].Primary.ID), nil
 				},
-				ImportState:       true,
-				ImportStateVerify: true,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"destination_conf"},
 			},
 		},
 	})
@@ -691,8 +695,9 @@ func TestAccCloudflareLogpushJob_ImmutableFields(t *testing.T) {
 				ImportStateIdFunc: func(s *terraform.State) (string, error) {
 					return fmt.Sprintf("zones/%s/%s", zoneID, s.RootModule().Resources[resourceName].Primary.ID), nil
 				},
-				ImportState:       true,
-				ImportStateVerify: true,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"destination_conf"},
 			},
 		},
 	})

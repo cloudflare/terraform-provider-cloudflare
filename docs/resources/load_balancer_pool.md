@@ -31,8 +31,10 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
     virtual_network_id = "a5624d4e-044a-4ff0-b3e1-e2465353d4b4"
     weight = 0.6
   }]
+  check_regions = ["WEU", "ENAM"]
   description = "Primary data center - Provider XYZ"
   enabled = false
+  health_sources = ["regional", "global"]
   latitude = 0
   load_shedding = {
     default_percent = 0
@@ -44,6 +46,7 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
   minimum_origins = 0
   monitor = "monitor"
   monitor_group = "monitor_group"
+  networks = ["cloudflare", "jdcloud"]
   notification_email = "someone@example.com,sometwo@example.com"
   notification_filter = {
     origin = {
@@ -82,6 +85,7 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
 - `minimum_origins` (Number) The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.
 - `monitor` (String) The ID of the Monitor to use for checking the health of origins within this pool.
 - `monitor_group` (String) The ID of the Monitor Group to use for checking the health of origins within this pool.
+- `networks` (List of String) List of networks where Load Balancer or Pool is enabled.
 - `notification_email` (String) This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.
 - `notification_filter` (Attributes) Filter pool and origin health notifications by resource type or health status. Use null to reset. (see [below for nested schema](#nestedatt--notification_filter))
 - `origin_steering` (Attributes) Configures origin steering for the pool. Controls how origins are selected for new sessions and traffic without session affinity. (see [below for nested schema](#nestedatt--origin_steering))
@@ -92,7 +96,6 @@ resource "cloudflare_load_balancer_pool" "example_load_balancer_pool" {
 - `disabled_at` (String) This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.
 - `id` (String) The ID of this resource.
 - `modified_on` (String)
-- `networks` (List of String) List of networks where Load Balancer or Pool is enabled.
 
 <a id="nestedatt--origins"></a>
 ### Nested Schema for `origins`

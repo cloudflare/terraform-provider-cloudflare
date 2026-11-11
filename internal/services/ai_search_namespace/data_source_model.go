@@ -18,17 +18,31 @@ type AISearchNamespaceResultDataSourceEnvelope struct {
 }
 
 type AISearchNamespaceDataSourceModel struct {
+	ID                   types.String                                                                   `tfsdk:"id" path:"name,computed"`
+	Name                 types.String                                                                   `tfsdk:"name" path:"name,computed_optional"`
 	AccountID            types.String                                                                   `tfsdk:"account_id" path:"account_id,required"`
-	Name                 types.String                                                                   `tfsdk:"name" path:"name,required"`
 	CreatedAt            timetypes.RFC3339                                                              `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Description          types.String                                                                   `tfsdk:"description" json:"description,computed"`
 	PublicEndpointID     types.String                                                                   `tfsdk:"public_endpoint_id" json:"public_endpoint_id,computed"`
 	PublicEndpointParams customfield.NestedObject[AISearchNamespacePublicEndpointParamsDataSourceModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed"`
+	Filter               *AISearchNamespaceFindOneByDataSourceModel                                     `tfsdk:"filter"`
 }
 
 func (m *AISearchNamespaceDataSourceModel) toReadParams(_ context.Context) (params ai_search.NamespaceReadParams, diags diag.Diagnostics) {
 	params = ai_search.NamespaceReadParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *AISearchNamespaceDataSourceModel) toListParams(_ context.Context) (params ai_search.NamespaceListParams, diags diag.Diagnostics) {
+	params = ai_search.NamespaceListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Filter.Search.IsNull() {
+		params.Search = cloudflare.F(m.Filter.Search.ValueString())
 	}
 
 	return
@@ -63,4 +77,8 @@ type AISearchNamespacePublicEndpointParamsRateLimitDataSourceModel struct {
 
 type AISearchNamespacePublicEndpointParamsSearchEndpointDataSourceModel struct {
 	Disabled types.Bool `tfsdk:"disabled" json:"disabled,computed"`
+}
+
+type AISearchNamespaceFindOneByDataSourceModel struct {
+	Search types.String `tfsdk:"search" query:"search,optional"`
 }

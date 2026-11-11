@@ -8,4 +8,5 @@ resource "cloudflare_zero_trust_dlp_custom_entry" "example_zero_trust_dlp_custom
   }
   description = "description"
   profile_id = "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
+  validator_ids = ["182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"]
 }

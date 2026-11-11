@@ -21,6 +21,7 @@ type ZeroTrustDLPCustomEntryModel struct {
 	Name          types.String                                                       `tfsdk:"name" json:"name,required"`
 	Pattern       *ZeroTrustDLPCustomEntryPatternModel                               `tfsdk:"pattern" json:"pattern,required"`
 	Description   types.String                                                       `tfsdk:"description" json:"description,optional"`
+	ValidatorIDs  customfield.Set[types.String]                                      `tfsdk:"validator_ids" json:"validator_ids,computed_optional"`
 	CaseSensitive types.Bool                                                         `tfsdk:"case_sensitive" json:"case_sensitive,computed"`
 	CreatedAt     timetypes.RFC3339                                                  `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Deprecated    types.Bool                                                         `tfsdk:"deprecated" json:"deprecated,computed"`

@@ -140,7 +140,7 @@ func (r *OrganizationResource) Update(ctx context.Context, req resource.UpdateRe
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-	
+
 }
 
 func (r *OrganizationResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {

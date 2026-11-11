@@ -162,18 +162,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							),
 						},
 					},
-					"custom_certificate": schema.StringAttribute{
-						Description: "If a custom uploaded certificate is used.",
-						Computed:    true,
-					},
 					"custom_csr_id": schema.StringAttribute{
 						Description: "The identifier for the Custom CSR that was used.",
 						Computed:    true,
-					},
-					"custom_key": schema.StringAttribute{
-						Description: "The key for a custom uploaded certificate.",
-						Computed:    true,
-						Sensitive:   true,
 					},
 					"dcv_delegation_records": schema.ListNestedAttribute{
 						Description: "DCV Delegation records for domain validation.",

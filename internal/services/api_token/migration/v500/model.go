@@ -80,6 +80,8 @@ type TargetAPITokenModel struct {
 	CreatorEmailAtCreation types.String `tfsdk:"creator_email_at_creation"`
 	ProvisionerID          types.String `tfsdk:"provisioner_id"`
 	ProvisionerType        types.String `tfsdk:"provisioner_type"`
+	TokenPrefix            types.String `tfsdk:"token_prefix"`
+	TokenSuffix            types.String `tfsdk:"token_suffix"`
 }
 
 // TargetPolicyModel represents a v5 policy in the policies set.

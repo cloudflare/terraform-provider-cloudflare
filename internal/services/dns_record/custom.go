@@ -3,11 +3,13 @@ package dns_record
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -89,6 +91,50 @@ func getZoneNameFromPrivateState(ctx context.Context, private privateStateReadWr
 }
 
 // ---------------------------------------------------------------------------
+// ValidateConfig – per-type checks the generated schema can't express, since
+// every record type shares one schema with all fields optional.
+// ---------------------------------------------------------------------------
+
+var _ resource.ResourceWithValidateConfig = (*DNSRecordResource)(nil)
+
+// contentRequiredTypes are the record types whose value is set with content
+// rather than data. The API rejects these records without content.
+var contentRequiredTypes = map[string]bool{
+	"A":          true,
+	"AAAA":       true,
+	"CNAME":      true,
+	"MX":         true,
+	"NS":         true,
+	"OPENPGPKEY": true,
+	"PTR":        true,
+	"TXT":        true,
+}
+
+func (r *DNSRecordResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
+	var recordType, content types.String
+	var data types.Object
+	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("type"), &recordType)...)
+	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("content"), &content)...)
+	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("data"), &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if recordType.IsNull() || recordType.IsUnknown() || !content.IsNull() || !data.IsNull() {
+		return
+	}
+	upperType := strings.ToUpper(recordType.ValueString())
+	if !contentRequiredTypes[upperType] {
+		return
+	}
+	resp.Diagnostics.AddAttributeError(
+		path.Root("content"),
+		"Missing content",
+		fmt.Sprintf("content is required for %s records.", upperType),
+	)
+}
+
+// ---------------------------------------------------------------------------
 // ModifyPlan – all plan-modification logic lives here to avoid conflicts with
 // code-generated CRUD methods in resource.go.
 // ---------------------------------------------------------------------------
@@ -158,14 +204,14 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 		contentChanged := false
 		if plan.Data == nil {
 			// Regular record using content field
-			// Special handling for CNAME records: DNS is case-insensitive
+			// Special handling for CNAME records: DNS is case-insensitive, and the
+			// API strips one trailing dot from the target.
 			if !plan.Type.IsNull() && plan.Type.ValueString() == "CNAME" &&
 				!plan.Content.IsNull() && !state.Content.IsNull() {
-				// Do case-insensitive comparison for CNAME content
-				planContent := strings.ToLower(plan.Content.ValueString())
-				stateContent := strings.ToLower(state.Content.ValueString())
+				planContent := normalizeCNAMEContent(plan.Content.ValueString())
+				stateContent := normalizeCNAMEContent(state.Content.ValueString())
 				contentChanged = planContent != stateContent
-				// If only case differs, preserve the state value to prevent drift
+				// If only case or the trailing dot differs, preserve the state value to prevent drift
 				if !contentChanged && plan.Content.ValueString() != state.Content.ValueString() {
 					plan.Content = state.Content
 				}
@@ -409,6 +455,17 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 
 	// Set the updated plan
 	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
+}
+
+// normalizeCNAMEContent returns the form of a CNAME target used to compare plan
+// and state: lowercase, without one trailing dot. A target of only "." is kept
+// as is, so it never matches an empty value.
+func normalizeCNAMEContent(content string) string {
+	lower := strings.ToLower(content)
+	if trimmed := strings.TrimSuffix(lower, "."); trimmed != "" {
+		return trimmed
+	}
+	return lower
 }
 
 // ---------------------------------------------------------------------------

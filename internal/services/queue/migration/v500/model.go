@@ -54,36 +54,12 @@ type TargetQueueConsumersModel struct {
 // TargetQueueConsumersSettingsModel represents the consumer settings nested object (v500).
 // Must match QueueConsumersSettingsModel structure exactly.
 type TargetQueueConsumersSettingsModel struct {
-	BatchSize           types.Float64                                                            `tfsdk:"batch_size"`
-	MaxConcurrency      types.Float64                                                            `tfsdk:"max_concurrency"`
-	MaxRetries          types.Float64                                                            `tfsdk:"max_retries"`
-	MaxWaitTimeMs       types.Float64                                                            `tfsdk:"max_wait_time_ms"`
-	RetryDelay          types.Float64                                                            `tfsdk:"retry_delay"`
-	VisibilityTimeoutMs types.Float64                                                            `tfsdk:"visibility_timeout_ms"`
-	Email               customfield.NestedObjectList[TargetQueueConsumersSettingsEmailModel]     `tfsdk:"email"`
-	Pagerduty           customfield.NestedObjectList[TargetQueueConsumersSettingsPagerdutyModel] `tfsdk:"pagerduty"`
-	Webhooks            customfield.NestedObjectList[TargetQueueConsumersSettingsWebhooksModel]  `tfsdk:"webhooks"`
-}
-
-// TargetQueueConsumersSettingsEmailModel represents an email notification
-// destination in the consumer settings (v500).
-// Must match QueueConsumersSettingsEmailModel structure exactly.
-type TargetQueueConsumersSettingsEmailModel struct {
-	ID types.String `tfsdk:"id"`
-}
-
-// TargetQueueConsumersSettingsPagerdutyModel represents a PagerDuty notification
-// destination in the consumer settings (v500).
-// Must match QueueConsumersSettingsPagerdutyModel structure exactly.
-type TargetQueueConsumersSettingsPagerdutyModel struct {
-	ID types.String `tfsdk:"id"`
-}
-
-// TargetQueueConsumersSettingsWebhooksModel represents a webhook in the consumer
-// settings webhooks list (v500).
-// Must match QueueConsumersSettingsWebhooksModel structure exactly.
-type TargetQueueConsumersSettingsWebhooksModel struct {
-	ID types.String `tfsdk:"id"`
+	BatchSize           types.Float64 `tfsdk:"batch_size"`
+	MaxConcurrency      types.Float64 `tfsdk:"max_concurrency"`
+	MaxRetries          types.Float64 `tfsdk:"max_retries"`
+	MaxWaitTimeMs       types.Float64 `tfsdk:"max_wait_time_ms"`
+	RetryDelay          types.Float64 `tfsdk:"retry_delay"`
+	VisibilityTimeoutMs types.Float64 `tfsdk:"visibility_timeout_ms"`
 }
 
 // TargetQueueProducersModel represents a producer in the target producers list (v500).

@@ -80,6 +80,7 @@ type TargetZeroTrustOrganizationModel struct {
 	TrustedAccounts                        customfield.List[types.String]     `tfsdk:"trusted_accounts"`
 	AllowAuthenticateViaWARP               types.Bool                         `tfsdk:"allow_authenticate_via_warp"`
 	AutoRedirectToIdentity                 types.Bool                         `tfsdk:"auto_redirect_to_identity"`
+	DisableEndUserAppCreation              types.Bool                         `tfsdk:"disable_end_user_app_creation"`
 	IsUIReadOnly                           types.Bool                         `tfsdk:"is_ui_read_only"`
 	MfaConfigurationAllowed                types.Bool                         `tfsdk:"mfa_configuration_allowed"`
 	MfaRequiredForAllApps                  types.Bool                         `tfsdk:"mfa_required_for_all_apps"`

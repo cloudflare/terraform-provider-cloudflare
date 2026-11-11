@@ -65,7 +65,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "User Group identifier tag.",
+							Description: "Identifier of the user group.",
 							Computed:    true,
 						},
 						"created_on": schema.StringAttribute{

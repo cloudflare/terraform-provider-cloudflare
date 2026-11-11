@@ -182,7 +182,7 @@ func (r *ZeroTrustDevicePostureRuleResource) Read(ctx context.Context, req resou
 	}
 	data = &env.Result
 
-	// Normalize API response to match configuration expectations  
+	// Normalize API response to match configuration expectations
 	r.normalizeReadData(ctx, data, req.State)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -356,7 +356,7 @@ func (r *ZeroTrustDevicePostureRuleResource) normalizeImportData(data *ZeroTrust
 	// For imports, remove commonly added defaults that users typically don't configure
 	// Only remove schedule if it's "5m" for rule types that commonly don't need it (like serial_number, application)
 	// but keep it for rule types that typically specify it (like file rules)
-	
+
 	if !data.Schedule.IsNull() && data.Schedule.ValueString() == "5m" {
 		ruleType := data.Type.ValueString()
 		// Only remove default schedule for rule types that typically don't specify it
@@ -372,13 +372,13 @@ func (r *ZeroTrustDevicePostureRuleResource) normalizeImportData(data *ZeroTrust
 			// Map platform to operating system equivalents
 			platformToOS := map[string]string{
 				"mac":     "mac",
-				"windows": "windows", 
+				"windows": "windows",
 				"linux":   "linux",
 			}
-			
+
 			platform := match.Platform.ValueString()
 			os := data.Input.OperatingSystem.ValueString()
-			
+
 			if expectedOS, exists := platformToOS[platform]; exists && os == expectedOS {
 				// If operating_system matches the expected value based on platform, remove it
 				data.Input.OperatingSystem = types.StringNull()

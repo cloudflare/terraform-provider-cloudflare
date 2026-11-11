@@ -14,8 +14,9 @@ type AISearchNamespaceResultEnvelope struct {
 }
 
 type AISearchNamespaceModel struct {
-	AccountID            types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	ID                   types.String                                                         `tfsdk:"id" json:"-,computed"`
 	Name                 types.String                                                         `tfsdk:"name" json:"name,required"`
+	AccountID            types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
 	Description          types.String                                                         `tfsdk:"description" json:"description,optional"`
 	PublicEndpointParams customfield.NestedObject[AISearchNamespacePublicEndpointParamsModel] `tfsdk:"public_endpoint_params" json:"public_endpoint_params,computed_optional"`
 	CreatedAt            timetypes.RFC3339                                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

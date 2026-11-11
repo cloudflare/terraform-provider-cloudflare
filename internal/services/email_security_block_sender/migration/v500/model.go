@@ -26,6 +26,7 @@ type TargetModel struct {
 	Pattern      types.String      `tfsdk:"pattern"`
 	PatternType  types.String      `tfsdk:"pattern_type"`
 	Comments     types.String      `tfsdk:"comments"`
+	ExpiresAt    timetypes.RFC3339 `tfsdk:"expires_at"`
 	CreatedAt    timetypes.RFC3339 `tfsdk:"created_at"`
 	LastModified timetypes.RFC3339 `tfsdk:"last_modified"`
 	ModifiedAt   timetypes.RFC3339 `tfsdk:"modified_at"`

@@ -22,19 +22,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"business_address": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"business_email": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"business_name": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"business_phone": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"external_metadata": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 		},
 	}

@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/schemata"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -54,12 +55,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"priority": schema.Int64Attribute{
 				Optional: true,
 			},
+			"provisioned_download_kbps": schema.Int64Attribute{
+				Description: "Provisioned download rate of the WAN circuit in kilobits per second.",
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 1000000000),
+				},
+			},
+			"provisioned_upload_kbps": schema.Int64Attribute{
+				Description: "Provisioned upload rate of the WAN circuit in kilobits per second.",
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 1000000000),
+				},
+			},
 			"vlan_tag": schema.Int64Attribute{
 				Description: "VLAN ID. Use zero for untagged.",
 				Optional:    true,
 			},
 			"static_addressing": schema.SingleNestedAttribute{
-				Description: "(optional) if omitted, use DHCP. Submit secondary_address when site is in high availability mode.",
+				Description: "Static addressing configuration for a WAN. Omit to use DHCP. Submit secondary_address when the site is in high availability mode.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"address": schema.StringAttribute{
@@ -72,6 +87,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"secondary_address": schema.StringAttribute{
 						Description: "A valid CIDR notation representing an IP range.",
+						Optional:    true,
+					},
+					"secondary_gateway_address": schema.StringAttribute{
+						Description: "Gateway address for the secondary connector of a high availability site.",
 						Optional:    true,
 					},
 				},

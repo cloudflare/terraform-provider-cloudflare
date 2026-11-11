@@ -105,12 +105,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"tls_settings": schema.SingleNestedAttribute{
-				Description: "TLS settings for a connectivity service.\n\nIf omitted, the default mode (`verify_full`) is used.",
+				Description: "TLS settings for a connectivity service.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"cert_verification_mode": schema.StringAttribute{
-						Description: "TLS certificate verification mode for the connection to the origin.\n\n- `\"verify_full\"` — verify certificate chain and hostname (default)\n- `\"verify_ca\"` — verify certificate chain only, skip hostname check\n- `\"disabled\"` — do not verify the server certificate at all",
+						Description: "TLS certificate verification mode for the connection to the origin.\n\n- `\"verify_full\"` — verify certificate chain and hostname (default)\n- `\"verify_ca\"` — verify certificate chain only, skip hostname check\n- `\"disabled\"` — do not verify the server certificate at all\n\n`disabled` cannot be combined with `certificate_authority`: a custom CA is\nonly used to verify the server certificate.",
 						Required:    true,
+					},
+					"certificate_authority": schema.StringAttribute{
+						Description: "UUID of the custom CA certificate or chain.",
+						Optional:    true,
+					},
+					"client_certificate": schema.StringAttribute{
+						Description: "UUID of the mTLS client certificate and private key.",
+						Optional:    true,
 					},
 				},
 			},

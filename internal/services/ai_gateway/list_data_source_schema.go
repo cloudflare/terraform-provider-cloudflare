@@ -86,7 +86,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"authentication": schema.BoolAttribute{
-							Computed: true,
+							Description: "Require authentication for gateway access. New gateways must have authentication enabled. Once enabled, authentication cannot be disabled.",
+							Computed:    true,
 						},
 						"byok_only": schema.BoolAttribute{
 							Description: "Requires customer-provided provider credentials and prevents fallback to Unified Billing.",
@@ -149,6 +150,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"fedramp_level": schema.StringAttribute{
+							Description: "FedRAMP compliance level: fedramp-medium or fedramp-high.\nAvailable values: \"fedramp-medium\", \"fedramp-high\".",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("fedramp-medium", "fedramp-high"),
+							},
+						},
+						"fedramp_mode": schema.StringAttribute{
+							Description: "FedRAMP enforcement mode. \"prefer\" prioritizes compliant connectors but allows fallback. \"require\" strictly filters.\nAvailable values: \"prefer\", \"require\".",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("prefer", "require"),
+							},
+						},
 						"guardrails": schema.SingleNestedAttribute{
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[AIGatewaysGuardrailsDataSourceModel](ctx),
@@ -193,6 +208,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"s13": schema.StringAttribute{
+											Description: `Available values: "FLAG", "BLOCK".`,
+											Computed:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+											},
+										},
+										"s14": schema.StringAttribute{
 											Description: `Available values: "FLAG", "BLOCK".`,
 											Computed:    true,
 											Validators: []validator.String{
@@ -297,6 +319,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"s13": schema.StringAttribute{
+											Description: `Available values: "FLAG", "BLOCK".`,
+											Computed:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("FLAG", "BLOCK"),
+											},
+										},
+										"s14": schema.StringAttribute{
 											Description: `Available values: "FLAG", "BLOCK".`,
 											Computed:    true,
 											Validators: []validator.String{
@@ -552,7 +581,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"store_id": schema.StringAttribute{
-							Computed: true,
+							Description: "Secrets Store used by this gateway. Omit on update to keep the current store. Cannot be cleared while stored keys or secret references depend on it.",
+							Computed:    true,
 						},
 						"stripe": schema.SingleNestedAttribute{
 							Computed:   true,

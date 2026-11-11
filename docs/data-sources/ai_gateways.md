@@ -40,13 +40,17 @@ data "cloudflare_ai_gateways" "example_ai_gateways" {
 
 Read-Only:
 
-- `authentication` (Boolean)
+- `authentication` (Boolean) Require authentication for gateway access. New gateways must have authentication enabled. Once enabled, authentication cannot be disabled.
 - `byok_only` (Boolean) Requires customer-provided provider credentials and prevents fallback to Unified Billing.
 - `cache_invalidate_on_update` (Boolean)
 - `cache_ttl` (Number)
 - `collect_logs` (Boolean)
 - `created_at` (String)
 - `dlp` (Attributes) (see [below for nested schema](#nestedatt--result--dlp))
+- `fedramp_level` (String) FedRAMP compliance level: fedramp-medium or fedramp-high.
+Available values: "fedramp-medium", "fedramp-high".
+- `fedramp_mode` (String) FedRAMP enforcement mode. "prefer" prioritizes compliant connectors but allows fallback. "require" strictly filters.
+Available values: "prefer", "require".
 - `guardrails` (Attributes) (see [below for nested schema](#nestedatt--result--guardrails))
 - `id` (String) Unique identifier of the AI Gateway within the account.
 - `is_default` (Boolean)
@@ -65,7 +69,7 @@ Available values: "constant", "linear", "exponential".
 - `retry_delay` (Number) Delay between retry attempts in milliseconds (0-60000)
 - `retry_max_attempts` (Number) Maximum number of retry attempts for failed requests (1-5)
 - `spend_limits` (Attributes) (see [below for nested schema](#nestedatt--result--spend_limits))
-- `store_id` (String)
+- `store_id` (String) Secrets Store used by this gateway. Omit on update to keep the current store. Cannot be cleared while stored keys or secret references depend on it.
 - `stripe` (Attributes) (see [below for nested schema](#nestedatt--result--stripe))
 - `workers_ai_billing_mode` (String) Controls how Workers AI inference calls routed through this gateway are billed. 'postpaid' bills the account directly through Workers AI; 'unified' deducts credits via AI Gateway using neuron-based pricing and delegates billing to AI Gateway.
 Available values: "postpaid", "unified".
@@ -113,6 +117,7 @@ Read-Only:
 - `s11` (String) Available values: "FLAG", "BLOCK".
 - `s12` (String) Available values: "FLAG", "BLOCK".
 - `s13` (String) Available values: "FLAG", "BLOCK".
+- `s14` (String) Available values: "FLAG", "BLOCK".
 - `s2` (String) Available values: "FLAG", "BLOCK".
 - `s3` (String) Available values: "FLAG", "BLOCK".
 - `s4` (String) Available values: "FLAG", "BLOCK".
@@ -134,6 +139,7 @@ Read-Only:
 - `s11` (String) Available values: "FLAG", "BLOCK".
 - `s12` (String) Available values: "FLAG", "BLOCK".
 - `s13` (String) Available values: "FLAG", "BLOCK".
+- `s14` (String) Available values: "FLAG", "BLOCK".
 - `s2` (String) Available values: "FLAG", "BLOCK".
 - `s3` (String) Available values: "FLAG", "BLOCK".
 - `s4` (String) Available values: "FLAG", "BLOCK".

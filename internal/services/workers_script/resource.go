@@ -700,4 +700,5 @@ func (r *WorkersScriptResource) ModifyPlan(ctx context.Context, req resource.Mod
 	// To prevent this, we must explicitly mark any computed attributes we know can change as unknown.
 	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("modified_on"), timetypes.NewRFC3339Unknown())...)
 	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("has_assets"), types.BoolUnknown())...)
+	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("startup_time_ms"), types.Int64Unknown())...)
 }

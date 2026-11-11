@@ -37,12 +37,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"created": schema.StringAttribute{
-				Description: "When the share was created.",
+				Description: "When the object was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"modified": schema.StringAttribute{
-				Description: "When the share was modified.",
+				Description: "When the object was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
@@ -51,7 +51,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"resource_id": schema.StringAttribute{
-				Description: "Share Resource identifier.",
+				Description: "Identifier assigned by the service that owns the shared resource.",
 				Computed:    true,
 			},
 			"resource_type": schema.StringAttribute{

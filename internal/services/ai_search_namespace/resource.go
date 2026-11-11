@@ -12,13 +12,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7/ai_search"
 	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*AISearchNamespaceResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*AISearchNamespaceResource)(nil)
+var _ resource.ResourceWithImportState = (*AISearchNamespaceResource)(nil)
 
 func NewResource() resource.Resource {
 	return &AISearchNamespaceResource{}
@@ -88,6 +91,7 @@ func (r *AISearchNamespaceResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -137,6 +141,7 @@ func (r *AISearchNamespaceResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -177,6 +182,7 @@ func (r *AISearchNamespaceResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -202,6 +208,53 @@ func (r *AISearchNamespaceResource) Delete(ctx context.Context, req resource.Del
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.Name
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *AISearchNamespaceResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data = new(AISearchNamespaceModel)
+
+	path_account_id := ""
+	path_name := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<name>",
+		&path_account_id,
+		&path_name,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.Name = types.StringValue(path_name)
+
+	res := new(http.Response)
+	env := AISearchNamespaceResultEnvelope{*data}
+	_, err := r.client.AISearch.Namespaces.Read(
+		ctx,
+		path_name,
+		ai_search.NamespaceReadParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

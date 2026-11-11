@@ -23,6 +23,7 @@ type ZeroTrustOrganizationDataSourceModel struct {
 	AuthDomain                             types.String                                                                         `tfsdk:"auth_domain" json:"auth_domain,computed"`
 	AutoRedirectToIdentity                 types.Bool                                                                           `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed"`
 	DenyUnmatchedRequests                  types.Bool                                                                           `tfsdk:"deny_unmatched_requests" json:"deny_unmatched_requests,computed"`
+	DisableEndUserAppCreation              types.Bool                                                                           `tfsdk:"disable_end_user_app_creation" json:"disable_end_user_app_creation,computed"`
 	IsUIReadOnly                           types.Bool                                                                           `tfsdk:"is_ui_read_only" json:"is_ui_read_only,computed"`
 	MfaRequiredForAllApps                  types.Bool                                                                           `tfsdk:"mfa_required_for_all_apps" json:"mfa_required_for_all_apps,computed"`
 	Name                                   types.String                                                                         `tfsdk:"name" json:"name,computed"`

@@ -68,6 +68,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.",
 				Optional:    true,
 			},
+			"policy_resolution_account_id": schema.StringAttribute{
+				Description: "The account ID used to resolve policy resources and identity for cross-account WARP authentication. The account must be trusted by the account that owns this policy.",
+				Optional:    true,
+			},
 			"purpose_justification_prompt": schema.StringAttribute{
 				Description: "A custom message that will appear on the purpose justification screen.",
 				Optional:    true,
@@ -117,7 +121,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 								Validators: []validator.List{
 									listvalidator.ValueStringsAre(
-										stringvalidator.OneOfCaseInsensitive("text"),
+										stringvalidator.OneOfCaseInsensitive("text", "file"),
 									),
 								},
 								ElementType: types.StringType,
@@ -127,7 +131,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 								Validators: []validator.List{
 									listvalidator.ValueStringsAre(
-										stringvalidator.OneOfCaseInsensitive("text"),
+										stringvalidator.OneOfCaseInsensitive("text", "file"),
 									),
 								},
 								ElementType: types.StringType,
@@ -416,6 +420,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Attributes: map[string]schema.Attribute{
 								"token_id": schema.StringAttribute{
 									Description: "The ID of a Service Token.",
+									Required:    true,
+								},
+							},
+						},
+						"service_token_tag": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"key": schema.StringAttribute{
+									Description: "The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.",
+									Required:    true,
+								},
+								"value": schema.StringAttribute{
+									Description: "The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.",
 									Required:    true,
 								},
 							},
@@ -718,6 +735,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"service_token_tag": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"key": schema.StringAttribute{
+									Description: "The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.",
+									Required:    true,
+								},
+								"value": schema.StringAttribute{
+									Description: "The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.",
+									Required:    true,
+								},
+							},
+						},
 						"linked_app_token": schema.SingleNestedAttribute{
 							Optional: true,
 							Attributes: map[string]schema.Attribute{
@@ -1016,6 +1046,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"service_token_tag": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"key": schema.StringAttribute{
+									Description: "The tag key to match. Keys are case-sensitive and may contain Unicode letters and digits, underscores, periods, and hyphens.",
+									Required:    true,
+								},
+								"value": schema.StringAttribute{
+									Description: "The tag value to match. Values are case-sensitive, preserve whitespace, and must not contain NUL characters.",
+									Required:    true,
+								},
+							},
+						},
 						"linked_app_token": schema.SingleNestedAttribute{
 							Optional: true,
 							Attributes: map[string]schema.Attribute{
@@ -1057,10 +1100,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 				PlanModifiers: []planmodifier.Set{setplanmodifier.UseNonNullStateForUnknown()},
-			},
-			"app_count": schema.Int64Attribute{
-				Description: "Number of access applications currently using this policy.",
-				Computed:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:      true,

@@ -16,8 +16,10 @@ type R2DataCatalogModel struct {
 	ID                types.String                                                  `tfsdk:"id" json:"id,computed"`
 	AccountID         types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
 	BucketName        types.String                                                  `tfsdk:"bucket_name" path:"bucket_name,required"`
+	Credential        *R2DataCatalogCredentialModel                                 `tfsdk:"credential" json:"credential,optional,no_refresh"`
 	Bucket            types.String                                                  `tfsdk:"bucket" json:"bucket,computed"`
 	CredentialStatus  types.String                                                  `tfsdk:"credential_status" json:"credential_status,computed"`
+	Jurisdiction      types.String                                                  `tfsdk:"jurisdiction" json:"jurisdiction,computed"`
 	Name              types.String                                                  `tfsdk:"name" json:"name,computed"`
 	Status            types.String                                                  `tfsdk:"status" json:"status,computed"`
 	MaintenanceConfig customfield.NestedObject[R2DataCatalogMaintenanceConfigModel] `tfsdk:"maintenance_config" json:"maintenance_config,computed"`
@@ -29,6 +31,10 @@ func (m R2DataCatalogModel) MarshalJSON() (data []byte, err error) {
 
 func (m R2DataCatalogModel) MarshalJSONForUpdate(state R2DataCatalogModel) (data []byte, err error) {
 	return apijson.MarshalForUpdate(m, state)
+}
+
+type R2DataCatalogCredentialModel struct {
+	Token types.String `tfsdk:"token" json:"token,required"`
 }
 
 type R2DataCatalogMaintenanceConfigModel struct {

@@ -1,0 +1,23 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+{{ if .HasExample -}}
+## Example Usage
+
+{{tffile .ExampleFile}}
+{{- end }}
+
+## Scope
+
+Configure exactly one of `account_id` or `zone_id`. `include_zones` is only
+supported with `account_id`.
+
+{{ .SchemaMarkdown | trimspace }}

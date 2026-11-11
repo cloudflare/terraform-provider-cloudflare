@@ -21,4 +21,5 @@ resource "cloudflare_origin_ca_certificate" "example_origin_ca_certificate" {
   hostnames = ["example.com", "*.example.com", "sub.example.com"]
   request_type = "origin-rsa"
   requested_validity = 5475
+  zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
 }

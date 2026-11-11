@@ -17,14 +17,27 @@ description: |-
 ### Required
 
 - `account_id` (String)
+
+### Optional
+
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `name` (String)
 
 ### Read-Only
 
 - `created_at` (String)
 - `description` (String) Optional description for the namespace. Max 256 characters.
+- `id` (String) The ID of this resource.
 - `public_endpoint_id` (String)
 - `public_endpoint_params` (Attributes) (see [below for nested schema](#nestedatt--public_endpoint_params))
+
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Optional:
+
+- `search` (String) Filter namespaces whose name or description contains this string (case-insensitive).
+
 
 <a id="nestedatt--public_endpoint_params"></a>
 ### Nested Schema for `public_endpoint_params`
@@ -36,7 +49,7 @@ Read-Only:
 - `custom_domains` (List of String) Custom domain hostnames that alias this public endpoint. GET and create responses return the current set; on update (PUT) this field is only echoed back when supplied in the request body, otherwise it is null (omit it to leave domains unchanged).
 - `default_domain_enabled` (Boolean) When false, the instance is reachable only via a registered custom domain and the default <public_endpoint_id>.search.ai.cloudflare.com host returns 404. Requires at least one custom domain. Defaults to true. public_endpoint_params is replaced wholesale on update, so resend default_domain_enabled on every update to keep the default host off — omitting it resets to true.
 - `enabled` (Boolean)
-- `instances_allowed` (List of String) Instance IDs exposed through the namespace public endpoint. Empty means nothing is searchable. Every ID must be an existing instance in this namespace, and the list cannot exceed the account's multi-instance search limit.
+- `instances_allowed` (List of String) Instance IDs exposed through the namespace public endpoint. Empty means nothing is searchable. Every ID must reference an existing instance in this namespace, and the list must stay within the account's multi-instance search limit.
 - `mcp` (Attributes) (see [below for nested schema](#nestedatt--public_endpoint_params--mcp))
 - `rate_limit` (Attributes) (see [below for nested schema](#nestedatt--public_endpoint_params--rate_limit))
 - `search_endpoint` (Attributes) (see [below for nested schema](#nestedatt--public_endpoint_params--search_endpoint))
@@ -46,7 +59,7 @@ Read-Only:
 
 Read-Only:
 
-- `disabled` (Boolean) Disable chat completions endpoint for this public endpoint
+- `disabled` (Boolean) Disable chat completions endpoint for this public endpoint.
 
 
 <a id="nestedatt--public_endpoint_params--mcp"></a>
@@ -55,7 +68,7 @@ Read-Only:
 Read-Only:
 
 - `description` (String)
-- `disabled` (Boolean) Disable MCP endpoint for this public endpoint
+- `disabled` (Boolean) Disable MCP endpoint for this public endpoint.
 
 
 <a id="nestedatt--public_endpoint_params--rate_limit"></a>
@@ -73,6 +86,6 @@ Read-Only:
 
 Read-Only:
 
-- `disabled` (Boolean) Disable search endpoint for this public endpoint
+- `disabled` (Boolean) Disable search endpoint for this public endpoint.
 
 

@@ -1,0 +1,36 @@
+{
+  "account": {
+    "id": "f037e56e89293a057740de681ac9abbe"
+  },
+  "activated_on": "2025-02-20T15:41:09.000000Z",
+  "created_on": "2025-02-20T15:40:11.000000Z",
+  "development_mode": 0,
+  "id": "023e105f4ecef8ad9ca31a8372d0c353",
+  "meta": {
+    "cdn_only": false,
+    "custom_certificate_quota": 0,
+    "dns_only": false,
+    "foundation_dns": false,
+    "page_rule_quota": 3,
+    "phishing_detected": false,
+    "step": 2
+  },
+  "modified_on": "2025-02-20T15:41:09.000000Z",
+  "name": "example.com",
+  "name_servers": [
+    "bob.ns.cloudflare.com",
+    "lola.ns.cloudflare.com"
+  ],
+  "original_dnshost": null,
+  "original_name_servers": null,
+  "original_registrar": null,
+  "owner": {
+    "id": "7c5dae5552338874e5053f2534d2767a",
+    "name": null,
+    "type": "user"
+  },
+  "paused": false,
+  "status": "active",
+  "type": "full",
+  "vanity_name_servers": null
+}

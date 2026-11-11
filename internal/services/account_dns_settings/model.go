@@ -28,7 +28,6 @@ func (m AccountDNSSettingsModel) MarshalJSONForUpdate(state AccountDNSSettingsMo
 
 type AccountDNSSettingsZoneDefaultsModel struct {
 	FlattenAllCNAMEs   types.Bool                                                               `tfsdk:"flatten_all_cnames" json:"flatten_all_cnames,optional"`
-	FoundationDNS      types.Bool                                                               `tfsdk:"foundation_dns" json:"foundation_dns,optional"`
 	InternalDNS        customfield.NestedObject[AccountDNSSettingsZoneDefaultsInternalDNSModel] `tfsdk:"internal_dns" json:"internal_dns,computed_optional"`
 	MultiProvider      types.Bool                                                               `tfsdk:"multi_provider" json:"multi_provider,optional"`
 	Nameservers        customfield.NestedObject[AccountDNSSettingsZoneDefaultsNameserversModel] `tfsdk:"nameservers" json:"nameservers,computed_optional"`

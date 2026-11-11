@@ -235,7 +235,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"value": schema.StringAttribute{
-									Description: "Environment variable value.",
+									Description: "For `type: plain_text`: Environment variable value.\n\nFor `type: secret_text`: Secret value.",
 									Computed:    true,
 									Sensitive:   true,
 								},
@@ -515,7 +515,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"value": schema.StringAttribute{
-											Description: "Environment variable value.",
+											Description: "For `type: plain_text`: Environment variable value.\n\nFor `type: secret_text`: Secret value.",
 											Computed:    true,
 											Sensitive:   true,
 										},
@@ -762,7 +762,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 										"value": schema.StringAttribute{
-											Description: "Environment variable value.",
+											Description: "For `type: plain_text`: Environment variable value.\n\nFor `type: secret_text`: Secret value.",
 											Computed:    true,
 											Sensitive:   true,
 										},
@@ -1081,7 +1081,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								"value": schema.StringAttribute{
-									Description: "Environment variable value.",
+									Description: "For `type: plain_text`: Environment variable value.\n\nFor `type: secret_text`: Secret value.",
 									Computed:    true,
 									Sensitive:   true,
 								},

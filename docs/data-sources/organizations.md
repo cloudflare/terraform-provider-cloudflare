@@ -4,6 +4,8 @@ subcategory: ""
 description: |-
   Accepted Permissions
   User Details ReadUser Details Write
+  User API tokens can list and create Organizations, but reading, updating, or deleting an Organization requires a Global API key and your registered email address. The cloudflare_organization Terraform resource therefore requires a Global API key for its full lifecycle.
+  See Organizations authentication limitations https://developers.cloudflare.com/fundamentals/organizations/limitations/#api-authentication for credential compatibility by operation. Each endpoint’s Security section lists its supported authentication methods, with Accepted Permissions where applicable.
 ---
 
 # cloudflare_organizations (Data Source)
@@ -12,6 +14,10 @@ Accepted Permissions
 
 - `User Details Read`
 - `User Details Write`
+
+User API tokens can list and create Organizations, but reading, updating, or deleting an Organization requires a Global API key and your registered email address. The `cloudflare_organization` Terraform resource therefore requires a Global API key for its full lifecycle.
+
+See [Organizations authentication limitations](https://developers.cloudflare.com/fundamentals/organizations/limitations/#api-authentication) for credential compatibility by operation. Each endpoint’s **Security** section lists its supported authentication methods, with **Accepted Permissions** where applicable.
 
 ## Example Usage
 
@@ -23,11 +29,16 @@ data "cloudflare_organizations" "example_organizations" {
     organization = "organization"
     user = "user"
   }
+  direction = "asc"
+  member = {
+    email = "email"
+  }
   name = {
     contains = "contains"
     ends_with = "endsWith"
     starts_with = "startsWith"
   }
+  order_by = "name"
   page_size = 0
   page_token = "page_token"
   parent = {
@@ -42,10 +53,17 @@ data "cloudflare_organizations" "example_organizations" {
 ### Optional
 
 - `containing` (Attributes) (see [below for nested schema](#nestedatt--containing))
+- `direction` (String) Sort direction for the `order_by` field. Defaults to `asc` when `order_by` is
+specified.
+Available values: "asc", "desc".
 - `id` (List of String) Only return organizations with the specified IDs (ex. id=foo&id=bar). Send multiple elements
 by repeating the query value.
 - `max_items` (Number) Max items to fetch, default: 1000
+- `member` (Attributes) (see [below for nested schema](#nestedatt--member))
 - `name` (Attributes) (see [below for nested schema](#nestedatt--name))
+- `order_by` (String) Field to order results by. Currently supported values: `name`.
+When not specified, results are ordered by hierarchy.
+Available values: "name".
 - `page_size` (Number) The amount of items to return. Defaults to 10.
 - `page_token` (String) An opaque token returned from the last list response that when
 provided will retrieve the next page.
@@ -74,6 +92,15 @@ IMPORTANT: Just because an organization "contains" a user is not a
 representation of any authorization or privilege to manage any resources
 therein. An organization "containing" a user simply means the user is managed by
 that organization.
+
+
+<a id="nestedatt--member"></a>
+### Nested Schema for `member`
+
+Optional:
+
+- `email` (String) Filter organizations to those where the given user, by email, is an active member of
+that exact organization. This does not include hierarchy-derived access.
 
 
 <a id="nestedatt--name"></a>
@@ -118,6 +145,7 @@ Read-Only:
 
 Read-Only:
 
+- `are_child_accounts_accessible_by_org_members` (Boolean)
 - `hierarchy_tags` (List of String) Ordered chain of organization tags from the root organization down to
 (and including) this organization itself. Root organizations return a
 single-element array containing their own tag; sub-organizations return
@@ -126,6 +154,7 @@ constructing authorization scopes that need to cover every ancestor
 in the hierarchy.
 - `managed_by` (String)
 - `tenant_flags` (Attributes) Enable features for Organizations. (see [below for nested schema](#nestedatt--result--meta--tenant_flags))
+- `tenant_type` (String)
 
 <a id="nestedatt--result--meta--tenant_flags"></a>
 ### Nested Schema for `result.meta.tenant_flags`

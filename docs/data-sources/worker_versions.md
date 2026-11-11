@@ -3,13 +3,21 @@ page_title: "cloudflare_worker_versions Data Source - Cloudflare"
 subcategory: ""
 description: |-
   Accepted Permissions
-  Workers Scripts ReadWorkers Scripts WriteWorkers Tail Read
+  Individual Workers AdminIndividual Workers Content Read-OnlyIndividual Workers EditorIndividual Workers Metadata Read-OnlyWorkers AdminWorkers Content Read-OnlyWorkers EditorWorkers Metadata Read-OnlyWorkers Scripts ReadWorkers Scripts WriteWorkers Tail Read
 ---
 
 # cloudflare_worker_versions (Data Source)
 
 Accepted Permissions
 
+- `Individual Workers Admin`
+- `Individual Workers Content Read-Only`
+- `Individual Workers Editor`
+- `Individual Workers Metadata Read-Only`
+- `Workers Admin`
+- `Workers Content Read-Only`
+- `Workers Editor`
+- `Workers Metadata Read-Only`
 - `Workers Scripts Read`
 - `Workers Scripts Write`
 - `Workers Tail Read`
@@ -142,7 +150,7 @@ Read-Only:
 - `format` (String) Data format of the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#format).
 Available values: "raw", "pkcs8", "spki", "jwk".
 - `id` (String) Identifier of the D1 database to bind to.
-- `identity` (String) Enables Gateway identity for the binding. Requires network_id to be "cf1:network" and cannot be combined with tunnel_id.
+- `identity` (String) Enables Gateway identity for the binding. Requires network_id to be "cf1:network" and cannot be combined with tunnel_id or an explicit "cf1:vnet:<UUID>" network_id.
 Available values: "runtime-email-alpha".
 - `index_name` (String) Name of the Vectorize index to bind to.
 - `instance_name` (String) The user-chosen instance name. Must exist at deploy time. The worker can search, chat, update, and manage items/jobs on this instance.
@@ -154,13 +162,12 @@ Available values: "eu", "fedramp", "fedramp-high", "us".
 - `name` (String) A JavaScript variable name for the binding.
 - `namespace` (String) The namespace the instance belongs to. Defaults to "default" if omitted. Customers who don't use namespaces can simply omit this field.
 - `namespace_id` (String) Namespace identifier tag.
-- `network_id` (String) Identifier of the network to bind to. Only "cf1:network" is currently supported. Mutually exclusive with tunnel_id.
+- `network_id` (String) Identifier of the network to bind to. Use "cf1:network" to select the account's default virtual network at runtime, or "cf1:vnet:<UUID>" to select an explicit virtual network in the Worker's account. Mutually exclusive with tunnel_id.
 - `old_name` (String) The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.
 - `outbound` (Attributes) Outbound worker. (see [below for nested schema](#nestedatt--result--bindings--outbound))
 - `part` (String) The name of the file containing the data content. Only accepted for `service worker syntax` Workers.
 - `pipeline` (String) Name of the Pipeline to bind to.
 - `queue_name` (String) Name of the Queue to bind to.
-- `retry` (Attributes) Retry policy for calls made to the Durable Object through this binding. Omitted or null properties use the runtime defaults. These limits are upper bounds and do not enable retries for otherwise ineligible calls. (see [below for nested schema](#nestedatt--result--bindings--retry))
 - `script_name` (String) The script where the Durable Object is defined, if it is external to this Worker.
 - `secret_name` (String) Name of the secret in the store.
 - `service` (String) Name of Worker to bind to.
@@ -173,7 +180,7 @@ Available values: "eu", "fedramp", "fedramp-high", "us".
 - `type` (String) The kind of resource that the binding provides.
 Available values: "ai", "ai_search", "ai_search_namespace", "messaging", "analytics_engine", "artifacts", "assets", "browser", "d1", "data_blob", "dispatch_namespace", "durable_object_namespace", "hyperdrive", "inherit", "images", "json", "kv_namespace", "media", "mtls_certificate", "plain_text", "pipelines", "k2", "queue", "ratelimit", "r2_bucket", "secret_text", "send_email", "service", "text_blob", "vectorize", "version_metadata", "secrets_store_secret", "flagship", "secret_key", "workflow", "wasm_module", "vpc_service", "vpc_network".
 - `usages` (Set of String) Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
-- `version_id` (String) Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.
+- `version_id` (String) Identifier for the version to inherit the binding from. This can be a version ID, or the literal "latest" to inherit from the most recently uploaded version, which may not be the deployed version. Defaults to "latest". Only the Workers API version endpoints under `/accounts/{account_id}/workers/workers/{worker_id}/versions` accept a version ID. Other endpoints, including script upload and script version upload, accept only "latest" and reject a version ID with error 10057.
 - `workflow_name` (String) Name of the Workflow to bind to.
 
 <a id="nestedatt--result--bindings--outbound"></a>
@@ -201,15 +208,6 @@ Read-Only:
 - `environment` (String) Environment of the outbound worker.
 - `service` (String) Name of the outbound worker.
 
-
-
-<a id="nestedatt--result--bindings--retry"></a>
-### Nested Schema for `result.bindings.retry`
-
-Read-Only:
-
-- `max_attempts` (Number) Maximum number of retries after the initial request, not the total number of attempts. Defaults to 4. Zero disables retries.
-- `timeout_ms` (Number) Retry timeout in milliseconds, measured from the start of the call. No retry starts after it expires, and a retry still running when it expires is cancelled. This is not a request timeout; it does not limit the initial request, which is still subject to any timeouts set by your Worker. Defaults to 10000.
 
 
 <a id="nestedatt--result--bindings--simple"></a>

@@ -53,7 +53,7 @@ data "cloudflare_zero_trust_access_application" "example_zero_trust_access_appli
 - `id` (String) Identifier.
 - `landing_page_design` (Attributes) The design of the App Launcher landing page shown to users when they log in. (see [below for nested schema](#nestedatt--landing_page_design))
 - `logo_url` (String) The image URL for the logo shown in the App Launcher dashboard.
-- `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings for the application. Only valid for self_hosted, ssh, vnc, and rdp application types. (see [below for nested schema](#nestedatt--mfa_config))
+- `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings for the application. Only valid for self_hosted, ssh, vnc, rdp, and infrastructure application types. For infrastructure applications, supported authenticators are `piv_key` and `ssh_fido2_key`; for other application types use `totp`, `biometrics`, or `security_key`. (see [below for nested schema](#nestedatt--mfa_config))
 - `name` (String) The name of the application.
 - `options_preflight_bypass` (Boolean) Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.
 - `path_cookie_attribute` (Boolean) Enables cookie paths to scope an application's JWT to the application path. If disabled, the JWT will scope to the hostname by default
@@ -152,7 +152,7 @@ Read-Only:
 Read-Only:
 
 - `allowed_authenticators` (List of String) The authenticators allowed for MFA.
-Available values: "totp", "biometrics", "security_key".
+Available values: "totp", "biometrics", "security_key", "piv_key", "ssh_fido2_key".
 - `mfa_disabled` (Boolean) Whether MFA is disabled for this application.
 - `session_duration` (String) How often a user will be forced to re-authenticate with MFA.
 
@@ -172,7 +172,7 @@ Available values: "allow", "deny", "non_identity", "bypass".
 - `id` (String) The UUID of the policy
 - `include` (Attributes Set) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--policies--include))
 - `isolation_required` (Boolean) Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.
-- `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings for this policy. (see [below for nested schema](#nestedatt--policies--mfa_config))
+- `mfa_config` (Attributes) Configures multi-factor authentication (MFA) settings for this policy. For infrastructure applications, supported authenticators are `piv_key` and `ssh_fido2_key`; for other application types use `totp`, `biometrics`, or `security_key`. (see [below for nested schema](#nestedatt--policies--mfa_config))
 - `name` (String) The name of the Access policy.
 - `precedence` (Number) The order of execution for this policy. Must be unique for each policy within an app.
 - `purpose_justification_prompt` (String) A custom message that will appear on the purpose justification screen.
@@ -660,7 +660,7 @@ Read-Only:
 Read-Only:
 
 - `allowed_authenticators` (List of String) The authenticators allowed for MFA.
-Available values: "totp", "biometrics", "security_key", "ssh_piv_key".
+Available values: "totp", "biometrics", "security_key", "piv_key", "ssh_fido2_key".
 - `mfa_disabled` (Boolean) Whether MFA is disabled for this policy.
 - `session_duration` (String) How often a user will be forced to re-authenticate with MFA.
 
@@ -1105,4 +1105,5 @@ Read-Only:
 Read-Only:
 
 - `hostname` (List of String)
+
 

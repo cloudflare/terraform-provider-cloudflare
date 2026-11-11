@@ -91,7 +91,11 @@ Available values: "r2", "r2_data_catalog", "basin_catalog".
 Required:
 
 - `account_id` (String) Cloudflare Account ID for the bucket
+
+Cloudflare Account ID
 - `bucket` (String) R2 Bucket to write to
+
+The R2 Bucket that hosts this catalog
 
 Optional:
 
@@ -153,7 +157,7 @@ Required:
 
 Optional:
 
-- `compression` (String) Specifies the compression applied to JSON sink output.
+- `compression` (String) For `type: json`: Specifies the compression applied to JSON sink output.
 Available values: "uncompressed", "gzip", "snappy", "zstd", "lz4".
 - `decimal_encoding` (String) Available values: "number", "string", "bytes".
 - `row_group_bytes` (Number)

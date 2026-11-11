@@ -165,6 +165,10 @@ func (r *ShareResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		params.IncludeResources = cloudflare.F(data.IncludeResources.ValueBool())
 	}
 
+	if !data.IncludeTagsFrom.IsNull() && !data.IncludeTagsFrom.IsUnknown() {
+		params.IncludeTagsFrom = cloudflare.F(resource_sharing.ResourceSharingGetParamsIncludeTagsFrom(data.IncludeTagsFrom.ValueString()))
+	}
+
 	res := new(http.Response)
 	env := ShareResultEnvelope{*data}
 	_, err := r.client.ResourceSharing.Get(

@@ -16,16 +16,18 @@ type WorkersCustomDomainResultDataSourceEnvelope struct {
 }
 
 type WorkersCustomDomainDataSourceModel struct {
-	ID          types.String                                 `tfsdk:"id" path:"domain_id,computed"`
-	DomainID    types.String                                 `tfsdk:"domain_id" path:"domain_id,optional"`
-	AccountID   types.String                                 `tfsdk:"account_id" path:"account_id,optional"`
-	CERTID      types.String                                 `tfsdk:"cert_id" json:"cert_id,computed"`
-	Environment types.String                                 `tfsdk:"environment" json:"environment,computed"`
-	Hostname    types.String                                 `tfsdk:"hostname" json:"hostname,computed"`
-	Service     types.String                                 `tfsdk:"service" json:"service,computed"`
-	ZoneID      types.String                                 `tfsdk:"zone_id" json:"zone_id,computed"`
-	ZoneName    types.String                                 `tfsdk:"zone_name" json:"zone_name,computed"`
-	Filter      *WorkersCustomDomainFindOneByDataSourceModel `tfsdk:"filter"`
+	ID              types.String                                 `tfsdk:"id" path:"domain_id,computed"`
+	DomainID        types.String                                 `tfsdk:"domain_id" path:"domain_id,optional"`
+	AccountID       types.String                                 `tfsdk:"account_id" path:"account_id,required"`
+	CERTID          types.String                                 `tfsdk:"cert_id" json:"cert_id,computed"`
+	Enabled         types.Bool                                   `tfsdk:"enabled" json:"enabled,computed"`
+	Environment     types.String                                 `tfsdk:"environment" json:"environment,computed"`
+	Hostname        types.String                                 `tfsdk:"hostname" json:"hostname,computed"`
+	PreviewsEnabled types.Bool                                   `tfsdk:"previews_enabled" json:"previews_enabled,computed"`
+	Service         types.String                                 `tfsdk:"service" json:"service,computed"`
+	ZoneID          types.String                                 `tfsdk:"zone_id" json:"zone_id,computed"`
+	ZoneName        types.String                                 `tfsdk:"zone_name" json:"zone_name,computed"`
+	Filter          *WorkersCustomDomainFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 func (m *WorkersCustomDomainDataSourceModel) toReadParams(_ context.Context) (params workers.DomainGetParams, diags diag.Diagnostics) {
@@ -41,11 +43,17 @@ func (m *WorkersCustomDomainDataSourceModel) toListParams(_ context.Context) (pa
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
+	if !m.Filter.Enabled.IsNull() {
+		params.Enabled = cloudflare.F(m.Filter.Enabled.ValueBool())
+	}
 	if !m.Filter.Environment.IsNull() {
 		params.Environment = cloudflare.F(m.Filter.Environment.ValueString())
 	}
 	if !m.Filter.Hostname.IsNull() {
 		params.Hostname = cloudflare.F(m.Filter.Hostname.ValueString())
+	}
+	if !m.Filter.PreviewsEnabled.IsNull() {
+		params.PreviewsEnabled = cloudflare.F(m.Filter.PreviewsEnabled.ValueBool())
 	}
 	if !m.Filter.Service.IsNull() {
 		params.Service = cloudflare.F(m.Filter.Service.ValueString())
@@ -61,9 +69,11 @@ func (m *WorkersCustomDomainDataSourceModel) toListParams(_ context.Context) (pa
 }
 
 type WorkersCustomDomainFindOneByDataSourceModel struct {
-	Environment types.String `tfsdk:"environment" query:"environment,optional"`
-	Hostname    types.String `tfsdk:"hostname" query:"hostname,optional"`
-	Service     types.String `tfsdk:"service" query:"service,optional"`
-	ZoneID      types.String `tfsdk:"zone_id" query:"zone_id,optional"`
-	ZoneName    types.String `tfsdk:"zone_name" query:"zone_name,optional"`
+	Enabled         types.Bool   `tfsdk:"enabled" query:"enabled,optional"`
+	Environment     types.String `tfsdk:"environment" query:"environment,optional"`
+	Hostname        types.String `tfsdk:"hostname" query:"hostname,optional"`
+	PreviewsEnabled types.Bool   `tfsdk:"previews_enabled" query:"previews_enabled,optional"`
+	Service         types.String `tfsdk:"service" query:"service,optional"`
+	ZoneID          types.String `tfsdk:"zone_id" query:"zone_id,optional"`
+	ZoneName        types.String `tfsdk:"zone_name" query:"zone_name,optional"`
 }

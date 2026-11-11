@@ -22,6 +22,7 @@ type SharesDataSourceModel struct {
 	AccountID              types.String                                              `tfsdk:"account_id" path:"account_id,required"`
 	IncludeRecipientCounts types.Bool                                                `tfsdk:"include_recipient_counts" query:"include_recipient_counts,optional"`
 	IncludeResources       types.Bool                                                `tfsdk:"include_resources" query:"include_resources,optional"`
+	IncludeTagsFrom        types.String                                              `tfsdk:"include_tags_from" query:"include_tags_from,optional"`
 	Kind                   types.String                                              `tfsdk:"kind" query:"kind,optional"`
 	Status                 types.String                                              `tfsdk:"status" query:"status,optional"`
 	TargetType             types.String                                              `tfsdk:"target_type" query:"target_type,optional"`
@@ -62,6 +63,9 @@ func (m *SharesDataSourceModel) toListParams(_ context.Context) (params resource
 	if !m.IncludeResources.IsNull() {
 		params.IncludeResources = cloudflare.F(m.IncludeResources.ValueBool())
 	}
+	if !m.IncludeTagsFrom.IsNull() {
+		params.IncludeTagsFrom = cloudflare.F(resource_sharing.ResourceSharingListParamsIncludeTagsFrom(m.IncludeTagsFrom.ValueString()))
+	}
 	if !m.Kind.IsNull() {
 		params.Kind = cloudflare.F(resource_sharing.ResourceSharingListParamsKind(m.Kind.ValueString()))
 	}
@@ -94,6 +98,7 @@ type SharesResultDataSourceModel struct {
 	DisassociatingRecipientCount types.Int64                                                  `tfsdk:"disassociating_recipient_count" json:"disassociating_recipient_count,computed"`
 	Kind                         types.String                                                 `tfsdk:"kind" json:"kind,computed"`
 	Resources                    customfield.NestedObjectList[SharesResourcesDataSourceModel] `tfsdk:"resources" json:"resources,computed"`
+	Tags                         customfield.Map[types.String]                                `tfsdk:"tags" json:"tags,computed"`
 }
 
 type SharesResourcesDataSourceModel struct {

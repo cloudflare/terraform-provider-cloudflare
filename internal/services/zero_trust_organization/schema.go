@@ -250,6 +250,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 			},
+			"disable_end_user_app_creation": schema.BoolAttribute{
+				Description: "Whether creation of end user applications is disabled for this organization.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
 			"is_ui_read_only": schema.BoolAttribute{
 				Description: "Lock all settings as Read-Only in the Dashboard, regardless of user permission. Updates may only be made via the API or Terraform for this account when enabled.",
 				Computed:    true,

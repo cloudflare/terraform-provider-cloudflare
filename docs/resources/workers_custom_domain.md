@@ -20,6 +20,8 @@ resource "cloudflare_workers_custom_domain" "example_workers_custom_domain" {
   account_id = "023e105f4ecef8ad9ca31a8372d0c353"
   hostname = "app.example.com"
   service = "my-worker"
+  enabled = true
+  previews_enabled = false
   zone_id = "593c9c94de529bbbfaac7c53ced0447d"
   zone_name = "example.com"
 }
@@ -36,7 +38,9 @@ resource "cloudflare_workers_custom_domain" "example_workers_custom_domain" {
 
 ### Optional
 
+- `enabled` (Boolean) Whether the configured hostname is routable for the domain. If disabled, then requests to the configured hostname will not be routed to the configured Worker. If disabled, then preview routing must be enabled, and only subdomains of the configured hostname will be routable.
 - `environment` (String, Deprecated) Worker environment associated with the domain.
+- `previews_enabled` (Boolean) Whether previews are routable for the domain. If enabled, previews will be routable as subdomains of the configured hostname. For example, if the configured hostname is `app.example.com`, then requests to `my-feature.app.example.com` will be routed to the preview with slug `my-feature`, if such a preview exists. If preview routing is disabled, then hostname routing must be enabled.
 - `zone_id` (String) ID of the zone containing the domain hostname.
 - `zone_name` (String) Name of the zone containing the domain hostname.
 

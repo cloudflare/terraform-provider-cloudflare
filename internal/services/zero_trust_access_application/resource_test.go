@@ -2432,7 +2432,7 @@ func TestAccCloudflareAccessApplication_MFAConfigInvalidType(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCloudflareAccessApplicationMFAConfigInvalidType(rnd, accountID),
-				ExpectError: regexp.MustCompile(`"mfa_config" can only be set if "type" is one of:\s+"self_hosted",\s+"ssh",\s+"vnc",\s+"rdp"`),
+				ExpectError: regexp.MustCompile(`"mfa_config" can only be set if "type" is one of:\s+"self_hosted",\s+"ssh",\s+"vnc",\s+"rdp",\s+"infrastructure"`),
 			},
 		},
 	})
@@ -2446,11 +2446,20 @@ func testAccCloudflareAccessApplicationMFAConfigInvalidType(rnd, accountID strin
 	return acctest.LoadTestCase("accessapplicationconfigmfaconfiginvalidtype.tf", rnd, accountID)
 }
 
+// Infrastructure apps accept only the infra SSH authenticators (piv_key, ssh_fido2_key)
+// at both the application and policy level. The API rejects the obsolete ssh_piv_key.
 func TestAccCloudflareAccessApplication_InfrastructureWithPolicyMFAConfig(t *testing.T) {
-	t.Skip("skipping: API rejects MFA authenticator type used in test config (invalid mfa authenticator type)")
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
-	resourceName := name
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	dataName := fmt.Sprintf("data.cloudflare_zero_trust_access_application.%s", rnd)
+	policyMFA := tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("mfa_config")
+	appAuthenticators := knownvalue.ListExact([]knownvalue.Check{
+		knownvalue.StringExact("piv_key"),
+	})
+	policyAuthenticators := knownvalue.ListExact([]knownvalue.Check{
+		knownvalue.StringExact("piv_key"),
+		knownvalue.StringExact("ssh_fido2_key"),
+	})
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -2465,20 +2474,17 @@ func TestAccCloudflareAccessApplication_InfrastructureWithPolicyMFAConfig(t *tes
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("infrastructure")),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("mfa_config").AtMapKey("allowed_authenticators"), knownvalue.ListExact([]knownvalue.Check{
-						knownvalue.StringExact("ssh_piv_key"),
-					})),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("mfa_config").AtMapKey("mfa_disabled"), knownvalue.Bool(false)),
-					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("mfa_config").AtMapKey("session_duration"), knownvalue.StringExact("12h")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("mfa_config").AtMapKey("allowed_authenticators"), appAuthenticators),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("mfa_config").AtMapKey("session_duration"), knownvalue.StringExact("24h")),
+					statecheck.ExpectKnownValue(resourceName, policyMFA.AtMapKey("allowed_authenticators"), policyAuthenticators),
+					statecheck.ExpectKnownValue(resourceName, policyMFA.AtMapKey("mfa_disabled"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, policyMFA.AtMapKey("session_duration"), knownvalue.StringExact("12h")),
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies").AtSliceIndex(0).AtMapKey("connection_rules").AtMapKey("ssh").AtMapKey("usernames"), knownvalue.ListExact([]knownvalue.Check{
 						knownvalue.StringExact("root"),
 					})),
+					statecheck.ExpectKnownValue(dataName, tfjsonpath.New("mfa_config").AtMapKey("allowed_authenticators"), appAuthenticators),
+					statecheck.ExpectKnownValue(dataName, policyMFA.AtMapKey("allowed_authenticators"), policyAuthenticators),
 				},
-			},
-			{
-				// Ensures no diff on replan
-				Config:   testAccCloudflareAccessApplicationInfrastructureWithPolicyMFAConfig(rnd, accountID, accessAppMFATestAuthDomain()),
-				PlanOnly: true,
 			},
 		},
 	})

@@ -77,3 +77,9 @@ func (v listIPValidator) ValidateString(ctx context.Context, req validator.Strin
 func ipValidator() validator.String {
 	return listIPValidator{}
 }
+
+// IPValidator is ipValidator for other list resources, such as
+// cloudflare_list_item, so both reject the same unnormalized IPs and CIDRs.
+func IPValidator() validator.String {
+	return ipValidator()
+}

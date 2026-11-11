@@ -1,0 +1,67 @@
+{
+  "account": {
+    "id": "f037e56e89293a057740de681ac9abbe"
+  },
+  "activated_on": "2025-06-12T18:04:31.123456Z",
+  "cname_suffix": null,
+  "created_on": "2025-06-12T17:59:02.654321Z",
+  "development_mode": 0,
+  "id": "023e105f4ecef8ad9ca31a8372d0c353",
+  "meta": {
+    "cdn_only": false,
+    "custom_certificate_quota": 1,
+    "dns_only": false,
+    "foundation_dns": false,
+    "page_rule_quota": 125,
+    "phishing_detected": false,
+    "step": 2
+  },
+  "modified_on": "2026-01-14T09:22:47.000001Z",
+  "name": "example.com",
+  "name_servers": [
+    "bob.ns.cloudflare.com",
+    "lola.ns.cloudflare.com"
+  ],
+  "original_dnshost": null,
+  "original_name_servers": [
+    "ns1.originaldnshost.com",
+    "ns2.originaldnshost.com"
+  ],
+  "original_registrar": null,
+  "owner": {
+    "id": null,
+    "name": "Example Org",
+    "type": "organization"
+  },
+  "paused": false,
+  "permissions": [
+    "#worker:read",
+    "#zone:read"
+  ],
+  "plan": {
+    "can_subscribe": false,
+    "currency": "USD",
+    "externally_managed": false,
+    "frequency": "",
+    "id": "94f3b7b768b0458b56d2cac4fe5ec0f9",
+    "is_subscribed": true,
+    "legacy_discount": false,
+    "legacy_id": "enterprise",
+    "name": "Enterprise Website",
+    "price": 0
+  },
+  "status": "active",
+  "tenant": {
+    "id": null,
+    "name": null
+  },
+  "tenant_unit": {
+    "id": null
+  },
+  "type": "full",
+  "vanity_name_servers": [
+    "ns1.example.com",
+    "ns2.example.com"
+  ],
+  "verification_key": null
+}

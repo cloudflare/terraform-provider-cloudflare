@@ -192,4 +192,3 @@ resource "cloudflare_argo" "%[1]s" {
 		},
 	})
 }
-

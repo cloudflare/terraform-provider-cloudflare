@@ -3,6 +3,6 @@ resource "cloudflare_share_resource" "example_share_resource" {
   share_id = "3fd85f74b32742f1bff64a85009dda07"
   meta = jsonencode({})
   resource_account_id = "023e105f4ecef8ad9ca31a8372d0c353"
-  resource_id = "023e105f4ecef8ad9ca31a8372d0c353"
+  resource_id = "0a679032-bbb2-4b7e-9acc-dd5c5cb27a17"
   resource_type = "custom-ruleset"
 }

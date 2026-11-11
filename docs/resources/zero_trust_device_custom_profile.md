@@ -34,6 +34,7 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
     suffix = "internal.corp"
     description = "Example internal domains"
   }]
+  enable_device_credential_authentication = false
   enabled = true
   exclude = [{
     address = "192.0.2.0/24"
@@ -45,6 +46,8 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
     enabled = true
     masque_endpoints = ["198.51.100.1:443"]
     wireguard_endpoints = ["198.51.100.1:2408"]
+    allow_manual_override = true
+    autoswitch = true
   }
   include = [{
     address = "192.0.2.0/24"
@@ -91,6 +94,7 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
 - `description` (String) A description of the policy.
 - `disable_auto_fallback` (Boolean) If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.
 - `dns_search_suffixes` (Attributes List) List of DNS search suffixes to apply to clients. Suffixes are evaluated in order. Use an empty array to clear. (see [below for nested schema](#nestedatt--dns_search_suffixes))
+- `enable_device_credential_authentication` (Boolean) Determines whether the WARP client can silently reauthenticate the user with device credentials (Microsoft Entra) instead of prompting for browser-based reauthentication.
 - `enabled` (Boolean) Whether the policy will be applied to matching devices.
 - `exclude` (Attributes List) List of routes excluded in the WARP client's tunnel. Both 'exclude' and 'include' cannot be set in the same request. (see [below for nested schema](#nestedatt--exclude))
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.
@@ -161,6 +165,11 @@ Required:
 - `enabled` (Boolean) Global acceleration settings are used only when "enabled".
 - `masque_endpoints` (List of String) IP:port entries for the MASQUE tunnel endpoints. Either wireguard_endpoints or masque_endpoints must be provided.
 - `wireguard_endpoints` (List of String) IP:port entries for the WireGuard tunnel endpoints. Either wireguard_endpoints or masque_endpoints must be provided.
+
+Optional:
+
+- `allow_manual_override` (Boolean) Whether WARP users may manually override the automatic Global Acceleration decision. Defaults to true when not provided.
+- `autoswitch` (Boolean) Automatically switch Global Acceleration regions based on device location. Defaults to false when not provided.
 
 
 <a id="nestedatt--include"></a>

@@ -32,6 +32,7 @@ type ZeroTrustDLPCustomEntryDataSourceModel struct {
 	Type          types.String                                                                 `tfsdk:"type" json:"type,computed"`
 	UpdatedAt     timetypes.RFC3339                                                            `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	UploadStatus  types.String                                                                 `tfsdk:"upload_status" json:"upload_status,computed"`
+	ValidatorIDs  customfield.Set[types.String]                                                `tfsdk:"validator_ids" json:"validator_ids,computed"`
 	WordList      customfield.List[types.String]                                               `tfsdk:"word_list" json:"word_list,computed"`
 	Confidence    customfield.NestedObject[ZeroTrustDLPCustomEntryConfidenceDataSourceModel]   `tfsdk:"confidence" json:"confidence,computed"`
 	Pattern       customfield.NestedObject[ZeroTrustDLPCustomEntryPatternDataSourceModel]      `tfsdk:"pattern" json:"pattern,computed"`

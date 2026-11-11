@@ -85,7 +85,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 								},
 								"host": schema.StringAttribute{
-									Description: "Defines the publicly reachable hostname or IP of your origin database. Private, loopback, and link-local IP addresses are not allowed.",
+									Description: "Defines the publicly reachable hostname or IP of your origin database. Private, loopback, and link-local IP addresses are not allowed.\n\nDefines the host (hostname or IP) of your origin database.",
 									Computed:    true,
 								},
 								"password": schema.StringAttribute{

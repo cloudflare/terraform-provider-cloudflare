@@ -87,7 +87,6 @@ type ZeroTrustGatewayPolicyExpirationDataSourceModel struct {
 type ZeroTrustGatewayPolicyRuleSettingsDataSourceModel struct {
 	AddHeaders                      customfield.Map[customfield.List[types.String]]                                                 `tfsdk:"add_headers" json:"add_headers,computed"`
 	AllowChildBypass                types.Bool                                                                                      `tfsdk:"allow_child_bypass" json:"allow_child_bypass,computed"`
-	AuditSSH                        customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsAuditSSHDataSourceModel]             `tfsdk:"audit_ssh" json:"audit_ssh,computed"`
 	BISOAdminControls               customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsDataSourceModel]    `tfsdk:"biso_admin_controls" json:"biso_admin_controls,computed"`
 	BlockPage                       customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsBlockPageDataSourceModel]            `tfsdk:"block_page" json:"block_page,computed"`
 	BlockPageEnabled                types.Bool                                                                                      `tfsdk:"block_page_enabled" json:"block_page_enabled,computed"`
@@ -98,6 +97,7 @@ type ZeroTrustGatewayPolicyRuleSettingsDataSourceModel struct {
 	DNSResolvers                    customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsDNSResolversDataSourceModel]         `tfsdk:"dns_resolvers" json:"dns_resolvers,computed"`
 	Egress                          customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsEgressDataSourceModel]               `tfsdk:"egress" json:"egress,computed"`
 	ForensicCopy                    customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsForensicCopyDataSourceModel]         `tfsdk:"forensic_copy" json:"forensic_copy,computed"`
+	Forward                         customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsForwardDataSourceModel]              `tfsdk:"forward" json:"forward,computed"`
 	IgnoreCNAMECategoryMatches      types.Bool                                                                                      `tfsdk:"ignore_cname_category_matches" json:"ignore_cname_category_matches,computed"`
 	InsecureDisableDNSSECValidation types.Bool                                                                                      `tfsdk:"insecure_disable_dnssec_validation" json:"insecure_disable_dnssec_validation,computed"`
 	IPCategories                    types.Bool                                                                                      `tfsdk:"ip_categories" json:"ip_categories,computed"`
@@ -113,10 +113,6 @@ type ZeroTrustGatewayPolicyRuleSettingsDataSourceModel struct {
 	ResolveDNSThroughCloudflare     types.Bool                                                                                      `tfsdk:"resolve_dns_through_cloudflare" json:"resolve_dns_through_cloudflare,computed"`
 	SetHeaders                      customfield.Map[customfield.List[types.String]]                                                 `tfsdk:"set_headers" json:"set_headers,computed"`
 	UntrustedCERT                   customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsUntrustedCERTDataSourceModel]        `tfsdk:"untrusted_cert" json:"untrusted_cert,computed"`
-}
-
-type ZeroTrustGatewayPolicyRuleSettingsAuditSSHDataSourceModel struct {
-	CommandLogging types.Bool `tfsdk:"command_logging" json:"command_logging,computed"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsDataSourceModel struct {
@@ -172,6 +168,10 @@ type ZeroTrustGatewayPolicyRuleSettingsEgressDataSourceModel struct {
 
 type ZeroTrustGatewayPolicyRuleSettingsForensicCopyDataSourceModel struct {
 	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
+}
+
+type ZeroTrustGatewayPolicyRuleSettingsForwardDataSourceModel struct {
+	WorkerID types.String `tfsdk:"worker_id" json:"worker_id,computed"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsL4overrideDataSourceModel struct {

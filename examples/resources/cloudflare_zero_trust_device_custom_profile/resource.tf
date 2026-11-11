@@ -17,6 +17,7 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
     suffix = "internal.corp"
     description = "Example internal domains"
   }]
+  enable_device_credential_authentication = false
   enabled = true
   exclude = [{
     address = "192.0.2.0/24"
@@ -28,6 +29,8 @@ resource "cloudflare_zero_trust_device_custom_profile" "example_zero_trust_devic
     enabled = true
     masque_endpoints = ["198.51.100.1:443"]
     wireguard_endpoints = ["198.51.100.1:2408"]
+    allow_manual_override = true
+    autoswitch = true
   }
   include = [{
     address = "192.0.2.0/24"

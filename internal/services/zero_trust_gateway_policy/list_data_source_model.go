@@ -86,7 +86,6 @@ type ZeroTrustGatewayPoliciesExpirationDataSourceModel struct {
 type ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel struct {
 	AddHeaders                      customfield.Map[customfield.List[types.String]]                                                   `tfsdk:"add_headers" json:"add_headers,computed"`
 	AllowChildBypass                types.Bool                                                                                        `tfsdk:"allow_child_bypass" json:"allow_child_bypass,computed"`
-	AuditSSH                        customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsAuditSSHDataSourceModel]             `tfsdk:"audit_ssh" json:"audit_ssh,computed"`
 	BISOAdminControls               customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsBISOAdminControlsDataSourceModel]    `tfsdk:"biso_admin_controls" json:"biso_admin_controls,computed"`
 	BlockPage                       customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsBlockPageDataSourceModel]            `tfsdk:"block_page" json:"block_page,computed"`
 	BlockPageEnabled                types.Bool                                                                                        `tfsdk:"block_page_enabled" json:"block_page_enabled,computed"`
@@ -97,6 +96,7 @@ type ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel struct {
 	DNSResolvers                    customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsDNSResolversDataSourceModel]         `tfsdk:"dns_resolvers" json:"dns_resolvers,computed"`
 	Egress                          customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsEgressDataSourceModel]               `tfsdk:"egress" json:"egress,computed"`
 	ForensicCopy                    customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsForensicCopyDataSourceModel]         `tfsdk:"forensic_copy" json:"forensic_copy,computed"`
+	Forward                         customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsForwardDataSourceModel]              `tfsdk:"forward" json:"forward,computed"`
 	IgnoreCNAMECategoryMatches      types.Bool                                                                                        `tfsdk:"ignore_cname_category_matches" json:"ignore_cname_category_matches,computed"`
 	InsecureDisableDNSSECValidation types.Bool                                                                                        `tfsdk:"insecure_disable_dnssec_validation" json:"insecure_disable_dnssec_validation,computed"`
 	IPCategories                    types.Bool                                                                                        `tfsdk:"ip_categories" json:"ip_categories,computed"`
@@ -112,10 +112,6 @@ type ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel struct {
 	ResolveDNSThroughCloudflare     types.Bool                                                                                        `tfsdk:"resolve_dns_through_cloudflare" json:"resolve_dns_through_cloudflare,computed"`
 	SetHeaders                      customfield.Map[customfield.List[types.String]]                                                   `tfsdk:"set_headers" json:"set_headers,computed"`
 	UntrustedCERT                   customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsUntrustedCERTDataSourceModel]        `tfsdk:"untrusted_cert" json:"untrusted_cert,computed"`
-}
-
-type ZeroTrustGatewayPoliciesRuleSettingsAuditSSHDataSourceModel struct {
-	CommandLogging types.Bool `tfsdk:"command_logging" json:"command_logging,computed"`
 }
 
 type ZeroTrustGatewayPoliciesRuleSettingsBISOAdminControlsDataSourceModel struct {
@@ -171,6 +167,10 @@ type ZeroTrustGatewayPoliciesRuleSettingsEgressDataSourceModel struct {
 
 type ZeroTrustGatewayPoliciesRuleSettingsForensicCopyDataSourceModel struct {
 	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
+}
+
+type ZeroTrustGatewayPoliciesRuleSettingsForwardDataSourceModel struct {
+	WorkerID types.String `tfsdk:"worker_id" json:"worker_id,computed"`
 }
 
 type ZeroTrustGatewayPoliciesRuleSettingsL4overrideDataSourceModel struct {

@@ -53,8 +53,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Sensitive:   true,
 			},
 			"scopes": schema.ListAttribute{
-				Description: "The list of services that can use this secret. Valid values are `workers`, `ai_gateway`, `dex`, and `access`. Must be listed in alphabetical order.",
-				Required:    true,
+				Description: "The list of services that can use this secret, or null when the secret inherits its store's scopes. Set it to null in a patch to inherit again. An empty list lets no service use the secret. Explicit scopes must be listed in alphabetical order.",
+				Optional:    true,
 				ElementType: types.StringType,
 			},
 			"created": schema.StringAttribute{

@@ -40,6 +40,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewNestedObjectListType[AISearchNamespacesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Computed: true,
+						},
 						"created_at": schema.StringAttribute{
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
@@ -68,7 +71,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType: customfield.NewNestedObjectType[AISearchNamespacesPublicEndpointParamsChatCompletionsEndpointDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"disabled": schema.BoolAttribute{
-											Description: "Disable chat completions endpoint for this public endpoint",
+											Description: "Disable chat completions endpoint for this public endpoint.",
 											Computed:    true,
 										},
 									},
@@ -87,7 +90,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed: true,
 								},
 								"instances_allowed": schema.ListAttribute{
-									Description: "Instance IDs exposed through the namespace public endpoint. Empty means nothing is searchable. Every ID must be an existing instance in this namespace, and the list cannot exceed the account's multi-instance search limit.",
+									Description: "Instance IDs exposed through the namespace public endpoint. Empty means nothing is searchable. Every ID must reference an existing instance in this namespace, and the list must stay within the account's multi-instance search limit.",
 									Computed:    true,
 									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
@@ -100,7 +103,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed: true,
 										},
 										"disabled": schema.BoolAttribute{
-											Description: "Disable MCP endpoint for this public endpoint",
+											Description: "Disable MCP endpoint for this public endpoint.",
 											Computed:    true,
 										},
 									},
@@ -135,7 +138,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									CustomType: customfield.NewNestedObjectType[AISearchNamespacesPublicEndpointParamsSearchEndpointDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"disabled": schema.BoolAttribute{
-											Description: "Disable search endpoint for this public endpoint",
+											Description: "Disable search endpoint for this public endpoint.",
 											Computed:    true,
 										},
 									},

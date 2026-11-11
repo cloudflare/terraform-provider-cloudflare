@@ -37,12 +37,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"resource_account_id": schema.StringAttribute{
-				Description:   "Account identifier.",
+				Description:   "The account that owns the resource. Must match the `account_id` in the path.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"resource_id": schema.StringAttribute{
-				Description:   "Share Resource identifier.",
+				Description:   "Identifier assigned by the service that owns the shared resource.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -68,13 +68,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  jsontypes.NormalizedType{},
 			},
 			"created": schema.StringAttribute{
-				Description:   "When the share was created.",
+				Description:   "When the object was created.",
 				Computed:      true,
 				CustomType:    timetypes.RFC3339Type{},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
 			},
 			"modified": schema.StringAttribute{
-				Description: "When the share was modified.",
+				Description: "When the object was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
