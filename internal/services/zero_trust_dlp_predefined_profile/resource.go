@@ -174,6 +174,8 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Read(ctx context.Context, req re
 
 	// Preserve enabled_entries from prior state to avoid drift when API returns null
 	priorEnabledEntries := data.EnabledEntries
+	// Preserve confidence_threshold from prior state when the API omits it (it does so for "low")
+	priorConfidenceThreshold := data.ConfidenceThreshold
 
 	res := new(http.Response)
 	env := ZeroTrustDLPPredefinedProfileResultEnvelope{*data}
@@ -217,6 +219,10 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Read(ctx context.Context, req re
 	apiReturnedNullOrAbsent := data.EnabledEntries == nil || *data.EnabledEntries == nil
 	if apiReturnedNullOrAbsent && priorEnabledEntries != nil {
 		data.EnabledEntries = priorEnabledEntries
+	}
+
+	if data.ConfidenceThreshold.ValueString() == "" && !priorConfidenceThreshold.IsNull() {
+		data.ConfidenceThreshold = priorConfidenceThreshold
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
