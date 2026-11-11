@@ -1866,7 +1866,6 @@ resource "cloudflare_list_item" "example" {
   values for some policies with configured-scale values for others. A planned
   precedence update changes actual policy ordering on apply. See
   [Gateway policy precedence review](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/version-5-migration#gateway-policy-precedence-review).
-- `audit_ssh` is now a single nested attribute (`audit_ssh = { ... }`) instead of a block (`audit_ssh { ... }`).
 - `biso_admin_controls` is now a single nested attribute (`biso_admin_controls = { ... }`) instead of a block (`biso_admin_controls { ... }`).
 - `check_session` is now a single nested attribute (`check_session = { ... }`) instead of a block (`check_session { ... }`).
 - `dns_resolvers` is now a single nested attribute (`dns_resolvers = { ... }`) instead of a block (`dns_resolvers { ... }`).

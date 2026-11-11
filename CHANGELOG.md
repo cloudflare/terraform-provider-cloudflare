@@ -10,6 +10,10 @@ Full Changelog: [v5.28.1...v5.29.0](https://github.com/cloudflare/terraform-prov
 - **zero_trust_gateway_policy:** the `rule_settings.audit_ssh` block has been removed; the Audit SSH action is no longer offered. Remove `audit_ssh` from any policy configuration. An automatic state migration drops a previously stored `audit_ssh` value.
 - **worker_version:** the Durable Object binding `retry` block (`retry.max_attempts`, `retry.timeout_ms`) has been removed from the `cloudflare_worker_version` resource and `cloudflare_worker_versions` data source, following its removal from the API. Remove it from any configuration.
 - **zero_trust_access_application, zero_trust_access_policy:** the MFA authenticator value `ssh_piv_key` has been replaced. Use `piv_key` for PIV smart cards and the new `ssh_fido2_key` for FIDO2 SSH authenticators.
+- **precursor:** `default_mode` has been renamed to `mode` and `enforcement_rules` to `rules`, and the enforcement enum values `min-friction` and `max-security` are replaced by `off`, `monitor`, and `arm`. The import ID is now `<zone_id>/<cloudflare_version>` instead of `<zone_id>`. Rename the arguments, update any enum values and expressions, and adjust `terraform import` commands.
+- **ai_search_instance:** the import ID is now `<account_id>/<namespace>/<id>` instead of `<account_id>/<id>`. Update any `terraform import` commands to include the namespace.
+- **organization:** the `profile` and `parent` attributes now force replacement — changing either destroys and recreates the organization. Review plans before applying.
+- **share_recipient:** the `organization_id` attribute has been removed; configurations that still set it now fail with an "Unsupported argument" error. Remove it.
 
 ### Notes
 
