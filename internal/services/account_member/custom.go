@@ -141,8 +141,15 @@ func parsePoliciesAndRoles(ctx context.Context, data []byte, result *AccountMemb
 		return nil, err
 	}
 
+	// The API lists a role once per policy that grants it, so the same role id
+	// can appear several times. The roles attribute is a set, so drop duplicates.
 	roleIDs := make([]types.String, 0, len(fullResponse.Result.Roles))
+	seenRoleIDs := make(map[string]struct{}, len(fullResponse.Result.Roles))
 	for _, role := range fullResponse.Result.Roles {
+		if _, seen := seenRoleIDs[role.ID.ValueString()]; seen {
+			continue
+		}
+		seenRoleIDs[role.ID.ValueString()] = struct{}{}
 		roleIDs = append(roleIDs, role.ID)
 	}
 
