@@ -212,6 +212,8 @@ jobs:
       CLOUDFLARE_ORGANIZATION_ID: ${{ matrix.test.org_id || '' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup go
         uses: actions/setup-go@v5

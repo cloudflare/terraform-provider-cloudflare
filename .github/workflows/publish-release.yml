@@ -55,6 +55,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
+          persist-credentials: false
           fetch-depth: 0
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -96,6 +97,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
+          persist-credentials: false
           fetch-depth: 0
       - name: Download all artifacts
         uses: actions/download-artifact@v4

@@ -225,6 +225,8 @@ jobs:
       CLOUDFLARE_GATEWAY_CERTIFICATE_ID: ${{ matrix.test.gateway_certificate_id_secret && secrets[matrix.test.gateway_certificate_id_secret] || '' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup go
         uses: actions/setup-go@v5
