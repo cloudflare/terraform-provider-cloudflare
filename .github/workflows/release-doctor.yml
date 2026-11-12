@@ -5,6 +5,9 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   release_doctor:
     name: release doctor
@@ -12,7 +15,9 @@ jobs:
     if: github.repository == 'cloudflare/terraform-provider-cloudflare' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || startsWith(github.head_ref, 'release-please') || github.head_ref == 'next')
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.1.0
+        with:
+          persist-credentials: false
 
       - name: Check release environment
         run: |

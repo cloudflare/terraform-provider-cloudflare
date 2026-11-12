@@ -16,6 +16,9 @@ jobs:
   build:
     runs-on: lx64
     timeout-minutes: 30
+    # Only the release job creates the release, the builds read the source.
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -50,11 +53,12 @@ jobs:
           ghcup nuke 2>/dev/null || true
           df -h /
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.1.0
         with:
+          persist-credentials: false
           fetch-depth: 0
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v5.6.0
         with:
           go-version-file: "go.mod"
       - name: Build binary
@@ -79,7 +83,7 @@ jobs:
           ARCHIVE_NAME="terraform-provider-cloudflare_${VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}.zip"
           zip "$ARCHIVE_NAME" "$BINARY_NAME"
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: terraform-provider-cloudflare-${{ matrix.goos }}-${{ matrix.goarch }}
           path: dist/*.zip
@@ -91,17 +95,18 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.1.0
         with:
+          persist-credentials: false
           fetch-depth: 0
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.3.0
         with:
           path: dist
           merge-multiple: true
       - name: Import GPG key
         id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@v6
+        uses: crazy-max/ghaction-import-gpg@v6.3.0
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
@@ -120,7 +125,7 @@ jobs:
           cd dist
           gpg --batch --local-user "${{ steps.import_gpg.outputs.fingerprint }}" --output "terraform-provider-cloudflare_${VERSION}_SHA256SUMS.sig" --detach-sign "terraform-provider-cloudflare_${VERSION}_SHA256SUMS"
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.6.2
         with:
           files: |
             dist/*.zip

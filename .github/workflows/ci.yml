@@ -18,12 +18,17 @@ on:
 env:
   GOPRIVATE: github.com/cloudflare/cloudflare-go/v7,github.com/stainless-sdks/cloudflare-go/v7
 
+permissions:
+  contents: read
+
 jobs:
   check-schema-versions:
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
     if: github.event_name == 'pull_request' && github.base_ref == 'main'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.1.0
+        with:
+          persist-credentials: false
 
       - name: Check schema versions
         run: ./scripts/check-schema-versions
@@ -32,9 +37,11 @@ jobs:
     runs-on: ${{ github.repository == 'stainless-sdks/cloudflare-terraform' && 'depot-ubuntu-24.04' || 'lx64' }}
     if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.1.0
+        with:
+          persist-credentials: false
 
-      - uses: ./.github/actions/setup-go
+      - uses: $/.github/actions/setup-go
         with:
           go-version: '1.27.3'
 
@@ -59,9 +66,11 @@ jobs:
       matrix:
         shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.1.0
+        with:
+          persist-credentials: false
 
-      - uses: ./.github/actions/setup-go
+      - uses: $/.github/actions/setup-go
         with:
           go-version: '1.27.3'
           cache-dependency-path: go.sum

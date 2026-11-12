@@ -29,6 +29,10 @@ env:
   CLOUDFLARE_HYPERDRIVE_DATABASE_USER: neondb_owner
   CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD }}
   CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME }}
+
+permissions:
+  contents: read
+
 jobs:
   migration-tests:
     name: ${{ matrix.test.display_name }} Tests
@@ -207,10 +211,12 @@ jobs:
       CLOUDFLARE_API_KEY: ${{ secrets[matrix.test.api_key_secret] }}
       CLOUDFLARE_ORGANIZATION_ID: ${{ matrix.test.org_id || '' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.4.0
+        with:
+          persist-credentials: false
 
       - name: Setup go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v5.6.0
         with:
           go-version-file: ./go.mod
 
@@ -218,7 +224,7 @@ jobs:
         run: ./scripts/bootstrap
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v3.1.2
         with:
           terraform_wrapper: false
 

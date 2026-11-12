@@ -37,6 +37,9 @@ env:
   CLOUDFLARE_BYO_IP_PREFIX_ID: a64cba4d4b764793ad6208410a652e74
   CLOUDFLARE_EMAIL_ROUTING_DESTINATION_ADDRESS: terraform-provider-acct@cloudflare.com
 
+permissions:
+  contents: read
+
 jobs:
   acceptance-tests:
     name: ${{ matrix.test.display_name }} Tests
@@ -221,10 +224,12 @@ jobs:
       CLOUDFLARE_ORGANIZATION_ID: ${{ matrix.test.org_id || '' }}
       CLOUDFLARE_GATEWAY_CERTIFICATE_ID: ${{ matrix.test.gateway_certificate_id_secret && secrets[matrix.test.gateway_certificate_id_secret] || '' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.4.0
+        with:
+          persist-credentials: false
 
       - name: Setup go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v5.6.0
         with:
           go-version-file: ./go.mod
 
@@ -232,7 +237,7 @@ jobs:
         run: ./scripts/bootstrap
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v3.1.2
         with:
           terraform_wrapper: false
 
