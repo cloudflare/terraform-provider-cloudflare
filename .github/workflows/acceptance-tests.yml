@@ -37,6 +37,9 @@ env:
   CLOUDFLARE_BYO_IP_PREFIX_ID: a64cba4d4b764793ad6208410a652e74
   CLOUDFLARE_EMAIL_ROUTING_DESTINATION_ADDRESS: terraform-provider-acct@cloudflare.com
 
+permissions:
+  contents: read
+
 jobs:
   acceptance-tests:
     name: ${{ matrix.test.display_name }} Tests

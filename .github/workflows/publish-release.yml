@@ -16,6 +16,9 @@ jobs:
   build:
     runs-on: lx64
     timeout-minutes: 30
+    # Only the release job creates the release, the builds read the source.
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:

@@ -29,6 +29,10 @@ env:
   CLOUDFLARE_HYPERDRIVE_DATABASE_USER: neondb_owner
   CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD }}
   CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME: ${{ secrets.CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME }}
+
+permissions:
+  contents: read
+
 jobs:
   migration-tests:
     name: ${{ matrix.test.display_name }} Tests

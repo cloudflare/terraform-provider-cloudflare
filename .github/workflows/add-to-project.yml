@@ -5,6 +5,9 @@ on:
     types:
       - opened
 
+# The project is updated with the personal token, the job token is not used.
+permissions: {}
+
 jobs:
   add-to-project:
     name: Add issue to project
