@@ -9,7 +9,7 @@ jobs:
   trigger-terraform-registry-sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.4.0
         with:
           persist-credentials: false
       - name: Run sync

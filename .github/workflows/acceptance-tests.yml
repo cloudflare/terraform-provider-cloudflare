@@ -224,12 +224,12 @@ jobs:
       CLOUDFLARE_ORGANIZATION_ID: ${{ matrix.test.org_id || '' }}
       CLOUDFLARE_GATEWAY_CERTIFICATE_ID: ${{ matrix.test.gateway_certificate_id_secret && secrets[matrix.test.gateway_certificate_id_secret] || '' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.4.0
         with:
           persist-credentials: false
 
       - name: Setup go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v5.6.0
         with:
           go-version-file: ./go.mod
 
@@ -237,7 +237,7 @@ jobs:
         run: ./scripts/bootstrap
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v3.1.2
         with:
           terraform_wrapper: false
 
