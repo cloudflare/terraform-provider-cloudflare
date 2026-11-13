@@ -13,13 +13,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7/r2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*R2CustomDomainResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*R2CustomDomainResource)(nil)
+var _ resource.ResourceWithImportState = (*R2CustomDomainResource)(nil)
 
 func NewResource() resource.Resource {
 	return &R2CustomDomainResource{}
@@ -271,6 +274,64 @@ func (r *R2CustomDomainResource) Delete(ctx context.Context, req resource.Delete
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *R2CustomDomainResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data = new(R2CustomDomainModel)
+
+	path_account_id := ""
+	path_bucket_name := ""
+	jurisdiction := "default"
+	path_domain := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<bucket_name>/<jurisdiction>/<domain>",
+		&path_account_id,
+		&path_bucket_name,
+		&jurisdiction,
+		&path_domain,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.AccountID = types.StringValue(path_account_id)
+	data.BucketName = types.StringValue(path_bucket_name)
+	data.Domain = types.StringValue(path_domain)
+
+	if jurisdiction == "default" {
+		data.Jurisdiction = types.StringValue("default")
+	} else {
+		data.Jurisdiction = types.StringValue(jurisdiction)
+	}
+
+	res := new(http.Response)
+	env := R2CustomDomainResultEnvelope{*data}
+	_, err := r.client.R2.Buckets.Domains.Custom.Get(
+		ctx,
+		path_bucket_name,
+		path_domain,
+		r2.BucketDomainCustomGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithHeader(consts.R2JurisdictionHTTPHeaderName, data.Jurisdiction.ValueString()),
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
