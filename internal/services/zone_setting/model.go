@@ -28,6 +28,11 @@ func (m ZoneSettingModel) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(m)
 }
 
+// MarshalJSONForUpdate sends the full planned value rather than a JSON merge
+// patch. The zone settings edit endpoint replaces `value` wholesale, so a patch
+// containing only the changed keys of an object-valued setting (e.g. `aegis`)
+// drops the unchanged ones. For aegis that meant `{"value":{"pool_id":"..."}}`
+// was sent without `enabled: false`, and the setting was enabled.
 func (m ZoneSettingModel) MarshalJSONForUpdate(state ZoneSettingModel) (data []byte, err error) {
-	return apijson.MarshalForPatch(m, state)
+	return apijson.MarshalForUpdate(m, state)
 }
