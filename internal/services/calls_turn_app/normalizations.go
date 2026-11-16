@@ -29,3 +29,16 @@ func normalizeCallsTURNKeyID(data *CallsTURNAppModel) {
 		data.KeyID = data.UID
 	}
 }
+
+// preserveCallsTURNKey keeps the bearer token from state when an API response
+// does not carry it. POST /calls/turn_keys returns it (as `secret`) once; PUT
+// and GET do not, so without this an update (e.g. renaming the key) would wipe
+// the only copy of the token from state.
+func preserveCallsTURNKey(data *CallsTURNAppModel, state *CallsTURNAppModel) {
+	if data == nil || state == nil {
+		return
+	}
+	if data.Key.IsNull() || data.Key.IsUnknown() || data.Key.ValueString() == "" {
+		data.Key = state.Key
+	}
+}

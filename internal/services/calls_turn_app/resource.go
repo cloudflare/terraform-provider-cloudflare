@@ -151,6 +151,8 @@ func (r *CallsTURNAppResource) Update(ctx context.Context, req resource.UpdateRe
 	}
 	data = &env.Result
 
+	// The API returns the bearer token only on create; keep it across updates.
+	preserveCallsTURNKey(data, state)
 	normalizeCallsTURNKeyID(data)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
