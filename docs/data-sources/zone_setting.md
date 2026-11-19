@@ -13,6 +13,8 @@ Accepted Permissions
 - `Zone Settings Read`
 - `Zone Settings Write`
 
+-> CNAME flattening is available from the [`cloudflare_zone_dns_settings`](zone_dns_settings.md) data source through its `flatten_all_cnames` attribute. It cannot be read with this data source.
+
 ## Available Setting IDs
 
 <!-- BEGIN_ZONE_SETTING_IDS -->
@@ -36,7 +38,6 @@ The following table lists all valid `setting_id` values. Some settings may requi
 | `cache_level` | `"aggressive"`, `"basic"`, `"simplified"` | Cache Level functions based off the setting level. The basic setting will cac... |
 | `challenge_ttl` | Number (14 values) | Specify how long a visitor is allowed access to your site after successfully ... |
 | `ciphers` | Array of string | An allowlist of ciphers for TLS termination. These ciphers must be in the Bor... |
-| `cname_flattening` | `"flatten_at_root"`, `"flatten_all"` | Whether or not cname flattening is on. |
 | `content_converter` | `"on"` / `"off"` | When enabled and the client sends an Accept header requesting text/markdown, ... |
 | `development_mode` | `"on"` / `"off"` | Development Mode temporarily allows you to enter development mode for your we... |
 | `early_hints` | `"on"` / `"off"` | When enabled, Cloudflare will attempt to speed up overall page loads by servi... |
@@ -154,5 +155,4 @@ For `id: webmcp_packs`: Comma-separated list of WebMCP tool-pack names to activa
 zone (for example, "c2pa,mcp-server-client"), surfaced to the injected
 bridge as the data-packs attribute. An empty value clears the override
 so the bridge uses its built-in default pack set.
-
 
