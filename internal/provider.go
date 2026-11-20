@@ -78,6 +78,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfers_outgoing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfers_peer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_transfers_tsig"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_auth_dmarc_report"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_address"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_catch_all"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_dns"
@@ -558,6 +559,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		email_routing_dns.NewResource,
 		email_routing_rule.NewResource,
 		email_routing_catch_all.NewResource,
+		email_auth_dmarc_report.NewResource,
 		email_routing_address.NewResource,
 		email_sending_subdomain.NewResource,
 		filter.NewResource,
