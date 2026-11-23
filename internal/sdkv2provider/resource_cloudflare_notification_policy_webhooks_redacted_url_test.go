@@ -97,7 +97,7 @@ func TestNotificationPolicyWebhooks_RedactedURLFromAPI(t *testing.T) {
 	defer srv.Close()
 
 	factories := map[string]func() (*schema.Provider, error){
-		"cloudflare": func() (*schema.Provider, error) {
+		"cloudflare": func() (*schema.Provider, error) { //nolint:unparam // resource.TestCase.ProviderFactories requires this signature
 			p := New("dev")()
 			p.ConfigureContextFunc = func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 				api, err := cloudflare.NewWithAPIToken("test-token", cloudflare.BaseURL(srv.URL))
