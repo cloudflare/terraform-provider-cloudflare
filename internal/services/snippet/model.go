@@ -83,7 +83,10 @@ func (r *SnippetModel) UnmarshalMultipart(data []byte, contentType string) error
 		if err != nil {
 			return fmt.Errorf("failed to get multipart part: %w", err)
 		}
-		if part.FormName() == "files" {
+		// The content endpoint names each part after its file
+		// (`name="worker.js"; filename="worker.js"`), not "files", so a part is
+		// a file when it carries a file name.
+		if part.FileName() != "" {
 			bytes, err := io.ReadAll(part)
 			if err != nil {
 				return fmt.Errorf("failed to read multipart part: %w", err)
