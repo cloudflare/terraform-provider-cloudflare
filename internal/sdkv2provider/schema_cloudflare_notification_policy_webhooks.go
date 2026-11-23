@@ -18,10 +18,11 @@ func resourceCloudflareNotificationPolicyWebhookSchema() map[string]*schema.Sche
 			Description: "The name of the webhook destination.",
 		},
 		"url": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			ForceNew:    true,
-			Description: "The URL of the webhook destinations.",
+			Type:             schema.TypeString,
+			Optional:         true,
+			ForceNew:         true,
+			Description:      "The URL of the webhook destinations. The API only returns the scheme and host of a configured URL (for example `https://example.com/...`), so a refreshed value in that form is not treated as a change.",
+			DiffSuppressFunc: suppressRedactedNotificationWebhookURLDiff,
 		},
 		"secret": {
 			Type:        schema.TypeString,

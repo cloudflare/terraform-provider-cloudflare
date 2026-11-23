@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"strings"
 	"time"
 
@@ -120,6 +121,27 @@ func resourceCloudflareNotificationPolicyWebhookImport(ctx context.Context, d *s
 	return []*schema.ResourceData{d}, nil
 }
 
+// redactedNotificationWebhookURL mirrors the form the notification API returns
+// for a stored webhook URL, which drops userinfo, path, query and fragment
+// because they can carry credentials.
+func redactedNotificationWebhookURL(storedURL string) (string, bool) {
+	u, err := url.ParseRequestURI(storedURL)
+	if err != nil || u.Scheme == "" || u.Host == "" {
+		return "", false
+	}
+	return u.Scheme + "://" + u.Host + "/...", true
+}
+
+// suppressRedactedNotificationWebhookURLDiff keeps a refreshed (redacted) url
+// from forcing a replacement while the configured url is unchanged.
+func suppressRedactedNotificationWebhookURLDiff(_, old, new string, _ *schema.ResourceData) bool {
+	if old == new {
+		return true
+	}
+	redacted, ok := redactedNotificationWebhookURL(new)
+	return ok && old == redacted
+}
+
 func buildNotificationPolicyWebhooks(d *schema.ResourceData) cloudflare.NotificationUpsertWebhooks {
 	webhooks := cloudflare.NotificationUpsertWebhooks{}
 
@@ -127,8 +149,17 @@ func buildNotificationPolicyWebhooks(d *schema.ResourceData) cloudflare.Notifica
 		webhooks.Name = name.(string)
 	}
 
-	if url, ok := d.GetOk("url"); ok {
-		webhooks.URL = url.(string)
+	// With the diff suppressed, d.Get("url") is the redacted value from state,
+	// so prefer the configured value.
+	if raw := d.GetRawConfig(); !raw.IsNull() && raw.IsKnown() {
+		if v := raw.GetAttr("url"); !v.IsNull() && v.IsKnown() {
+			webhooks.URL = v.AsString()
+		}
+	}
+	if webhooks.URL == "" {
+		if webhookURL, ok := d.GetOk("url"); ok {
+			webhooks.URL = webhookURL.(string)
+		}
 	}
 
 	if secret, ok := d.GetOk("secret"); ok {

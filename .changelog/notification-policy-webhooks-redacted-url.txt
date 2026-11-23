@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_notification_policy_webhooks: stop planning a replacement on every run now that the API returns only the scheme and host of a webhook `url`
+```
