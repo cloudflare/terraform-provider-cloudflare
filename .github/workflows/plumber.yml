@@ -1,0 +1,39 @@
+name: Plumber workflow scan
+on:
+  pull_request: {}
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  plumber:
+    runs-on: ubuntu-latest
+    # Runs in this repository only, like the release doctor: the score
+    # reads this repository's settings (branch protection).
+    if: github.repository == 'cloudflare/terraform-provider-cloudflare'
+    permissions:
+      contents: read
+      # Plumber reads the workflow states and one run log to prove the
+      # token scope of each job.
+      actions: read
+      # Lists the findings under code scanning.
+      security-events: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      # Reads the workflow files and the repository settings. No code from
+      # the repository is run.
+      - name: Check the workflows with Plumber
+        uses: getplumber/plumber@ec8cb3a7edd6a324b33e85109b627b2df6023d94 # v0.7.23
+        with:
+          # Fail under 85 points. The default is 100, where any finding fails.
+          min-points: 85
+          # Findings go to code scanning from pushes to main only: pull
+          # requests from forks and from Dependabot get a read-only token.
+          # The report is kept as a run artifact either way.
+          upload-sarif: ${{ github.event_name == 'push' }}

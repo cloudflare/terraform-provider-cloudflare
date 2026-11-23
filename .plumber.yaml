@@ -1,0 +1,16 @@
+# Plumber overlay: inherits every control from the CLI's built-in
+# baseline, only the differences for this repository are written here.
+# Run 'plumber config resolve' to see the full effective config.
+extends: plumber:default
+version: "2.0"
+
+github:
+  controls:
+    githubActionMustComeFromAuthorizedSources:
+      # Keep the default trust list and add the three third-party actions
+      # the release workflow and the setup-go action use.
+      includePlumberDefaults: true
+      trustedGithubActions:
+        - crazy-max/ghaction-import-gpg
+        - softprops/action-gh-release
+        - stainless-api/retrieve-github-access-token
