@@ -181,6 +181,11 @@ func (r *SnippetRulesResource) Read(ctx context.Context, req resource.ReadReques
 	}
 	data = &env.Result
 	data.ID = data.ZoneID
+	data.Rules, err = unmarshalRulesResult(bytes)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -248,6 +253,11 @@ func (r *SnippetRulesResource) ImportState(ctx context.Context, req resource.Imp
 	}
 	data = &env.Result
 	data.ID = data.ZoneID
+	data.Rules, err = unmarshalRulesResult(bytes)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
