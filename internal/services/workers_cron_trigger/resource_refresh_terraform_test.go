@@ -1,14 +1,15 @@
 package workers_cron_trigger_test
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"sync"
 	"testing"
 
-	"context"
 	"github.com/cloudflare/cloudflare-go/v7"
 	"github.com/cloudflare/cloudflare-go/v7/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_cron_trigger"
@@ -25,6 +26,8 @@ import (
 func TestWorkersCronTriggerTerraformDetectsDrift(t *testing.T) {
 	var mu sync.Mutex
 	schedules := []map[string]string{}
+	createdOn := ""
+	updates := 0
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		mu.Lock()
 		defer mu.Unlock()
@@ -36,6 +39,8 @@ func TestWorkersCronTriggerTerraformDetectsDrift(t *testing.T) {
 			if err := json.NewDecoder(req.Body).Decode(&schedules); err != nil {
 				t.Error(err)
 			}
+			updates++
+			createdOn = fmt.Sprintf("2026-11-01T00:00:%02dZ", updates)
 		case http.MethodGet:
 		default:
 			t.Errorf("unexpected method: %s", req.Method)
@@ -44,7 +49,7 @@ func TestWorkersCronTriggerTerraformDetectsDrift(t *testing.T) {
 		}
 		responseSchedules := []map[string]string{}
 		for _, schedule := range schedules {
-			responseSchedules = append(responseSchedules, map[string]string{"cron": schedule["cron"], "created_on": "2026-11-01T00:00:00Z", "modified_on": "2026-11-02T00:00:00Z"})
+			responseSchedules = append(responseSchedules, map[string]string{"cron": schedule["cron"], "created_on": createdOn, "modified_on": "2026-11-02T00:00:00Z"})
 		}
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(map[string]any{"success": true, "errors": []any{}, "messages": []any{}, "result": map[string]any{"schedules": responseSchedules}}); err != nil {
@@ -86,13 +91,17 @@ func TestWorkersCronTriggerTerraformDetectsDrift(t *testing.T) {
 	// Updating configuration must still preserve the planned cron and populate timestamps.
 	steps = append(steps, resource.TestStep{Config: strings.ReplaceAll(config, "0 0 * * *", "0 6 * * *"), Check: resource.ComposeTestCheckFunc(
 		resource.TestCheckResourceAttr(name, "schedules.0.cron", "0 6 * * *"),
-		resource.TestCheckResourceAttr(name, "schedules.0.created_on", "2026-11-01T00:00:00Z"),
+		resource.TestCheckResourceAttrSet(name, "schedules.0.created_on"),
 	)})
 	resource.UnitTest(t, resource.TestCase{ProtoV6ProviderFactories: map[string]func() (tfprotov6.ProviderServer, error){"cloudflare": providerserver.NewProtocol6WithError(&cronTestProvider{baseURL: server.URL})}, Steps: steps})
 }
 
-// Only the resource under test is served; all requests use the local HTTP server.
-type cronTestProvider struct{ baseURL string }
+// Only the resource under test is served. Local tests use a local HTTP server;
+// the opt-in acceptance test supplies its live API client explicitly.
+type cronTestProvider struct {
+	baseURL string
+	client  *cloudflare.Client
+}
 
 func (p *cronTestProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
 	resp.TypeName = "cloudflare"
@@ -101,6 +110,10 @@ func (p *cronTestProvider) Schema(_ context.Context, _ provider.SchemaRequest, r
 	resp.Schema = providerschema.Schema{}
 }
 func (p *cronTestProvider) Configure(_ context.Context, _ provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+	if p.client != nil {
+		resp.ResourceData = p.client
+		return
+	}
 	resp.ResourceData = cloudflare.NewClient(option.WithBaseURL(p.baseURL), option.WithAPIToken("test-token"), option.WithMaxRetries(0))
 }
 func (p *cronTestProvider) Resources(context.Context) []func() frameworkresource.Resource {

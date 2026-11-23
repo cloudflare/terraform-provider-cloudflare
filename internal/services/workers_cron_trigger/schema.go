@@ -54,8 +54,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required: true,
 						},
 						"created_on": schema.StringAttribute{
-							Computed:      true,
-							PlanModifiers: []planmodifier.String{stringplanmodifier.UseNonNullStateForUnknown()},
+							Computed: true,
 						},
 						"modified_on": schema.StringAttribute{
 							Computed: true,
