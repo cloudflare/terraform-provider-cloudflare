@@ -11,7 +11,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: 'tools/go.mod'
+          go-version-file: 'go.mod'
       - run: make tools
       - run: go run cmd/maintainer-only-file-check/main.go ${{ github.event.pull_request.number }}
         working-directory: ./tools

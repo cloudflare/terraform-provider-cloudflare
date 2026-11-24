@@ -34,7 +34,7 @@ testacc: fmtcheck
 
 lint: tools terraform-provider-lint golangci-lint
 
-terraform-provider-lint: tools
+terraform-provider-lint: tfproviderlintx
 	$$(go env GOPATH)/bin/tfproviderlintx \
 	 -R001=false \
 	 -R003=false \
@@ -97,6 +97,13 @@ tools:
 	@echo "==> Installing development tooling..."
 	go generate -tags tools tools/tools.go
 
+# Installs only tfproviderlintx. The full `tools` target pulls in a large,
+# pinned toolchain (golangci-lint v1, gopls, delve) that does not build under
+# newer Go releases; provider linting needs just this one binary.
+tfproviderlintx:
+	@echo "==> Installing tfproviderlintx..."
+	@cd tools && go install github.com/bflad/tfproviderlint/cmd/tfproviderlintx
+
 update-go-client:
 	@echo "==> Updating the cloudflare-go client to $(CLOUDFLARE_GO_VERSION)"
 	go get github.com/cloudflare/cloudflare-go@$(CLOUDFLARE_GO_VERSION)
@@ -105,4 +112,4 @@ update-go-client:
 docs: tools
 	@sh -c "'$(CURDIR)/scripts/generate-docs.sh'"
 
-.PHONY: build install test sweep testacc lint terraform-provider-lint vet fmt fmtcheck errcheck test-compilebuild-dev clean-dev generate-changelog golangci-lint tools update-go-client docs
+.PHONY: build install test sweep testacc lint terraform-provider-lint tfproviderlintx vet fmt fmtcheck errcheck test-compilebuild-dev clean-dev generate-changelog golangci-lint tools update-go-client docs
