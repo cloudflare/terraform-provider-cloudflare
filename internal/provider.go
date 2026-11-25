@@ -225,6 +225,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script_subdomain"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_subdomain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workflow"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_ai_controls_mcp_portal"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_ai_controls_mcp_server"
@@ -587,6 +588,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		workers_route.NewResource,
 		workers_script.NewResource,
 		workers_script_subdomain.NewResource,
+		workers_subdomain.NewResource,
 		workers_cron_trigger.NewResource,
 		workers_deployment.NewResource,
 		workers_custom_domain.NewResource,
